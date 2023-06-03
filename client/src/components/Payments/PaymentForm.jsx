@@ -2,6 +2,7 @@ import React from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import "./PaymentForm.css";
 import { useAuthContext } from '../../hooks/AuthContext.tsx';
+import axios from 'axios';
 
 const PaymentForm = ({ handlePaymentSuccess }) => {
   const { user } = useAuthContext();
@@ -22,7 +23,12 @@ const PaymentForm = ({ handlePaymentSuccess }) => {
     if (error) {
       console.error("[error]", error);
     } else {
-      handlePaymentSuccess(paymentMethod.id);
+      try {
+        const response = await axios.post("/api/free-messages/increment-free-messages", { userId });
+        handlePaymentSuccess(paymentMethod.id, response.data.updatedFreeMessages);
+      } catch (updateError) {
+        console.error("Failed to update free messages:", updateError);
+      }
     }
   };
 

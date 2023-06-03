@@ -35,9 +35,10 @@ export default function Chat() {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [freeMsgs, setFreeMsgs] = useState(user?.freeMessages || null); // Set initial state with user.freeMessages
 
-  const handlePaymentSuccess = (paymentMethodId) => {
+  const handlePaymentSuccess = (paymentMethodId, freeMessages) => {
     console.log("Payment Successful:", paymentMethodId);
-    console.log("Remaining free messages:", user.freeMessages);
+    console.log("Remaining free messages:", freeMessages);
+    setFreeMsgs(freeMessages); // Set the updated freeMessages value
     setPaymentSuccess(true);
   };
 
@@ -99,18 +100,24 @@ export default function Chat() {
 
   return (
     <>
-      {conversationId === 'new' && !messagesTree?.length ? <Landing /> : <Messages />}
-      {!paymentSuccess ? (
-        <div>
-          <h3>Please make a payment to enable sending messages</h3>
-          {freeMsgs !== null && <h4>Remaining free messages: {freeMsgs}</h4>}
-          <Elements stripe={stripePromise}>
-            <PaymentForm userId={userId} handlePaymentSuccess={handlePaymentSuccess} />
-          </Elements>
-        </div>
+      {conversationId === "new" && !messagesTree?.length ? (
+        <Landing />
       ) : (
-        <TextChat />
+        <Messages />
       )}
+      {freeMsgs > 0 || paymentSuccess ? (
+        <TextChat />
+      ) : (
+          <div className="container">
+            <h3>Please make a payment to enable sending messages</h3>
+            {freeMsgs !== null && (
+              <h4>Remaining free messages: {freeMsgs}</h4>
+            )}
+            <Elements stripe={stripePromise}>
+              <PaymentForm userId={userId} handlePaymentSuccess={handlePaymentSuccess} />
+            </Elements>
+          </div>
+        )}
     </>
   );
-};
+}  
