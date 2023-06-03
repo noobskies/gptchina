@@ -72,7 +72,11 @@ const userSchema = mongoose.Schema(
     },
     refreshToken: {
       type: [Session]
-    }
+    },
+    freeMessages: {
+      type: Number,
+      default: 5, // Set the default number of free messages for new users
+    },
   },
   { timestamps: true }
 );
@@ -96,7 +100,8 @@ userSchema.methods.toJSON = function () {
     role: this.role,
     emailVerified: this.emailVerified,
     createdAt: this.createdAt,
-    updatedAt: this.updatedAt
+    updatedAt: this.updatedAt,
+    freeMessages: this.freeMessages
   };
 };
 
@@ -139,6 +144,10 @@ userSchema.methods.comparePassword = function (candidatePassword, callback) {
     if (err) return callback(err);
     callback(null, isMatch);
   });
+};
+
+userSchema.methods.getFreeMessages = function () {
+  return this.freeMessages;
 };
 
 module.exports.hashPassword = async (password) => {

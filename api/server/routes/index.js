@@ -7,6 +7,8 @@ const search = require('./search');
 const tokenizer = require('./tokenizer');
 const auth = require('./auth');
 const oauth = require('./oauth');
+const stripe = require('./stripe');
+const freeMessages = require("./freeMessages");
 const { router: endpoints } = require('./endpoints');
 
 module.exports = {
@@ -19,5 +21,7 @@ module.exports = {
   auth,
   oauth,
   tokenizer,
-  endpoints
+  endpoints,
+  stripe,
+  freeMessages
 };

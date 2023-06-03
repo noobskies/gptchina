@@ -4,6 +4,7 @@ const { genAzureEndpoint } = require('../../utils/genAzureEndpoints');
 const tiktoken = require('@dqbd/tiktoken');
 const tiktokenModels = require('../../utils/tiktokenModels');
 const encoding_for_model = tiktoken.encoding_for_model;
+const User = require('../../models/User'); // Import your User Model
 
 const askClient = async ({
   text,
@@ -78,6 +79,18 @@ const askClient = async ({
   }
   
   const res = await client.sendMessage(text, { ...options, userId });
+
+  // Find the user who sent the message
+  const user = await User.findById(userId);
+
+  // Deduct 1 free message from their account if they have any available
+  if (user.freeMessages > 0) {
+    user.freeMessages -= 1;
+  }
+
+  await user.save();
+
+  res.remainingFreeMessages = user.freeMessages;
 
   try {
     usage.completion_tokens = (enc.encode(res.response)).length;

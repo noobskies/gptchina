@@ -6,6 +6,7 @@ const path = require('path');
 const cors = require('cors');
 const routes = require('./routes');
 const errorController = require('./controllers/error.controller');
+const { stripe: routesStripe } = require('./routes');
 const passport = require('passport');
 
 const port = process.env.PORT || 3080;
@@ -47,6 +48,8 @@ const projectPath = path.join(__dirname, '..', '..', 'client');
   app.use('/api/prompts', routes.prompts);
   app.use('/api/tokenizer', routes.tokenizer);
   app.use('/api/endpoints', routes.endpoints);
+  app.use('/api/stripe', routesStripe);
+  app.use("/api/free-messages", routes.freeMessages);
 
   // static files
   app.get('/*', function (req, res) {

@@ -1,15 +1,26 @@
-import { useEffect } from 'react';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import Landing from '../components/ui/Landing';
 import Messages from '../components/Messages';
 import TextChat from '../components/Input';
+import PaymentForm from '../components/Payments/PaymentForm.jsx';
+import { useAuthContext } from "../hooks/AuthContext.tsx";
 
 import store from '~/store';
 import { useGetMessagesByConvoId, useGetConversationByIdMutation } from '~/data-provider';
+import axios from 'axios';
+
+const stripePromise = loadStripe('pk_test_51MwvEEHKD0byXXClhlIY96bsuIIIcdGgTenVqBnktRp8fzoUHlcI29yTj9ktyqumu2Xk1uz7KptFryWfTZz5Sdj200f3cPZSa3');
 
 export default function Chat() {
+  const { user } = useAuthContext();
+  console.log("user:", user);
+  const userId = user?.id;
   const searchQuery = useRecoilValue(store.searchQuery);
   const [conversation, setConversation] = useRecoilState(store.conversation);
   const setMessages = useSetRecoilState(store.messages);
@@ -18,9 +29,17 @@ export default function Chat() {
   const { conversationId } = useParams();
   const navigate = useNavigate();
 
-  //disabled by default, we only enable it when messagesTree is null
   const messagesQuery = useGetMessagesByConvoId(conversationId, { enabled: false });
   const getConversationMutation = useGetConversationByIdMutation(conversationId);
+
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [freeMsgs, setFreeMsgs] = useState(user?.freeMessages || null); // Set initial state with user.freeMessages
+
+  const handlePaymentSuccess = (paymentMethodId) => {
+    console.log("Payment Successful:", paymentMethodId);
+    console.log("Remaining free messages:", user.freeMessages);
+    setPaymentSuccess(true);
+  };
 
   // when conversation changed or conversationId (in url) changed
   useEffect(() => {
@@ -38,13 +57,13 @@ export default function Chat() {
           onError: (error) => {
             console.error('failed to fetch the conversation');
             console.error(error);
-            navigate(`/chat/new`);
+            navigate('/chat/new');
             newConversation();
-          }
+          },
         });
         setMessages(null);
       } else {
-        navigate(`/chat/new`);
+        navigate('/chat/new');
       }
     } else if (conversation?.conversationId === 'search') {
       // jump to search page
@@ -72,17 +91,26 @@ export default function Chat() {
     }
   }, [messagesQuery.data, messagesQuery.isError, setMessages]);
 
-  // if not a conversation
   if (conversation?.conversationId === 'search') return null;
-  // if conversationId not match
+
   if (conversation?.conversationId !== conversationId) return null;
-  // if conversationId is null
+
   if (!conversationId) return null;
 
   return (
     <>
       {conversationId === 'new' && !messagesTree?.length ? <Landing /> : <Messages />}
-      <TextChat />
+      {!paymentSuccess ? (
+        <div>
+          <h3>Please make a payment to enable sending messages</h3>
+          {freeMsgs !== null && <h4>Remaining free messages: {freeMsgs}</h4>}
+          <Elements stripe={stripePromise}>
+            <PaymentForm userId={userId} handlePaymentSuccess={handlePaymentSuccess} />
+          </Elements>
+        </div>
+      ) : (
+        <TextChat />
+      )}
     </>
   );
-}
+};
