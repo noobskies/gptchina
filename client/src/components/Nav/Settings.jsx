@@ -1,7 +1,8 @@
 import * as Tabs from '@radix-ui/react-tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui';
-import { General } from './SettingsTabs';
+import { General, Billing } from './SettingsTabs';
 import { CogIcon } from '~/components/svg';
+import { useEffect, useState } from 'react';
 import { cn } from '~/utils/';
 import { useRecoilValue } from 'recoil';
 import { localize } from '~/localization/Translation';
@@ -22,14 +23,14 @@ export default function Settings({ open, onOpenChange }) {
     };
 
     checkMobile();
-    window.addEventListener("resize", checkMobile);
+    window.addEventListener('resize', checkMobile);
   }, []);
 
   useEffect(() => {
     // If the user clicks in the dialog when confirmClear is true, set it to false
     const handleClick = (e) => {
       if (confirmClear) {
-        if (e.target.id === "clearConvosBtn" || e.target.id === "clearConvosTxt") {
+        if (e.target.id === 'clearConvosBtn' || e.target.id === 'clearConvosTxt') {
           return;
         }
 
@@ -37,8 +38,8 @@ export default function Settings({ open, onOpenChange }) {
       }
     };
 
-    window.addEventListener("click", handleClick);
-    return () => window.removeEventListener("click", handleClick);
+    window.addEventListener('click', handleClick);
+    return () => window.removeEventListener('click', handleClick);
   }, [confirmClear]);
 
   return (
@@ -63,7 +64,7 @@ export default function Settings({ open, onOpenChange }) {
                 '-ml-[8px] flex min-w-[180px] flex-shrink-0 flex-col',
                 isMobile && 'flex-row rounded-lg bg-gray-100 p-1 dark:bg-gray-800/30',
               )}
-              style={{ outline: "none" }}
+              style={{ outline: 'none' }}
             >
               <Tabs.Trigger
                 className={cn(
@@ -80,23 +81,19 @@ export default function Settings({ open, onOpenChange }) {
               {/* Add the new Billing tab trigger */}
               <Tabs.Trigger
                 className={cn(
-                  "radix-state-active:bg-gray-800 radix-state-active:text-white flex items-center justify-start gap-2 rounded-md px-2 py-1.5 text-sm",
+                  'flex items-center justify-start gap-2 rounded-md px-2 py-1.5 text-sm radix-state-active:bg-gray-800 radix-state-active:text-white',
                   isMobile &&
-                    "dark:radix-state-active:text-white group flex-1 items-center justify-center text-sm dark:text-gray-500"
+                    'group flex-1 items-center justify-center text-sm dark:text-gray-500 dark:radix-state-active:text-white',
                 )}
                 value="billing"
               >
                 {/* <BillingIcon /> */}
                 Billing
               </Tabs.Trigger>
-
             </Tabs.List>
             <General />
             {/* Add the new Billing tab content */}
-            <Tabs.Content
-              className="w-full min-h-[400px]"
-              value="billing"
-            >
+            <Tabs.Content className="min-h-[400px] w-full" value="billing">
               <Billing />
             </Tabs.Content>
           </Tabs.Root>

@@ -5,9 +5,8 @@ import SunIcon from '../svg/SunIcon';
 import LightningIcon from '../svg/LightningIcon';
 import CautionIcon from '../svg/CautionIcon';
 import store from '~/store';
-import getAppTitle from '~/utils/getAppTitle';
-import { localize } from '~/localization/Translation';
-import { useGetStartupConfig } from '@librechat/data-provider';
+import { useLocalize } from '~/hooks';
+import { useGetStartupConfig } from 'librechat-data-provider';
 
 export default function Landing() {
   const { data: config } = useGetStartupConfig();
@@ -16,8 +15,6 @@ export default function Landing() {
   const localize = useLocalize();
   // @ts-ignore TODO: Fix anti-pattern - requires refactoring conversation store
   const { title = localize('com_ui_new_chat') } = conversation || {};
-
-  const appTitle = getAppTitle(config);
 
   useDocumentTitle(title);
 
@@ -31,16 +28,13 @@ export default function Landing() {
   return (
     <div className="flex h-full flex-col items-center overflow-y-auto pt-0 text-sm dark:bg-gray-800">
       <div className="w-full px-6 text-gray-800 dark:text-gray-100 md:flex md:max-w-2xl md:flex-col lg:max-w-3xl">
-      <h1
-        id="landing-title"
-        className="mb-10 ml-auto mr-auto mt-6 flex items-center justify-center gap-2 text-center text-4xl font-semibold sm:mb-16 md:mt-[10vh]"
-      >
-        <img
-          src="/assets/logo-no-background.png"
-          alt=""
-          className="w-1/2 h-auto object-contain sm:w-1/3"
-        />
-      </h1>
+        <h1
+          id="landing-title"
+          data-testid="landing-title"
+          className="mb-10 ml-auto mr-auto mt-6 flex items-center justify-center gap-2 text-center text-4xl font-semibold sm:mb-16 md:mt-[10vh]"
+        >
+          {config?.appTitle || 'LibreChat'}
+        </h1>
         <div className="items-start gap-3.5 text-center md:flex">
           <div className="mb-8 flex flex-1 flex-col gap-3.5 md:mb-auto">
             <h2 className="m-auto flex items-center gap-3 text-lg font-normal md:flex-col md:gap-2">
