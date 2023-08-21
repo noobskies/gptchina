@@ -48,7 +48,6 @@ Click on the thumbnail to open the video☝️
 ---
 
 ## ⚠️ [Breaking Changes](docs/general_info/breaking_changes.md) ⚠️
-**Applies to [v0.5.4](docs/general_info/breaking_changes.md#v054) & [v0.5.5](docs/general_info/breaking_changes.md#v055)**
 
 **Please read this before updating from a previous version**
 
@@ -64,13 +63,16 @@ Keep up with the latest updates by visiting the releases page - [Releases](https
 <details open>
   <summary><strong>Getting Started</strong></summary>
 
-  * [Docker Install](docs/install/docker_install.md)
-  * [Linux Install](docs/install/linux_install.md)
-  * [Mac Install](docs/install/mac_install.md)
-  * [Windows Install](docs/install/windows_install.md)
-  * [APIs and Tokens](docs/install/apis_and_tokens.md)
-  * [User Auth System](docs/install/user_auth_system.md)
-  * [Online MongoDB Database](docs/install/mongodb.md)
+  * Installation
+    * [Docker Install🐳](docs/install/docker_install.md)
+    * [Linux Install🐧](docs/install/linux_install.md)
+    * [Mac Install🍎](docs/install/mac_install.md)
+    * [Windows Install💙](docs/install/windows_install.md)
+  * Configuration
+    * [APIs and Tokens](docs/install/apis_and_tokens.md)
+    * [User Auth System](docs/install/user_auth_system.md)
+    * [Online MongoDB Database](docs/install/mongodb.md)
+    * [Languages](docs/install/languages.md)
 </details>
 
 <details>
@@ -106,11 +108,12 @@ Keep up with the latest updates by visiting the releases page - [Releases](https
   * [Cloudflare](docs/deployment/cloudflare.md)
   * [Ngrok](docs/deployment/ngrok.md)
   * [Render](docs/deployment/render.md)
+  * [Azure](docs/deployment/azure-terraform.md)
 </details>
 
 <details>
   <summary><strong>Contributions</strong></summary>
-
+  
   * [Contributor Guidelines](CONTRIBUTING.md)
   * [Documentation Guidelines](docs/contributions/documentation_guidelines.md)
   * [Code Standards and Conventions](docs/contributions/coding_conventions.md)

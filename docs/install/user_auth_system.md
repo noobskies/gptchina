@@ -27,7 +27,7 @@ Important: When you run the app for the first time, you need to create a new acc
 
 ## Before enabling Social Authentication, set ALLOW_SOCIAL_LOGIN=true in the .env file
 
-## How to Set Up Google Authentication
+## Google Authentication
 
 To enable Google login, you must create an application in the [Google Cloud Console](https://cloud.google.com) and provide the client ID and client secret in the `/.env` file.
 
@@ -37,21 +37,21 @@ To enable Google login, you must create an application in the [Google Cloud Cons
 4. Click on "Save and continue" and then "Back to dashboard".
 5. Click on "Create Credentials" and then "OAuth client ID".
 6. Select "Web application" as the application type and give it a name.
-7. Add "http://localhost" "http://localhost:3080" and "http://localhost:3090" to the authorized JavaScript origins.
-8. Add "http://localhost:3080/oauth/google/callback" to the authorized redirect URIs.
+7. Add `http://yourdomain`, `http://localhost:3080` and `http://localhost:3090` to the authorized JavaScript origins.
+8. Add `http://your-domain/oauth/google/callback` to the authorized redirect URIs. (if you use localhost then use this `http://localhost:3080/oauth/google/callback`)
 9. Click on "Create" and copy your client ID and client secret.
-10. Paste them into your /.env file.
-11. Enable the feature in the /.env file
+10. Paste them into your `/.env` file.
+11. Enable the feature in the `/.env` file
 
 ---
 
-## How to Set Up OpenID Authentication with Azure AD
+## OpenID Authentication with Azure AD
 
-1. Go to the Azure Portal and sign in with your account.
-2. In the search box, type Azure Active Directory and click on it.
+1. Go to the [Azure Portal](https://portal.azure.com/) and sign in with your account.
+2. In the search box, type "Azure Active Directory" and click on it.
 3. On the left menu, click on App registrations and then on New registration.
 4. Give your app a name and select Web as the platform type.
-5. In the Redirect URI field, enter http://localhost:3080/oauth/openid/callback and click on Register.
+5. In the Redirect URI field, enter `http://localhost:3080/oauth/openid/callback` and click on Register.
 6. You will see an Overview page with some information about your app. Copy the Application (client) ID and the Directory (tenant) ID and save them somewhere.
 7. On the left menu, click on Authentication and check the boxes for Access tokens and ID tokens under Implicit grant and hybrid flows.
 8. On the left menu, click on Certificates & Secrets and then on New client secret. Give your secret a name and an expiration date and click on Add.
@@ -63,12 +63,12 @@ OPENID_CLIENT_ID=Your Application (client) ID
 OPENID_CLIENT_SECRET=Your client secret
 OPENID_ISSUER=https://login.microsoftonline.com/Your Directory (tenant ID)/v2.0/
 OPENID_SESSION_SECRET=Any random string
-OPENID_SCOPE=openid profile email
-OPENID_CALLBACK_URL=/oauth/openid/callback
+OPENID_SCOPE=openid profile email #DO NOT CHANGE THIS
+OPENID_CALLBACK_URL=/oauth/openid/callback # this should be the same for everyone
 ```
 11. Save the .env file and you're done! You have successfully set up OpenID authentication with Azure AD for your app.
 
-## How to Set Up OpenID Authentication with AWS Cognito
+## OpenID Authentication with AWS Cognito
 
 1. Create a new User Pool in Cognito:
    1. Ensure your Cognito user pool sign-in options include `User Name` and `Email`.
@@ -100,12 +100,12 @@ OPENID_CALLBACK_URL=/oauth/openid/callback
 
 ---
 
-## How to Set Up Github Authentication
+## GitHub Authentication
 
 1. Go to your [Github Developer settings](https://github.com/settings/apps)
 2. Create a new Github app
-3. Give it a GitHub App name and set in the Homepage URL your [DOMAIN_CLIENT](https://github.com/danny-avila/LibreChat/blob/main/.env.example#L219)    (example: http://localhost:3080)
-4. Add a callback URL and set it as "[Your DOMAIN_CLIENT](https://github.com/danny-avila/LibreChat/blob/main/.env.example#L219)/oauth/github/callback" (example: http://localhost:3080/oauth/github/callback)
+3. Give it a GitHub App name and set in the Homepage URL "your-domain")    (example: http://localhost:3080)
+4. Add a callback URL and set it as "your-domain/oauth/github/callback" (example: http://localhost:3080/oauth/github/callback)
 5. Remove the Active checkbox in the Webhook section
 6. Save changes and generate a Client Secret
 7. In the Permissions & events tab select, open the Account Permissions and set Email addresses to Read-only
@@ -118,11 +118,11 @@ GITHUB_CALLBACK_URL=/oauth/github/callback # this should be the same for everyon
 9. Save the .env file
 ---
 
-## How to Set Up Discord Authentication
+## Discord Authentication
 
 1. Go to [Discord Developer Portal](https://discord.com/developers)
 2. Create a new Application and give it a name
-4. In the OAuth2 general settings add a redirect URL and set it as "[Your DOMAIN_CLIENT](https://github.com/danny-avila/LibreChat/blob/main/.env.example#L219)/oauth/discord/callback" (example: http://localhost:3080/oauth/discord/callback)
+4. In the OAuth2 general settings add a redirect URL and set it as "your-domain/oauth/discord/callback" (example: http://localhost:3080/oauth/discord/callback)
 5. in the Default Authorization Link set applications.commands
 6. Save changes and reset the Client Secret
 7. Put the Client ID and Client Secret in the .env file:
@@ -135,11 +135,47 @@ DISCORD_CALLBACK_URL=/oauth/discord/callback # this should be the same for every
 ---
 ## **Email and Password Reset** 
 
-Most of the code is in place for sending password reset emails, but is not yet feature-complete as I have not setup an email server to test it. Currently, submitting a password reset request will then display a link with the one-time reset token that can then be used to reset the password. Understanding that this is a considerable security hazard, email integration will be included in the next release.
+### General setup
+
+in the .env file modify this 4 variables:
+
+```
+EMAIL_SERVICE=   # eg. gmail
+EMAIL_USERNAME=  # eg. your email address if using gmail
+EMAIL_PASSWORD=  # eg. this is the "app password" if using gmail
+EMAIL_FROM=      # eg. email address for from field like noreply@librechat.ai
+```
+
+EMAIL_SERVICE is the name of the email service you are using (Gmail, Outlook, Yahoo Mail, ProtonMail, iCloud Mail, etc.).
+EMAIL_USERNAME is the username of the email service (usually, it will be the email address, but in some cases, it can be an actual username used to access the account).
+EMAIL_PASSWORD is the password used to access the email service. This is not the password to access the email account directly, but a password specifically generated for this service.
+EMAIL_FROM is the email address that will appear in the "from" field when a user receives an email.
+
+### Setup with Gmail 
+
+1. Create a Google Account and enable 2-step verification.
+2. In the [Google Account settings](https://myaccount.google.com/), click on the "Security" tab and open "2-step verification."
+3. Scroll down and open "App passwords." Choose "Mail" for the app and select "Other" for the device, then give it a random name.
+4. Click on "Generate" to create a password, and copy the generated password.
+5. In the .env file, modify the variables as follows:
+
+```
+EMAIL_SERVICE=gmail
+EMAIL_USERNAME=your-email
+EMAIL_PASSWORD=your-app-password
+EMAIL_FROM=email address for the from field, e.g., noreply@librechat.ai
+```
+
+NOTE: The variable EMAIL_FROM currently does not work. To stay updated, check the bug fixes [here](https://github.com/danny-avila/LibreChat/tags).
+
 
 ## **Disable User Registration**
 
 To disable or re-enable registration, open up the root `.env` file and set `ALLOW_REGISTRATION=true` or `ALLOW_REGISTRATION=false` depending on if you want registration open or closed.
+
+To disable or re-enable social registration, open up the root `.env` file and set `ALLOW_SOCIAL_REGISTRATION=true` or `ALLOW_SOCIAL_REGISTRATION=false` depending on if you want social registration open or closed.
+
+**NOTE: OpenID does not support the ability to disable only registration.**
 
 ### ⚠️***Warning***
 

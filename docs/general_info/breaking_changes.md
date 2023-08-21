@@ -1,5 +1,22 @@
 # ⚠️ **Breaking Changes** ⚠️
 
+## v0.5.8
+**If you have issues after updating, please try to clear your browser cache and cookies!**
+
+Some of the latest changes affect the cookies and can cause weird behaviors if not properly cleared.
+
+## v0.5.7
+
+Now, we have an easier and safer way to update LibreChat. You can simply run `npm run update` from the project directory for a clean update.
+If you want to skip the prompt you can use
+
+for a docker install:
+- `npm run update:docker`
+
+for a local install:
+- `npm run update:local`
+
+
 ## v0.5.5
 Some users have reported an error after updating their docker containers.
 
@@ -51,6 +68,12 @@ ANTHROPIC_MODELS=claude-1,claude-instant-1,claude-2
 ```
 
   - Choose from ANTHROPIC_MODELS which models you want to enable 🤖
+
+## v0.5.3
+
+Changed **AZURE_OPENAI_API_KEY** to **AZURE_API_KEY**:
+
+I had to change the environment variable from AZURE_OPENAI_API_KEY to AZURE_API_KEY, because the former would be read by langchain and cause issues when a user has both Azure and OpenAI keys set. This is a [known issue in the langchain library](https://github.com/hwchase17/langchainjs/issues/1687)
 
 ## v0.5.0
 

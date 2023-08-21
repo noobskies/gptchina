@@ -1,29 +1,28 @@
-import { Menu, Transition } from '@headlessui/react';
-import { Fragment, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-import SearchBar from './SearchBar';
-import Settings from './Settings';
 import { Download } from 'lucide-react';
-import NavLink from './NavLink';
-import ExportModel from './ExportConversation/ExportModel';
+import { useRecoilValue } from 'recoil';
+import { Fragment, useState } from 'react';
+import { Menu, Transition } from '@headlessui/react';
 import ClearConvos from './ClearConvos';
+import Settings from './Settings';
+import NavLink from './NavLink';
 import Logout from './Logout';
+import { ExportModel } from './ExportConversation';
+import { LinkIcon, DotsIcon, GearIcon } from '~/components';
+import { useLocalize } from '~/hooks';
 import { useAuthContext } from '~/hooks/AuthContext';
 import { cn } from '~/utils/';
 import SubscribeForm from "../Stripe/SubscribeForm.tsx";
 import { DialogOverlay, DialogContent } from "@reach/dialog";
 import { Button } from '../ui/Button';
 import store from '~/store';
-import { LinkIcon, DotsIcon, GearIcon, TrashIcon } from '~/components';
-import { localize } from '~/localization/Translation';
 
-export default function NavLinks({ clearSearch, isSearchEnabled }) {
+export default function NavLinks() {
   const [showExports, setShowExports] = useState(false);
   const [showClearConvos, setShowClearConvos] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const { user } = useAuthContext();
+  const localize = useLocalize();
   const [showSubscribeModal, setShowSubscribeModal] = useState(false);
-  const lang = useRecoilValue(store.lang);
 
   const conversation = useRecoilValue(store.conversation) || {};
 
@@ -97,7 +96,7 @@ export default function NavLinks({ clearSearch, isSearchEnabled }) {
                 </div>
               </div>
               <div className="grow overflow-hidden text-ellipsis whitespace-nowrap text-left text-white">
-                {user?.name || localize(lang, 'com_nav_user')}
+                {user?.name || localize('com_nav_user')}
               </div>
               <DotsIcon />
             </Menu.Button>
@@ -112,11 +111,6 @@ export default function NavLinks({ clearSearch, isSearchEnabled }) {
               leaveTo="transform opacity-0 scale-95"
             >
               <Menu.Items className="absolute bottom-full left-0 z-20 mb-2 w-full translate-y-0 overflow-hidden rounded-md bg-[#050509] py-1.5 opacity-100 outline-none">
-                {isSearchEnabled && (
-                  <Menu.Item>
-                    <SearchBar clearSearch={clearSearch} />
-                  </Menu.Item>
-                )}
                 <Menu.Item as="div">
                   <NavLink
                     className={cn(
@@ -124,7 +118,7 @@ export default function NavLinks({ clearSearch, isSearchEnabled }) {
                       exportable ? 'cursor-pointer text-white' : 'cursor-not-allowed text-white/50',
                     )}
                     svg={() => <Download size={16} />}
-                    text={localize(lang, 'com_nav_export_conversation')}
+                    text={localize('com_nav_export_conversation')}
                     clickHandler={clickHandler}
                   />
                 </Menu.Item>
@@ -132,16 +126,8 @@ export default function NavLinks({ clearSearch, isSearchEnabled }) {
                 <Menu.Item as="div">
                   <NavLink
                     className="flex w-full cursor-pointer items-center gap-3 rounded-none px-3 py-3 text-sm text-white transition-colors duration-200 hover:bg-gray-700"
-                    svg={() => <TrashIcon />}
-                    text={localize(lang, 'com_nav_clear_conversation')}
-                    clickHandler={() => setShowClearConvos(true)}
-                  />
-                </Menu.Item>
-                <Menu.Item as="div">
-                  <NavLink
-                    className="flex w-full cursor-pointer items-center gap-3 rounded-none px-3 py-3 text-sm text-white transition-colors duration-200 hover:bg-gray-700"
                     svg={() => <LinkIcon />}
-                    text={localize(lang, 'com_nav_help_faq')}
+                    text={localize('com_nav_help_faq')}
                     clickHandler={() => window.open('https://docs.librechat.ai/', '_blank')}
                   />
                 </Menu.Item>
@@ -149,7 +135,7 @@ export default function NavLinks({ clearSearch, isSearchEnabled }) {
                   <NavLink
                     className="flex w-full cursor-pointer items-center gap-3 rounded-none px-3 py-3 text-sm text-white transition-colors duration-200 hover:bg-gray-700"
                     svg={() => <GearIcon />}
-                    text={localize(lang, 'com_nav_settings')}
+                    text={localize('com_nav_settings')}
                     clickHandler={() => setShowSettings(true)}
                   />
                 </Menu.Item>

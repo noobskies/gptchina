@@ -1,12 +1,17 @@
 export { default as Plugin } from './Plugin';
 export { default as GPTIcon } from './GPTIcon';
+export { default as EditIcon } from './EditIcon';
 export { default as CogIcon } from './CogIcon';
 export { default as Panel } from './Panel';
 export { default as Spinner } from './Spinner';
 export { default as Clipboard } from './Clipboard';
 export { default as CheckMark } from './CheckMark';
+export { default as CrossIcon } from './CrossIcon';
+export { default as LogOutIcon } from './LogOutIcon';
 export { default as MessagesSquared } from './MessagesSquared';
 export { default as StopGeneratingIcon } from './StopGeneratingIcon';
+export { default as RegenerateIcon } from './RegenerateIcon';
+export { default as ContinueIcon } from './ContinueIcon';
 export { default as GoogleIcon } from './GoogleIcon';
 export { default as OpenIDIcon } from './OpenIDIcon';
 export { default as GithubIcon } from './GithubIcon';

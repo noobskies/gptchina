@@ -1,7 +1,6 @@
 const express = require('express');
 const session = require('express-session');
 const connectDb = require('../lib/db/connectDb');
-const migrateDb = require('../lib/db/migrateDb');
 const indexSync = require('../lib/db/indexSync');
 const path = require('path');
 const cors = require('cors');
@@ -33,7 +32,7 @@ const rawBodyBuffer = (req, res, buf, encoding) => {
 
 (async () => {
   await connectDb();
-  await migrateDb();
+  console.log('Connected to MongoDB');
   await indexSync();
 
   const app = express();
@@ -60,34 +59,37 @@ const rawBodyBuffer = (req, res, buf, encoding) => {
   app.use(passport.initialize());
   passport.use(await jwtLogin());
   passport.use(await passportLogin());
-  if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
-    passport.use(await googleLogin());
-  }
-  if (process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET) {
-    passport.use(await facebookLogin());
-  }
-  if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
-    passport.use(await githubLogin());
-  }
-  if (process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET) {
-    passport.use(await discordLogin());
-  }
-  if (
-    process.env.OPENID_CLIENT_ID &&
-    process.env.OPENID_CLIENT_SECRET &&
-    process.env.OPENID_ISSUER &&
-    process.env.OPENID_SCOPE &&
-    process.env.OPENID_SESSION_SECRET
-  ) {
-    app.use(
-      session({
-        secret: process.env.OPENID_SESSION_SECRET,
-        resave: false,
-        saveUninitialized: false,
-      }),
-    );
-    app.use(passport.session());
-    await setupOpenId();
+
+  if (process.env.ALLOW_SOCIAL_LOGIN === 'true') {
+    if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+      passport.use(await googleLogin());
+    }
+    if (process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET) {
+      passport.use(await facebookLogin());
+    }
+    if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
+      passport.use(await githubLogin());
+    }
+    if (process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET) {
+      passport.use(await discordLogin());
+    }
+    if (
+      process.env.OPENID_CLIENT_ID &&
+      process.env.OPENID_CLIENT_SECRET &&
+      process.env.OPENID_ISSUER &&
+      process.env.OPENID_SCOPE &&
+      process.env.OPENID_SESSION_SECRET
+    ) {
+      app.use(
+        session({
+          secret: process.env.OPENID_SESSION_SECRET,
+          resave: false,
+          saveUninitialized: false,
+        }),
+      );
+      app.use(passport.session());
+      await setupOpenId();
+    }
   }
   app.use('/oauth', routes.oauth);
   // api endpoint
@@ -95,6 +97,7 @@ const rawBodyBuffer = (req, res, buf, encoding) => {
   app.use('/api/user', routes.user);
   app.use('/api/search', routes.search);
   app.use('/api/ask', routes.ask);
+  app.use('/api/edit', routes.edit);
   app.use('/api/messages', routes.messages);
   app.use('/api/convos', routes.convos);
   app.use('/api/presets', routes.presets);

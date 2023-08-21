@@ -150,6 +150,7 @@ Only respond with your conversational reply to the following User Message:
   }
 
   createLLM(modelOptions, configOptions) {
+    let azure = {};
     let credentials = { openAIApiKey: this.openAIApiKey };
     let configuration = {
       apiKey: this.openAIApiKey,
@@ -158,6 +159,7 @@ Only respond with your conversational reply to the following User Message:
     if (this.azure) {
       credentials = {};
       configuration = {};
+      ({ azure } = this);
     }
 
     if (this.options.debug) {
@@ -165,7 +167,7 @@ Only respond with your conversational reply to the following User Message:
       console.debug(configOptions);
     }
 
-    return new ChatOpenAI({ credentials, configuration, ...modelOptions }, configOptions);
+    return new ChatOpenAI({ credentials, configuration, ...azure, ...modelOptions }, configOptions);
   }
 
   async initialize({ user, message, onAgentAction, onChainEnd, signal }) {
@@ -270,15 +272,6 @@ Only respond with your conversational reply to the following User Message:
     if (this.options.debug) {
       console.debug('Loaded agent.');
     }
-
-    onAgentAction(
-      {
-        tool: 'self-reflection',
-        toolInput: `Processing the User's message:\n"${message}"`,
-        log: '',
-      },
-      true,
-    );
   }
 
   async executorCall(message, signal) {
@@ -352,7 +345,8 @@ Only respond with your conversational reply to the following User Message:
   }
 
   async sendMessage(message, opts = {}) {
-    const completionMode = this.options.tools.length === 0;
+    // If a message is edited, no tools can be used.
+    const completionMode = this.options.tools.length === 0 || opts.isEdited;
     if (completionMode) {
       this.setOptions(opts);
       return super.sendMessage(message, opts);

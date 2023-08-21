@@ -16,7 +16,7 @@ import {
   useGetUserQuery,
   useRefreshTokenMutation,
   TLoginUser,
-} from '@librechat/data-provider';
+} from 'librechat-data-provider';
 import { useNavigate } from 'react-router-dom';
 
 export type TAuthContext = {
@@ -46,7 +46,7 @@ const AuthContextProvider = ({
   authConfig,
   children,
 }: {
-  authConfig: TAuthConfig;
+  authConfig?: TAuthConfig;
   children: ReactNode;
 }) => {
   const [user, setUser] = useState<TUser | undefined>(undefined);
@@ -90,7 +90,7 @@ const AuthContextProvider = ({
   );
 
   const getCookieValue = (key: string) => {
-    let keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+    const keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
     return keyValue ? keyValue[2] : null;
   };
 

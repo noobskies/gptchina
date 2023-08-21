@@ -1,81 +1,27 @@
-export type TMessage = {
-  messageId: string;
-  conversationId: string;
-  clientId: string;
-  parentMessageId: string;
-  sender: string;
-  text: string;
-  isCreatedByUser: boolean;
-  error: boolean;
-  createdAt: string;
-  updatedAt: string;
-};
+import type { TPlugin, TMessage, TConversation, TEndpointOption } from './schemas';
 
-export type TExample = {
-  input: string;
-  output: string;
-};
+export * from './schemas';
 
-export enum EModelEndpoint {
-  azureOpenAI = 'azureOpenAI',
-  openAI = 'openAI',
-  bingAI = 'bingAI',
-  chatGPT = 'chatGPT',
-  chatGPTBrowser = 'chatGPTBrowser',
-  google = 'google',
-  gptPlugins = 'gptPlugins',
-  anthropic = 'anthropic',
-}
+export type TMessages = TMessage[];
+
+export type TMessagesAtom = TMessages | null;
 
 export type TSubmission = {
-  clientId?: string;
-  context?: string;
-  conversationId?: string;
-  conversationSignature?: string;
-  current: boolean;
-  endpoint: EModelEndpoint;
-  invocationId: number;
-  isCreatedByUser: boolean;
-  jailbreak: boolean;
-  jailbreakConversationId?: string;
-  messageId: string;
-  overrideParentMessageId?: string | boolean;
-  parentMessageId?: string;
-  sender: string;
-  systemMessage?: string;
-  text: string;
-  toneStyle?: string;
-  model?: string;
-  promptPrefix?: string;
-  temperature?: number;
-  top_p?: number;
-  presence_penalty?: number;
-  frequence_penalty?: number;
-  conversation: TConversation;
+  plugin?: TPlugin;
   message: TMessage;
+  isEdited?: boolean;
+  messages: TMessage[];
+  isRegenerate?: boolean;
+  conversationId?: string;
+  initialResponse: TMessage;
+  conversation: TConversation;
   endpointOption: TEndpointOption;
 };
 
-export type TEndpointOption = {
-  endpoint: EModelEndpoint;
-  model?: string;
-  promptPrefix?: string;
-  temperature?: number;
-};
-
-export type TPluginAuthConfig = {
-  authField: string;
-  label: string;
-  description: string;
-};
-
-export type TPlugin = {
-  name: string;
+export type TPluginAction = {
   pluginKey: string;
-  description: string;
-  icon: string;
-  authConfig: TPluginAuthConfig[];
-  authenticated: boolean;
+  action: 'install' | 'uninstall';
+  auth?: unknown;
 };
 
 export type TUpdateUserPlugins = {
@@ -84,64 +30,14 @@ export type TUpdateUserPlugins = {
   auth?: unknown;
 };
 
-export type TConversation = {
-  conversationId: string;
-  title: string;
-  user?: string;
-  endpoint: EModelEndpoint;
-  suggestions?: string[];
-  messages?: TMessage[];
-  tools?: TPlugin[];
-  createdAt: string;
-  updatedAt: string;
-  // google only
-  modelLabel?: string;
-  examples?: TExample[];
-  // for azureOpenAI, openAI only
-  chatGptLabel?: string;
-  userLabel?: string;
-  model?: string;
-  promptPrefix?: string;
-  temperature?: number;
-  topP?: number;
-  topK?: number;
-  // bing and google
-  context?: string;
-  top_p?: number;
-  presence_penalty?: number;
-  // for bingAI only
-  jailbreak?: boolean;
-  jailbreakConversationId?: string;
-  conversationSignature?: string;
-  parentMessageId?: string;
-  clientId?: string;
-  invocationId?: string;
-  toneStyle?: string;
-};
-
-export type TPreset = {
-  title: string;
-  endpoint: EModelEndpoint;
-  conversationSignature?: string;
-  createdAt?: string;
-  updatedAt?: string;
-  presetId?: string;
-  user?: string;
-  // for azureOpenAI, openAI only
-  chatGptLabel?: string;
-  frequence_penalty?: number;
-  model?: string;
-  presence_penalty?: number;
-  promptPrefix?: string;
-  temperature?: number;
-  top_p?: number;
-  //for BingAI
-  clientId?: string;
-  invocationId?: number;
-  jailbreak?: boolean;
-  jailbreakPresetId?: string;
-  presetSignature?: string;
-  toneStyle?: string;
+export type TError = {
+  message: string;
+  code?: number;
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
 };
 
 export type TUser = {
@@ -197,15 +93,21 @@ export type TSearchResults = {
   filter: object;
 };
 
-export type TEndpoints = {
-  azureOpenAI: boolean;
-  bingAI: boolean;
-  ChatGptBrowser: {
-    availableModels: [];
-  };
-  OpenAI: {
-    availableModels: [];
-  };
+export type TConfig = {
+  availableModels: [];
+  userProvide?: boolean | null;
+  availableTools?: [];
+  plugins?: [];
+};
+
+export type TEndpointsConfig = {
+  azureOpenAI: TConfig | null;
+  bingAI: TConfig | null;
+  chatGPTBrowser: TConfig | null;
+  anthropic: TConfig | null;
+  google: TConfig | null;
+  openAI: TConfig | null;
+  gptPlugins: TConfig | null;
 };
 
 export type TUpdateTokenCountResponse = {
@@ -248,7 +150,7 @@ export type TResetPassword = {
 };
 
 export type TStartupConfig = {
-  appTitle: boolean;
+  appTitle: string;
   googleLoginEnabled: boolean;
   openidLoginEnabled: boolean;
   githubLoginEnabled: boolean;
@@ -258,6 +160,7 @@ export type TStartupConfig = {
   serverDomain: string;
   registrationEnabled: boolean;
   socialLoginEnabled: boolean;
+  emailEnabled: boolean;
 };
 
 export type TRefreshTokenResponse = {
@@ -266,5 +169,6 @@ export type TRefreshTokenResponse = {
 };
 
 export type TRequestPasswordResetResponse = {
-  link: string;
+  link?: string;
+  message?: string;
 };

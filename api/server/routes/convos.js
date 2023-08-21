@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getConvo, saveConvo } = require('../../models');
 const { getConvosByPage, deleteConvos } = require('../../models/Conversation');
-const requireJwtAuth = require('../../middleware/requireJwtAuth');
+const requireJwtAuth = require('../middleware/requireJwtAuth');
 
 router.get('/', requireJwtAuth, async (req, res) => {
   const pageNumber = req.query.pageNumber || 1;
@@ -14,7 +14,7 @@ router.get('/:conversationId', requireJwtAuth, async (req, res) => {
   const convo = await getConvo(req.user.id, conversationId);
 
   if (convo) {
-    res.status(200).send(convo.toObject());
+    res.status(200).send(convo);
   } else {
     res.status(404).end();
   }
@@ -27,7 +27,8 @@ router.post('/clear', requireJwtAuth, async (req, res) => {
     filter = { conversationId };
   }
 
-  console.log('source:', source);
+  // for debugging deletion source
+  // console.log('source:', source);
 
   if (source === 'button' && !conversationId) {
     return res.status(200).send('No conversationId provided');

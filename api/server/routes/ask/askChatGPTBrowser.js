@@ -1,14 +1,13 @@
 const express = require('express');
 const crypto = require('crypto');
 const router = express.Router();
-// const { getChatGPTBrowserModels } = require('../endpoints');
 const { browserClient } = require('../../../app/');
 const { saveMessage, getConvoTitle, saveConvo, getConvo } = require('../../../models');
-const { handleError, sendMessage, createOnProgress, handleText } = require('./handlers');
-const requireJwtAuth = require('../../../middleware/requireJwtAuth');
+const { handleError, sendMessage, createOnProgress, handleText } = require('../../utils');
+const { requireJwtAuth, setHeaders } = require('../../middleware');
 const rateLimit = require('../../../middleware/rateLimit');
 
-router.post('/', requireJwtAuth, rateLimit, async (req, res) => {
+router.post('/', requireJwtAuth, setHeaders, rateLimit, async (req, res) => {
   const {
     endpoint,
     text,
@@ -87,15 +86,6 @@ const ask = async ({
 }) => {
   let { text, parentMessageId: userParentMessageId, messageId: userMessageId } = userMessage;
   const userId = req.user.id;
-
-  res.writeHead(200, {
-    Connection: 'keep-alive',
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache, no-transform',
-    'Access-Control-Allow-Origin': '*',
-    'X-Accel-Buffering': 'no',
-  });
-
   let responseMessageId = crypto.randomUUID();
   let getPartialMessage = null;
   try {

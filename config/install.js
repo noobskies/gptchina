@@ -11,6 +11,12 @@ if (!process.stdin.isTTY) {
   exit(0);
 }
 
+// If we are in CI env, lets exit
+if (process.env.NODE_ENV === 'ci') {
+  console.log('Note: we are in a CI environment, skipping install script.');
+  exit(0);
+}
+
 // Save the original console.log function
 const originalConsoleWarn = console.warn;
 console.warn = () => {};
@@ -101,3 +107,6 @@ let env = {};
 
   // We can ask for more here if we want
   console.log(''); // New line
+  console.green('Success! Please read our docs if you need help setting up the rest of the app.');
+  console.log(''); // New line
+})();
