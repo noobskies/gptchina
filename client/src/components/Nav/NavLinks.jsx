@@ -11,8 +11,8 @@ import { LinkIcon, DotsIcon, GearIcon } from '~/components';
 import { useLocalize } from '~/hooks';
 import { useAuthContext } from '~/hooks/AuthContext';
 import { cn } from '~/utils/';
-import SubscribeForm from "../Stripe/SubscribeForm.tsx";
-import { DialogOverlay, DialogContent } from "@reach/dialog";
+import SubscribeForm from '../Stripe/SubscribeForm.tsx';
+import { Dialog, DialogContent } from '../ui';
 import { Button } from '../ui/Button';
 import store from '~/store';
 
@@ -37,8 +37,8 @@ export default function NavLinks() {
     }
   };
 
-  console.log(user)
-  
+  console.log(user);
+
   return (
     <>
       <Menu as="div" className="group relative">
@@ -46,34 +46,23 @@ export default function NavLinks() {
           <>
             {user && user.subscriptionStatus !== 'active' && (
               <Button
-                variant="green" 
+                variant="green"
                 className="w-full"
                 onClick={() => setShowSubscribeModal(true)}
               >
                 Go Pro
               </Button>
-              
             )}
             {/* Add the SubscribeForm dialog */}
             {showSubscribeModal && (
-              <>
-                <div className="fixed inset-0 bg-black opacity-50 z-40"></div>
-                <DialogOverlay isOpen={showSubscribeModal} onDismiss={() => setShowSubscribeModal(false)} className="z-50 fixed inset-0 flex items-center justify-center">
-                  <DialogContent className="w-full sm:w-3/4 md:w-2/3 lg:w-1/2 p-6 bg-white dark:bg-black-500 overflow-auto">
-                    <button
-                      className="float-right text-xl font-bold"
-                      onClick={() => setShowSubscribeModal(false)}
-                    >
-                      &times;
-                    </button>
-                    <div className="h-full flex flex-col justify-center items-center">
-                      <SubscribeForm />
-                    </div>
-                  </DialogContent>
-                </DialogOverlay>
-              </>
+              <Dialog open={showSubscribeModal} onOpenChange={setShowSubscribeModal}>
+                <DialogContent className="dark:bg-black-500 w-full overflow-auto bg-white p-6 shadow-2xl dark:bg-gray-900 dark:text-white sm:w-3/4 md:w-2/3 md:w-[680px] lg:w-1/2">
+                  <div className="flex h-full flex-col items-center justify-center">
+                    <SubscribeForm />
+                  </div>
+                </DialogContent>
+              </Dialog>
             )}
-
 
             <Menu.Button
               className={cn(
