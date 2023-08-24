@@ -20,7 +20,6 @@ module.exports = {
     model = null,
   }) {
     try {
-      // may also need to update the conversation here
       await Message.findOneAndUpdate(
         { messageId },
         {
@@ -40,6 +39,18 @@ module.exports = {
         },
         { upsert: true, new: true },
       );
+      // console.log("Conversation ID:", conversationId);
+
+      // if (tokenCount) {
+      //   const convo = await Conversation.findOne({ conversationId }).populate('user');
+      //   console.log("Conversation:", convo);
+      //   if (convo && convo.user) {
+      //     const user = await User.findOne({ username: convo.user });
+      //     if (user) {
+      //       await user.updateTokenUsage(tokenCount);
+      //     }
+      //   }
+      // }
 
       return {
         messageId,

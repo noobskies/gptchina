@@ -6,6 +6,7 @@ const { loadSummarizationChain } = require('langchain/chains');
 const { refinePrompt } = require('./prompts/refinePrompt');
 const { getConvo, getMessages, saveMessage, updateMessage, saveConvo } = require('../../models');
 const { addSpaceIfNeeded } = require('../../server/utils');
+const User = require('../../models/User');
 
 class BaseClient {
   constructor(apiKey, options = {}) {
@@ -394,13 +395,15 @@ class BaseClient {
   }
 
   async sendMessage(message, opts = {}) {
-    const { user, head, isEdited, conversationId, responseMessageId, saveOptions, userMessage } =
+    const { head, isEdited, conversationId, responseMessageId, saveOptions, userMessage } =
       await this.handleStartMethods(message, opts);
 
+    const userId = opts.user;
+    const user = await User.findById(userId);
+
+    console.log(opts);
+
     this.user = user;
-    // It's not necessary to push to currentMessages
-    // depending on subclass implementation of handling messages
-    // When this is an edit, all messages are already in currentMessages, both user and response
     if (!isEdited) {
       this.currentMessages.push(userMessage);
     }
@@ -411,25 +414,14 @@ class BaseClient {
       promptTokens,
     } = await this.buildMessages(
       this.currentMessages,
-      // When the userMessage is pushed to currentMessages, the parentMessage is the userMessageId.
-      // this only matters when buildMessages is utilizing the parentMessageId, and may vary on implementation
       isEdited ? head : userMessage.messageId,
       this.getBuildMessagesOptions(opts),
     );
 
-    if (this.options.debug) {
-      console.debug('payload');
-      // console.debug(payload);
-    }
-
     if (tokenCountMap) {
-      console.dir(tokenCountMap, { depth: null });
       if (tokenCountMap[userMessage.messageId]) {
         userMessage.tokenCount = tokenCountMap[userMessage.messageId];
-        console.log('userMessage.tokenCount', userMessage.tokenCount);
-        console.log('userMessage', userMessage);
       }
-
       payload = payload.map((message) => {
         const messageWithoutTokenCount = message;
         delete messageWithoutTokenCount.tokenCount;
@@ -458,6 +450,28 @@ class BaseClient {
       responseMessage.tokenCount = this.getTokenCountForResponse(responseMessage);
       responseMessage.completionTokens = responseMessage.tokenCount;
     }
+
+    // Extract token counts and update user's token usage
+    const userTokenCount = this.getTokenCountForMessage(userMessage);
+    const responseTokenCount = responseMessage.tokenCount || 0;
+    console.debug('User token count:', userTokenCount);
+    console.debug('Response token count:', responseTokenCount);
+    if (user) {
+      console.debug('Updating token usage for user', user.username);
+      const totalTokenCount = responseTokenCount;
+      console.debug('Total token count:', totalTokenCount);
+      try {
+        await User.findByIdAndUpdate(
+          user._id,
+          { $inc: { tokenUsage: totalTokenCount } },
+          { new: true },
+        );
+        console.debug('Token usage updated.');
+      } catch (err) {
+        console.error('Error updating token usage:', err);
+      }
+    }
+
     await this.saveMessageToDatabase(responseMessage, saveOptions, user);
     delete responseMessage.tokenCount;
     return responseMessage;

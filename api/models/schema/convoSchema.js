@@ -16,7 +16,8 @@ const convoSchema = mongoose.Schema(
       meiliIndex: true,
     },
     user: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
       default: null,
     },
     messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],

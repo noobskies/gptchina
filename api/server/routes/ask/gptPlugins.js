@@ -6,6 +6,7 @@ const { addTitle } = require('../endpoints/openAI');
 const { initializeClient } = require('../endpoints/gptPlugins');
 const { saveMessage, getConvoTitle, getConvo } = require('../../../models');
 const { sendMessage, createOnProgress, formatSteps, formatAction } = require('../../utils');
+// const messageRateLimit = require('../../middleware/messageRateLimit');
 const {
   handleAbort,
   createAbortController,

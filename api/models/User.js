@@ -85,28 +85,32 @@ const userSchema = mongoose.Schema(
       default: [],
     },
     refreshToken: {
-      type: [Session]
+      type: [Session],
+    },
+    tokenUsage: {
+      type: Number,
+      default: 0,
     },
     stripeCustomerId: {
       type: String,
       unique: true,
-      sparse: true
+      sparse: true,
     },
     stripeSubscriptionId: {
       type: String,
       unique: true,
-      sparse: true
+      sparse: true,
     },
     subscriptionStatus: {
       type: String,
       enum: ['active', 'canceled', 'paused', 'unsubscribed'],
-      default: 'unsubscribed'
+      default: 'unsubscribed',
     },
     oneTimePaymentPlan: {
       type: String,
       enum: ['pro_year', 'pro_month', 'pro_day', 'pro_week', 'unsubscribed'],
-      default: 'unsubscribed'
-    },    
+      default: 'unsubscribed',
+    },
   },
   { timestamps: true },
 );
@@ -136,7 +140,14 @@ userSchema.methods.toJSON = function () {
     stripeSubscriptionId: this.stripeSubscriptionId,
     subscriptionStatus: this.subscriptionStatus,
     oneTimePaymentPlan: this.oneTimePaymentPlan,
+    tokenUsage: this.tokenUsage,
   };
+};
+
+userSchema.methods.updateTokenUsage = function (tokenCount) {
+  this.tokenUsage += tokenCount;
+  console.log('Updated Token Usage:', this.tokenUsage);
+  return this.save();
 };
 
 userSchema.methods.generateToken = function () {
