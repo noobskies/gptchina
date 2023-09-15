@@ -56,30 +56,39 @@ const SubscribeForm = () => {
     <section className="py-6 dark:bg-gray-800 dark:text-gray-100">
       <div className="container mx-auto">
         <div className="mb-12 space-y-4 text-center">
-          <h1 className="text-4xl font-semibold">Upgrade to Pro</h1>
-          <p className="px-4 sm:px-8 lg:px-24">We love that you're enjoying GPTChina. If we could offer unlimited chats for free, we would. Unfortunately, API calls aren't free and to keep the lights on we need paying patrons. Thank you for your support!</p>
+          <p className="px-4 sm:px-8 lg:px-24">
+            Dear Users, To serve you better, we're shifting to a token-based payment system. 
+            As we transition, "Baopals Pro" will be temporarily unavailable. 
+            This change aims to offer more transparent and flexible billing based on your actual usage.
+            <br/><br/>
+            Thank you for your patience and understanding during this update.
+            <br/><br/>
+            Warm regards,
+            <br/>
+            The gptchina.io Team
+          </p>
           <div>
-          <button 
-            onClick={() => setSelectedPaymentMethod('wechat_pay')}
-            className={`w-1/3 px-4 py-1 border rounded-l-lg hover:bg-green-600 hover:text-white  ${selectedPaymentMethod === 'wechat_pay' ? 'bg-green-500 border-green-500 text-white' : 'bg-gray-200 text-gray-600'}`}
-          >
-            WeChat
-          </button>
-          <button 
-            onClick={() => setSelectedPaymentMethod('card')}
-            className={`w-1/3 px-4 py-1 border rounded-r-lg hover:bg-green-600 hover:text-white  ${selectedPaymentMethod === 'card' ? 'bg-green-500 border-green-500 text-white' : 'bg-gray-200 text-gray-600'}`}
-          >
-            Visa/Mastercard
-          </button>
+            <button 
+              onClick={() => setSelectedPaymentMethod('wechat_pay')}
+              className={`w-1/3 px-4 py-1 border rounded-l-lg bg-gray-200 text-gray-600`}
+              disabled
+            >
+              WeChat
+            </button>
+            <button 
+              onClick={() => setSelectedPaymentMethod('card')}
+              className={`w-1/3 px-4 py-1 border rounded-r-lg bg-gray-200 text-gray-600`}
+              disabled
+            >
+              Visa/Mastercard
+            </button>
           </div>
         </div>
         <div className="flex flex-wrap justify-center w-full">
           {priceOptions.filter(option => option.method === selectedPaymentMethod).map(option => (
             <div 
               key={option.id} 
-              onMouseEnter={() => setHoveredCard(option.id)}
-              onMouseLeave={() => setHoveredCard(null)}
-              className={`m-4 ${option.id === 'pro_month_card' ? 'w-1/3' : 'w-full sm:w-1/2 md:w-1/3 lg:w-1/3 xl:w-1/5'} flex flex-col items-center border border-gray-200 rounded-lg p-3 shadow-lg transform hover:scale-105 transition-transform`}
+              className={`m-4 ${option.id === 'pro_month_card' ? 'w-1/3' : 'w-full sm:w-1/2 md:w-1/3 lg:w-1/3 xl:w-1/5'} flex flex-col items-center border border-gray-200 rounded-lg p-3 shadow-lg`}
             >
               <div className="flex flex-col items-center justify-center px-2 py-8 space-y-4 dark:bg-gray-800">
                 <p className="text-lg font-medium">{option.label}</p>
@@ -97,13 +106,11 @@ const SubscribeForm = () => {
                   ))}
                 </ul>
                 <button
-  onClick={() => onSubmit(option)}
-  className={`w-full px-8 py-3 mt-4 text-lg font-semibold rounded sm:mt-4 ${hoveredCard === option.id ? "bg-gradient-to-r from-pink-500 to-yellow-500 text-white" : "bg-gradient-to-r from-green-400 to-blue-500 text-white"} transition-colors duration-200`}
-  disabled={isLoading}
->
-{isLoading && loadingButtonId === option.id ? <div className="flex justify-center items-center"><Spinner className="m-1" /></div> : 'Select'}
-</button>
-
+                  className="w-full px-8 py-3 mt-4 text-lg font-semibold rounded sm:mt-4 bg-gray-300 text-gray-600"
+                  disabled
+                >
+                  Select
+                </button>
               </div>
             </div>
           ))}
