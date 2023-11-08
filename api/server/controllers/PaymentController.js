@@ -4,7 +4,7 @@ const addTokensByUserId = require('../../../config/addTokens'); // Adjust the im
 exports.createPaymentIntent = async (req, res) => {
   try {
     let { amount, userId } = req.body;
-    amount = parseInt(amount, 10) * 100; // Convert RMB to cents for Stripe
+    amount = parseInt(amount, 10) * 100 * 0.7;
 
     if (isNaN(amount) || amount <= 0) {
       res.status(400).json({ error: `Invalid amount: ${amount}` });

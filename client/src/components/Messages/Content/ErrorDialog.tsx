@@ -35,7 +35,9 @@ export default function ErrorDialog({ open, onOpenChange, message }) {
   };
 
   const handlePurchase = async () => {
-    if (selectedTokens === null) {return;} // Ensure a package is selected
+    if (selectedTokens === null) {
+      return;
+    } // Ensure a package is selected
 
     setProcessingTokenAmount(selectedTokens);
     let amount;
@@ -96,29 +98,55 @@ export default function ErrorDialog({ open, onOpenChange, message }) {
         main={
           <>
             <div className="flex w-full flex-col items-center gap-2">
-              <div className="text-center text-sm dark:text-white">
-                Please Note! WeChat and Alipay valid only with a Chinese National ID-linked account
+              <div className="rounded-md bg-orange-500 p-4 shadow-lg">
+                <h1 className="text-center text-3xl font-bold text-white">
+                  11/11 Flash Sale!
+                  <div>Get 30% Off - Today Only!</div>
+                </h1>
               </div>
-              <div className="grid w-full grid-cols-2 gap-5 p-3">
+              <div className="grid w-full grid-cols-2 gap-3 p-3">
                 {[
-                  { tokens: 100000, label: '100k', price: '10 RMB' },
-                  { tokens: 500000, label: '500k', price: '35 RMB' },
-                  { tokens: 1000000, label: '1 Million', price: '50 RMB' },
-                  { tokens: 10000000, label: '10 Million', price: '250 RMB' },
-                ].map(({ tokens, label, price }) => (
+                  {
+                    tokens: 100000,
+                    label: '100k',
+                    originalPrice: '10 RMB',
+                    discountedPrice: '7 RMB',
+                  },
+                  {
+                    tokens: 500000,
+                    label: '500k',
+                    originalPrice: '35 RMB',
+                    discountedPrice: '24.50 RMB',
+                  },
+                  {
+                    tokens: 1000000,
+                    label: '1 Million',
+                    originalPrice: '50 RMB',
+                    discountedPrice: '35 RMB',
+                  },
+                  {
+                    tokens: 10000000,
+                    label: '10 Million',
+                    originalPrice: '250 RMB',
+                    discountedPrice: '175 RMB',
+                  },
+                ].map(({ tokens, label, originalPrice, discountedPrice }) => (
                   <button
                     key={tokens}
                     onClick={() => handleSelect(tokens)}
-                    className={`flex h-[100px] flex-col items-center justify-between rounded p-3 text-white
+                    className={`flex h-[120px] flex-col items-center justify-between rounded p-3 text-white
                     ${
                   selectedTokens === tokens
                     ? 'border-4 border-blue-500 bg-green-500'
                     : 'border-4-green-500 border-4 bg-green-500 hover:bg-green-600 dark:hover:bg-green-600'
                   }`}
                   >
-                    <div className="text-lg font-bold">{label}</div>
+                    <div className="text-xl font-bold">{label}</div>
                     <div>Tokens</div>
-                    <div className="text-sm">{price}</div>
+                    <div className="text">
+                      <span className="line-through">{originalPrice}</span>
+                      <span className="ml-2">{discountedPrice}</span>
+                    </div>
                   </button>
                 ))}
               </div>
@@ -135,6 +163,9 @@ export default function ErrorDialog({ open, onOpenChange, message }) {
               >
                 {processingTokenAmount !== null ? <Spinner /> : 'Purchase'}
               </button>
+              <div className="text-center text-sm dark:text-white">
+                Please Note! WeChat and Alipay valid only with a Chinese National ID-linked account
+              </div>
             </div>
           </>
         }
