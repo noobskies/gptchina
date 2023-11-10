@@ -73,16 +73,16 @@ exports.handleWebhook = async (req, res) => {
 
     let tokens;
     switch (amountInRMB) {
-      case 10: // Updated amount
+      case 7: // 70% of 10
         tokens = 100000;
         break;
-      case 35: // Updated amount
+      case 24.5: // 70% of 35
         tokens = 500000;
         break;
-      case 50: // Updated amount
+      case 35: // 70% of 50
         tokens = 1000000;
         break;
-      case 250: // Updated amount
+      case 175: // 70% of 250
         tokens = 10000000;
         break;
       default:
