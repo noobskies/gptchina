@@ -1,26 +1,30 @@
+require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const nodemailer = require('nodemailer');
 const handlebars = require('handlebars');
-const { isEnabled } = require('~/server/utils/handleText');
 const logger = require('~/config/winston');
 
 const sendEmail = async (email, subject, payload, template) => {
+  console.log('sendEmail', email, subject, payload, template);
   try {
     const transporterOptions = {
       // Use STARTTLS by default instead of obligatory TLS
-      secure: process.env.EMAIL_ENCRYPTION === 'tls',
+      secure: process.env.EMAIL_ENCRYPTION === 'false',
       // If explicit STARTTLS is set, require it when connecting
       requireTls: process.env.EMAIL_ENCRYPTION === 'starttls',
       tls: {
         // Whether to accept unsigned certificates
-        rejectUnauthorized: !isEnabled(process.env.EMAIL_ALLOW_SELFSIGNED),
+        secure: false, // Disable SSL/TLS encryption
+        ignoreTLS: true, // Ignore TLS requirements
       },
       auth: {
         user: process.env.EMAIL_USERNAME,
         pass: process.env.EMAIL_PASSWORD,
       },
     };
+
+    console.log('Transporter options:', transporterOptions);
 
     if (process.env.EMAIL_ENCRYPTION_HOSTNAME) {
       // Check the certificate against this name explicitly
@@ -29,12 +33,15 @@ const sendEmail = async (email, subject, payload, template) => {
 
     // Mailer service definition has precedence
     if (process.env.EMAIL_SERVICE) {
+      console.log('Using service:', process.env.EMAIL_SERVICE);
       transporterOptions.service = process.env.EMAIL_SERVICE;
     } else {
+      console.log('Using host:', process.env.EMAIL_HOST);
       transporterOptions.host = process.env.EMAIL_HOST;
       transporterOptions.port = process.env.EMAIL_PORT ?? 25;
     }
 
+    console.log('Final Transporter options:', transporterOptions);
     const transporter = nodemailer.createTransport(transporterOptions);
 
     const source = fs.readFileSync(path.join(__dirname, 'emails', template), 'utf8');
@@ -73,4 +80,17 @@ const sendEmail = async (email, subject, payload, template) => {
   }
 };
 
-module.exports = sendEmail;
+const sendVerificationEmail = async (email, token) => {
+  console.log('sendVerificationEmail', email, token);
+  const payload = {
+    name: email.split('@')[0], // Extract the username from the email
+    verificationLink: `${process.env.DOMAIN_CLIENT}/verify-email/${token}`,
+  };
+
+  await sendEmail(email, 'Verify Your Email', payload, 'verifyEmail.handlebars');
+};
+
+module.exports = {
+  sendEmail,
+  sendVerificationEmail,
+};

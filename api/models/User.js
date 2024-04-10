@@ -1,9 +1,14 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const signPayload = require('../server/services/signPayload');
 const userSchema = require('./schema/userSchema.js');
 const { SESSION_EXPIRY } = process.env ?? {};
 const expires = eval(SESSION_EXPIRY) ?? 1000 * 60 * 15;
+
+userSchema.add({
+  emailVerificationToken: String,
+});
 
 userSchema.methods.toJSON = function () {
   return {
@@ -32,6 +37,12 @@ userSchema.methods.generateToken = async function () {
     secret: process.env.JWT_SECRET,
     expirationTime: expires / 1000,
   });
+};
+
+userSchema.methods.generateEmailVerificationToken = function () {
+  const token = crypto.randomBytes(20).toString('hex');
+  this.emailVerificationToken = token;
+  return token;
 };
 
 userSchema.methods.comparePassword = function (candidatePassword, callback) {

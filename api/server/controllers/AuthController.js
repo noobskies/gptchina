@@ -10,6 +10,7 @@ const {
   requestPasswordReset,
 } = require('~/server/services/AuthService');
 const { logger } = require('~/config');
+const { sendVerificationEmail } = require('~/server/utils/sendEmail');
 
 const registrationController = async (req, res) => {
   try {
@@ -29,7 +30,16 @@ const registrationController = async (req, res) => {
       });
       await newBalance.save();
 
+      // Generate email verification token
+      const emailVerificationToken = newUser.generateEmailVerificationToken();
+      await newUser.save();
+
+      // Send verification email
+      await sendVerificationEmail(newUser.email, emailVerificationToken);
+
       const token = await setAuthTokens(user._id, res);
+
+      console.log('Token:', token);
       res.setHeader('Authorization', `Bearer ${token}`);
       res.status(status).send({ user });
     } else {
@@ -38,6 +48,30 @@ const registrationController = async (req, res) => {
     }
   } catch (err) {
     logger.error('[registrationController]', err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+const verifyEmailController = async (req, res) => {
+  try {
+    const { token } = req.params;
+
+    // Find the user with the provided email verification token
+    const user = await User.findOne({ emailVerificationToken: token });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid email verification token' });
+    }
+
+    // Update the user's emailVerified field to true and remove the token
+    user.emailVerified = true;
+    user.emailVerificationToken = undefined;
+    await user.save();
+
+    // Redirect the user to a success page or send a success response
+    res.status(200).json({ message: 'Email verified successfully' });
+  } catch (err) {
+    logger.error('[verifyEmailController]', err);
     return res.status(500).json({ message: err.message });
   }
 };
@@ -129,4 +163,5 @@ module.exports = {
   registrationController,
   resetPasswordRequestController,
   resetPasswordController,
+  verifyEmailController,
 };
