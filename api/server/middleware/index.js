@@ -16,6 +16,7 @@ const buildEndpointOption = require('./buildEndpointOption');
 const validateRegistration = require('./validateRegistration');
 const moderateText = require('./moderateText');
 const noIndex = require('./noIndex');
+const requireEmailVerification = require('./requireEmailVerification');
 
 module.exports = {
   ...uploadLimiters,
@@ -36,4 +37,5 @@ module.exports = {
   validateModel,
   moderateText,
   noIndex,
+  requireEmailVerification,
 };
