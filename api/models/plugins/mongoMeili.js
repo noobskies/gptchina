@@ -7,6 +7,9 @@ const logger = require('~/config/meiliLogger');
 const searchEnabled = process.env.SEARCH && process.env.SEARCH.toLowerCase() === 'true';
 const meiliEnabled = process.env.MEILI_HOST && process.env.MEILI_MASTER_KEY && searchEnabled;
 
+console.log('meiliEnabled', meiliEnabled);
+console.log('searchEnabled', searchEnabled);
+
 const validateOptions = function (options) {
   const requiredKeys = ['host', 'apiKey', 'indexName'];
   requiredKeys.forEach((key) => {
