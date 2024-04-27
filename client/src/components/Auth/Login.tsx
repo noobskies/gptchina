@@ -302,8 +302,8 @@ function Login() {
           </div>
           <p className="mb-4 text-lg text-white">
             Unleash the power of advanced language models like Anthropic, Mistral, GPT-3, and GPT-4
-            with Novliskys cutting-edge AI chat platform. Experience seamless, intelligent
-            conversations tailored to your needs.
+            with our cutting-edge AI chat platform. Experience seamless, intelligent conversations
+            tailored to your needs.
           </p>
           <p className="mb-4 text-lg text-white">
             With our pay-as-you-go pricing model, you can access this revolutionary technology

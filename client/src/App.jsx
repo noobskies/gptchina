@@ -25,17 +25,6 @@ const domainTrackingCodes = {
   'novlisky.io': 'G-xxxxxxxxxx',
 };
 
-Sentry.init({
-  dsn: 'https://9fe618ffe956020b729289e4d4701167@o4507099226177536.ingest.us.sentry.io/4507099229192192',
-  integrations: [
-    Sentry.feedbackIntegration({
-      // Additional SDK configuration goes in here, for example:
-      colorScheme: 'system',
-    }),
-  ],
-  tracesSampleRate: 0.1,
-});
-
 // Get the current domain
 const currentDomain = window.location.hostname;
 
