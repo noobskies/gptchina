@@ -602,4 +602,6 @@ export default {
     'A strong performer across multiple domains, slightly behind Claude 3 Opus in most tasks. Use case: Suitable for a wide range of applications that require high-quality language understanding and generation.',
   com_claude_3_opus_use_case:
     'A highly capable AI model that consistently outperforms others across various benchmarks. Use case: Ideal for complex tasks requiring advanced reasoning, problem-solving, and knowledge-based question-answering.',
+  com_error_token_balance:
+    'You\'ve run out of tokens. To continue your conversation, please purchase more tokens.',
 };

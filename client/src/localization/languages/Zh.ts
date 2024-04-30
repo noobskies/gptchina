@@ -542,4 +542,5 @@ export default {
     '在多个领域表现出色，在大多数任务中略低于 Claude 3 Opus。用例：适用于需要高质量语言理解和生成的各种应用。',
   com_claude_3_opus_use_case:
     '一个高度capable的AI模型，在各种基准测试中始终优于其他模型。用例：非常适合需要高级推理、问题解决和基于知识的问答的复杂任务。',
+  com_error_token_balance: '你的算力已用完。 为了继续对话，请购买更多算力。',
 };

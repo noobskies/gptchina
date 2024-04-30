@@ -5,6 +5,7 @@ import type { LocalizeFunction } from '~/common';
 import { formatJSON, extractJson, isJson } from '~/utils/json';
 import useLocalize from '~/hooks/useLocalize';
 import CodeBlock from './CodeBlock';
+import BuyTokensButton from '~/components/Nav/BuyTokensButton';
 
 const localizedErrorPrefix = 'com_error';
 
@@ -60,26 +61,14 @@ const errorMessages = {
       windowInMinutes > 1 ? `${windowInMinutes} minutes` : 'minute'
     }.`;
   },
-  token_balance: (json: TTokenBalance) => {
-    const { balance, tokenCost, promptTokens, generations } = json;
-    const message = `Insufficient Funds! Balance: ${balance}. Prompt tokens: ${promptTokens}. Cost: ${tokenCost}.`;
+  token_balance: (json: TTokenBalance, localize: LocalizeFunction) => {
     return (
-      <>
-        {message}
-        {generations && (
-          <>
-            <br />
-            <br />
-          </>
-        )}
-        {generations && (
-          <CodeBlock
-            lang="Generations"
-            error={true}
-            codeChildren={formatJSON(JSON.stringify(generations))}
-          />
-        )}
-      </>
+      <div className="text-center">
+        <p>{localize('com_error_token_balance')}</p>
+        <div className="flex justify-center">
+          <BuyTokensButton fullWidth={false} />
+        </div>
+      </div>
     );
   },
 };
