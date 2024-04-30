@@ -111,8 +111,8 @@ export const googleSettings = {
     max: 2048,
     step: 1,
     default: 1024,
-    maxGeminiPro: 8192,
-    defaultGeminiPro: 8192,
+    maxGemini: 8192,
+    defaultGemini: 8192,
   },
   temperature: {
     min: 0,
@@ -283,6 +283,7 @@ export const tConversationSchema = z.object({
   instructions: z.string().optional(),
   /** Used to overwrite active conversation settings when saving a Preset */
   presetOverride: z.record(z.unknown()).optional(),
+  stop: z.array(z.string()).optional(),
 });
 
 export const tPresetSchema = tConversationSchema
@@ -319,7 +320,7 @@ export type TPreset = z.infer<typeof tPresetSchema>;
 
 export type TSetOption = (
   param: number | string,
-) => (newValue: number | string | boolean | Partial<TPreset>) => void;
+) => (newValue: number | string | boolean | string[] | Partial<TPreset>) => void;
 
 export type TConversation = z.infer<typeof tConversationSchema> & {
   presetOverride?: Partial<TPreset>;
@@ -336,6 +337,7 @@ export const openAISchema = tConversationSchema
     frequency_penalty: true,
     resendFiles: true,
     imageDetail: true,
+    stop: true,
   })
   .transform((obj) => ({
     ...obj,
@@ -349,6 +351,7 @@ export const openAISchema = tConversationSchema
     resendFiles:
       typeof obj.resendFiles === 'boolean' ? obj.resendFiles : openAISettings.resendFiles.default,
     imageDetail: obj.imageDetail ?? openAISettings.imageDetail.default,
+    stop: obj.stop ?? undefined,
   }))
   .catch(() => ({
     model: openAISettings.model.default,
@@ -360,6 +363,7 @@ export const openAISchema = tConversationSchema
     frequency_penalty: openAISettings.frequency_penalty.default,
     resendFiles: openAISettings.resendFiles.default,
     imageDetail: openAISettings.imageDetail.default,
+    stop: undefined,
   }));
 
 export const googleSchema = tConversationSchema
@@ -374,13 +378,13 @@ export const googleSchema = tConversationSchema
     topK: true,
   })
   .transform((obj) => {
-    const isGeminiPro = obj?.model?.toLowerCase()?.includes('gemini-pro');
+    const isGemini = obj?.model?.toLowerCase()?.includes('gemini');
 
-    const maxOutputTokensMax = isGeminiPro
-      ? google.maxOutputTokens.maxGeminiPro
+    const maxOutputTokensMax = isGemini
+      ? google.maxOutputTokens.maxGemini
       : google.maxOutputTokens.max;
-    const maxOutputTokensDefault = isGeminiPro
-      ? google.maxOutputTokens.defaultGeminiPro
+    const maxOutputTokensDefault = isGemini
+      ? google.maxOutputTokens.defaultGemini
       : google.maxOutputTokens.default;
 
     let maxOutputTokens = obj.maxOutputTokens ?? maxOutputTokensDefault;
@@ -568,6 +572,7 @@ export const compactOpenAISchema = tConversationSchema
     frequency_penalty: true,
     resendFiles: true,
     imageDetail: true,
+    stop: true,
   })
   .transform((obj: Partial<TConversation>) => {
     const newObj: Partial<TConversation> = { ...obj };

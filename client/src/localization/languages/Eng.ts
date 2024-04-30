@@ -11,6 +11,13 @@ export default {
   com_ui_payment_please_note:
     'Please Note! WeChat and Alipay valid only with a Chinese National ID-linked account',
   com_ui_learn_more: 'Learn More',
+  com_error_moderation:
+    'It appears that the content submitted has been flagged by our moderation system for not aligning with our community guidelines. We\'re unable to proceed with this specific topic. If you have any other questions or topics you\'d like to explore, please edit your message, or create a new conversation.',
+  com_error_no_user_key: 'No key found. Please provide a key and try again.',
+  com_error_no_base_url: 'No base URL found. Please provide one and try again.',
+  com_error_invalid_user_key: 'Invalid key provided. Please provide a key and try again.',
+  com_error_expired_user_key:
+    'Provided key for {0} expired at {1}. Please provide a key and try again.',
   com_files_no_results: 'No results.',
   com_files_filter: 'Filter files...',
   com_files_number_selected: '{0} of {1} file(s) selected',
@@ -156,6 +163,8 @@ export default {
     'Uploading "{0}" is taking more time than anticipated. Please wait while the file finishes indexing for retrieval.',
   com_ui_privacy_policy: 'Privacy policy',
   com_ui_terms_of_service: 'Terms of service',
+  com_ui_min_tags: 'Cannot remove more values, a minimum of {0} are required.',
+  com_ui_max_tags: 'Maximum number allowed is {0}, using latest values.',
   com_auth_error_login:
     'Unable to login with the information provided. Please check your credentials and try again.',
   com_auth_error_login_rl:
@@ -264,6 +273,8 @@ export default {
   com_endpoint_top_p: 'Top P',
   com_endpoint_top_k: 'Top K',
   com_endpoint_max_output_tokens: 'Max Output Tokens',
+  com_endpoint_stop: 'Stop Sequences',
+  com_endpoint_stop_placeholder: 'Separate values by pressing `Enter`',
   com_endpoint_openai_temp:
     'Higher values = more random, while lower values = more focused and deterministic. We recommend altering this or Top P but not both.',
   com_endpoint_openai_max:
@@ -280,6 +291,7 @@ export default {
     'Resend all previously attached files. Note: this will increase token cost and you may experience errors with many attachments.',
   com_endpoint_openai_detail:
     'The resolution for Vision requests. "Low" is cheaper and faster, "High" is more detailed and expensive, and "Auto" will automatically choose between the two based on the image resolution.',
+  com_endpoint_openai_stop: 'Up to 4 sequences where the API will stop generating further tokens.',
   com_endpoint_openai_custom_name_placeholder: 'Set a custom name for the AI',
   com_endpoint_openai_prompt_prefix_placeholder:
     'Set custom instructions to include in System Message. Default: none',
