@@ -20,9 +20,15 @@ const registrationController = async (req, res) => {
       let newUser = await User.findOne({ _id: user._id });
       if (!newUser) {
         newUser = new User(user);
-        newUser.lastTokenClaimTimestamp = new Date();
-        await newUser.save();
       }
+
+      newUser.lastTokenClaimTimestamp = new Date();
+      console.log(
+        'Setting lastTokenClaimTimestamp during registration:',
+        newUser.lastTokenClaimTimestamp,
+      );
+      await newUser.save();
+      console.log('User saved with lastTokenClaimTimestamp:', newUser.lastTokenClaimTimestamp);
 
       // Create a new Balance document for the user with 25,000 token credits
       const newBalance = new Balance({

@@ -10,7 +10,9 @@ const claimTokens = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const currentTimestamp = new Date();
+    const currentTimestamp = Date.now();
+    console.log('Current timestamp:', currentTimestamp);
+    console.log('User lastTokenClaimTimestamp:', user.lastTokenClaimTimestamp);
 
     if (
       !user.lastTokenClaimTimestamp ||
@@ -26,7 +28,9 @@ const claimTokens = async (req, res) => {
       await balance.save();
 
       user.lastTokenClaimTimestamp = currentTimestamp;
+      console.log('Setting new lastTokenClaimTimestamp:', user.lastTokenClaimTimestamp);
       await user.save();
+      console.log('User saved with updated lastTokenClaimTimestamp:', user.lastTokenClaimTimestamp);
 
       return res.status(200).json({ message: 'Tokens claimed successfully' });
     } else {
@@ -41,7 +45,7 @@ const claimTokens = async (req, res) => {
       });
     }
   } catch (err) {
-    logger.error('[claimTokensController]', err);
+    logger.error('[claimTokens]', err);
     return res.status(500).json({ message: err.message });
   }
 };

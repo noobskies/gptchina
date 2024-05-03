@@ -63,6 +63,7 @@ const getUserLastTokenClaimTimestamp = async (req, res) => {
     }
 
     const lastTokenClaimTimestamp = user.lastTokenClaimTimestamp || 0;
+    console.log('Last token claim timestamp:', lastTokenClaimTimestamp);
     res.status(200).json({ lastTokenClaimTimestamp });
   } catch (err) {
     logger.error('[getUserLastTokenClaimTimestamp]', err);
