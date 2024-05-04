@@ -4,33 +4,21 @@ import { ThemeSelector } from '~/components/ui';
 import { Link } from 'react-router-dom';
 import { FaHome } from 'react-icons/fa';
 import { useLocalize } from '~/hooks';
+import Header from '~/components/Nav/Header';
 
 const AiTokenBurnRates = () => {
   const localize = useLocalize();
 
-  const domainLogos = {
-    'gptchina.io': 'logo-china.png',
-    'gptafrica.io': 'logo-africa.png',
-    'gptglobal.io': 'logo-global.png',
-    'gptiran.io': 'logo-iran.png',
-    'gptitaly.io': 'logo-italy.png',
-    'gptrussia.io': 'logo-russia.png',
-    'gptusa.io': 'logo-usa.png',
-    'novlisky.io': 'logo-novlisky.png',
-  };
-
-  const currentDomain = window.location.hostname;
-  const logoImageFilename = domainLogos[currentDomain] || 'logo-novlisky.png';
-
   return (
     <div className="relative min-h-screen bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-white">
+      <Header />
       <div className="container mx-auto px-4 py-8">
         <h1 className="mb-6 text-4xl font-bold">{localize('token_burn_rates_title')}</h1>
         <p className="mb-4">{localize('token_burn_rates_intro')}</p>
         <p className="mb-4">
           {localize('token_burn_rates_br_explanation')}{' '}
           <strong>{localize('token_burn_rates_context_usage')}</strong>{' '}
-          {localize('token_burn_rates_new_chat_suggestion')}
+          <strong>{localize('token_burn_rates_new_chat_suggestion')}</strong>
         </p>
         <p className="mb-4">{localize('token_burn_rates_input_tokens')}</p>
         <table className="mb-4 w-full table-auto border-collapse border border-gray-400">
