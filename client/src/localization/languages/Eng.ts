@@ -581,7 +581,7 @@ export default {
   token_burn_rates_example_given: 'Given:',
   token_burn_rates_example_given_1: 'You\'re five messages into a conversation with each model.',
   token_burn_rates_example_given_2:
-    'The previous inputs automatically cost 500 tokens due to context.',
+    'The previous context from the five messages is 500 input tokens.',
   token_burn_rates_example_given_3:
     'You write a 100-word prompt, bringing the total input tokens to 600.',
   token_burn_rates_example_given_4:
@@ -606,8 +606,7 @@ export default {
   token_burn_rates_conclusion:
     'Ultimately, finding the right balance between model performance and cost efficiency requires a combination of understanding the token consumption rates, experimenting with different models, and employing strategies like starting new conversations when appropriate.',
   home_welcome_to: 'Welcome to',
-  home_intro_text_1:
-    'Discover the power of AI with Novlisky.io, your go-to platform for seamless interaction with cutting-edge AI models.',
+  home_intro_text_1: 'Your go-to platform for seamless interaction with cutting-edge AI models.',
   home_intro_text_2: 'Here\'s what sets us apart:',
   home_feature_1: '• No monthly subscriptions or upfront costs',
   home_feature_2: '• Free daily tokens for all registered users',
