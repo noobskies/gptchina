@@ -605,4 +605,14 @@ export default {
     'When working with powerful models like Claude 3 Opus and GPT-4 Turbo, it\'s important to keep in mind that starting new conversations can significantly reduce the input token usage. By doing so, you can optimize your token consumption and manage costs more effectively.',
   token_burn_rates_conclusion:
     'Ultimately, finding the right balance between model performance and cost efficiency requires a combination of understanding the token consumption rates, experimenting with different models, and employing strategies like starting new conversations when appropriate.',
+  home_welcome_to: 'Welcome to',
+  home_intro_text_1:
+    'Discover the power of AI with Novlisky.io, your go-to platform for seamless interaction with cutting-edge AI models.',
+  home_intro_text_2: 'Here\'s what sets us apart:',
+  home_feature_1: '• No monthly subscriptions or upfront costs',
+  home_feature_2: '• Free daily tokens for all registered users',
+  home_feature_3: '• Access to top-tier AI models like Claude 3 Opus, GPT-4 Turbo, and more',
+  home_feature_4: '• All your favorite AI models under one roof',
+  home_feature_5: '• Flexibility to purchase additional tokens as needed',
+  home_feature_6: '• User-friendly experience tailored to your requirements',
 };
