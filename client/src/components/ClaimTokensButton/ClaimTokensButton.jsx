@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaRegThumbsUp, FaSpinner } from 'react-icons/fa';
+import { useLocalize } from '~/hooks';
 
 const ClaimTokensButton = ({ refetchBalance }) => {
+  const localize = useLocalize();
   const [isActive, setIsActive] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -90,12 +92,17 @@ const ClaimTokensButton = ({ refetchBalance }) => {
           {isLoading ? (
             <span className="flex items-center">
               <FaSpinner className="mr-2 animate-spin" />
-              Loading...
             </span>
           ) : (
             <>
               <span className={`${isSuccess ? 'invisible' : ''}`}>
-                {isActive ? 'Claim 20K Tokens' : `Claim in ${formatTime(countdown)}`}
+                {isActive ? (
+                  localize('claim_active')
+                ) : (
+                  <>
+                    {localize('claim_inactive')} {formatTime(countdown)}
+                  </>
+                )}
               </span>
               {isSuccess && (
                 <span className="absolute inset-0 flex items-center justify-center animate-in fade-in">

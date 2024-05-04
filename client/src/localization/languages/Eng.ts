@@ -614,4 +614,6 @@ export default {
   home_feature_4: '• All your favorite AI models under one roof',
   home_feature_5: '• Flexibility to purchase additional tokens as needed',
   home_feature_6: '• User-friendly experience tailored to your requirements',
+  claim_active: 'Claim 20K Tokens',
+  claim_inactive: 'Claim in',
 };

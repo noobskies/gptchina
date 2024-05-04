@@ -552,4 +552,6 @@ export default {
   home_feature_4: '• 多款热门 AI 模型,一站即可体验',
   home_feature_5: '• 根据需要灵活购买额外的算力',
   home_feature_6: '• 根据您的需求量身定制的用户友好体验',
+  claim_active: '领取 20k 算力',
+  claim_inactive: '领取倒计时',
 };
