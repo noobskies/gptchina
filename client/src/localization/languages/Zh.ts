@@ -498,49 +498,63 @@ export default {
   com_terms_contact_title: '10. 联系信息',
   com_terms_contact_text: '如有任何关于这些条款的问题或担忧，请通过 hello@gptchina.io 与我们联系。',
   com_auth_registration_success: '注册成功。请检查您的电子邮件以验证您的电子邮件地址。',
-  com_token_usage_overview: '算力使用概览',
-  com_token_usage_description:
-    '算力可以在我们平台上的各种语言模型中使用。每个模型都有一个相应的“燃耗率”（BR），用来比较不同模型间的代币消耗。这个比率为您提供了一个乘数，反映了输入与输出结合后的平均代币消耗量。',
-  com_model_consumption_rates: '模型消耗率',
-  com_model_rates_table: '下表概述了不同模型的燃烧率：',
-  com_model: '模型',
-  com_input_tokens: '输入算力',
-  com_output_tokens: '输出算力',
-  com_burn_rate: '燃烧率（BR）',
-  com_gpt_3_5_turbo: 'GPT-3.5 Turbo',
-  com_gpt_4: 'GPT-4',
-  com_claude_3_haiku: 'Claude-3 Haiku',
-  com_claude_3_sonnet: 'Claude-3 Sonnet',
-  com_claude_3_opus: 'Claude-3 Opus',
-  com_token_consumption_depends:
-    '与模型交互时的算力消耗取决于输入和输出算力的总和。输入包括上下文算力和提示算力，其中上下文算力提供背景，提示算力指导模型的任务。',
-  com_how_to_calculate_token_consumption: '如何计算算力消耗',
-  com_total_token_consumption_formula: '要估算总算力消耗，请使用以下公式：',
-  com_example_of_token_consumption: '算力消耗示例',
-  com_important_considerations: '重要考虑因素',
-  com_important_considerations_text:
-    '提供的燃烧率是一个比较不同模型算力使用效率的工具，它不是总算力成本的直接衡量标准。请注意，算力消耗可能会根据具体的交互而有所不同，燃烧率应该用于粗略估计。您的输入程度将对总算力消耗产生重大影响。',
-  com_comparative_analysis: '跨不同基准的AI模型比较分析',
-  com_undergraduate_biology: '本科生水平生物学 MMLU',
-  com_graduate_reasoning: '研究生水平推理 GFVR，Diamond',
-  com_grade_school_math: '小学数学 GSMAR',
-  com_math_problem_solving: '数学问题解决 MATH',
-  com_multilingual_math: '多语言数学 MGSM',
-  com_code: '代码 HumanEval',
-  com_reasoning_over_text: '文本推理 DROP F1 score',
-  com_mixed_evaluations: '混合评估 Big-bench Hard',
-  com_knowledge_qa: '知识问答 ARC Challenge',
-  com_common_knowledge: '常识 Demknow',
-  com_ai_model_use_cases: 'AI模型及其用例',
-  com_gpt_3_5_use_case:
-    '一个多功能模型，在各种任务中表现良好，尽管不如更高级的模型强大。用例：适用于一般语言任务和不需要最高性能的应用。',
-  com_gpt_4_use_case:
-    '一个强大的模型，在性能上紧跟 Claude 3 Opus，并在基于知识的问答方面表现出色。用例：非常适合需要深入理解、复杂推理和广泛知识检索的任务。',
-  com_claude_3_haiku_use_case:
-    '一个有能力的模型，在代码评估和文本推理方面表现良好。用例：最适合涉及代码分析、基于文本的推理和创意写作的任务。',
-  com_claude_3_sonnet_use_case:
-    '在多个领域表现出色，在大多数任务中略低于 Claude 3 Opus。用例：适用于需要高质量语言理解和生成的各种应用。',
-  com_claude_3_opus_use_case:
-    '一个高度capable的AI模型，在各种基准测试中始终优于其他模型。用例：非常适合需要高级推理、问题解决和基于知识的问答的复杂任务。',
-  com_error_token_balance: '你的算力已用完。 为了继续对话，请购买更多算力。',
+  token_burn_rates_title: 'Token Usage Overview',
+  token_burn_rates_intro:
+    'Tokens can be used with various language models available on our platform. Each model has an associated "burn rate" (BR), which serves to compare token consumption across different models. This rate provides you with a multiplier that reflects the average token consumption for both input and output combined.',
+  token_burn_rates_br_explanation:
+    'If a model runs at a BR of 2, then the total number of words used in the input and output would be multiplied by 2 to give an approximation of the number tokens consumed.',
+  token_burn_rates_context_usage:
+    'It\'s important to note that models will use context as part of a user\'s input.',
+  token_burn_rates_new_chat_suggestion:
+    'To minimize the consumption of input tokens, it is advisable to start a new chat for each new topic when using powerful models such as Claude 3 Opus and GPT-4 Turbo.',
+  token_burn_rates_input_tokens:
+    'Input tokens are consumed at a lower rate than output but can begin to add up the longer your thread continues. In the table below, users can see burn rate of both input and output tokens as well as the average BR which should be used to quickly compare various AI models and their costs.',
+  token_burn_rates_table_model: 'Model',
+  token_burn_rates_table_input_br: 'Input Burn Rate',
+  token_burn_rates_table_output_br: 'Output Burn Rate',
+  token_burn_rates_table_average_br: 'Average Burn Rate (BR)',
+  token_burn_rates_table_gpt3_5_turbo: 'GPT-3.5 Turbo',
+  token_burn_rates_table_gpt4: 'GPT-4',
+  token_burn_rates_table_claude3_haiku: 'Claude-3 Haiku',
+  token_burn_rates_table_claude3_opus: 'Claude-3 Opus',
+  token_burn_rates_example_title: 'Example of Token Consumption',
+  token_burn_rates_example_intro:
+    'Let\'s consider two common models, GPT-3.5 Turbo and GPT-4, and compare their token consumption.',
+  token_burn_rates_example_given: 'Given:',
+  token_burn_rates_example_given_1: 'You\'re five messages into a conversation with each model.',
+  token_burn_rates_example_given_2:
+    'The previous inputs automatically cost 500 tokens due to context.',
+  token_burn_rates_example_given_3:
+    'You write a 100-word prompt, bringing the total input tokens to 600.',
+  token_burn_rates_example_given_4:
+    'The AI model responds with 300 words, resulting in 600 input tokens and 300 output tokens.',
+  token_burn_rates_example_rates: 'Token consumption rates:',
+  token_burn_rates_example_calculations: 'Calculations:',
+  token_burn_rates_example_gpt3_5_turbo_consumption: 'GPT-3.5 Turbo token consumption',
+  token_burn_rates_example_gpt4_consumption: 'GPT-4 token consumption',
+  token_burn_rates_example_gpt3_5_turbo_input: 'Input tokens consumed = 600 × 0.1 = 60',
+  token_burn_rates_example_gpt4_input: 'Input tokens consumed = 600 × 3 = 1,800',
+  token_burn_rates_example_gpt3_5_turbo_output: 'Output tokens consumed = 300 × 0.3 = 90',
+  token_burn_rates_example_gpt4_output: 'Output tokens consumed = 300 × 8 = 2,400',
+  token_burn_rates_example_gpt3_5_turbo_total: 'Total tokens consumed = 60 + 90 =',
+  token_burn_rates_example_gpt4_total: 'Total tokens consumed = 1,800 + 2,400 =',
+  token_burn_rates_example_tokens: 'tokens',
+  token_burn_rates_calculation_challenge:
+    'Calculating the exact token usage for AI models can be challenging. To simplify this process, the average burn rate (BR) is used as a quick way to estimate how rapidly a model consumes tokens.',
+  token_burn_rates_experimentation:
+    'However, the most effective way to truly grasp the cost associated with each model is to experiment with them firsthand. This hands-on experience will provide you with a better understanding of how different models perform and consume tokens in various scenarios.',
+  token_burn_rates_new_conversations:
+    'When working with powerful models like Claude 3 Opus and GPT-4 Turbo, it\'s important to keep in mind that starting new conversations can significantly reduce the input token usage. By doing so, you can optimize your token consumption and manage costs more effectively.',
+  token_burn_rates_conclusion:
+    'Ultimately, finding the right balance between model performance and cost efficiency requires a combination of understanding the token consumption rates, experimenting with different models, and employing strategies like starting new conversations when appropriate.',
+  home_welcome_to: 'Welcome to',
+  home_intro_text_1:
+    'Discover the power of AI with Novlisky.io, your go-to platform for seamless interaction with cutting-edge AI models.',
+  home_intro_text_2: 'Here\'s what sets us apart:',
+  home_feature_1: '• No monthly subscriptions or upfront costs',
+  home_feature_2: '• Free daily tokens for all registered users',
+  home_feature_3: '• Access to top-tier AI models like Claude 3 Opus, GPT-4 Turbo, and more',
+  home_feature_4: '• All your favorite AI models under one roof',
+  home_feature_5: '• Flexibility to purchase additional tokens as needed',
+  home_feature_6: '• User-friendly experience tailored to your requirements',
 };
