@@ -423,7 +423,7 @@ const Registration: React.FC = () => {
             <TypeAnimation
               sequence={[
                 // Same substring at the start will only be typed once, initially
-                `Welcome to ${domainTitle}`,
+                `${localize('home_welcome_to')} ${domainTitle}`,
                 1000,
               ]}
               speed={50}
@@ -432,16 +432,16 @@ const Registration: React.FC = () => {
               className="mb-4 text-5xl font-bold text-white"
             />
           </div>
-          <p className="mb-4 text-lg text-white">
-            Unleash the power of advanced language models like Anthropic, Mistral, GPT-3, and GPT-4
-            with Novliskys cutting-edge AI chat platform. Experience seamless, intelligent
-            conversations tailored to your needs.
-          </p>
-          <p className="mb-4 text-lg text-white">
-            With our pay-as-you-go pricing model, you can access this revolutionary technology
-            without breaking the bank. Sign up now and explore the future of AI-driven
-            communication.
-          </p>
+          <p className="mb-4 text-lg text-white">{localize('home_intro_text_1')}</p>
+          <p className="mb-4 text-lg text-white">{localize('home_intro_text_2')}</p>
+          <ul className="mb-4 text-lg text-white">
+            <li>{localize('home_feature_1')}</li>
+            <li>{localize('home_feature_2')}</li>
+            <li>{localize('home_feature_3')}</li>
+            <li>{localize('home_feature_4')}</li>
+            <li>{localize('home_feature_5')}</li>
+            <li>{localize('home_feature_6')}</li>
+          </ul>
         </div>
       </div>
     </section>
