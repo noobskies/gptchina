@@ -73,7 +73,7 @@ const Header = () => {
         </div>
 
         <div className="ml-auto flex items-center space-x-6">
-          <button className="border-none text-[15px] font-semibold outline-none">
+          {/* <button className="border-none text-[15px] font-semibold outline-none">
             <Link to="/login" className="text-[#007bff] hover:underline">
               Login
             </Link>
@@ -83,7 +83,7 @@ const Header = () => {
             className="rounded-sm border-2 border-[#007bff] bg-[#007bff] px-4 py-2 text-sm font-bold text-white transition-all duration-300 ease-in-out hover:bg-transparent hover:text-[#007bff]"
           >
             Sign up
-          </Link>
+          </Link> */}
 
           <button id="toggleOpen" className="lg:hidden">
             <svg
