@@ -500,14 +500,14 @@ export default {
   com_auth_registration_success: '注册成功。请检查您的电子邮件以验证您的电子邮件地址。',
   token_burn_rates_title: '算力使用概述',
   token_burn_rates_intro:
-    '算力可用于我们平台上提供的各种语言模型。每个模型都有一个相关的 "燃烧率" (BR),用于比较不同模型之间的算力消耗。该比率为您提供一个乘数,反映了输入和输出的平均算力消耗。',
+    '算力可用于我们平台上提供的各种语言模型。每个模型都有一个相关的 "燃烧率" (BR)，用于比较不同模型之间的算力消耗。该比率为您提供一个乘数,反映了输入和输出的平均算力消耗。',
   token_burn_rates_br_explanation:
-    '如果一个模型以 BR 2 运行,那么输入和输出中使用的总字数将乘以 2,以估算消耗的算力数量。',
-  token_burn_rates_context_usage: '需要注意的是,模型将使用上下文作为用户输入的一部分。',
+    '如果一个模型以 BR 2 运行，那么输入和输出中使用的总字数将乘以 2，以估算消耗的算力数量。',
+  token_burn_rates_context_usage: '需要注意的是， 模型将使用上下文作为用户输入的一部分。',
   token_burn_rates_new_chat_suggestion:
-    '为了最大限度地减少输入算力的消耗,建议在使用 Claude 3 Opus 和 GPT-4 Turbo 等强大模型时,为每个新主题开始新的对话。',
+    '为了最大限度地减少输入算力的消耗，建议在使用 Claude 3 Opus 和 GPT-4 Turbo 等强大模型时，为每个新主题开始新的对话。',
   token_burn_rates_input_tokens:
-    '输入算力的消耗率低于输出,但随着线程的继续,可能会开始累积。在下表中,用户可以看到输入和输出算力的燃烧率以及平均 BR,应该用它来快速比较各种 AI 模型及其成本。',
+    '输入算力的消耗率低于输出,但随着线程的继续，可能会开始累积。在下表中,用户可以看到输入和输出算力的燃烧率以及平均 BR，应该用它来快速比较各种 AI 模型及其成本。',
   token_burn_rates_table_model: '模型',
   token_burn_rates_table_input_br: '输入燃烧率',
   token_burn_rates_table_output_br: '输出燃烧率',
@@ -518,12 +518,12 @@ export default {
   token_burn_rates_table_claude3_opus: 'Claude-3 Opus',
   token_burn_rates_example_title: '算力消耗示例',
   token_burn_rates_example_intro:
-    '让我们考虑两个常见的模型,GPT-3.5 Turbo 和 GPT-4,并比较它们的算力消耗。',
+    '让我们考虑两个常见的模型，GPT-3.5 Turbo 和 GPT-4，并比较它们的算力消耗。',
   token_burn_rates_example_given: '给定:',
   token_burn_rates_example_given_1: '您在与每个模型的对话中已有五条消息。',
   token_burn_rates_example_given_2: '上下文自动消耗 500 个算力。',
-  token_burn_rates_example_given_3: '您编写了一个 100 字的提示,使总输入算力达到 600。',
-  token_burn_rates_example_given_4: 'AI 模型以 300 字回复,导致 600 个输入算力和 300 个输出算力。',
+  token_burn_rates_example_given_3: '您编写了一个 100 字的提示，使总输入算力达到 600。',
+  token_burn_rates_example_given_4: 'AI 模型以 300 字回复，导致 600 个输入算力和 300 个输出算力。',
   token_burn_rates_example_rates: '算力消耗率:',
   token_burn_rates_example_calculations: '计算:',
   token_burn_rates_example_gpt3_5_turbo_consumption: 'GPT-3.5 Turbo 算力消耗',
@@ -536,13 +536,13 @@ export default {
   token_burn_rates_example_gpt4_total: '消耗的总算力 = 1,800 + 2,400 =',
   token_burn_rates_example_tokens: '算力',
   token_burn_rates_calculation_challenge:
-    '计算 AI 模型的确切算力使用量可能具有挑战性。为了简化此过程,平均燃烧率 (BR) 被用作快速估计模型消耗算力速度的方法。',
+    '计算 AI 模型的确切算力使用量可能具有挑战性。为了简化此过程， 平均燃烧率 (BR) 被用作快速估计模型消耗算力速度的方法。',
   token_burn_rates_experimentation:
-    '然而,真正掌握每个模型相关成本的最有效方法是亲自尝试它们。这种实践经验将为您提供对不同模型在各种场景中的性能和算力消耗的更好理解。',
+    '然而，真正掌握每个模型相关成本的最有效方法是亲自尝试它们。这种实践经验将为您提供对不同模型在各种场景中的性能和算力消耗的更好理解。',
   token_burn_rates_new_conversations:
-    '使用 Claude 3 Opus 和 GPT-4 Turbo 等强大模型时,请记住,开始新对话可以显著减少输入算力的使用。通过这样做,您可以优化算力消耗并更有效地管理成本。',
+    '使用 Claude 3 Opus 和 GPT-4 Turbo 等强大模型时，请记住，开始新对话可以显著减少输入算力的使用。通过这样做，您可以优化算力消耗并更有效地管理成本。',
   token_burn_rates_conclusion:
-    '最终,在模型性能和成本效率之间找到正确的平衡需要结合对算力消耗率的理解、尝试不同的模型以及在适当时采用开始新对话等策略。',
+    '最终，在模型性能和成本效率之间找到正确的平衡需要结合对算力消耗率的理解，尝试不同的模型以及在适当时采用开始新对话等策略。',
   home_welcome_to: '欢迎来到',
   home_intro_text_1: '这是您与尖端 AI 模型无缝互动的首选平台。',
   home_intro_text_2: '以下是我们的与众不同之处:',
