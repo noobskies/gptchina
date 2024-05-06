@@ -4,7 +4,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useRegisterUserMutation, useGetStartupConfig } from 'librechat-data-provider/react-query';
 import type { TRegisterUser } from 'librechat-data-provider';
 import { GoogleIcon, FacebookIcon, OpenIDIcon, GithubIcon, DiscordIcon } from '~/components';
-import { ThemeSelector } from '~/components/ui';
 import SocialButton from './SocialButton';
 import { useLocalize } from '~/hooks';
 import Particles, { initParticlesEngine } from '@tsparticles/react';
@@ -279,9 +278,6 @@ const Registration: React.FC = () => {
 
   return (
     <section className="flex flex-col md:h-screen md:flex-row">
-      <div className="fixed bottom-0 left-0 z-50 m-4">
-        <ThemeSelector />
-      </div>
       <div className="relative z-10 flex w-full flex-col items-center justify-center bg-white dark:bg-gray-800 md:w-1/2">
         <div className="w-full overflow-hidden bg-white px-6 py-4 dark:bg-gray-800 sm:max-w-md sm:rounded-lg">
           <img
@@ -411,7 +407,7 @@ const Registration: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="relative flex w-full flex-col justify-center bg-blue-500 p-24 dark:bg-blue-600 md:w-1/2">
+      <div className="relative flex w-full flex-col justify-center bg-blue-500 p-8 dark:bg-blue-600 sm:p-12 md:w-1/2 md:p-16 lg:p-24">
         <Particles
           id="tsparticles"
           particlesLoaded={particlesLoaded}
@@ -429,12 +425,12 @@ const Registration: React.FC = () => {
               speed={50}
               repeat={Infinity}
               cursor={true}
-              className="mb-4 text-5xl font-bold text-white"
+              className="mb-4 text-3xl font-bold text-white sm:text-4xl lg:text-5xl"
             />
           </div>
-          <p className="mb-4 text-lg text-white">{localize('home_intro_text_1')}</p>
-          <p className="mb-4 text-lg text-white">{localize('home_intro_text_2')}</p>
-          <ul className="mb-4 text-lg text-white">
+          <p className="mb-4 text-base text-white sm:text-lg">{localize('home_intro_text_1')}</p>
+          <p className="mb-4 text-base text-white sm:text-lg">{localize('home_intro_text_2')}</p>
+          <ul className="mb-4 text-base text-white sm:text-lg">
             <li>{localize('home_feature_1')}</li>
             <li>{localize('home_feature_2')}</li>
             <li>{localize('home_feature_3')}</li>
