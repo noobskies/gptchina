@@ -81,28 +81,60 @@ exports.handleWebhook = async (req, res) => {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  if (event['type'] === 'payment_intent.succeeded') {
-    const paymentIntent = event.data.object;
-    const userId = paymentIntent.metadata.userId;
-    const priceId = paymentIntent.metadata.priceId;
+  let paymentIntent;
+  let userId;
+  let priceId;
+  let tokens;
 
-    if (!(priceId in priceConfig)) {
-      console.error('Invalid price ID:', priceId);
-      res.status(400).send({ error: 'Invalid price ID' });
-      return;
-    }
+  switch (event.type) {
+    case 'payment_intent.succeeded':
+      paymentIntent = event.data.object;
+      userId = paymentIntent.metadata.userId;
+      priceId = paymentIntent.metadata.priceId;
 
-    const { tokens } = priceConfig[priceId];
+      if (!(priceId in priceConfig)) {
+        console.error('Invalid price ID:', priceId);
+        res.status(400).send({ error: 'Invalid price ID' });
+        return;
+      }
 
-    try {
-      const newBalance = await addTokensByUserId(userId, tokens);
-      res.status(200).send(`Success! New balance is ${newBalance}`);
-    } catch (error) {
-      console.error(`Error updating balance: ${error.message}`);
-      res.status(500).send({ error: `Error updating balance: ${error.message}` });
-    }
-  } else {
-    console.log('Unhandled event type:', event.type);
-    res.status(200).send();
+      tokens = priceConfig[priceId].tokens;
+
+      try {
+        const newBalance = await addTokensByUserId(userId, tokens);
+        res.status(200).send(`Success! New balance is ${newBalance}`);
+      } catch (error) {
+        console.error(`Error updating balance: ${error.message}`);
+        res.status(500).send({ error: `Error updating balance: ${error.message}` });
+      }
+      break;
+    case 'payment_intent.payment_failed':
+      // Handle payment failure
+      console.log('Payment failed:', event.data.object);
+      res.status(200).send();
+      break;
+    case 'payment_intent.created':
+      // Handle payment intent creation
+      console.log('Payment intent created:', event.data.object);
+      res.status(200).send();
+      break;
+    case 'checkout.session.completed':
+      // Handle checkout session completion
+      console.log('Checkout session completed:', event.data.object);
+      res.status(200).send();
+      break;
+    case 'charge.succeeded':
+      // Handle successful charge
+      console.log('Charge succeeded:', event.data.object);
+      res.status(200).send();
+      break;
+    case 'charge.failed':
+      // Handle failed charge
+      console.log('Charge failed:', event.data.object);
+      res.status(200).send();
+      break;
+    default:
+      console.log(`Unhandled event type: ${event.type}`);
+      res.status(200).send();
   }
 };
