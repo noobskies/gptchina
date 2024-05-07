@@ -1,7 +1,7 @@
 const sendEmail = require('../utils/sendEmail');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const addTokensByUserId = require('../../../config/addTokens');
-const User = require('../models/User');
+const User = require('~/models/User');
 
 const PAYMENT_METHOD_CARD = 'card';
 const PAYMENT_METHOD_ALIPAY = 'alipay';
