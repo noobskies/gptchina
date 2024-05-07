@@ -1,5 +1,7 @@
+const sendEmail = require('../utils/sendEmail');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const addTokensByUserId = require('../../../config/addTokens');
+const User = require('../models/User');
 
 const PAYMENT_METHOD_CARD = 'card';
 const PAYMENT_METHOD_ALIPAY = 'alipay';
@@ -125,6 +127,22 @@ exports.handleWebhook = async (req, res) => {
         const newBalance = await addTokensByUserId(userId, tokens);
         console.log(`Payment succeeded. User ID: ${userId}, New balance: ${newBalance}`);
         res.status(200).json({ message: `Payment succeeded. New balance is ${newBalance}` });
+
+        // Send payment confirmation email
+        const user = await User.findById(userId);
+        if (user) {
+          await sendEmail(
+            user.email,
+            'Payment Confirmation',
+            {
+              name: user.name,
+              transactionId: paymentIntent.id,
+              amount: paymentIntent.amount / 100, // Convert amount from cents to the appropriate currency unit
+              date: new Date().toISOString(),
+            },
+            'paymentConfirmation.handlebars',
+          );
+        }
       } catch (error) {
         console.error(`Error updating balance: ${error.message}`);
         res.status(500).json({ error: `Error updating balance: ${error.message}` });
