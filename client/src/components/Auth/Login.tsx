@@ -299,11 +299,11 @@ function Login() {
           <p className="mb-4 text-base text-white sm:text-lg">{localize('home_intro_text_1')}</p>
           <p className="mb-4 text-base text-white sm:text-lg">{localize('home_intro_text_2')}</p>
           <ul className="mb-4 text-base text-white sm:text-lg">
-            <li>{localize('home_feature_1')}</li>
-            <li>{localize('home_feature_2')}</li>
-            <li>{localize('home_feature_3')}</li>
-            <li>{localize('home_feature_4')}</li>
-            <li>{localize('home_feature_5')}</li>
+            <li className="mb-3 sm:mb-0">{localize('home_feature_1')}</li>
+            <li className="mb-3 sm:mb-0">{localize('home_feature_2')}</li>
+            <li className="mb-3 sm:mb-0">{localize('home_feature_3')}</li>
+            <li className="mb-3 sm:mb-0">{localize('home_feature_4')}</li>
+            <li className="mb-3 sm:mb-0">{localize('home_feature_5')}</li>
             <li>{localize('home_feature_6')}</li>
           </ul>
         </div>
