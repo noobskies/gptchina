@@ -66,6 +66,8 @@ exports.createPaymentIntent = async (req, res) => {
   }
 };
 
+const processedPaymentIntents = new Set();
+
 exports.handleWebhook = async (req, res) => {
   const sigHeader = req.headers['stripe-signature'];
   let event;
@@ -88,7 +90,19 @@ exports.handleWebhook = async (req, res) => {
 
   switch (event.type) {
     case 'payment_intent.succeeded':
-      paymentIntent = event.data.object;
+    case 'checkout.session.completed':
+      if (event.type === 'payment_intent.succeeded') {
+        paymentIntent = event.data.object;
+      } else if (event.type === 'checkout.session.completed') {
+        paymentIntent = event.data.object.payment_intent;
+      }
+
+      if (processedPaymentIntents.has(paymentIntent.id)) {
+        console.log(`Payment intent ${paymentIntent.id} has already been processed`);
+        res.status(200).send();
+        return;
+      }
+
       userId = paymentIntent.metadata.userId;
       priceId = paymentIntent.metadata.priceId;
 
@@ -102,6 +116,7 @@ exports.handleWebhook = async (req, res) => {
 
       try {
         const newBalance = await addTokensByUserId(userId, tokens);
+        processedPaymentIntents.add(paymentIntent.id);
         res.status(200).send(`Success! New balance is ${newBalance}`);
       } catch (error) {
         console.error(`Error updating balance: ${error.message}`);
@@ -116,11 +131,6 @@ exports.handleWebhook = async (req, res) => {
     case 'payment_intent.created':
       // Handle payment intent creation
       console.log('Payment intent created:', event.data.object);
-      res.status(200).send();
-      break;
-    case 'checkout.session.completed':
-      // Handle checkout session completion
-      console.log('Checkout session completed:', event.data.object);
       res.status(200).send();
       break;
     case 'charge.succeeded':
