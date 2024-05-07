@@ -1,7 +1,18 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const addTokensByUserId = require('../../../config/addTokens');
 
-const priceConfig = {
+const PAYMENT_METHOD_CARD = 'card';
+const PAYMENT_METHOD_ALIPAY = 'alipay';
+const PAYMENT_METHOD_WECHAT_PAY = 'wechat_pay';
+
+const PAYMENT_INTENT_SUCCEEDED = 'payment_intent.succeeded';
+const PAYMENT_INTENT_PAYMENT_FAILED = 'payment_intent.payment_failed';
+const PAYMENT_INTENT_CREATED = 'payment_intent.created';
+const CHECKOUT_SESSION_COMPLETED = 'checkout.session.completed';
+const CHARGE_SUCCEEDED = 'charge.succeeded';
+const CHARGE_FAILED = 'charge.failed';
+
+const priceDetailsConfig = {
   price_1ORgzMHKD0byXXClDCm5PkwO: { tokens: 10000000, region: 'China' },
   price_1ORgyiHKD0byXXClHetdaI3W: { tokens: 1000000, region: 'China' },
   price_1ORgyJHKD0byXXClfvOyCbp7: { tokens: 500000, region: 'China' },
@@ -12,25 +23,36 @@ const priceConfig = {
   price_1P6drxHKD0byXXClVVLokkLh: { tokens: 10000000, region: 'global' },
 };
 
-const validPaymentMethods = ['card', 'alipay', 'wechat_pay'];
-
 exports.createPaymentIntent = async (req, res) => {
   try {
     const { priceId, userId, domain, email, paymentMethod } = req.body;
 
-    if (!Object.hasOwn(priceConfig, priceId)) {
-      res.status(400).json({ error: 'Invalid price ID' });
-      return;
+    if (!Object.prototype.hasOwnProperty.call(priceDetailsConfig, priceId)) {
+      return res.status(400).json({ error: 'Invalid price ID' });
     }
 
-    if (!validPaymentMethods.includes(paymentMethod)) {
-      res.status(400).json({ error: 'Invalid payment method' });
-      return;
+    if (!userId || !email || !domain) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    let isValidPaymentMethod = false;
+    switch (paymentMethod) {
+      case PAYMENT_METHOD_CARD:
+      case PAYMENT_METHOD_ALIPAY:
+      case PAYMENT_METHOD_WECHAT_PAY:
+        isValidPaymentMethod = true;
+        break;
+      default:
+        isValidPaymentMethod = false;
+    }
+
+    if (!isValidPaymentMethod) {
+      return res.status(400).json({ error: 'Invalid payment method' });
     }
 
     const paymentMethodOptions = {};
 
-    if (paymentMethod === 'wechat_pay') {
+    if (paymentMethod === PAYMENT_METHOD_WECHAT_PAY) {
       paymentMethodOptions.wechat_pay = {
         client: 'web',
       };
@@ -61,12 +83,10 @@ exports.createPaymentIntent = async (req, res) => {
 
     res.status(200).json({ sessionId: session.id });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error.message });
+    console.error('Error creating payment intent:', error);
+    res.status(500).json({ error: 'An error occurred while creating the payment intent' });
   }
 };
-
-const processedPaymentIntents = new Set();
 
 exports.handleWebhook = async (req, res) => {
   const sigHeader = req.headers['stripe-signature'];
@@ -80,7 +100,7 @@ exports.handleWebhook = async (req, res) => {
     );
   } catch (err) {
     console.error(`Webhook Error: ${err.message}`);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    return res.status(400).json({ error: `Webhook Error: ${err.message}` });
   }
 
   let paymentIntent;
@@ -89,62 +109,50 @@ exports.handleWebhook = async (req, res) => {
   let tokens;
 
   switch (event.type) {
-    case 'payment_intent.succeeded':
-    case 'checkout.session.completed':
-      if (event.type === 'payment_intent.succeeded') {
-        paymentIntent = event.data.object;
-      } else if (event.type === 'checkout.session.completed') {
-        paymentIntent = event.data.object.payment_intent;
-      }
-
-      if (processedPaymentIntents.has(paymentIntent.id)) {
-        console.log(`Payment intent ${paymentIntent.id} has already been processed`);
-        res.status(200).send();
-        return;
-      }
-
+    case PAYMENT_INTENT_SUCCEEDED:
+      paymentIntent = event.data.object;
       userId = paymentIntent.metadata.userId;
       priceId = paymentIntent.metadata.priceId;
 
-      if (!(priceId in priceConfig)) {
+      if (!Object.prototype.hasOwnProperty.call(priceDetailsConfig, priceId)) {
         console.error('Invalid price ID:', priceId);
-        res.status(400).send({ error: 'Invalid price ID' });
-        return;
+        return res.status(400).json({ error: 'Invalid price ID' });
       }
 
-      tokens = priceConfig[priceId].tokens;
+      tokens = priceDetailsConfig[priceId].tokens;
 
       try {
         const newBalance = await addTokensByUserId(userId, tokens);
-        processedPaymentIntents.add(paymentIntent.id);
-        res.status(200).send(`Success! New balance is ${newBalance}`);
+        console.log(`Payment succeeded. User ID: ${userId}, New balance: ${newBalance}`);
+        res.status(200).json({ message: `Payment succeeded. New balance is ${newBalance}` });
       } catch (error) {
         console.error(`Error updating balance: ${error.message}`);
-        res.status(500).send({ error: `Error updating balance: ${error.message}` });
+        res.status(500).json({ error: `Error updating balance: ${error.message}` });
       }
       break;
-    case 'payment_intent.payment_failed':
-      // Handle payment failure
-      console.log('Payment failed:', event.data.object);
-      res.status(200).send();
+    case PAYMENT_INTENT_PAYMENT_FAILED:
+      console.error('Payment failed:', event.data.object);
+      // Handle payment failure, e.g., send notifications or retry payment
+      res.status(200).json({ message: 'Payment failed' });
       break;
-    case 'payment_intent.created':
-      // Handle payment intent creation
+    case PAYMENT_INTENT_CREATED:
       console.log('Payment intent created:', event.data.object);
-      res.status(200).send();
+      res.status(200).json({ message: 'Payment intent created' });
       break;
-    case 'charge.succeeded':
-      // Handle successful charge
+    case CHECKOUT_SESSION_COMPLETED:
+      console.log('Checkout session completed:', event.data.object);
+      res.status(200).json({ message: 'Checkout session completed' });
+      break;
+    case CHARGE_SUCCEEDED:
       console.log('Charge succeeded:', event.data.object);
-      res.status(200).send();
+      res.status(200).json({ message: 'Charge succeeded' });
       break;
-    case 'charge.failed':
-      // Handle failed charge
-      console.log('Charge failed:', event.data.object);
-      res.status(200).send();
+    case CHARGE_FAILED:
+      console.error('Charge failed:', event.data.object);
+      res.status(200).json({ message: 'Charge failed' });
       break;
     default:
-      console.log(`Unhandled event type: ${event.type}`);
-      res.status(200).send();
+      console.warn(`Unhandled event type: ${event.type}`);
+      res.status(200).json({ message: `Unhandled event type: ${event.type}` });
   }
 };
