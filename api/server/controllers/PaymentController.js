@@ -150,6 +150,7 @@ exports.handleWebhook = async (req, res) => {
             user.email,
             'Payment Confirmation',
             {
+              appName: process.env.APP_TITLE || 'Novlisk',
               name: user.name,
               tokens: tokens.toLocaleString(),
               amount: formattedAmount,
