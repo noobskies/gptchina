@@ -112,13 +112,7 @@ exports.handleWebhook = async (req, res) => {
 
   switch (event.type) {
     case PAYMENT_INTENT_SUCCEEDED:
-    case CHARGE_SUCCEEDED:
-      if (event.type === PAYMENT_INTENT_SUCCEEDED) {
-        paymentIntent = event.data.object;
-      } else if (event.type === CHARGE_SUCCEEDED) {
-        paymentIntent = event.data.object.payment_intent;
-      }
-
+      paymentIntent = event.data.object;
       userId = paymentIntent.metadata.userId;
       priceId = paymentIntent.metadata.priceId;
 
@@ -171,7 +165,6 @@ exports.handleWebhook = async (req, res) => {
       }
       break;
     case PAYMENT_INTENT_PAYMENT_FAILED:
-    case CHARGE_FAILED:
       console.error('Payment failed:', event.data.object);
       // Handle payment failure, e.g., send notifications or retry payment
       res.status(200).json({ message: 'Payment failed' });
@@ -183,6 +176,14 @@ exports.handleWebhook = async (req, res) => {
     case CHECKOUT_SESSION_COMPLETED:
       console.log('Checkout session completed:', event.data.object);
       res.status(200).json({ message: 'Checkout session completed' });
+      break;
+    case CHARGE_SUCCEEDED:
+      console.log('Charge succeeded:', event.data.object);
+      res.status(200).json({ message: 'Charge succeeded' });
+      break;
+    case CHARGE_FAILED:
+      console.error('Charge failed:', event.data.object);
+      res.status(200).json({ message: 'Charge failed' });
       break;
     default:
       console.warn(`Unhandled event type: ${event.type}`);
