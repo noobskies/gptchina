@@ -131,14 +131,29 @@ exports.handleWebhook = async (req, res) => {
         // Send payment confirmation email
         const user = await User.findById(userId);
         if (user) {
+          const currentDate = new Date();
+          const readableDate = currentDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          });
+
+          const region = priceDetailsConfig[priceId].region;
+          const currencyCode = region === 'China' ? 'CNY' : 'USD';
+
+          const formattedAmount = (paymentIntent.amount / 100).toLocaleString('en-US', {
+            style: 'currency',
+            currency: currencyCode,
+          });
+
           await sendEmail(
             user.email,
             'Payment Confirmation',
             {
               name: user.name,
-              transactionId: paymentIntent.id,
-              amount: paymentIntent.amount / 100, // Convert amount from cents to the appropriate currency unit
-              date: new Date().toISOString(),
+              tokens: tokens.toLocaleString(),
+              amount: formattedAmount,
+              date: readableDate,
             },
             'paymentConfirmation.handlebars',
           );
