@@ -11,6 +11,7 @@ const PAYMENT_INTENT_SUCCEEDED = 'payment_intent.succeeded';
 const PAYMENT_INTENT_PAYMENT_FAILED = 'payment_intent.payment_failed';
 const PAYMENT_INTENT_CREATED = 'payment_intent.created';
 const CHECKOUT_SESSION_COMPLETED = 'checkout.session.completed';
+const CHARGE_SUCCEEDED = 'charge.succeeded';
 const CHARGE_FAILED = 'charge.failed';
 
 const priceDetailsConfig = {
@@ -114,6 +115,7 @@ exports.handleWebhook = async (req, res) => {
       paymentIntent = event.data.object;
       userId = paymentIntent.metadata.userId;
       priceId = paymentIntent.metadata.priceId;
+      console.log('paymentIntent.metadata.email:', paymentIntent.metadata.email);
 
       if (!Object.prototype.hasOwnProperty.call(priceDetailsConfig, priceId)) {
         console.error('Invalid price ID:', priceId);
@@ -129,7 +131,10 @@ exports.handleWebhook = async (req, res) => {
 
         // Send payment confirmation email
         const user = await User.findById(userId);
-        if (user) {
+        console.log('User object:', user);
+        if (user && user.email) {
+          console.log('User email:', user.email);
+          // Validate the email address if needed
           const currentDate = new Date();
           const readableDate = currentDate.toLocaleDateString('en-US', {
             year: 'numeric',
@@ -146,21 +151,26 @@ exports.handleWebhook = async (req, res) => {
           });
 
           await sendEmail(
-            process.env.APP_TITLE || 'Novlisk',
+            user.email, // Pass the user's email address as the first argument
             'Payment Confirmation',
             {
               appName: process.env.APP_TITLE || 'Novlisk',
               name: user.name,
+              email: user.email,
               tokens: tokens.toLocaleString(),
               amount: formattedAmount,
               date: readableDate,
             },
             'paymentConfirmation.handlebars',
           );
+        } else {
+          console.warn('User not found or user email not provided');
         }
       } catch (error) {
-        console.error(`Error updating balance: ${error.message}`);
-        res.status(500).json({ error: `Error updating balance: ${error.message}` });
+        console.error(`Error updating balance or sending email: ${error.message}`);
+        res
+          .status(500)
+          .json({ error: `Error updating balance or sending email: ${error.message}` });
       }
       break;
     case PAYMENT_INTENT_PAYMENT_FAILED:
@@ -175,6 +185,10 @@ exports.handleWebhook = async (req, res) => {
     case CHECKOUT_SESSION_COMPLETED:
       console.log('Checkout session completed:', event.data.object);
       res.status(200).json({ message: 'Checkout session completed' });
+      break;
+    case CHARGE_SUCCEEDED:
+      console.log('Charge succeeded:', event.data.object);
+      res.status(200).json({ message: 'Charge succeeded' });
       break;
     case CHARGE_FAILED:
       console.error('Charge failed:', event.data.object);
