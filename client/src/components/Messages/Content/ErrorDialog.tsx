@@ -141,7 +141,7 @@ export default function ErrorDialog({ open, onOpenChange }) {
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
 
-            <div className="my-4 flex justify-center space-x-4">
+            <div className="my-4 flex flex-wrap justify-center space-x-2 sm:space-x-4">
               <PaymentOptionButton
                 option="wechat_pay"
                 isSelected={selectedPaymentOption === 'wechat_pay'}

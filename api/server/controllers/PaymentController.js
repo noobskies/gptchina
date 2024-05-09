@@ -147,7 +147,7 @@ exports.handleWebhook = async (req, res) => {
           });
 
           await sendEmail(
-            user.email,
+            process.env.APP_TITLE || 'Novlisk',
             'Payment Confirmation',
             {
               appName: process.env.APP_TITLE || 'Novlisk',

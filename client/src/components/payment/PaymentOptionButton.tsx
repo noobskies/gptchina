@@ -16,7 +16,7 @@ const PaymentOptionButton = ({ option, isSelected, onClick }) => {
   return (
     <button
       onClick={onClick}
-      className={`rounded p-2 ${
+      className={`mb-2 rounded p-2 ${
         isSelected ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
       } transition-colors duration-150 hover:bg-blue-600 hover:text-white`}
     >
