@@ -61,7 +61,8 @@ export default function ErrorDialog({ open, onOpenChange }) {
       if (selectedPaymentOption === 'bitcoin') {
         await processBitcoinPayment(selectedTokens, selectedOption, userId, email, isChina);
       } else {
-        await processStripePayment(selectedOption, selectedPaymentOption, userId, email);
+        // Use 'card' payment method type for both card and Google Pay payments
+        await processStripePayment(selectedOption, 'card', userId, email);
       }
     } catch (error) {
       console.error('Payment error:', error);
@@ -160,6 +161,11 @@ export default function ErrorDialog({ open, onOpenChange }) {
                 option="bitcoin"
                 isSelected={selectedPaymentOption === 'bitcoin'}
                 onClick={() => setSelectedPaymentOption('bitcoin')}
+              />
+              <PaymentOptionButton
+                option="google_pay"
+                isSelected={selectedPaymentOption === 'google_pay'}
+                onClick={() => setSelectedPaymentOption('google_pay')}
               />
             </div>
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { SiWechat, SiAlipay } from 'react-icons/si';
-import { FaCreditCard, FaBitcoin } from 'react-icons/fa';
+import { FaCreditCard, FaBitcoin, FaGooglePay } from 'react-icons/fa';
 
 const PaymentOptionButton = ({ option, isSelected, onClick }) => {
   const icons = {
@@ -8,6 +8,7 @@ const PaymentOptionButton = ({ option, isSelected, onClick }) => {
     alipay: SiAlipay,
     card: FaCreditCard,
     bitcoin: FaBitcoin,
+    google_pay: FaGooglePay,
   };
 
   const Icon = icons[option];
