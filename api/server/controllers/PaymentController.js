@@ -11,7 +11,6 @@ const PAYMENT_INTENT_SUCCEEDED = 'payment_intent.succeeded';
 const PAYMENT_INTENT_PAYMENT_FAILED = 'payment_intent.payment_failed';
 const PAYMENT_INTENT_CREATED = 'payment_intent.created';
 const CHECKOUT_SESSION_COMPLETED = 'checkout.session.completed';
-const CHARGE_SUCCEEDED = 'charge.succeeded';
 const CHARGE_FAILED = 'charge.failed';
 
 const priceDetailsConfig = {
@@ -176,10 +175,6 @@ exports.handleWebhook = async (req, res) => {
     case CHECKOUT_SESSION_COMPLETED:
       console.log('Checkout session completed:', event.data.object);
       res.status(200).json({ message: 'Checkout session completed' });
-      break;
-    case CHARGE_SUCCEEDED:
-      console.log('Charge succeeded:', event.data.object);
-      res.status(200).json({ message: 'Charge succeeded' });
       break;
     case CHARGE_FAILED:
       console.error('Charge failed:', event.data.object);
