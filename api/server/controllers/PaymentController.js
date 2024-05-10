@@ -6,8 +6,8 @@ const User = require('~/models/User');
 const PAYMENT_METHOD_CARD = 'card';
 const PAYMENT_METHOD_ALIPAY = 'alipay';
 const PAYMENT_METHOD_WECHAT_PAY = 'wechat_pay';
-const PAYMENT_OPTION_GOOGLE_PAY = 'card';
-const PAYMENT_OPTION_APPLE_PAY = 'card';
+const PAYMENT_OPTION_GOOGLE_PAY = 'google_pay';
+const PAYMENT_OPTION_APPLE_PAY = 'apple_pay';
 
 const PAYMENT_INTENT_SUCCEEDED = 'payment_intent.succeeded';
 const PAYMENT_INTENT_PAYMENT_FAILED = 'payment_intent.payment_failed';
@@ -53,6 +53,8 @@ exports.createPaymentIntent = async (req, res) => {
       case PAYMENT_METHOD_CARD:
       case PAYMENT_OPTION_GOOGLE_PAY:
       case PAYMENT_OPTION_APPLE_PAY:
+        isValidPaymentMethod = true;
+        break;
       case PAYMENT_METHOD_ALIPAY:
       case PAYMENT_METHOD_WECHAT_PAY:
         isValidPaymentMethod = true;
@@ -74,8 +76,14 @@ exports.createPaymentIntent = async (req, res) => {
       };
     }
 
+    const payment_method_types = [
+      paymentMethod === PAYMENT_OPTION_GOOGLE_PAY || paymentMethod === PAYMENT_OPTION_APPLE_PAY
+        ? PAYMENT_METHOD_CARD
+        : paymentMethod,
+    ];
+
     console.log('Creating Stripe Checkout session with options:', {
-      payment_method_types: [paymentMethod],
+      payment_method_types,
       line_items: [
         {
           price: priceId,
@@ -98,7 +106,7 @@ exports.createPaymentIntent = async (req, res) => {
     });
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: [paymentMethod],
+      payment_method_types,
       line_items: [
         {
           price: priceId,

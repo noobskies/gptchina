@@ -63,7 +63,7 @@ export default function ErrorDialog({ open, onOpenChange }) {
         await processBitcoinPayment(selectedTokens, selectedOption, userId, email, isChina);
       } else {
         console.log('Selected payment option:', selectedPaymentOption);
-        await processStripePayment(selectedOption, selectedPaymentOption, userId, email);
+        await processStripePayment(selectedOption, 'card', userId, email);
       }
     } catch (error) {
       console.error('Payment error:', error);
