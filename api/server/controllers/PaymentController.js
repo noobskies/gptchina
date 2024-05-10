@@ -53,8 +53,6 @@ exports.createPaymentIntent = async (req, res) => {
       case PAYMENT_METHOD_CARD:
       case PAYMENT_OPTION_GOOGLE_PAY:
       case PAYMENT_OPTION_APPLE_PAY:
-        isValidPaymentMethod = true;
-        break;
       case PAYMENT_METHOD_ALIPAY:
       case PAYMENT_METHOD_WECHAT_PAY:
         isValidPaymentMethod = true;

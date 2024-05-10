@@ -61,9 +61,12 @@ export default function ErrorDialog({ open, onOpenChange }) {
     try {
       if (selectedPaymentOption === 'bitcoin') {
         await processBitcoinPayment(selectedTokens, selectedOption, userId, email, isChina);
-      } else {
+      } else if (selectedPaymentOption === 'google_pay' || selectedPaymentOption === 'apple_pay') {
         console.log('Selected payment option:', selectedPaymentOption);
         await processStripePayment(selectedOption, 'card', userId, email);
+      } else {
+        console.log('Selected payment option:', selectedPaymentOption);
+        await processStripePayment(selectedOption, selectedPaymentOption, userId, email);
       }
     } catch (error) {
       console.error('Payment error:', error);
