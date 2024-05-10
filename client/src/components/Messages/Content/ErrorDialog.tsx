@@ -174,14 +174,14 @@ export default function ErrorDialog({ open, onOpenChange }) {
                   setSelectedPaymentOption('bitcoin');
                 }}
               />
-              <PaymentOptionButton
+              {/* <PaymentOptionButton
                 option="google_pay"
                 isSelected={selectedPaymentOption === 'google_pay'}
                 onClick={() => {
                   console.log('Google Pay selected');
                   setSelectedPaymentOption('google_pay');
                 }}
-              />
+              /> */}
             </div>
 
             <button
