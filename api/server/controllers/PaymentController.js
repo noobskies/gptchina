@@ -1,18 +1,11 @@
-const sendEmail = require('../utils/sendEmail');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const addTokensByUserId = require('../../../config/addTokens');
-const User = require('~/models/User');
 
 const PAYMENT_METHOD_CARD = 'card';
 const PAYMENT_METHOD_ALIPAY = 'alipay';
 const PAYMENT_METHOD_WECHAT_PAY = 'wechat_pay';
 
 const PAYMENT_INTENT_SUCCEEDED = 'payment_intent.succeeded';
-const PAYMENT_INTENT_PAYMENT_FAILED = 'payment_intent.payment_failed';
-const PAYMENT_INTENT_CREATED = 'payment_intent.created';
-const CHECKOUT_SESSION_COMPLETED = 'checkout.session.completed';
-const CHARGE_SUCCEEDED = 'charge.succeeded';
-const CHARGE_FAILED = 'charge.failed';
 
 const priceDetailsConfig = {
   price_1ORgzMHKD0byXXClDCm5PkwO: { tokens: 10000000, region: 'China' },
@@ -102,100 +95,30 @@ exports.handleWebhook = async (req, res) => {
     );
   } catch (err) {
     console.error(`Webhook Error: ${err.message}`);
-    return res.status(400).json({ error: `Webhook Error: ${err.message}` });
+    return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  let paymentIntent;
-  let userId;
-  let priceId;
-  let tokens;
+  if (event.type === PAYMENT_INTENT_SUCCEEDED) {
+    const paymentIntent = event.data.object;
+    const userId = paymentIntent.metadata.userId;
+    const priceId = paymentIntent.metadata.priceId;
 
-  switch (event.type) {
-    case PAYMENT_INTENT_SUCCEEDED:
-      paymentIntent = event.data.object;
-      userId = paymentIntent.metadata.userId;
-      priceId = paymentIntent.metadata.priceId;
-      console.log('paymentIntent.metadata.email:', paymentIntent.metadata.email);
+    if (!Object.prototype.hasOwnProperty.call(priceDetailsConfig, priceId)) {
+      console.error('Invalid price ID:', priceId);
+      return res.status(400).send('Invalid price ID');
+    }
 
-      if (!Object.prototype.hasOwnProperty.call(priceDetailsConfig, priceId)) {
-        console.error('Invalid price ID:', priceId);
-        return res.status(400).json({ error: 'Invalid price ID' });
-      }
+    const tokens = priceDetailsConfig[priceId].tokens;
 
-      tokens = priceDetailsConfig[priceId].tokens;
-
-      try {
-        const newBalance = await addTokensByUserId(userId, tokens);
-        console.log(`Payment succeeded. User ID: ${userId}, New balance: ${newBalance}`);
-        res.status(200).json({ message: `Payment succeeded. New balance is ${newBalance}` });
-
-        // Send payment confirmation email
-        const user = await User.findById(userId);
-        console.log('User object:', user);
-        if (user && user.email) {
-          console.log('User email:', user.email);
-          // Validate the email address if needed
-          const currentDate = new Date();
-          const readableDate = currentDate.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          });
-
-          const region = priceDetailsConfig[priceId].region;
-          const currencyCode = region === 'China' ? 'CNY' : 'USD';
-
-          const formattedAmount = (paymentIntent.amount / 100).toLocaleString('en-US', {
-            style: 'currency',
-            currency: currencyCode,
-          });
-
-          await sendEmail(
-            user.email, // Pass the user's email address as the first argument
-            'Payment Confirmation',
-            {
-              appName: process.env.APP_TITLE || 'Novlisk',
-              name: user.name,
-              email: user.email,
-              tokens: tokens.toLocaleString(),
-              amount: formattedAmount,
-              date: readableDate,
-            },
-            'paymentConfirmation.handlebars',
-          );
-        } else {
-          console.warn('User not found or user email not provided');
-        }
-      } catch (error) {
-        console.error(`Error updating balance or sending email: ${error.message}`);
-        res
-          .status(500)
-          .json({ error: `Error updating balance or sending email: ${error.message}` });
-      }
-      break;
-    case PAYMENT_INTENT_PAYMENT_FAILED:
-      console.error('Payment failed:', event.data.object);
-      // Handle payment failure, e.g., send notifications or retry payment
-      res.status(200).json({ message: 'Payment failed' });
-      break;
-    case PAYMENT_INTENT_CREATED:
-      console.log('Payment intent created:', event.data.object);
-      res.status(200).json({ message: 'Payment intent created' });
-      break;
-    case CHECKOUT_SESSION_COMPLETED:
-      console.log('Checkout session completed:', event.data.object);
-      res.status(200).json({ message: 'Checkout session completed' });
-      break;
-    case CHARGE_SUCCEEDED:
-      console.log('Charge succeeded:', event.data.object);
-      res.status(200).json({ message: 'Charge succeeded' });
-      break;
-    case CHARGE_FAILED:
-      console.error('Charge failed:', event.data.object);
-      res.status(200).json({ message: 'Charge failed' });
-      break;
-    default:
-      console.warn(`Unhandled event type: ${event.type}`);
-      res.status(200).json({ message: `Unhandled event type: ${event.type}` });
+    try {
+      const newBalance = await addTokensByUserId(userId, tokens);
+      console.log(`Payment succeeded. User ID: ${userId}, New balance: ${newBalance}`);
+      res.status(200).send(`Payment succeeded. New balance: ${newBalance}`);
+    } catch (error) {
+      console.error(`Error updating balance: ${error.message}`);
+      res.status(500).send(`Error updating balance: ${error.message}`);
+    }
+  } else {
+    res.status(400).send(`Unexpected event type: ${event.type}`);
   }
 };
