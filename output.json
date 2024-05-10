@@ -1,0 +1,2656 @@
+[
+  {
+    "type": "directory",
+    "name": ".",
+    "contents": [
+      {
+        "type": "directory",
+        "name": "api",
+        "contents": [
+          {
+            "type": "directory",
+            "name": "app",
+            "contents": [
+              { "type": "file", "name": "bingai.js" },
+              { "type": "file", "name": "chatgpt-browser.js" },
+              {
+                "type": "directory",
+                "name": "clients",
+                "contents": [
+                  {
+                    "type": "directory",
+                    "name": "agents",
+                    "contents": [
+                      {
+                        "type": "directory",
+                        "name": "CustomAgent",
+                        "contents": [
+                          { "type": "file", "name": "CustomAgent.js" },
+                          { "type": "file", "name": "initializeCustomAgent.js" },
+                          { "type": "file", "name": "instructions.js" },
+                          { "type": "file", "name": "outputParser.js" }
+                        ]
+                      },
+                      {
+                        "type": "directory",
+                        "name": "Functions",
+                        "contents": [
+                          { "type": "file", "name": "addToolDescriptions.js" },
+                          { "type": "file", "name": "FunctionsAgent.js" },
+                          { "type": "file", "name": "initializeFunctionsAgent.js" }
+                        ]
+                      },
+                      { "type": "file", "name": "index.js" }
+                    ]
+                  },
+                  { "type": "file", "name": "AnthropicClient.js" },
+                  { "type": "file", "name": "BaseClient.js" },
+                  {
+                    "type": "directory",
+                    "name": "callbacks",
+                    "contents": [
+                      { "type": "file", "name": "createStartHandler.js" },
+                      { "type": "file", "name": "index.js" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "chains",
+                    "contents": [
+                      { "type": "file", "name": "index.js" },
+                      { "type": "file", "name": "predictNewSummary.js" },
+                      { "type": "file", "name": "runTitleChain.js" }
+                    ]
+                  },
+                  { "type": "file", "name": "ChatGPTClient.js" },
+                  {
+                    "type": "directory",
+                    "name": "document",
+                    "contents": [
+                      { "type": "file", "name": "index.js" },
+                      { "type": "file", "name": "tokenSplit.js" },
+                      { "type": "file", "name": "tokenSplit.spec.js" }
+                    ]
+                  },
+                  { "type": "file", "name": "GoogleClient.js" },
+                  { "type": "file", "name": "index.js" },
+                  {
+                    "type": "directory",
+                    "name": "llm",
+                    "contents": [
+                      { "type": "file", "name": "createCoherePayload.js" },
+                      { "type": "file", "name": "createLLM.js" },
+                      { "type": "file", "name": "index.js" },
+                      { "type": "file", "name": "RunManager.js" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "memory",
+                    "contents": [
+                      { "type": "file", "name": "example.js" },
+                      { "type": "file", "name": "index.js" },
+                      { "type": "file", "name": "summaryBuffer.demo.js" },
+                      { "type": "file", "name": "summaryBuffer.js" }
+                    ]
+                  },
+                  { "type": "file", "name": "OpenAIClient.js" },
+                  {
+                    "type": "directory",
+                    "name": "output_parsers",
+                    "contents": [
+                      { "type": "file", "name": "addImages.js" },
+                      { "type": "file", "name": "addImages.spec.js" },
+                      { "type": "file", "name": "handleOutputs.js" },
+                      { "type": "file", "name": "index.js" }
+                    ]
+                  },
+                  { "type": "file", "name": "PluginsClient.js" },
+                  {
+                    "type": "directory",
+                    "name": "prompts",
+                    "contents": [
+                      { "type": "file", "name": "createContextHandlers.js" },
+                      { "type": "file", "name": "createVisionPrompt.js" },
+                      { "type": "file", "name": "formatGoogleInputs.js" },
+                      { "type": "file", "name": "formatGoogleInputs.spec.js" },
+                      { "type": "file", "name": "formatMessages.js" },
+                      { "type": "file", "name": "formatMessages.spec.js" },
+                      { "type": "file", "name": "handleInputs.js" },
+                      { "type": "file", "name": "index.js" },
+                      { "type": "file", "name": "instructions.js" },
+                      { "type": "file", "name": "summaryPrompts.js" },
+                      { "type": "file", "name": "titlePrompts.js" },
+                      { "type": "file", "name": "truncateText.js" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "specs",
+                    "contents": [
+                      { "type": "file", "name": "AnthropicClient.test.js" },
+                      { "type": "file", "name": "BaseClient.test.js" },
+                      { "type": "file", "name": "FakeClient.js" },
+                      { "type": "file", "name": "OpenAIClient.test.js" },
+                      { "type": "file", "name": "OpenAIClient.tokens.js" },
+                      { "type": "file", "name": "PluginsClient.test.js" }
+                    ]
+                  },
+                  { "type": "file", "name": "TextStream.js" },
+                  {
+                    "type": "directory",
+                    "name": "tools",
+                    "contents": [
+                      { "type": "file", "name": "AzureAiSearch.js" },
+                      { "type": "file", "name": "CodeBrew.js" },
+                      { "type": "file", "name": "DALL-E.js" },
+                      {
+                        "type": "directory",
+                        "name": "dynamic",
+                        "contents": [
+                          { "type": "file", "name": "OpenAPIPlugin.js" },
+                          { "type": "file", "name": "OpenAPIPlugin.spec.js" }
+                        ]
+                      },
+                      { "type": "file", "name": "HumanTool.js" },
+                      { "type": "file", "name": "index.js" },
+                      { "type": "file", "name": "manifest.json" },
+                      { "type": "file", "name": "SelfReflection.js" },
+                      { "type": "file", "name": "StableDiffusion.js" },
+                      {
+                        "type": "directory",
+                        "name": "structured",
+                        "contents": [
+                          { "type": "file", "name": "AzureAISearch.js" },
+                          { "type": "file", "name": "ChatTool.js" },
+                          { "type": "file", "name": "CodeSherpa.js" },
+                          { "type": "file", "name": "CodeSherpaTools.js" },
+                          { "type": "file", "name": "DALLE3.js" },
+                          { "type": "file", "name": "E2BTools.js" },
+                          { "type": "file", "name": "extractionChain.js" },
+                          { "type": "file", "name": "GoogleSearch.js" },
+                          {
+                            "type": "directory",
+                            "name": "specs",
+                            "contents": [{ "type": "file", "name": "DALLE3.spec.js" }]
+                          },
+                          { "type": "file", "name": "StableDiffusion.js" },
+                          { "type": "file", "name": "TavilySearchResults.js" },
+                          { "type": "file", "name": "TraversaalSearch.js" },
+                          { "type": "file", "name": "Wolfram.js" }
+                        ]
+                      },
+                      {
+                        "type": "directory",
+                        "name": "util",
+                        "contents": [
+                          { "type": "file", "name": "addOpenAPISpecs.js" },
+                          { "type": "file", "name": "addOpenAPISpecs.spec.js" },
+                          { "type": "file", "name": "handleOpenAIErrors.js" },
+                          { "type": "file", "name": "handleTools.js" },
+                          { "type": "file", "name": "handleTools.test.js" },
+                          { "type": "file", "name": "index.js" },
+                          { "type": "file", "name": "loadSpecs.js" },
+                          { "type": "file", "name": "loadSpecs.spec.js" },
+                          { "type": "file", "name": "loadToolSuite.js" }
+                        ]
+                      },
+                      { "type": "file", "name": "wolfram-guidelines.md" },
+                      { "type": "file", "name": "Wolfram.js" }
+                    ]
+                  }
+                ]
+              },
+              { "type": "file", "name": "index.js" },
+              { "type": "file", "name": "titleConvoBing.js" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "cache",
+            "contents": [
+              { "type": "file", "name": "banViolation.js" },
+              { "type": "file", "name": "banViolation.spec.js" },
+              { "type": "file", "name": "clearPendingReq.js" },
+              { "type": "file", "name": "getLogStores.js" },
+              { "type": "file", "name": "index.js" },
+              { "type": "file", "name": "keyvFiles.js" },
+              { "type": "file", "name": "keyvMongo.js" },
+              { "type": "file", "name": "keyvRedis.js" },
+              { "type": "file", "name": "logViolation.js" },
+              { "type": "file", "name": "redis.js" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "config",
+            "contents": [
+              { "type": "file", "name": "index.js" },
+              { "type": "file", "name": "meiliLogger.js" },
+              { "type": "file", "name": "parsers.js" },
+              { "type": "file", "name": "paths.js" },
+              { "type": "file", "name": "winston.js" }
+            ]
+          },
+          { "type": "file", "name": "jest.config.js" },
+          { "type": "file", "name": "jsconfig.json" },
+          {
+            "type": "directory",
+            "name": "lib",
+            "contents": [
+              {
+                "type": "directory",
+                "name": "db",
+                "contents": [
+                  { "type": "file", "name": "connectDb.js" },
+                  { "type": "file", "name": "index.js" },
+                  { "type": "file", "name": "indexSync.js" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "utils",
+                "contents": [
+                  { "type": "file", "name": "mergeSort.js" },
+                  { "type": "file", "name": "misc.js" },
+                  { "type": "file", "name": "reduceHits.js" }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "logs",
+            "contents": [
+              { "type": "file", "name": "debug-2024-02-10.log.gz" },
+              { "type": "file", "name": "debug-2024-02-26.log.gz" },
+              { "type": "file", "name": "debug-2024-03-12.log.gz" },
+              { "type": "file", "name": "debug-2024-04-08.log.gz" },
+              { "type": "file", "name": "debug-2024-04-23.log" },
+              { "type": "file", "name": "debug-2024-04-24.log" },
+              { "type": "file", "name": "debug-2024-04-25.log" },
+              { "type": "file", "name": "debug-2024-04-26.log" },
+              { "type": "file", "name": "debug-2024-04-27.log" },
+              { "type": "file", "name": "debug-2024-04-28.log" },
+              { "type": "file", "name": "debug-2024-04-29.log" },
+              { "type": "file", "name": "debug-2024-04-30.log" },
+              { "type": "file", "name": "debug-2024-05-03.log" },
+              { "type": "file", "name": "debug-2024-05-04.log" },
+              { "type": "file", "name": "debug-2024-05-06.log" },
+              { "type": "file", "name": "error-2024-02-26.log.gz" },
+              { "type": "file", "name": "error-2024-04-23.log" },
+              { "type": "file", "name": "error-2024-04-24.log" },
+              { "type": "file", "name": "error-2024-04-25.log" },
+              { "type": "file", "name": "error-2024-04-26.log" },
+              { "type": "file", "name": "error-2024-04-27.log" },
+              { "type": "file", "name": "error-2024-04-28.log" },
+              { "type": "file", "name": "error-2024-04-29.log" },
+              { "type": "file", "name": "error-2024-04-30.log" },
+              { "type": "file", "name": "error-2024-05-03.log" },
+              { "type": "file", "name": "error-2024-05-04.log" },
+              { "type": "file", "name": "error-2024-05-06.log" },
+              { "type": "file", "name": "meiliSync-2024-02-10.log.gz" },
+              { "type": "file", "name": "meiliSync-2024-04-23.log" },
+              { "type": "file", "name": "meiliSync-2024-04-24.log" },
+              { "type": "file", "name": "meiliSync-2024-04-25.log" },
+              { "type": "file", "name": "meiliSync-2024-04-26.log" },
+              { "type": "file", "name": "meiliSync-2024-04-27.log" },
+              { "type": "file", "name": "meiliSync-2024-04-28.log" },
+              { "type": "file", "name": "meiliSync-2024-04-29.log" },
+              { "type": "file", "name": "meiliSync-2024-04-30.log" },
+              { "type": "file", "name": "meiliSync-2024-05-03.log" },
+              { "type": "file", "name": "meiliSync-2024-05-04.log" },
+              { "type": "file", "name": "meiliSync-2024-05-06.log" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "models",
+            "contents": [
+              { "type": "file", "name": "Action.js" },
+              { "type": "file", "name": "Assistant.js" },
+              { "type": "file", "name": "Balance.js" },
+              { "type": "file", "name": "checkBalance.js" },
+              { "type": "file", "name": "Config.js" },
+              { "type": "file", "name": "Conversation.js" },
+              { "type": "file", "name": "File.js" },
+              { "type": "file", "name": "index.js" },
+              { "type": "file", "name": "Key.js" },
+              { "type": "file", "name": "Message.js" },
+              {
+                "type": "directory",
+                "name": "plugins",
+                "contents": [{ "type": "file", "name": "mongoMeili.js" }]
+              },
+              { "type": "file", "name": "Preset.js" },
+              { "type": "file", "name": "Prompt.js" },
+              {
+                "type": "directory",
+                "name": "schema",
+                "contents": [
+                  { "type": "file", "name": "action.js" },
+                  { "type": "file", "name": "assistant.js" },
+                  { "type": "file", "name": "balance.js" },
+                  { "type": "file", "name": "convoSchema.js" },
+                  { "type": "file", "name": "defaults.js" },
+                  { "type": "file", "name": "fileSchema.js" },
+                  { "type": "file", "name": "key.js" },
+                  { "type": "file", "name": "messageSchema.js" },
+                  { "type": "file", "name": "pluginAuthSchema.js" },
+                  { "type": "file", "name": "presetSchema.js" },
+                  { "type": "file", "name": "tokenSchema.js" },
+                  { "type": "file", "name": "transaction.js" },
+                  { "type": "file", "name": "userSchema.js" }
+                ]
+              },
+              { "type": "file", "name": "Session.js" },
+              { "type": "file", "name": "spendTokens.js" },
+              { "type": "file", "name": "Transaction.js" },
+              { "type": "file", "name": "tx.js" },
+              { "type": "file", "name": "tx.spec.js" },
+              { "type": "file", "name": "User.js" },
+              { "type": "file", "name": "userMethods.js" }
+            ]
+          },
+          { "type": "file", "name": "package.json" },
+          {
+            "type": "directory",
+            "name": "server",
+            "contents": [
+              {
+                "type": "directory",
+                "name": "controllers",
+                "contents": [
+                  { "type": "file", "name": "AskController.js" },
+                  {
+                    "type": "directory",
+                    "name": "auth",
+                    "contents": [
+                      { "type": "file", "name": "LoginController.js" },
+                      { "type": "file", "name": "LogoutController.js" }
+                    ]
+                  },
+                  { "type": "file", "name": "AuthController.js" },
+                  { "type": "file", "name": "Balance.js" },
+                  { "type": "file", "name": "claimTokensController.js" },
+                  { "type": "file", "name": "EditController.js" },
+                  { "type": "file", "name": "EndpointController.js" },
+                  { "type": "file", "name": "ErrorController.js" },
+                  { "type": "file", "name": "ModelController.js" },
+                  { "type": "file", "name": "OpenNodeController.js" },
+                  { "type": "file", "name": "OverrideController.js" },
+                  { "type": "file", "name": "PaymentController.js" },
+                  { "type": "file", "name": "PayPalController.js" },
+                  { "type": "file", "name": "PluginController.js" },
+                  { "type": "file", "name": "UserController.js" }
+                ]
+              },
+              { "type": "file", "name": "index.js" },
+              {
+                "type": "directory",
+                "name": "middleware",
+                "contents": [
+                  { "type": "file", "name": "abortControllers.js" },
+                  { "type": "file", "name": "abortMiddleware.js" },
+                  { "type": "file", "name": "abortRun.js" },
+                  { "type": "file", "name": "buildEndpointOption.js" },
+                  { "type": "file", "name": "checkBan.js" },
+                  { "type": "file", "name": "checkDomainAllowed.js" },
+                  { "type": "file", "name": "concurrentLimiter.js" },
+                  { "type": "file", "name": "denyRequest.js" },
+                  { "type": "file", "name": "index.js" },
+                  { "type": "file", "name": "loginLimiter.js" },
+                  { "type": "file", "name": "messageLimiters.js" },
+                  { "type": "file", "name": "moderateText.js" },
+                  { "type": "file", "name": "noIndex.js" },
+                  { "type": "file", "name": "registerLimiter.js" },
+                  { "type": "file", "name": "requireJwtAuth.js" },
+                  { "type": "file", "name": "requireLocalAuth.js" },
+                  { "type": "file", "name": "setHeaders.js" },
+                  { "type": "file", "name": "uaParser.js" },
+                  { "type": "file", "name": "uploadLimiters.js" },
+                  { "type": "file", "name": "validateEndpoint.js" },
+                  { "type": "file", "name": "validateImageRequest.js" },
+                  { "type": "file", "name": "validateMessageReq.js" },
+                  { "type": "file", "name": "validateModel.js" },
+                  { "type": "file", "name": "validateRegistration.js" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "routes",
+                "contents": [
+                  {
+                    "type": "directory",
+                    "name": "ask",
+                    "contents": [
+                      { "type": "file", "name": "addToCache.js" },
+                      { "type": "file", "name": "anthropic.js" },
+                      { "type": "file", "name": "askChatGPTBrowser.js" },
+                      { "type": "file", "name": "bingAI.js" },
+                      { "type": "file", "name": "custom.js" },
+                      { "type": "file", "name": "google.js" },
+                      { "type": "file", "name": "gptPlugins.js" },
+                      { "type": "file", "name": "index.js" },
+                      { "type": "file", "name": "openAI.js" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "assistants",
+                    "contents": [
+                      { "type": "file", "name": "actions.js" },
+                      { "type": "file", "name": "assistants.js" },
+                      { "type": "file", "name": "chat.js" },
+                      { "type": "file", "name": "index.js" },
+                      { "type": "file", "name": "tools.js" }
+                    ]
+                  },
+                  { "type": "file", "name": "auth.js" },
+                  { "type": "file", "name": "balance.js" },
+                  { "type": "file", "name": "claimTokens.js" },
+                  { "type": "file", "name": "config.js" },
+                  { "type": "file", "name": "convos.js" },
+                  {
+                    "type": "directory",
+                    "name": "edit",
+                    "contents": [
+                      { "type": "file", "name": "anthropic.js" },
+                      { "type": "file", "name": "custom.js" },
+                      { "type": "file", "name": "google.js" },
+                      { "type": "file", "name": "gptPlugins.js" },
+                      { "type": "file", "name": "index.js" },
+                      { "type": "file", "name": "openAI.js" }
+                    ]
+                  },
+                  { "type": "file", "name": "endpoints.js" },
+                  {
+                    "type": "directory",
+                    "name": "files",
+                    "contents": [
+                      { "type": "file", "name": "avatar.js" },
+                      { "type": "file", "name": "files.js" },
+                      { "type": "file", "name": "images.js" },
+                      { "type": "file", "name": "index.js" },
+                      { "type": "file", "name": "multer.js" }
+                    ]
+                  },
+                  { "type": "file", "name": "index.js" },
+                  { "type": "file", "name": "keys.js" },
+                  { "type": "file", "name": "messages.js" },
+                  { "type": "file", "name": "models.js" },
+                  { "type": "file", "name": "oauth.js" },
+                  { "type": "file", "name": "openNodePayment.js" },
+                  { "type": "file", "name": "payment.js" },
+                  { "type": "file", "name": "paypalPayment.js" },
+                  { "type": "file", "name": "plugins.js" },
+                  { "type": "file", "name": "presets.js" },
+                  { "type": "file", "name": "prompts.js" },
+                  { "type": "file", "name": "search.js" },
+                  { "type": "file", "name": "static.js" },
+                  {
+                    "type": "directory",
+                    "name": "__tests__",
+                    "contents": [{ "type": "file", "name": "config.spec.js" }]
+                  },
+                  { "type": "file", "name": "tokenizer.js" },
+                  {
+                    "type": "directory",
+                    "name": "types",
+                    "contents": [{ "type": "file", "name": "assistants.js" }]
+                  },
+                  { "type": "file", "name": "user.js" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "services",
+                "contents": [
+                  { "type": "file", "name": "ActionService.js" },
+                  { "type": "file", "name": "ActionService.spec.js" },
+                  { "type": "file", "name": "AppService.js" },
+                  { "type": "file", "name": "AppService.spec.js" },
+                  { "type": "file", "name": "AssistantService.js" },
+                  { "type": "file", "name": "AuthService.js" },
+                  {
+                    "type": "directory",
+                    "name": "Config",
+                    "contents": [
+                      { "type": "file", "name": "EndpointService.js" },
+                      { "type": "file", "name": "getCustomConfig.js" },
+                      { "type": "file", "name": "handleRateLimits.js" },
+                      { "type": "file", "name": "index.js" },
+                      { "type": "file", "name": "loadAsyncEndpoints.js" },
+                      { "type": "file", "name": "loadConfigEndpoints.js" },
+                      { "type": "file", "name": "loadConfigModels.js" },
+                      { "type": "file", "name": "loadConfigModels.spec.js" },
+                      { "type": "file", "name": "loadCustomConfig.js" },
+                      { "type": "file", "name": "loadCustomConfig.spec.js" },
+                      { "type": "file", "name": "loadDefaultEConfig.js" },
+                      { "type": "file", "name": "loadDefaultModels.js" },
+                      { "type": "file", "name": "loadOverrideConfig.js" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "Endpoints",
+                    "contents": [
+                      {
+                        "type": "directory",
+                        "name": "anthropic",
+                        "contents": [
+                          { "type": "file", "name": "addTitle.js" },
+                          { "type": "file", "name": "buildOptions.js" },
+                          { "type": "file", "name": "index.js" },
+                          { "type": "file", "name": "initializeClient.js" }
+                        ]
+                      },
+                      {
+                        "type": "directory",
+                        "name": "assistants",
+                        "contents": [
+                          { "type": "file", "name": "addTitle.js" },
+                          { "type": "file", "name": "buildOptions.js" },
+                          { "type": "file", "name": "index.js" },
+                          { "type": "file", "name": "initializeClient.js" },
+                          { "type": "file", "name": "initializeClient.spec.js" }
+                        ]
+                      },
+                      {
+                        "type": "directory",
+                        "name": "custom",
+                        "contents": [
+                          { "type": "file", "name": "buildOptions.js" },
+                          { "type": "file", "name": "index.js" },
+                          { "type": "file", "name": "initializeClient.js" }
+                        ]
+                      },
+                      {
+                        "type": "directory",
+                        "name": "google",
+                        "contents": [
+                          { "type": "file", "name": "buildOptions.js" },
+                          { "type": "file", "name": "index.js" },
+                          { "type": "file", "name": "initializeClient.js" },
+                          { "type": "file", "name": "initializeClient.spec.js" }
+                        ]
+                      },
+                      {
+                        "type": "directory",
+                        "name": "gptPlugins",
+                        "contents": [
+                          { "type": "file", "name": "buildOptions.js" },
+                          { "type": "file", "name": "index.js" },
+                          { "type": "file", "name": "initializeClient.js" },
+                          { "type": "file", "name": "initializeClient.spec.js" }
+                        ]
+                      },
+                      {
+                        "type": "directory",
+                        "name": "openAI",
+                        "contents": [
+                          { "type": "file", "name": "addTitle.js" },
+                          { "type": "file", "name": "buildOptions.js" },
+                          { "type": "file", "name": "index.js" },
+                          { "type": "file", "name": "initializeClient.js" },
+                          { "type": "file", "name": "initializeClient.spec.js" }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "Files",
+                    "contents": [
+                      {
+                        "type": "directory",
+                        "name": "Firebase",
+                        "contents": [
+                          { "type": "file", "name": "crud.js" },
+                          { "type": "file", "name": "images.js" },
+                          { "type": "file", "name": "index.js" },
+                          { "type": "file", "name": "initialize.js" }
+                        ]
+                      },
+                      {
+                        "type": "directory",
+                        "name": "images",
+                        "contents": [
+                          { "type": "file", "name": "avatar.js" },
+                          { "type": "file", "name": "convert.js" },
+                          { "type": "file", "name": "encode.js" },
+                          { "type": "file", "name": "index.js" },
+                          { "type": "file", "name": "parse.js" },
+                          { "type": "file", "name": "resize.js" }
+                        ]
+                      },
+                      {
+                        "type": "directory",
+                        "name": "Local",
+                        "contents": [
+                          { "type": "file", "name": "crud.js" },
+                          { "type": "file", "name": "images.js" },
+                          { "type": "file", "name": "index.js" }
+                        ]
+                      },
+                      {
+                        "type": "directory",
+                        "name": "OpenAI",
+                        "contents": [
+                          { "type": "file", "name": "crud.js" },
+                          { "type": "file", "name": "index.js" }
+                        ]
+                      },
+                      { "type": "file", "name": "process.js" },
+                      { "type": "file", "name": "strategies.js" },
+                      {
+                        "type": "directory",
+                        "name": "VectorDB",
+                        "contents": [
+                          { "type": "file", "name": "crud.js" },
+                          { "type": "file", "name": "index.js" }
+                        ]
+                      }
+                    ]
+                  },
+                  { "type": "file", "name": "isDomainAllowed.js" },
+                  { "type": "file", "name": "isDomainAllowed.spec.js" },
+                  { "type": "file", "name": "ModelService.js" },
+                  { "type": "file", "name": "ModelService.spec.js" },
+                  { "type": "file", "name": "PluginService.js" },
+                  {
+                    "type": "directory",
+                    "name": "Runs",
+                    "contents": [
+                      { "type": "file", "name": "handle.js" },
+                      { "type": "file", "name": "index.js" },
+                      { "type": "file", "name": "methods.js" },
+                      { "type": "file", "name": "RunManager.js" },
+                      { "type": "file", "name": "StreamRunManager.js" }
+                    ]
+                  },
+                  { "type": "file", "name": "signPayload.js" },
+                  {
+                    "type": "directory",
+                    "name": "start",
+                    "contents": [
+                      { "type": "file", "name": "assistants.js" },
+                      { "type": "file", "name": "azureOpenAI.js" },
+                      { "type": "file", "name": "checks.js" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "Threads",
+                    "contents": [
+                      { "type": "file", "name": "index.js" },
+                      { "type": "file", "name": "manage.js" }
+                    ]
+                  },
+                  { "type": "file", "name": "ToolService.js" },
+                  { "type": "file", "name": "UserService.js" }
+                ]
+              },
+              { "type": "file", "name": "socialLogins.js" },
+              {
+                "type": "directory",
+                "name": "utils",
+                "contents": [
+                  { "type": "file", "name": "citations.js" },
+                  { "type": "file", "name": "countTokens.js" },
+                  { "type": "file", "name": "crypto.js" },
+                  {
+                    "type": "directory",
+                    "name": "emails",
+                    "contents": [
+                      { "type": "file", "name": "passwordReset.handlebars" },
+                      { "type": "file", "name": "requestPasswordReset.handlebars" },
+                      { "type": "file", "name": "verifyEmail.handlebars" }
+                    ]
+                  },
+                  { "type": "file", "name": "files.js" },
+                  { "type": "file", "name": "handleText.js" },
+                  { "type": "file", "name": "handleText.spec.js" },
+                  { "type": "file", "name": "index.js" },
+                  { "type": "file", "name": "math.js" },
+                  { "type": "file", "name": "queue.js" },
+                  { "type": "file", "name": "removePorts.js" },
+                  { "type": "file", "name": "sendEmail.js" },
+                  { "type": "file", "name": "streamResponse.js" }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "strategies",
+            "contents": [
+              { "type": "file", "name": "discordStrategy.js" },
+              { "type": "file", "name": "facebookStrategy.js" },
+              { "type": "file", "name": "githubStrategy.js" },
+              { "type": "file", "name": "googleStrategy.js" },
+              { "type": "file", "name": "index.js" },
+              { "type": "file", "name": "joseStrategy.js" },
+              { "type": "file", "name": "jwtStrategy.js" },
+              { "type": "file", "name": "localStrategy.js" },
+              { "type": "file", "name": "openidStrategy.js" },
+              { "type": "file", "name": "process.js" },
+              { "type": "file", "name": "validators.js" },
+              { "type": "file", "name": "validators.spec.js" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "test",
+            "contents": [
+              { "type": "file", "name": "jestSetup.js" },
+              {
+                "type": "directory",
+                "name": "__mocks__",
+                "contents": [
+                  { "type": "file", "name": "auth.mock.json" },
+                  { "type": "file", "name": "fetchEventSource.js" },
+                  { "type": "file", "name": "KeyvMongo.js" },
+                  { "type": "file", "name": "logger.js" }
+                ]
+              }
+            ]
+          },
+          { "type": "file", "name": "typedefs.js" },
+          {
+            "type": "directory",
+            "name": "utils",
+            "contents": [
+              { "type": "file", "name": "azureUtils.js" },
+              { "type": "file", "name": "azureUtils.spec.js" },
+              { "type": "file", "name": "debug.js" },
+              { "type": "file", "name": "extractBaseURL.js" },
+              { "type": "file", "name": "extractBaseURL.spec.js" },
+              { "type": "file", "name": "findMessageContent.js" },
+              { "type": "file", "name": "index.js" },
+              { "type": "file", "name": "loadYaml.js" },
+              { "type": "file", "name": "logAxiosError.js" },
+              { "type": "file", "name": "logger.js" },
+              { "type": "file", "name": "LoggingSystem.js" },
+              { "type": "file", "name": "tokens.js" },
+              { "type": "file", "name": "tokens.spec.js" }
+            ]
+          }
+        ]
+      },
+      { "type": "file", "name": "bun.lockb" },
+      {
+        "type": "directory",
+        "name": "client",
+        "contents": [
+          { "type": "file", "name": "babel.config.cjs" },
+          { "type": "file", "name": "check_updates.sh" },
+          {
+            "type": "directory",
+            "name": "dist",
+            "contents": [
+              {
+                "type": "directory",
+                "name": "assets",
+                "contents": [
+                  { "type": "file", "name": "anyscale.png" },
+                  { "type": "file", "name": "apipie.png" },
+                  { "type": "file", "name": "apple-touch-icon-180x180.png" },
+                  { "type": "file", "name": "bingai-jb.png" },
+                  { "type": "file", "name": "bingai.png" },
+                  { "type": "file", "name": "cohere.png" },
+                  { "type": "file", "name": "favicon-africa-16x16.png" },
+                  { "type": "file", "name": "favicon-africa-32x32.png" },
+                  { "type": "file", "name": "favicon-china-16x16.png" },
+                  { "type": "file", "name": "favicon-china-32x32.png" },
+                  { "type": "file", "name": "favicon-global-16x16.png" },
+                  { "type": "file", "name": "favicon-global-32x32.png" },
+                  { "type": "file", "name": "favicon-iran-16x16.png" },
+                  { "type": "file", "name": "favicon-iran-32x32.png" },
+                  { "type": "file", "name": "favicon-italy-16x16.png" },
+                  { "type": "file", "name": "favicon-italy-32x32.png" },
+                  { "type": "file", "name": "favicon-novlisky-16x16.png" },
+                  { "type": "file", "name": "favicon-novlisky-32x32.png" },
+                  { "type": "file", "name": "favicon-russia-16x16.png" },
+                  { "type": "file", "name": "favicon-russia-32x32.png" },
+                  { "type": "file", "name": "favicon-usa-16x16.png" },
+                  { "type": "file", "name": "favicon-usa-32x32.png" },
+                  { "type": "file", "name": "fireworks.png" },
+                  { "type": "file", "name": "google-palm.svg" },
+                  { "type": "file", "name": "groq.png" },
+                  { "type": "file", "name": "index-4aviKKeI.js" },
+                  { "type": "file", "name": "index-Rv8JKDgP.css" },
+                  { "type": "file", "name": "Inter-Bold-CytjP_7U.woff2" },
+                  { "type": "file", "name": "Inter-BoldItalic-B0T-BnK6.woff2" },
+                  { "type": "file", "name": "Inter-Italic-B_ozvy2G.woff2" },
+                  { "type": "file", "name": "Inter-Regular-B0QUfDW0.woff2" },
+                  { "type": "file", "name": "Inter-SemiBoldItalic-C4gNvuGw.woff2" },
+                  { "type": "file", "name": "Inter-SemiBold-_JLwM7Yv.woff2" },
+                  { "type": "file", "name": "logo-africa.png" },
+                  { "type": "file", "name": "logo-china.png" },
+                  { "type": "file", "name": "logo-global.png" },
+                  { "type": "file", "name": "logo-iran.png" },
+                  { "type": "file", "name": "logo-italy.png" },
+                  { "type": "file", "name": "logo-novlisky-og.png" },
+                  { "type": "file", "name": "logo-novlisky.png" },
+                  { "type": "file", "name": "logo-russia.png" },
+                  { "type": "file", "name": "logo-usa.png" },
+                  { "type": "file", "name": "markdown_highlight-ByjxT0vp.js" },
+                  { "type": "file", "name": "markdown_large-DYztx7A7.js" },
+                  { "type": "file", "name": "maskable-icon.png" },
+                  { "type": "file", "name": "mistral.png" },
+                  { "type": "file", "name": "ollama.png" },
+                  { "type": "file", "name": "openrouter.png" },
+                  { "type": "file", "name": "perplexity.png" },
+                  { "type": "file", "name": "roboto-mono-latin-400-italic-B6BBQVPU.woff2" },
+                  { "type": "file", "name": "roboto-mono-latin-400-normal-C_5wUCW5.woff2" },
+                  { "type": "file", "name": "roboto-mono-latin-700-normal-DpzZ8rK9.woff2" },
+                  { "type": "file", "name": "shuttleai.png" },
+                  { "type": "file", "name": "together.png" },
+                  { "type": "file", "name": "vendor-JxUmfV-b.js" },
+                  { "type": "file", "name": "web-browser.svg" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "fonts",
+                "contents": [
+                  { "type": "file", "name": "Inter-BoldItalic.woff2" },
+                  { "type": "file", "name": "Inter-Bold.woff2" },
+                  { "type": "file", "name": "Inter-Italic.woff2" },
+                  { "type": "file", "name": "Inter-Regular.woff2" },
+                  { "type": "file", "name": "Inter-SemiBoldItalic.woff2" },
+                  { "type": "file", "name": "Inter-SemiBold.woff2" },
+                  { "type": "file", "name": "roboto-mono-latin-400-italic.woff2" },
+                  { "type": "file", "name": "roboto-mono-latin-400-normal.woff2" },
+                  { "type": "file", "name": "roboto-mono-latin-700-normal.woff2" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "images",
+                "contents": [
+                  {
+                    "type": "directory",
+                    "name": "64b8356a583d5bfa240b678c",
+                    "contents": [
+                      {
+                        "type": "file",
+                        "name": "319fc1a4-ab03-4c60-a4fc-df22b72ee0a1__Screenshot from 2024-04-03 16-01-04.webp"
+                      },
+                      {
+                        "type": "file",
+                        "name": "e9bf12ae-a956-476b-adb7-c9cbdd753b11__Screenshot from 2024-04-03 16-01-04.webp"
+                      },
+                      { "type": "file", "name": "img-0cd2c494-73ed-4663-bf75-82bde752af25.png" },
+                      { "type": "file", "name": "img-20275349-b5c7-4c49-a1ec-5be40878ea6f.png" },
+                      { "type": "file", "name": "img-6ef1f783-5b0e-4bd2-aae8-411470ea94fd.png" },
+                      { "type": "file", "name": "img-c14d4e12-3612-4a6c-ab06-d9d29505f1d5.png" },
+                      { "type": "file", "name": "img-c559db03-09f6-49aa-aa65-55a77441127b.png" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "6520144a2bdcdb98064cd566",
+                    "contents": [
+                      { "type": "file", "name": "img-0187d4fc-c3cc-4cad-8379-e71730dbd74e.png" },
+                      { "type": "file", "name": "img-373c581f-9f16-4e66-99d6-00bba2b5b626.png" },
+                      { "type": "file", "name": "img-82bc3d9b-3db4-4e57-8cd7-1c604ee016a5.png" },
+                      { "type": "file", "name": "img-ad8b5f3e-b7d6-413f-bb7c-3955f5281c2f.png" },
+                      { "type": "file", "name": "img-c0c7d700-e2ed-4f14-a46a-0f5c49f67915.png" }
+                    ]
+                  },
+                  { "type": "directory", "name": "temp" }
+                ]
+              },
+              { "type": "file", "name": "index.html" },
+              { "type": "file", "name": "manifest.webmanifest" },
+              { "type": "file", "name": "registerSW.js" },
+              { "type": "file", "name": "sw.js" },
+              { "type": "file", "name": "workbox-b23c3c24.js" }
+            ]
+          },
+          { "type": "file", "name": "index.html" },
+          { "type": "file", "name": "jest.config.cjs" },
+          { "type": "file", "name": "nginx.conf" },
+          { "type": "file", "name": "package.json" },
+          { "type": "file", "name": "postcss.config.cjs" },
+          {
+            "type": "directory",
+            "name": "public",
+            "contents": [
+              {
+                "type": "directory",
+                "name": "assets",
+                "contents": [
+                  { "type": "file", "name": "anyscale.png" },
+                  { "type": "file", "name": "apipie.png" },
+                  { "type": "file", "name": "apple-touch-icon-180x180.png" },
+                  { "type": "file", "name": "bingai-jb.png" },
+                  { "type": "file", "name": "bingai.png" },
+                  { "type": "file", "name": "cohere.png" },
+                  { "type": "file", "name": "favicon-africa-16x16.png" },
+                  { "type": "file", "name": "favicon-africa-32x32.png" },
+                  { "type": "file", "name": "favicon-china-16x16.png" },
+                  { "type": "file", "name": "favicon-china-32x32.png" },
+                  { "type": "file", "name": "favicon-global-16x16.png" },
+                  { "type": "file", "name": "favicon-global-32x32.png" },
+                  { "type": "file", "name": "favicon-iran-16x16.png" },
+                  { "type": "file", "name": "favicon-iran-32x32.png" },
+                  { "type": "file", "name": "favicon-italy-16x16.png" },
+                  { "type": "file", "name": "favicon-italy-32x32.png" },
+                  { "type": "file", "name": "favicon-novlisky-16x16.png" },
+                  { "type": "file", "name": "favicon-novlisky-32x32.png" },
+                  { "type": "file", "name": "favicon-russia-16x16.png" },
+                  { "type": "file", "name": "favicon-russia-32x32.png" },
+                  { "type": "file", "name": "favicon-usa-16x16.png" },
+                  { "type": "file", "name": "favicon-usa-32x32.png" },
+                  { "type": "file", "name": "fireworks.png" },
+                  { "type": "file", "name": "google-palm.svg" },
+                  { "type": "file", "name": "groq.png" },
+                  { "type": "file", "name": "logo-africa.png" },
+                  { "type": "file", "name": "logo-china.png" },
+                  { "type": "file", "name": "logo-global.png" },
+                  { "type": "file", "name": "logo-iran.png" },
+                  { "type": "file", "name": "logo-italy.png" },
+                  { "type": "file", "name": "logo-novlisky-og.png" },
+                  { "type": "file", "name": "logo-novlisky.png" },
+                  { "type": "file", "name": "logo-russia.png" },
+                  { "type": "file", "name": "logo-usa.png" },
+                  { "type": "file", "name": "maskable-icon.png" },
+                  { "type": "file", "name": "mistral.png" },
+                  { "type": "file", "name": "ollama.png" },
+                  { "type": "file", "name": "openrouter.png" },
+                  { "type": "file", "name": "perplexity.png" },
+                  { "type": "file", "name": "shuttleai.png" },
+                  { "type": "file", "name": "together.png" },
+                  { "type": "file", "name": "web-browser.svg" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "fonts",
+                "contents": [
+                  { "type": "file", "name": "Inter-BoldItalic.woff2" },
+                  { "type": "file", "name": "Inter-Bold.woff2" },
+                  { "type": "file", "name": "Inter-Italic.woff2" },
+                  { "type": "file", "name": "Inter-Regular.woff2" },
+                  { "type": "file", "name": "Inter-SemiBoldItalic.woff2" },
+                  { "type": "file", "name": "Inter-SemiBold.woff2" },
+                  { "type": "file", "name": "roboto-mono-latin-400-italic.woff2" },
+                  { "type": "file", "name": "roboto-mono-latin-400-normal.woff2" },
+                  { "type": "file", "name": "roboto-mono-latin-700-normal.woff2" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "images",
+                "contents": [
+                  {
+                    "type": "directory",
+                    "name": "64b8356a583d5bfa240b678c",
+                    "contents": [
+                      {
+                        "type": "file",
+                        "name": "319fc1a4-ab03-4c60-a4fc-df22b72ee0a1__Screenshot from 2024-04-03 16-01-04.webp"
+                      },
+                      {
+                        "type": "file",
+                        "name": "e9bf12ae-a956-476b-adb7-c9cbdd753b11__Screenshot from 2024-04-03 16-01-04.webp"
+                      },
+                      { "type": "file", "name": "img-0cd2c494-73ed-4663-bf75-82bde752af25.png" },
+                      { "type": "file", "name": "img-20275349-b5c7-4c49-a1ec-5be40878ea6f.png" },
+                      { "type": "file", "name": "img-6ef1f783-5b0e-4bd2-aae8-411470ea94fd.png" },
+                      { "type": "file", "name": "img-c14d4e12-3612-4a6c-ab06-d9d29505f1d5.png" },
+                      { "type": "file", "name": "img-c559db03-09f6-49aa-aa65-55a77441127b.png" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "6520144a2bdcdb98064cd566",
+                    "contents": [
+                      { "type": "file", "name": "img-0187d4fc-c3cc-4cad-8379-e71730dbd74e.png" },
+                      { "type": "file", "name": "img-373c581f-9f16-4e66-99d6-00bba2b5b626.png" },
+                      { "type": "file", "name": "img-82bc3d9b-3db4-4e57-8cd7-1c604ee016a5.png" },
+                      { "type": "file", "name": "img-ad8b5f3e-b7d6-413f-bb7c-3955f5281c2f.png" },
+                      { "type": "file", "name": "img-c0c7d700-e2ed-4f14-a46a-0f5c49f67915.png" }
+                    ]
+                  },
+                  { "type": "directory", "name": "temp" }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "src",
+            "contents": [
+              { "type": "file", "name": "App.jsx" },
+              {
+                "type": "directory",
+                "name": "common",
+                "contents": [
+                  { "type": "file", "name": "assistants-types.ts" },
+                  { "type": "file", "name": "index.ts" },
+                  { "type": "file", "name": "types.ts" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "components",
+                "contents": [
+                  {
+                    "type": "directory",
+                    "name": "AiTokenBurnRates",
+                    "contents": [{ "type": "file", "name": "AiTokenBurnRates.tsx" }]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "Auth",
+                    "contents": [
+                      { "type": "file", "name": "ApiErrorWatcher.tsx" },
+                      { "type": "file", "name": "index.ts" },
+                      { "type": "file", "name": "LoginForm.tsx" },
+                      { "type": "file", "name": "Login.tsx" },
+                      { "type": "file", "name": "Registration.tsx" },
+                      { "type": "file", "name": "RequestPasswordReset.tsx" },
+                      { "type": "file", "name": "ResetPassword.tsx" },
+                      { "type": "file", "name": "SocialButton.tsx" },
+                      {
+                        "type": "directory",
+                        "name": "__tests__",
+                        "contents": [
+                          { "type": "file", "name": "LoginForm.spec.tsx" },
+                          { "type": "file", "name": "Login.spec.tsx" },
+                          { "type": "file", "name": "Registration.spec.tsx" }
+                        ]
+                      },
+                      { "type": "file", "name": "VerifyEmail.tsx" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "Chat",
+                    "contents": [
+                      { "type": "file", "name": "ChatView.tsx" },
+                      { "type": "file", "name": "Footer.tsx" },
+                      { "type": "file", "name": "Header.tsx" },
+                      {
+                        "type": "directory",
+                        "name": "Input",
+                        "contents": [
+                          { "type": "file", "name": "ChatForm.tsx" },
+                          {
+                            "type": "directory",
+                            "name": "Files",
+                            "contents": [
+                              { "type": "file", "name": "AttachFile.tsx" },
+                              { "type": "file", "name": "DragDropOverlay.tsx" },
+                              { "type": "file", "name": "FileContainer.tsx" },
+                              { "type": "file", "name": "FilePreview.tsx" },
+                              { "type": "file", "name": "FileRow.tsx" },
+                              { "type": "file", "name": "FilesView.tsx" },
+                              { "type": "file", "name": "FileUpload.tsx" },
+                              { "type": "file", "name": "ImagePreview.tsx" },
+                              { "type": "file", "name": "Image.tsx" },
+                              { "type": "file", "name": "ProgressCircle.tsx" },
+                              { "type": "file", "name": "RemoveFile.tsx" },
+                              {
+                                "type": "directory",
+                                "name": "Table",
+                                "contents": [
+                                  { "type": "file", "name": "Columns.tsx" },
+                                  { "type": "file", "name": "DataTable.tsx" },
+                                  { "type": "file", "name": "fakeData.ts" },
+                                  { "type": "file", "name": "index.ts" },
+                                  { "type": "file", "name": "SortFilterHeader.tsx" },
+                                  { "type": "file", "name": "TemplateTable.tsx" }
+                                ]
+                              }
+                            ]
+                          },
+                          { "type": "file", "name": "GenerationButtons.tsx" },
+                          { "type": "file", "name": "HeaderOptions.tsx" },
+                          { "type": "file", "name": "OptionsPopover.tsx" },
+                          { "type": "file", "name": "PopoverButtons.tsx" },
+                          { "type": "file", "name": "SendButton.tsx" },
+                          { "type": "file", "name": "StopButton.tsx" }
+                        ]
+                      },
+                      { "type": "file", "name": "Landing.tsx" },
+                      {
+                        "type": "directory",
+                        "name": "Menus",
+                        "contents": [
+                          {
+                            "type": "directory",
+                            "name": "Endpoints",
+                            "contents": [
+                              { "type": "file", "name": "Icons.tsx" },
+                              { "type": "file", "name": "MenuItems.tsx" },
+                              { "type": "file", "name": "MenuItem.tsx" },
+                              { "type": "file", "name": "UnknownIcon.tsx" }
+                            ]
+                          },
+                          { "type": "file", "name": "EndpointsMenu.tsx" },
+                          { "type": "file", "name": "HeaderNewChat.tsx" },
+                          { "type": "file", "name": "index.ts" },
+                          {
+                            "type": "directory",
+                            "name": "Presets",
+                            "contents": [
+                              { "type": "file", "name": "EditPresetDialog.tsx" },
+                              { "type": "file", "name": "index.ts" },
+                              { "type": "file", "name": "PresetItems.tsx" }
+                            ]
+                          },
+                          { "type": "file", "name": "PresetsMenu.tsx" },
+                          {
+                            "type": "directory",
+                            "name": "UI",
+                            "contents": [
+                              { "type": "file", "name": "index.ts" },
+                              { "type": "file", "name": "MenuItem.tsx" },
+                              { "type": "file", "name": "MenuSeparator.tsx" },
+                              { "type": "file", "name": "TitleButton.tsx" }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "directory",
+                        "name": "Messages",
+                        "contents": [
+                          {
+                            "type": "directory",
+                            "name": "Content",
+                            "contents": [
+                              { "type": "file", "name": "ActionIcon.tsx" },
+                              { "type": "file", "name": "CancelledIcon.tsx" },
+                              { "type": "file", "name": "CodeAnalyze.tsx" },
+                              { "type": "file", "name": "Container.tsx" },
+                              { "type": "file", "name": "ContentParts.tsx" },
+                              { "type": "file", "name": "DialogImage.tsx" },
+                              { "type": "file", "name": "EditMessage.tsx" },
+                              { "type": "file", "name": "Files.tsx" },
+                              { "type": "file", "name": "FinishedIcon.tsx" },
+                              { "type": "file", "name": "ImageGen.tsx" },
+                              { "type": "file", "name": "Image.tsx" },
+                              { "type": "file", "name": "InProgressCall.tsx" },
+                              { "type": "file", "name": "MarkdownLite.tsx" },
+                              { "type": "file", "name": "Markdown.tsx" },
+                              { "type": "file", "name": "MessageContent.tsx" },
+                              { "type": "file", "name": "Part.tsx" },
+                              { "type": "file", "name": "ProgressCircle.tsx" },
+                              { "type": "file", "name": "ProgressText.tsx" },
+                              { "type": "file", "name": "RetrievalCall.tsx" },
+                              { "type": "file", "name": "RetrievalIcon.tsx" },
+                              { "type": "file", "name": "ToolCall.tsx" },
+                              { "type": "file", "name": "ToolPopover.tsx" },
+                              { "type": "file", "name": "WrenchIcon.tsx" }
+                            ]
+                          },
+                          { "type": "file", "name": "HoverButtons.tsx" },
+                          { "type": "file", "name": "MessageParts.tsx" },
+                          { "type": "file", "name": "MessagesView.tsx" },
+                          { "type": "file", "name": "Message.tsx" },
+                          { "type": "file", "name": "MultiMessage.tsx" },
+                          { "type": "file", "name": "SiblingSwitch.tsx" },
+                          { "type": "file", "name": "SubRow.tsx" }
+                        ]
+                      },
+                      { "type": "file", "name": "Presentation.tsx" },
+                      { "type": "file", "name": "SearchView.tsx" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "ClaimTokensButton",
+                    "contents": [{ "type": "file", "name": "ClaimTokensButton.jsx" }]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "Conversations",
+                    "contents": [
+                      { "type": "file", "name": "Conversation.jsx" },
+                      { "type": "file", "name": "Conversations.tsx" },
+                      { "type": "file", "name": "Convo.tsx" },
+                      { "type": "file", "name": "DeleteButton.tsx" },
+                      { "type": "file", "name": "index.ts" },
+                      { "type": "file", "name": "Pages.tsx" },
+                      { "type": "file", "name": "RenameButton.tsx" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "Endpoints",
+                    "contents": [
+                      { "type": "file", "name": "AlternativeSettings.tsx" },
+                      { "type": "file", "name": "EndpointOptionsPopover.tsx" },
+                      { "type": "file", "name": "EndpointSettings.tsx" },
+                      { "type": "file", "name": "Icon.tsx" },
+                      { "type": "file", "name": "index.ts" },
+                      { "type": "file", "name": "MinimalIcon.tsx" },
+                      { "type": "file", "name": "SaveAsPresetDialog.tsx" },
+                      {
+                        "type": "directory",
+                        "name": "Settings",
+                        "contents": [
+                          { "type": "file", "name": "Advanced.tsx" },
+                          { "type": "file", "name": "AgentSettings.tsx" },
+                          { "type": "file", "name": "Anthropic.tsx" },
+                          { "type": "file", "name": "Assistants.tsx" },
+                          { "type": "file", "name": "BingAI.tsx" },
+                          { "type": "file", "name": "Examples.tsx" },
+                          { "type": "file", "name": "Google.tsx" },
+                          { "type": "file", "name": "index.ts" },
+                          {
+                            "type": "directory",
+                            "name": "MultiView",
+                            "contents": [
+                              { "type": "file", "name": "GoogleSettings.tsx" },
+                              { "type": "file", "name": "Google.tsx" },
+                              { "type": "file", "name": "index.ts" },
+                              { "type": "file", "name": "PluginSettings.tsx" },
+                              { "type": "file", "name": "Plugins.tsx" }
+                            ]
+                          },
+                          { "type": "file", "name": "OpenAI.tsx" },
+                          { "type": "file", "name": "OptionHover.tsx" },
+                          { "type": "file", "name": "Plugins.tsx" },
+                          { "type": "file", "name": "settings.ts" }
+                        ]
+                      }
+                    ]
+                  },
+                  { "type": "file", "name": "index.ts" },
+                  {
+                    "type": "directory",
+                    "name": "Input",
+                    "contents": [
+                      { "type": "file", "name": "Footer.tsx" },
+                      { "type": "file", "name": "GenerationButtons.tsx" },
+                      {
+                        "type": "directory",
+                        "name": "Generations",
+                        "contents": [
+                          { "type": "file", "name": "Button.tsx" },
+                          { "type": "file", "name": "Continue.tsx" },
+                          { "type": "file", "name": "GenerationButtons.tsx" },
+                          { "type": "file", "name": "index.ts" },
+                          { "type": "file", "name": "Regenerate.tsx" },
+                          { "type": "file", "name": "Stop.tsx" },
+                          {
+                            "type": "directory",
+                            "name": "__tests__",
+                            "contents": [
+                              { "type": "file", "name": "Button.spec.tsx" },
+                              { "type": "file", "name": "Continue.spec.tsx" },
+                              { "type": "file", "name": "Regenerate.spec.tsx" },
+                              { "type": "file", "name": "Stop.spec.tsx" }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "directory",
+                        "name": "ModelSelect",
+                        "contents": [
+                          { "type": "file", "name": "Anthropic.tsx" },
+                          { "type": "file", "name": "BingAI.tsx" },
+                          { "type": "file", "name": "ChatGPT.tsx" },
+                          { "type": "file", "name": "Google.tsx" },
+                          { "type": "file", "name": "index.ts" },
+                          { "type": "file", "name": "ModelSelect.tsx" },
+                          { "type": "file", "name": "OpenAI.tsx" },
+                          { "type": "file", "name": "options.ts" },
+                          { "type": "file", "name": "PluginsByIndex.tsx" },
+                          { "type": "file", "name": "Plugins.tsx" }
+                        ]
+                      },
+                      {
+                        "type": "directory",
+                        "name": "SetKeyDialog",
+                        "contents": [
+                          { "type": "file", "name": "CustomEndpoint.tsx" },
+                          { "type": "file", "name": "GoogleConfig.tsx" },
+                          { "type": "file", "name": "HelpText.tsx" },
+                          { "type": "file", "name": "index.ts" },
+                          { "type": "file", "name": "InputWithLabel.tsx" },
+                          { "type": "file", "name": "OpenAIConfig.tsx" },
+                          { "type": "file", "name": "OtherConfig.tsx" },
+                          { "type": "file", "name": "SetKeyDialog.tsx" }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "Landing",
+                    "contents": [{ "type": "file", "name": "Intro.tsx" }]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "Messages",
+                    "contents": [
+                      {
+                        "type": "directory",
+                        "name": "Content",
+                        "contents": [
+                          { "type": "file", "name": "CodeBlock.tsx" },
+                          { "type": "file", "name": "Container.tsx" },
+                          { "type": "file", "name": "EditMessage.tsx" },
+                          { "type": "file", "name": "ErrorDialog.tsx" },
+                          { "type": "file", "name": "Error.tsx" },
+                          { "type": "file", "name": "index.ts" },
+                          { "type": "file", "name": "Markdown.tsx" },
+                          { "type": "file", "name": "MessageContent.tsx" },
+                          { "type": "file", "name": "Plugin.tsx" },
+                          { "type": "file", "name": "SubRow.tsx" }
+                        ]
+                      },
+                      { "type": "file", "name": "HoverButtons.tsx" },
+                      { "type": "file", "name": "Message.tsx" },
+                      { "type": "file", "name": "MultiMessage.tsx" },
+                      { "type": "file", "name": "ScrollToBottom.tsx" },
+                      { "type": "file", "name": "SiblingSwitch.tsx" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "Nav",
+                    "contents": [
+                      { "type": "file", "name": "BuyTokensButton.tsx" },
+                      { "type": "file", "name": "ClearConvos.tsx" },
+                      {
+                        "type": "directory",
+                        "name": "ExportConversation",
+                        "contents": [
+                          { "type": "file", "name": "ExportConversation.jsx" },
+                          { "type": "file", "name": "ExportModal.jsx" },
+                          { "type": "file", "name": "index.ts" }
+                        ]
+                      },
+                      { "type": "file", "name": "Header.tsx" },
+                      { "type": "file", "name": "index.ts" },
+                      { "type": "file", "name": "Logout.tsx" },
+                      { "type": "file", "name": "MobileNav.tsx" },
+                      { "type": "file", "name": "NavLinks.tsx" },
+                      { "type": "file", "name": "NavLink.tsx" },
+                      { "type": "file", "name": "NavToggle.tsx" },
+                      { "type": "file", "name": "Nav.tsx" },
+                      { "type": "file", "name": "NewChat.tsx" },
+                      { "type": "file", "name": "SearchBar.tsx" },
+                      {
+                        "type": "directory",
+                        "name": "SettingsTabs",
+                        "contents": [
+                          {
+                            "type": "directory",
+                            "name": "Account",
+                            "contents": [
+                              { "type": "file", "name": "Account.tsx" },
+                              { "type": "file", "name": "Avatar.tsx" }
+                            ]
+                          },
+                          {
+                            "type": "directory",
+                            "name": "Beta",
+                            "contents": [
+                              { "type": "file", "name": "Beta.tsx" },
+                              { "type": "file", "name": "LaTeXParsing.tsx" },
+                              { "type": "file", "name": "ModularChat.tsx" }
+                            ]
+                          },
+                          { "type": "file", "name": "DangerButton.tsx" },
+                          {
+                            "type": "directory",
+                            "name": "Data",
+                            "contents": [{ "type": "file", "name": "Data.tsx" }]
+                          },
+                          {
+                            "type": "directory",
+                            "name": "General",
+                            "contents": [
+                              { "type": "file", "name": "AutoScrollSwitch.spec.tsx" },
+                              { "type": "file", "name": "AutoScrollSwitch.tsx" },
+                              { "type": "file", "name": "ClearChatsButton.spec.tsx" },
+                              { "type": "file", "name": "EnterToSend.tsx" },
+                              { "type": "file", "name": "General.tsx" },
+                              { "type": "file", "name": "HideSidePanelSwitch.tsx" },
+                              { "type": "file", "name": "LangSelector.spec.tsx" },
+                              { "type": "file", "name": "ShowCodeSwitch.tsx" },
+                              { "type": "file", "name": "ThemeSelector.spec.tsx" }
+                            ]
+                          },
+                          { "type": "file", "name": "index.ts" }
+                        ]
+                      },
+                      { "type": "file", "name": "Settings.tsx" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "payment",
+                    "contents": [
+                      { "type": "file", "name": "BitcoinPayment.tsx" },
+                      { "type": "file", "name": "paymentConstants.ts" },
+                      { "type": "file", "name": "PaymentOptionButton.tsx" },
+                      { "type": "file", "name": "paymentUtils.ts" },
+                      { "type": "file", "name": "StripePayment.tsx" },
+                      { "type": "file", "name": "TokenOption.tsx" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "Plugins",
+                    "contents": [
+                      { "type": "file", "name": "index.ts" },
+                      {
+                        "type": "directory",
+                        "name": "Store",
+                        "contents": [
+                          { "type": "file", "name": "index.ts" },
+                          { "type": "file", "name": "PluginAuthForm.tsx" },
+                          { "type": "file", "name": "PluginPagination.tsx" },
+                          { "type": "file", "name": "PluginStoreDialog.tsx" },
+                          { "type": "file", "name": "PluginStoreItem.tsx" },
+                          { "type": "file", "name": "PluginStoreLinkButton.tsx" },
+                          { "type": "file", "name": "PluginTooltip.tsx" },
+                          { "type": "file", "name": "styles.module.css" },
+                          {
+                            "type": "directory",
+                            "name": "__tests__",
+                            "contents": [
+                              { "type": "file", "name": "PluginAuthForm.spec.tsx" },
+                              { "type": "file", "name": "PluginPagination.spec.tsx" },
+                              { "type": "file", "name": "PluginStoreDialog.spec.tsx" },
+                              { "type": "file", "name": "PluginStoreItem.spec.tsx" }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "PrivacyPolicy",
+                    "contents": [{ "type": "file", "name": "PrivacyPolicy.tsx" }]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "SidePanel",
+                    "contents": [
+                      { "type": "file", "name": "AssistantSwitcher.tsx" },
+                      {
+                        "type": "directory",
+                        "name": "Builder",
+                        "contents": [
+                          { "type": "file", "name": "ActionsAuth.tsx" },
+                          { "type": "file", "name": "ActionsInput.tsx" },
+                          { "type": "file", "name": "ActionsPanel.tsx" },
+                          {
+                            "type": "directory",
+                            "name": "ActionsTable",
+                            "contents": [
+                              { "type": "file", "name": "Columns.tsx" },
+                              { "type": "file", "name": "index.ts" },
+                              { "type": "file", "name": "Table.tsx" }
+                            ]
+                          },
+                          { "type": "file", "name": "AssistantAction.tsx" },
+                          { "type": "file", "name": "AssistantAvatar.tsx" },
+                          { "type": "file", "name": "AssistantPanel.tsx" },
+                          { "type": "file", "name": "AssistantSelect.tsx" },
+                          { "type": "file", "name": "AssistantTool.tsx" },
+                          { "type": "file", "name": "ContextButton.tsx" },
+                          { "type": "file", "name": "Images.tsx" },
+                          { "type": "file", "name": "Knowledge.tsx" },
+                          { "type": "file", "name": "PanelSwitch.tsx" }
+                        ]
+                      },
+                      { "type": "file", "name": "data.tsx" },
+                      {
+                        "type": "directory",
+                        "name": "Files",
+                        "contents": [
+                          { "type": "file", "name": "PanelColumns.tsx" },
+                          { "type": "file", "name": "PanelFileCell.tsx" },
+                          { "type": "file", "name": "PanelTable.tsx" },
+                          { "type": "file", "name": "Panel.tsx" }
+                        ]
+                      },
+                      { "type": "file", "name": "index.ts" },
+                      { "type": "file", "name": "ModelSwitcher.tsx" },
+                      { "type": "file", "name": "Nav.tsx" },
+                      {
+                        "type": "directory",
+                        "name": "Parameters",
+                        "contents": [
+                          { "type": "file", "name": "DynamicCheckbox.tsx" },
+                          { "type": "file", "name": "DynamicDropdown.tsx" },
+                          { "type": "file", "name": "DynamicInput.tsx" },
+                          { "type": "file", "name": "DynamicSlider.tsx" },
+                          { "type": "file", "name": "DynamicSwitch.tsx" },
+                          { "type": "file", "name": "DynamicTags.tsx" },
+                          { "type": "file", "name": "DynamicTextarea.tsx" },
+                          { "type": "file", "name": "index.ts" },
+                          { "type": "file", "name": "OptionHover.tsx" },
+                          { "type": "file", "name": "Panel.tsx" }
+                        ]
+                      },
+                      { "type": "file", "name": "SidePanel.tsx" },
+                      { "type": "file", "name": "Switcher.tsx" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "svg",
+                    "contents": [
+                      { "type": "file", "name": "AnthropicIcon.tsx" },
+                      { "type": "file", "name": "AnthropicMinimalIcon.tsx" },
+                      { "type": "file", "name": "AssistantIcon.tsx" },
+                      { "type": "file", "name": "AttachmentIcon.tsx" },
+                      { "type": "file", "name": "AzureMinimalIcon.tsx" },
+                      { "type": "file", "name": "BingAIMinimalIcon.tsx" },
+                      { "type": "file", "name": "BingChatIcon.tsx" },
+                      { "type": "file", "name": "BingIconBackup.tsx" },
+                      { "type": "file", "name": "BingIcon.tsx" },
+                      { "type": "file", "name": "BingJbIcon.tsx" },
+                      { "type": "file", "name": "BirthdayIcon.tsx" },
+                      { "type": "file", "name": "Blocks.tsx" },
+                      { "type": "file", "name": "CautionIcon.tsx" },
+                      { "type": "file", "name": "ChatGPTMinimalIcon.tsx" },
+                      { "type": "file", "name": "ChatIcon.tsx" },
+                      { "type": "file", "name": "CheckMark.tsx" },
+                      { "type": "file", "name": "Clipboard.tsx" },
+                      { "type": "file", "name": "CodeyIcon.tsx" },
+                      { "type": "file", "name": "ContinueIcon.tsx" },
+                      { "type": "file", "name": "ConvoIcon.tsx" },
+                      { "type": "file", "name": "CrossIcon.tsx" },
+                      { "type": "file", "name": "CustomMinimalIcon.tsx" },
+                      { "type": "file", "name": "DarkModeIcon.tsx" },
+                      { "type": "file", "name": "DataIcon.tsx" },
+                      { "type": "file", "name": "DiscordIcon.tsx" },
+                      { "type": "file", "name": "DislikeIcon.tsx" },
+                      { "type": "file", "name": "DotsIcon.tsx" },
+                      { "type": "file", "name": "EditIcon.tsx" },
+                      { "type": "file", "name": "ExperimentIcon.tsx" },
+                      { "type": "file", "name": "FacebookIcon.tsx" },
+                      {
+                        "type": "directory",
+                        "name": "Files",
+                        "contents": [
+                          { "type": "file", "name": "CodePaths.tsx" },
+                          { "type": "file", "name": "FileIcon.tsx" },
+                          { "type": "file", "name": "FilePaths.tsx" },
+                          { "type": "file", "name": "SheetPaths.tsx" },
+                          { "type": "file", "name": "TextPaths.tsx" }
+                        ]
+                      },
+                      { "type": "file", "name": "GearIcon.tsx" },
+                      { "type": "file", "name": "GeminiIcon.tsx" },
+                      { "type": "file", "name": "GithubIcon.tsx" },
+                      { "type": "file", "name": "GoogleIconChat.tsx" },
+                      { "type": "file", "name": "GoogleIcon.tsx" },
+                      { "type": "file", "name": "GoogleMinimalIcon.tsx" },
+                      { "type": "file", "name": "GPTIcon.tsx" },
+                      { "type": "file", "name": "index.ts" },
+                      { "type": "file", "name": "LightModeIcon.tsx" },
+                      { "type": "file", "name": "LightningIcon.tsx" },
+                      { "type": "file", "name": "LikeIcon.tsx" },
+                      { "type": "file", "name": "LinkIcon.tsx" },
+                      { "type": "file", "name": "LogOutIcon.tsx" },
+                      { "type": "file", "name": "MessagesSquared.tsx" },
+                      { "type": "file", "name": "MinimalPlugin.tsx" },
+                      { "type": "file", "name": "NewChatIcon.tsx" },
+                      { "type": "file", "name": "NewTrashIcon.tsx" },
+                      { "type": "file", "name": "OGBingIcon.tsx" },
+                      { "type": "file", "name": "OpenAIMinimalIcon.tsx" },
+                      { "type": "file", "name": "OpenIDIcon.tsx" },
+                      { "type": "file", "name": "PaLMIcon.tsx" },
+                      { "type": "file", "name": "PaLMinimalIcon.tsx" },
+                      { "type": "file", "name": "Panel.tsx" },
+                      { "type": "file", "name": "PinIcon.tsx" },
+                      { "type": "file", "name": "Plugin.tsx" },
+                      { "type": "file", "name": "RegenerateIcon.tsx" },
+                      { "type": "file", "name": "RenameIcon.tsx" },
+                      { "type": "file", "name": "SaveIcon.tsx" },
+                      { "type": "file", "name": "SendIcon.tsx" },
+                      { "type": "file", "name": "SendMessageIcon.tsx" },
+                      { "type": "file", "name": "Sparkles.tsx" },
+                      { "type": "file", "name": "Spinner.tsx" },
+                      { "type": "file", "name": "StopGeneratingIcon.tsx" },
+                      { "type": "file", "name": "SunIcon.tsx" },
+                      { "type": "file", "name": "SwitchIcon.tsx" },
+                      { "type": "file", "name": "TrashIcon.tsx" },
+                      { "type": "file", "name": "UserIcon.tsx" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "TermsOfService",
+                    "contents": [{ "type": "file", "name": "TermsOfService.tsx" }]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "Tools",
+                    "contents": [
+                      { "type": "file", "name": "index.ts" },
+                      { "type": "file", "name": "ToolItem.tsx" },
+                      { "type": "file", "name": "ToolSelectDialog.tsx" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "ui",
+                    "contents": [
+                      { "type": "file", "name": "Accordion.tsx" },
+                      { "type": "file", "name": "AlertDialog.tsx" },
+                      { "type": "file", "name": "Button.tsx" },
+                      { "type": "file", "name": "Checkbox.tsx" },
+                      { "type": "file", "name": "Collapsible.tsx" },
+                      { "type": "file", "name": "Combobox.tsx" },
+                      { "type": "file", "name": "DataTableColumnHeader.tsx" },
+                      { "type": "file", "name": "DelayedRender.tsx" },
+                      { "type": "file", "name": "DialogTemplate.spec.tsx" },
+                      { "type": "file", "name": "DialogTemplate.tsx" },
+                      { "type": "file", "name": "Dialog.tsx" },
+                      { "type": "file", "name": "DropdownMenu.tsx" },
+                      { "type": "file", "name": "Dropdown.tsx" },
+                      { "type": "file", "name": "FileUpload.tsx" },
+                      { "type": "file", "name": "HoverCard.tsx" },
+                      { "type": "file", "name": "index.ts" },
+                      { "type": "file", "name": "InputNumber.tsx" },
+                      { "type": "file", "name": "Input.tsx" },
+                      { "type": "file", "name": "Label.tsx" },
+                      { "type": "file", "name": "Landing.tsx" },
+                      { "type": "file", "name": "MultiSearch.tsx" },
+                      { "type": "file", "name": "MultiSelectDropDown.tsx" },
+                      { "type": "file", "name": "MultiSelectPop.tsx" },
+                      { "type": "file", "name": "Prompt.tsx" },
+                      { "type": "file", "name": "QuestionMark.tsx" },
+                      { "type": "file", "name": "Resizable.tsx" },
+                      { "type": "file", "name": "SelectDropDownPop.tsx" },
+                      { "type": "file", "name": "SelectDropDown.tsx" },
+                      { "type": "file", "name": "Select.tsx" },
+                      { "type": "file", "name": "Separator.tsx" },
+                      { "type": "file", "name": "Slider.tsx" },
+                      { "type": "file", "name": "Switch.tsx" },
+                      { "type": "file", "name": "Table.tsx" },
+                      { "type": "file", "name": "Tabs.tsx" },
+                      { "type": "file", "name": "Tag.tsx" },
+                      { "type": "file", "name": "Templates.tsx" },
+                      { "type": "file", "name": "TextareaAutosize.tsx" },
+                      { "type": "file", "name": "Textarea.tsx" },
+                      { "type": "file", "name": "ThemeSelector.tsx" },
+                      { "type": "file", "name": "Toast.tsx" },
+                      { "type": "file", "name": "Tooltip.tsx" }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "data-provider",
+                "contents": [
+                  { "type": "file", "name": "index.ts" },
+                  { "type": "file", "name": "mutations.ts" },
+                  { "type": "file", "name": "queries.ts" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "hooks",
+                "contents": [
+                  { "type": "file", "name": "ApiErrorBoundaryContext.tsx" },
+                  {
+                    "type": "directory",
+                    "name": "Assistants",
+                    "contents": [
+                      { "type": "file", "name": "index.ts" },
+                      { "type": "file", "name": "useAssistantsMap.ts" },
+                      { "type": "file", "name": "useSelectAssistant.ts" }
+                    ]
+                  },
+                  { "type": "file", "name": "AuthContext.tsx" },
+                  {
+                    "type": "directory",
+                    "name": "Config",
+                    "contents": [
+                      { "type": "file", "name": "index.ts" },
+                      { "type": "file", "name": "useConfigOverride.ts" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "Conversations",
+                    "contents": [
+                      { "type": "file", "name": "index.ts" },
+                      { "type": "file", "name": "useDebouncedInput.ts" },
+                      { "type": "file", "name": "useGetSender.ts" },
+                      { "type": "file", "name": "useParameterEffects.ts" },
+                      { "type": "file", "name": "usePresets.ts" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "Files",
+                    "contents": [
+                      { "type": "file", "name": "index.ts" },
+                      { "type": "file", "name": "useDelayedUploadToast.ts" },
+                      { "type": "file", "name": "useDeleteFilesFromTable.tsx" },
+                      { "type": "file", "name": "useDragHelpers.ts" },
+                      { "type": "file", "name": "useFileDeletion.ts" },
+                      { "type": "file", "name": "useFileHandling.ts" },
+                      { "type": "file", "name": "useFileMap.ts" },
+                      { "type": "file", "name": "useSetFilesToDelete.ts" },
+                      { "type": "file", "name": "useUpdateFiles.ts" }
+                    ]
+                  },
+                  { "type": "file", "name": "index.ts" },
+                  {
+                    "type": "directory",
+                    "name": "Input",
+                    "contents": [
+                      { "type": "file", "name": "index.ts" },
+                      { "type": "file", "name": "useCombobox.ts" },
+                      { "type": "file", "name": "useDebounce.ts" },
+                      { "type": "file", "name": "useMultipleKeys.ts" },
+                      { "type": "file", "name": "useRequiresKey.ts" },
+                      { "type": "file", "name": "useTextarea.ts" },
+                      { "type": "file", "name": "useUserKey.ts" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "Messages",
+                    "contents": [
+                      { "type": "file", "name": "index.ts" },
+                      { "type": "file", "name": "useAvatar.ts" },
+                      { "type": "file", "name": "useMessageHelpers.ts" },
+                      { "type": "file", "name": "useMessageScrolling.ts" },
+                      { "type": "file", "name": "useProgress.ts" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "Nav",
+                    "contents": [
+                      { "type": "file", "name": "index.ts" },
+                      { "type": "file", "name": "useNavScrolling.ts" },
+                      { "type": "file", "name": "useSideNavLinks.ts" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "Plugins",
+                    "contents": [
+                      { "type": "file", "name": "index.ts" },
+                      { "type": "file", "name": "usePluginDialogHelpers.ts" }
+                    ]
+                  },
+                  { "type": "file", "name": "ScreenshotContext.tsx" },
+                  {
+                    "type": "directory",
+                    "name": "SSE",
+                    "contents": [
+                      { "type": "file", "name": "index.ts" },
+                      { "type": "file", "name": "useContentHandler.ts" },
+                      { "type": "file", "name": "useSSE.ts" }
+                    ]
+                  },
+                  { "type": "file", "name": "ThemeContext.tsx" },
+                  { "type": "file", "name": "useChatHelpers.ts" },
+                  { "type": "file", "name": "useConversations.ts" },
+                  { "type": "file", "name": "useConversation.ts" },
+                  { "type": "file", "name": "useDefaultConvo.ts" },
+                  { "type": "file", "name": "useDelayedRender.tsx" },
+                  { "type": "file", "name": "useDocumentTitle.ts" },
+                  { "type": "file", "name": "useGenerationsByLatest.ts" },
+                  { "type": "file", "name": "useGenerations.ts" },
+                  { "type": "file", "name": "useLocalize.ts" },
+                  { "type": "file", "name": "useLocalStorage.tsx" },
+                  { "type": "file", "name": "useMediaQuery.tsx" },
+                  { "type": "file", "name": "useMessageHandler.ts" },
+                  { "type": "file", "name": "useNavigateToConvo.tsx" },
+                  { "type": "file", "name": "useNewConvo.ts" },
+                  { "type": "file", "name": "useOnClickOutside.ts" },
+                  { "type": "file", "name": "useOriginNavigate.ts" },
+                  { "type": "file", "name": "usePresetIndexOptions.ts" },
+                  { "type": "file", "name": "usePresetOptions.ts" },
+                  { "type": "file", "name": "useScrollToRef.ts" },
+                  { "type": "file", "name": "useServerStream.ts" },
+                  { "type": "file", "name": "useSetIndexOptions.ts" },
+                  { "type": "file", "name": "useSetOptions.ts" },
+                  { "type": "file", "name": "useSetStorage.ts" },
+                  { "type": "file", "name": "useTimeout.tsx" },
+                  { "type": "file", "name": "useToast.ts" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "localization",
+                "contents": [
+                  {
+                    "type": "directory",
+                    "name": "languages",
+                    "contents": [
+                      { "type": "file", "name": "Ar.ts" },
+                      { "type": "file", "name": "Br.ts" },
+                      { "type": "file", "name": "De.ts" },
+                      { "type": "file", "name": "Eng.ts" },
+                      { "type": "file", "name": "Es.ts" },
+                      { "type": "file", "name": "Fr.ts" },
+                      { "type": "file", "name": "He.ts" },
+                      { "type": "file", "name": "Id.ts" },
+                      { "type": "file", "name": "It.ts" },
+                      { "type": "file", "name": "Jp.ts" },
+                      { "type": "file", "name": "Ko.ts" },
+                      { "type": "file", "name": "Nl.ts" },
+                      { "type": "file", "name": "Pl.ts" },
+                      { "type": "file", "name": "Ru.ts" },
+                      { "type": "file", "name": "Sv.ts" },
+                      { "type": "file", "name": "Tr.ts" },
+                      { "type": "file", "name": "Vi.ts" },
+                      { "type": "file", "name": "ZhTraditional.ts" },
+                      { "type": "file", "name": "Zh.ts" }
+                    ]
+                  },
+                  { "type": "file", "name": "Translation.spec.ts" },
+                  { "type": "file", "name": "Translation.ts" }
+                ]
+              },
+              { "type": "file", "name": "main.jsx" },
+              { "type": "file", "name": "mobile.css" },
+              {
+                "type": "directory",
+                "name": "Providers",
+                "contents": [
+                  { "type": "file", "name": "AssistantsContext.tsx" },
+                  { "type": "file", "name": "AssistantsMapContext.tsx" },
+                  { "type": "file", "name": "ChatContext.tsx" },
+                  { "type": "file", "name": "FileMapContext.tsx" },
+                  { "type": "file", "name": "index.ts" },
+                  { "type": "file", "name": "ToastContext.tsx" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "routes",
+                "contents": [
+                  { "type": "file", "name": "ChatRoute.tsx" },
+                  { "type": "file", "name": "index.tsx" },
+                  { "type": "file", "name": "Root.tsx" },
+                  { "type": "file", "name": "Search.tsx" },
+                  { "type": "file", "name": "useAuthRedirect.ts" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "store",
+                "contents": [
+                  { "type": "file", "name": "conversations.ts" },
+                  { "type": "file", "name": "conversation.ts" },
+                  { "type": "file", "name": "endpoints.ts" },
+                  { "type": "file", "name": "families.ts" },
+                  { "type": "file", "name": "index.ts" },
+                  { "type": "file", "name": "language.ts" },
+                  { "type": "file", "name": "preset.ts" },
+                  { "type": "file", "name": "search.ts" },
+                  { "type": "file", "name": "settings.ts" },
+                  { "type": "file", "name": "submission.ts" },
+                  { "type": "file", "name": "text.ts" },
+                  { "type": "file", "name": "toast.ts" },
+                  { "type": "file", "name": "user.ts" }
+                ]
+              },
+              { "type": "file", "name": "style.css" },
+              {
+                "type": "directory",
+                "name": "utils",
+                "contents": [
+                  { "type": "file", "name": "buildDefaultConvo.ts" },
+                  { "type": "file", "name": "buildTree.ts" },
+                  { "type": "file", "name": "cleanupPreset.ts" },
+                  { "type": "file", "name": "cn.ts" },
+                  { "type": "file", "name": "convos.fakeData.ts" },
+                  { "type": "file", "name": "convos.spec.ts" },
+                  { "type": "file", "name": "convos.ts" },
+                  { "type": "file", "name": "endpoints.spec.ts" },
+                  { "type": "file", "name": "endpoints.ts" },
+                  { "type": "file", "name": "files.ts" },
+                  { "type": "file", "name": "getDefaultEndpoint.ts" },
+                  { "type": "file", "name": "getLocalStorageItems.ts" },
+                  { "type": "file", "name": "getLoginError.ts" },
+                  { "type": "file", "name": "index.ts" },
+                  { "type": "file", "name": "json.ts" },
+                  { "type": "file", "name": "languages.ts" },
+                  { "type": "file", "name": "latex.spec.ts" },
+                  { "type": "file", "name": "latex.ts" },
+                  { "type": "file", "name": "map.ts" },
+                  { "type": "file", "name": "presets.ts" },
+                  { "type": "file", "name": "resetConvo.ts" },
+                  { "type": "file", "name": "textarea.ts" },
+                  { "type": "file", "name": "validateIframe.ts" }
+                ]
+              }
+            ]
+          },
+          { "type": "file", "name": "tailwind.config.cjs" },
+          {
+            "type": "directory",
+            "name": "test",
+            "contents": [
+              { "type": "file", "name": "layout-test-utils.tsx" },
+              { "type": "file", "name": "matchMedia.mock" },
+              { "type": "file", "name": "setupTests.js" }
+            ]
+          },
+          { "type": "file", "name": "tsconfig.json" },
+          { "type": "file", "name": "tsconfig.node.json" },
+          { "type": "file", "name": "vite.config.ts" }
+        ]
+      },
+      {
+        "type": "directory",
+        "name": "config",
+        "contents": [
+          { "type": "file", "name": "add-balance.js" },
+          { "type": "file", "name": "addTokens.js" },
+          { "type": "file", "name": "ban-user.js" },
+          { "type": "file", "name": "connect.js" },
+          { "type": "file", "name": "create-user.js" },
+          { "type": "file", "name": "delete-user.js" },
+          { "type": "file", "name": "deployed-update.js" },
+          { "type": "file", "name": "helpers.js" },
+          { "type": "file", "name": "install.js" },
+          { "type": "file", "name": "list-balances.js" },
+          { "type": "file", "name": "loader.js" },
+          { "type": "file", "name": "packages.js" },
+          { "type": "file", "name": "prepare.js" },
+          { "type": "file", "name": "stop-backend.js" },
+          { "type": "file", "name": "update.js" },
+          { "type": "file", "name": "upgrade.js" },
+          { "type": "file", "name": "user-stats.js" }
+        ]
+      },
+      {
+        "type": "directory",
+        "name": "data",
+        "contents": [
+          { "type": "file", "name": "logs.json" },
+          { "type": "file", "name": "violations.json" }
+        ]
+      },
+      {
+        "type": "directory",
+        "name": "data-node",
+        "contents": [
+          { "type": "file", "name": "collection-0--1011495784087228110.wt" },
+          { "type": "file", "name": "collection-0-5176817535611817382.wt" },
+          { "type": "file", "name": "collection-10--1011495784087228110.wt" },
+          { "type": "file", "name": "collection-11--1011495784087228110.wt" },
+          { "type": "file", "name": "collection-12--1011495784087228110.wt" },
+          { "type": "file", "name": "collection-14--1011495784087228110.wt" },
+          { "type": "file", "name": "collection-15--1011495784087228110.wt" },
+          { "type": "file", "name": "collection-16--1011495784087228110.wt" },
+          { "type": "file", "name": "collection-18--1011495784087228110.wt" },
+          { "type": "file", "name": "collection-2-5176817535611817382.wt" },
+          { "type": "file", "name": "collection-4--1011495784087228110.wt" },
+          { "type": "file", "name": "collection-4-5176817535611817382.wt" },
+          { "type": "file", "name": "collection-6--1011495784087228110.wt" },
+          { "type": "file", "name": "collection-7--1011495784087228110.wt" },
+          { "type": "file", "name": "collection-9--1011495784087228110.wt" },
+          {
+            "type": "directory",
+            "name": "diagnostic.data",
+            "contents": [
+              { "type": "file", "name": "metrics.2023-09-20T02-03-07Z-00000" },
+              { "type": "file", "name": "metrics.2023-09-20T13-44-11Z-00000" },
+              { "type": "file", "name": "metrics.2023-09-20T22-06-14Z-00000" },
+              { "type": "file", "name": "metrics.2023-09-24T15-23-51Z-00000" },
+              { "type": "file", "name": "metrics.2023-09-27T10-30-19Z-00000" },
+              { "type": "file", "name": "metrics.2023-09-28T15-40-10Z-00000" },
+              { "type": "file", "name": "metrics.2023-09-29T12-52-49Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-05T08-28-02Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-05T22-08-56Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-06T08-13-51Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-06T13-18-24Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-09T17-14-19Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-10T12-14-35Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-11T14-24-16Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-12T18-01-10Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-13T03-37-50Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-13T12-46-14Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-17T14-26-45Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-17T18-02-30Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-18T14-18-19Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-18T19-21-48Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-18T20-44-31Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-18T21-11-05Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-19T14-53-36Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-19T14-56-35Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-22T20-41-07Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-23T19-20-29Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-24T13-40-00Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-24T20-12-59Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-25T13-34-12Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-25T13-35-15Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-25T15-00-01Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-26T20-45-00Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-28T10-33-05Z-00000" },
+              { "type": "file", "name": "metrics.2023-10-30T13-42-34Z-00000" },
+              { "type": "file", "name": "metrics.2023-11-02T15-24-38Z-00000" },
+              { "type": "file", "name": "metrics.2023-11-05T12-10-11Z-00000" },
+              { "type": "file", "name": "metrics.2023-11-05T18-13-35Z-00000" },
+              { "type": "file", "name": "metrics.2023-11-05T18-16-21Z-00000" },
+              { "type": "file", "name": "metrics.2023-11-05T18-21-16Z-00000" },
+              { "type": "file", "name": "metrics.2023-11-05T20-35-31Z-00000" },
+              { "type": "file", "name": "metrics.2023-11-06T16-11-31Z-00000" },
+              { "type": "file", "name": "metrics.2023-11-06T22-15-05Z-00000" },
+              { "type": "file", "name": "metrics.2023-11-07T13-18-32Z-00000" },
+              { "type": "file", "name": "metrics.2023-11-07T21-26-11Z-00000" },
+              { "type": "file", "name": "metrics.2023-11-08T17-28-00Z-00000" },
+              { "type": "file", "name": "metrics.2023-11-10T03-24-09Z-00000" },
+              { "type": "file", "name": "metrics.2023-11-10T16-58-42Z-00000" },
+              { "type": "file", "name": "metrics.2023-11-11T13-07-16Z-00000" },
+              { "type": "file", "name": "metrics.2023-11-11T13-12-01Z-00000" },
+              { "type": "file", "name": "metrics.2023-11-15T15-34-37Z-00000" },
+              { "type": "file", "name": "metrics.2023-11-16T17-45-00Z-00000" },
+              { "type": "file", "name": "metrics.2023-11-16T20-11-52Z-00000" },
+              { "type": "file", "name": "metrics.2024-02-11T06-54-21Z-00000" },
+              { "type": "file", "name": "metrics.2024-02-11T06-56-57Z-00000" },
+              { "type": "file", "name": "metrics.2024-02-11T06-57-45Z-00000" },
+              { "type": "file", "name": "metrics.2024-02-11T06-58-29Z-00000" },
+              { "type": "file", "name": "metrics.2024-02-11T07-21-26Z-00000" }
+            ]
+          },
+          { "type": "file", "name": "index-1--1011495784087228110.wt" },
+          { "type": "file", "name": "index-1-5176817535611817382.wt" },
+          { "type": "file", "name": "index-17--1011495784087228110.wt" },
+          { "type": "file", "name": "index-19--1011495784087228110.wt" },
+          { "type": "file", "name": "index-20--1011495784087228110.wt" },
+          { "type": "file", "name": "index-21--1011495784087228110.wt" },
+          { "type": "file", "name": "index-22--1011495784087228110.wt" },
+          { "type": "file", "name": "index-23--1011495784087228110.wt" },
+          { "type": "file", "name": "index-24--1011495784087228110.wt" },
+          { "type": "file", "name": "index-25--1011495784087228110.wt" },
+          { "type": "file", "name": "index-26--1011495784087228110.wt" },
+          { "type": "file", "name": "index-27--1011495784087228110.wt" },
+          { "type": "file", "name": "index-28--1011495784087228110.wt" },
+          { "type": "file", "name": "index-29--1011495784087228110.wt" },
+          { "type": "file", "name": "index-30--1011495784087228110.wt" },
+          { "type": "file", "name": "index-3--1011495784087228110.wt" },
+          { "type": "file", "name": "index-31--1011495784087228110.wt" },
+          { "type": "file", "name": "index-32--1011495784087228110.wt" },
+          { "type": "file", "name": "index-33--1011495784087228110.wt" },
+          { "type": "file", "name": "index-34--1011495784087228110.wt" },
+          { "type": "file", "name": "index-35--1011495784087228110.wt" },
+          { "type": "file", "name": "index-3-5176817535611817382.wt" },
+          { "type": "file", "name": "index-36--1011495784087228110.wt" },
+          { "type": "file", "name": "index-37--1011495784087228110.wt" },
+          { "type": "file", "name": "index-38--1011495784087228110.wt" },
+          { "type": "file", "name": "index-39--1011495784087228110.wt" },
+          { "type": "file", "name": "index-40--1011495784087228110.wt" },
+          { "type": "file", "name": "index-41--1011495784087228110.wt" },
+          { "type": "file", "name": "index-42--1011495784087228110.wt" },
+          { "type": "file", "name": "index-43--1011495784087228110.wt" },
+          { "type": "file", "name": "index-44--1011495784087228110.wt" },
+          { "type": "file", "name": "index-45--1011495784087228110.wt" },
+          { "type": "file", "name": "index-46--1011495784087228110.wt" },
+          { "type": "file", "name": "index-47--1011495784087228110.wt" },
+          { "type": "file", "name": "index-5-5176817535611817382.wt" },
+          { "type": "file", "name": "index-6-5176817535611817382.wt" },
+          { "type": "file", "name": "index-8--1011495784087228110.wt" },
+          {
+            "type": "directory",
+            "name": "journal",
+            "contents": [
+              { "type": "file", "name": "WiredTigerLog.0000000058" },
+              { "type": "file", "name": "WiredTigerPreplog.0000000001" },
+              { "type": "file", "name": "WiredTigerPreplog.0000000002" }
+            ]
+          },
+          { "type": "file", "name": "_mdb_catalog.wt" },
+          { "type": "file", "name": "mongod.lock" },
+          { "type": "file", "name": "sizeStorer.wt" },
+          { "type": "file", "name": "storage.bson" },
+          { "type": "file", "name": "WiredTiger" },
+          { "type": "file", "name": "WiredTigerHS.wt" },
+          { "type": "file", "name": "WiredTiger.lock" },
+          { "type": "file", "name": "WiredTiger.turtle" },
+          { "type": "file", "name": "WiredTiger.wt" }
+        ]
+      },
+      { "type": "file", "name": "deploy-compose.yml" },
+      { "type": "file", "name": "docker-compose.override.yml" },
+      { "type": "file", "name": "docker-compose.override.yml.example" },
+      { "type": "file", "name": "docker-compose.yml" },
+      { "type": "file", "name": "Dockerfile" },
+      { "type": "file", "name": "Dockerfile.multi" },
+      {
+        "type": "directory",
+        "name": "docs",
+        "contents": [
+          {
+            "type": "directory",
+            "name": "assets",
+            "contents": [
+              {
+                "type": "directory",
+                "name": "favicon_package",
+                "contents": [
+                  { "type": "file", "name": "android-chrome-192x192.png" },
+                  { "type": "file", "name": "android-chrome-512x512.png" },
+                  { "type": "file", "name": "apple-touch-icon-120x120.png" },
+                  { "type": "file", "name": "apple-touch-icon-152x152.png" },
+                  { "type": "file", "name": "apple-touch-icon-180x180.png" },
+                  { "type": "file", "name": "apple-touch-icon-60x60.png" },
+                  { "type": "file", "name": "apple-touch-icon-76x76.png" },
+                  { "type": "file", "name": "apple-touch-icon.png" },
+                  { "type": "file", "name": "browserconfig.xml" },
+                  { "type": "file", "name": "favicon-16x16.png" },
+                  { "type": "file", "name": "favicon-32x32.png" },
+                  { "type": "file", "name": "favicon.ico" },
+                  { "type": "file", "name": "mstile-144x144.png" },
+                  { "type": "file", "name": "mstile-150x150.png" },
+                  { "type": "file", "name": "mstile-310x150.png" },
+                  { "type": "file", "name": "mstile-310x310.png" },
+                  { "type": "file", "name": "mstile-70x70.png" },
+                  { "type": "file", "name": "safari-pinned-tab.svg" },
+                  { "type": "file", "name": "site.webmanifest" }
+                ]
+              },
+              { "type": "file", "name": "LibreChat.svg" },
+              { "type": "file", "name": "LibreChat-wide-margin.svg" }
+            ]
+          },
+          { "type": "file", "name": "CNAME" },
+          {
+            "type": "directory",
+            "name": "contributions",
+            "contents": [
+              { "type": "file", "name": "coding_conventions.md" },
+              { "type": "file", "name": "documentation_guidelines.md" },
+              { "type": "file", "name": "how_to_contribute.md" },
+              { "type": "file", "name": "index.md" },
+              { "type": "file", "name": "testing.md" },
+              { "type": "file", "name": "translation_contribution.md" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "deployment",
+            "contents": [
+              { "type": "file", "name": "azure-terraform.md" },
+              { "type": "file", "name": "cloudflare.md" },
+              { "type": "file", "name": "digitalocean.md" },
+              { "type": "file", "name": "docker_ubuntu_deploy.md" },
+              { "type": "file", "name": "heroku.md" },
+              { "type": "file", "name": "hetzner_ubuntu.md" },
+              { "type": "file", "name": "huggingface.md" },
+              { "type": "file", "name": "index.md" },
+              { "type": "file", "name": "introduction.md" },
+              { "type": "file", "name": "linode.md" },
+              { "type": "file", "name": "meilisearch_in_render.md" },
+              { "type": "file", "name": "nginx.md" },
+              { "type": "file", "name": "ngrok.md" },
+              { "type": "file", "name": "railway.md" },
+              { "type": "file", "name": "render.md" },
+              { "type": "file", "name": "traefik.md" },
+              { "type": "file", "name": "zeabur.md" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "dev",
+            "contents": [
+              { "type": "file", "name": "deploy-compose.yml" },
+              { "type": "file", "name": "Dockerfile-app" },
+              { "type": "file", "name": "eslintrc-stripped.js" },
+              { "type": "file", "name": "meilisearch.yml" },
+              { "type": "file", "name": "README.md" },
+              { "type": "file", "name": "single-compose.yml" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "features",
+            "contents": [
+              { "type": "file", "name": "bing_jailbreak.md" },
+              { "type": "file", "name": "firebase.md" },
+              { "type": "file", "name": "index.md" },
+              { "type": "file", "name": "logging_system.md" },
+              { "type": "file", "name": "manage_your_database.md" },
+              { "type": "file", "name": "mod_system.md" },
+              {
+                "type": "directory",
+                "name": "plugins",
+                "contents": [
+                  { "type": "file", "name": "azure_ai_search.md" },
+                  { "type": "file", "name": "chatgpt_plugins_openapi.md" },
+                  { "type": "file", "name": "google_search.md" },
+                  { "type": "file", "name": "index.md" },
+                  { "type": "file", "name": "introduction.md" },
+                  { "type": "file", "name": "make_your_own.md" },
+                  { "type": "file", "name": "stable_diffusion.md" },
+                  { "type": "file", "name": "wolfram.md" }
+                ]
+              },
+              { "type": "file", "name": "presets.md" },
+              { "type": "file", "name": "rag_api.md" },
+              { "type": "file", "name": "third_party.md" },
+              { "type": "file", "name": "token_usage.md" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "general_info",
+            "contents": [
+              { "type": "file", "name": "breaking_changes.md" },
+              { "type": "file", "name": "index.md" },
+              { "type": "file", "name": "multilingual_information.md" },
+              { "type": "file", "name": "project_origin.md" },
+              { "type": "file", "name": "tech_stack.md" }
+            ]
+          },
+          { "type": "file", "name": "index.md" },
+          {
+            "type": "directory",
+            "name": "install",
+            "contents": [
+              {
+                "type": "directory",
+                "name": "configuration",
+                "contents": [
+                  { "type": "file", "name": "ai_endpoints.md" },
+                  { "type": "file", "name": "ai_setup.md" },
+                  { "type": "file", "name": "azure_openai.md" },
+                  { "type": "file", "name": "custom_config.md" },
+                  { "type": "file", "name": "default_language.md" },
+                  { "type": "file", "name": "docker_override.md" },
+                  { "type": "file", "name": "dotenv.md" },
+                  { "type": "file", "name": "free_ai_apis.md" },
+                  { "type": "file", "name": "index.md" },
+                  { "type": "file", "name": "litellm.md" },
+                  { "type": "file", "name": "misc.md" },
+                  { "type": "file", "name": "mongodb.md" },
+                  {
+                    "type": "directory",
+                    "name": "OAuth2-and-OIDC",
+                    "contents": [
+                      { "type": "file", "name": "aws.md" },
+                      { "type": "file", "name": "azure.md" },
+                      { "type": "file", "name": "discord.md" },
+                      { "type": "file", "name": "facebook.md" },
+                      { "type": "file", "name": "github.md" },
+                      { "type": "file", "name": "google.md" },
+                      { "type": "file", "name": "keycloak.md" }
+                    ]
+                  },
+                  { "type": "file", "name": "ollama.md" },
+                  { "type": "file", "name": "user_auth_system.md" }
+                ]
+              },
+              { "type": "file", "name": "index.md" },
+              {
+                "type": "directory",
+                "name": "installation",
+                "contents": [
+                  { "type": "file", "name": "container_install.md" },
+                  { "type": "file", "name": "docker_compose_install.md" },
+                  { "type": "file", "name": "index.md" },
+                  { "type": "file", "name": "linux_install.md" },
+                  { "type": "file", "name": "mac_install.md" },
+                  { "type": "file", "name": "windows_install.md" }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "src",
+            "contents": [{ "type": "file", "name": "requirements.txt" }]
+          }
+        ]
+      },
+      {
+        "type": "directory",
+        "name": "e2e",
+        "contents": [
+          { "type": "file", "name": "jestSetup.js" },
+          { "type": "file", "name": "playwright.config.local.ts" },
+          { "type": "file", "name": "playwright.config.ts" },
+          {
+            "type": "directory",
+            "name": "setup",
+            "contents": [
+              { "type": "file", "name": "authenticate.ts" },
+              { "type": "file", "name": "cleanupUser.ts" },
+              { "type": "file", "name": "global-setup.local.ts" },
+              { "type": "file", "name": "global-setup.ts" },
+              { "type": "file", "name": "global-teardown.local.ts" },
+              { "type": "file", "name": "global-teardown.ts" }
+            ]
+          },
+          {
+            "type": "directory",
+            "name": "specs",
+            "contents": [
+              { "type": "file", "name": "keys.spec.ts" },
+              { "type": "file", "name": "landing.spec.ts" },
+              { "type": "file", "name": "messages.spec.ts" },
+              { "type": "file", "name": "nav.spec.ts" },
+              { "type": "file", "name": "popup.spec.ts" },
+              { "type": "file", "name": "settings.spec.ts" }
+            ]
+          }
+        ]
+      },
+      { "type": "directory", "name": "images" },
+      { "type": "file", "name": "index.html" },
+      { "type": "file", "name": "librechat.example.yaml" },
+      { "type": "file", "name": "librechat.yaml" },
+      { "type": "file", "name": "LICENSE" },
+      { "type": "file", "name": "login-logs.log" },
+      {
+        "type": "directory",
+        "name": "meili_data",
+        "contents": [
+          {
+            "type": "directory",
+            "name": "data.ms",
+            "contents": [
+              {
+                "type": "directory",
+                "name": "auth",
+                "contents": [
+                  { "type": "file", "name": "data.mdb" },
+                  { "type": "file", "name": "lock.mdb" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "indexes",
+                "contents": [
+                  {
+                    "type": "directory",
+                    "name": "20397ed2-98dc-43f8-9f0f-c7bbc83515a9",
+                    "contents": [
+                      { "type": "file", "name": "data.mdb" },
+                      { "type": "file", "name": "lock.mdb" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "4f0a09c4-c834-45ba-880e-7408df86e196",
+                    "contents": [
+                      { "type": "file", "name": "data.mdb" },
+                      { "type": "file", "name": "lock.mdb" }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "tasks",
+                "contents": [
+                  { "type": "file", "name": "data.mdb" },
+                  { "type": "file", "name": "lock.mdb" }
+                ]
+              },
+              { "type": "directory", "name": "update_files" },
+              { "type": "file", "name": "VERSION" }
+            ]
+          },
+          { "type": "directory", "name": "dumps" }
+        ]
+      },
+      {
+        "type": "directory",
+        "name": "meili_data_v1.5",
+        "contents": [
+          {
+            "type": "directory",
+            "name": "data.ms",
+            "contents": [
+              {
+                "type": "directory",
+                "name": "auth",
+                "contents": [
+                  { "type": "file", "name": "data.mdb" },
+                  { "type": "file", "name": "lock.mdb" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "indexes",
+                "contents": [
+                  {
+                    "type": "directory",
+                    "name": "b201de50-5672-42df-8ae9-e352a9079ddf",
+                    "contents": [
+                      { "type": "file", "name": "data.mdb" },
+                      { "type": "file", "name": "lock.mdb" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "e62e56c9-a8f4-43ee-9f9d-3a31bc463d87",
+                    "contents": [
+                      { "type": "file", "name": "data.mdb" },
+                      { "type": "file", "name": "lock.mdb" }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "tasks",
+                "contents": [
+                  { "type": "file", "name": "data.mdb" },
+                  { "type": "file", "name": "lock.mdb" }
+                ]
+              },
+              { "type": "directory", "name": "update_files" },
+              { "type": "file", "name": "VERSION" }
+            ]
+          },
+          { "type": "directory", "name": "dumps" }
+        ]
+      },
+      { "type": "file", "name": "mkdocs.yml" },
+      { "type": "file", "name": "output.json" },
+      { "type": "file", "name": "package.json" },
+      { "type": "file", "name": "package-lock.json" },
+      {
+        "type": "directory",
+        "name": "packages",
+        "contents": [
+          {
+            "type": "directory",
+            "name": "data-provider",
+            "contents": [
+              { "type": "file", "name": "babel.config.js" },
+              { "type": "file", "name": "check_updates.sh" },
+              {
+                "type": "directory",
+                "name": "dist",
+                "contents": [
+                  { "type": "file", "name": "index.es.js" },
+                  { "type": "file", "name": "index.es.js.map" },
+                  { "type": "file", "name": "index.js" },
+                  { "type": "file", "name": "index.js.map" },
+                  {
+                    "type": "directory",
+                    "name": "react-query",
+                    "contents": [
+                      { "type": "file", "name": "index.es.js" },
+                      { "type": "file", "name": "index.es.js.map" },
+                      { "type": "file", "name": "package.json" }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "types",
+                    "contents": [
+                      { "type": "file", "name": "actions.d.ts" },
+                      { "type": "file", "name": "api-endpoints.d.ts" },
+                      { "type": "file", "name": "azure.d.ts" },
+                      { "type": "file", "name": "config.d.ts" },
+                      { "type": "file", "name": "createPayload.d.ts" },
+                      { "type": "file", "name": "data-service.d.ts" },
+                      { "type": "file", "name": "file-config.d.ts" },
+                      { "type": "file", "name": "generate.d.ts" },
+                      { "type": "file", "name": "headers-helpers.d.ts" },
+                      { "type": "file", "name": "index.d.ts" },
+                      { "type": "file", "name": "keys.d.ts" },
+                      { "type": "file", "name": "parsers.d.ts" },
+                      {
+                        "type": "directory",
+                        "name": "react-query",
+                        "contents": [
+                          { "type": "file", "name": "index.d.ts" },
+                          { "type": "file", "name": "react-query-service.d.ts" }
+                        ]
+                      },
+                      { "type": "file", "name": "request.d.ts" },
+                      { "type": "file", "name": "schemas.d.ts" },
+                      {
+                        "type": "directory",
+                        "name": "types",
+                        "contents": [
+                          { "type": "file", "name": "assistants.d.ts" },
+                          { "type": "file", "name": "files.d.ts" },
+                          { "type": "file", "name": "mutations.d.ts" },
+                          { "type": "file", "name": "queries.d.ts" }
+                        ]
+                      },
+                      { "type": "file", "name": "types.d.ts" }
+                    ]
+                  }
+                ]
+              },
+              { "type": "file", "name": "jest.config.js" },
+              { "type": "file", "name": "package.json" },
+              {
+                "type": "directory",
+                "name": "react-query",
+                "contents": [{ "type": "file", "name": "package.json" }]
+              },
+              { "type": "file", "name": "rollup.config.js" },
+              { "type": "file", "name": "server-rollup.config.js" },
+              {
+                "type": "directory",
+                "name": "specs",
+                "contents": [
+                  { "type": "file", "name": "actions.spec.ts" },
+                  { "type": "file", "name": "azure.spec.ts" },
+                  { "type": "file", "name": "filetypes.spec.ts" },
+                  { "type": "file", "name": "generate.spec.ts" },
+                  { "type": "file", "name": "openapiSpecs.ts" },
+                  { "type": "file", "name": "parsers.spec.ts" }
+                ]
+              },
+              {
+                "type": "directory",
+                "name": "src",
+                "contents": [
+                  { "type": "file", "name": "actions.ts" },
+                  { "type": "file", "name": "api-endpoints.ts" },
+                  { "type": "file", "name": "azure.ts" },
+                  { "type": "file", "name": "config.ts" },
+                  { "type": "file", "name": "createPayload.ts" },
+                  { "type": "file", "name": "data-service.ts" },
+                  { "type": "file", "name": "file-config.ts" },
+                  { "type": "file", "name": "generate.ts" },
+                  { "type": "file", "name": "headers-helpers.ts" },
+                  { "type": "file", "name": "index.ts" },
+                  { "type": "file", "name": "keys.ts" },
+                  { "type": "file", "name": "parsers.ts" },
+                  {
+                    "type": "directory",
+                    "name": "react-query",
+                    "contents": [
+                      { "type": "file", "name": "index.ts" },
+                      { "type": "file", "name": "react-query-service.ts" }
+                    ]
+                  },
+                  { "type": "file", "name": "request.ts" },
+                  { "type": "file", "name": "schemas.ts" },
+                  { "type": "file", "name": "sse.js" },
+                  {
+                    "type": "directory",
+                    "name": "types",
+                    "contents": [
+                      { "type": "file", "name": "assistants.ts" },
+                      { "type": "file", "name": "files.ts" },
+                      { "type": "file", "name": "mutations.ts" },
+                      { "type": "file", "name": "queries.ts" }
+                    ]
+                  },
+                  { "type": "file", "name": "types.ts" }
+                ]
+              },
+              { "type": "file", "name": "tsconfig.json" },
+              { "type": "file", "name": "tsconfig.spec.json" },
+              {
+                "type": "directory",
+                "name": "types",
+                "contents": [
+                  { "type": "file", "name": "api-endpoints.d.ts" },
+                  { "type": "file", "name": "assistants.d.ts" },
+                  { "type": "file", "name": "createPayload.d.ts" },
+                  { "type": "file", "name": "data-service.d.ts" },
+                  { "type": "file", "name": "headers-helpers.d.ts" },
+                  { "type": "file", "name": "index.d.ts" },
+                  { "type": "file", "name": "query-keys.d.ts" },
+                  { "type": "file", "name": "react-query-service.d.ts" },
+                  { "type": "file", "name": "request.d.ts" },
+                  { "type": "file", "name": "schemas.d.ts" },
+                  {
+                    "type": "directory",
+                    "name": "types",
+                    "contents": [{ "type": "file", "name": "assistants.d.ts" }]
+                  },
+                  { "type": "file", "name": "types.d.ts" }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      { "type": "file", "name": "prettier.config.js" },
+      { "type": "file", "name": "rag.yml" },
+      { "type": "file", "name": "README.md" },
+      {
+        "type": "directory",
+        "name": "uploads",
+        "contents": [
+          {
+            "type": "directory",
+            "name": "temp",
+            "contents": [{ "type": "directory", "name": "64b8356a583d5bfa240b678c" }]
+          }
+        ]
+      },
+      {
+        "type": "directory",
+        "name": "utils",
+        "contents": [
+          {
+            "type": "directory",
+            "name": "docker",
+            "contents": [
+              { "type": "file", "name": "docker-build.sh" },
+              { "type": "file", "name": "docker-push.sh" },
+              { "type": "file", "name": "test-compose.yml" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  { "type": "report", "directories": 207, "files": 1461 }
+]

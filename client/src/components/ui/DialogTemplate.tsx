@@ -26,6 +26,9 @@ type DialogTemplateProps = {
   className?: string;
   headerClassName?: string;
   showCloseButton?: boolean;
+  fullscreen?: boolean;
+  showFooter?: boolean;
+  footerContent?: ReactNode;
 };
 
 const DialogTemplate = forwardRef((props: DialogTemplateProps, ref: Ref<HTMLDivElement>) => {
@@ -40,17 +43,25 @@ const DialogTemplate = forwardRef((props: DialogTemplateProps, ref: Ref<HTMLDivE
     className,
     headerClassName,
     showCloseButton,
+    fullscreen = false,
+    showFooter = true,
+    footerContent,
   } = props;
   const { selectHandler, selectClasses, selectText } = selection || {};
   const Cancel = localize('com_ui_cancel');
 
   const defaultSelect =
     'bg-gray-800 text-white transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-200 dark:text-gray-800 dark:hover:bg-gray-200';
+
   return (
     <DialogContent
       showCloseButton={showCloseButton}
       ref={ref}
-      className={cn('shadow-2xl dark:bg-gray-700', className || '')}
+      className={cn(
+        'shadow-2xl dark:bg-gray-700',
+        fullscreen ? 'fixed inset-0 z-50' : '',
+        className || '',
+      )}
       onClick={(e) => e.stopPropagation()}
     >
       <DialogHeader className={cn(headerClassName ?? '')}>
@@ -64,25 +75,31 @@ const DialogTemplate = forwardRef((props: DialogTemplateProps, ref: Ref<HTMLDivE
         )}
       </DialogHeader>
       <div className="px-6">{main ? main : null}</div>
-      <DialogFooter>
-        <div>{leftButtons ? leftButtons : null}</div>
-        <div className="flex h-auto gap-3">
-          <DialogClose className="border-gray-100 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-600">
-            {Cancel}
-          </DialogClose>
-          {buttons ? buttons : null}
-          {selection ? (
-            <DialogClose
-              onClick={selectHandler}
-              className={`${
-                selectClasses || defaultSelect
-              } inline-flex h-10 items-center justify-center rounded-lg border-none px-4 py-2 text-sm`}
-            >
-              {selectText}
-            </DialogClose>
-          ) : null}
-        </div>
-      </DialogFooter>
+      {footerContent ? (
+        <DialogFooter>{footerContent}</DialogFooter>
+      ) : (
+        showFooter && (
+          <DialogFooter>
+            <div>{leftButtons ? leftButtons : null}</div>
+            <div className="flex h-auto gap-3">
+              <DialogClose className="border-gray-100 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-600">
+                {Cancel}
+              </DialogClose>
+              {buttons ? buttons : null}
+              {selection ? (
+                <DialogClose
+                  onClick={selectHandler}
+                  className={`${
+                    selectClasses || defaultSelect
+                  } inline-flex h-10 items-center justify-center rounded-lg border-none px-4 py-2 text-sm`}
+                >
+                  {selectText}
+                </DialogClose>
+              ) : null}
+            </div>
+          </DialogFooter>
+        )
+      )}
     </DialogContent>
   );
 });

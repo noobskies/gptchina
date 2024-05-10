@@ -8,6 +8,8 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
   const { priceId } = selectedOption;
   const domain = window.location.hostname;
 
+  console.log('Payment method before sending request:', paymentMethod);
+
   const res = await fetch('/api/payment/stripe/create-checkout-session', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

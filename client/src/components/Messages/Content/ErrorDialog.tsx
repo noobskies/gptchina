@@ -4,6 +4,7 @@ import DialogTemplate from '~/components/ui/DialogTemplate';
 import { useAuthContext } from '../../../hooks/AuthContext';
 import { Spinner } from '~/components';
 import { useLocalize } from '~/hooks';
+import TokenOptionButton from '~/components/payment/TokenOptionButton';
 import PaymentOptionButton from '~/components/payment/PaymentOptionButton';
 import { tokenOptions, tokenOptionsChina } from '~/components/payment/paymentConstants';
 import { processBitcoinPayment } from '~/components/payment/BitcoinPayment';
@@ -60,7 +61,11 @@ export default function ErrorDialog({ open, onOpenChange }) {
     try {
       if (selectedPaymentOption === 'bitcoin') {
         await processBitcoinPayment(selectedTokens, selectedOption, userId, email, isChina);
+      } else if (selectedPaymentOption === 'google_pay' || selectedPaymentOption === 'apple_pay') {
+        console.log('Selected payment option:', selectedPaymentOption);
+        await processStripePayment(selectedOption, 'card', userId, email);
       } else {
+        console.log('Selected payment option:', selectedPaymentOption);
         await processStripePayment(selectedOption, selectedPaymentOption, userId, email);
       }
     } catch (error) {
@@ -81,6 +86,7 @@ export default function ErrorDialog({ open, onOpenChange }) {
       <DialogTemplate
         title={localize('com_ui_payment_title')}
         className="max-w-[450px]"
+        showFooter={false}
         main={
           <div className="flex w-full flex-col items-center gap-2">
             {errorMessage && (
@@ -88,48 +94,15 @@ export default function ErrorDialog({ open, onOpenChange }) {
                 <span>{errorMessage}</span>
               </div>
             )}
-            <div className="text-center text-sm dark:text-white">
-              {localize('com_ui_payment_please_note')}
-            </div>
             <div className="grid w-full grid-cols-2 gap-5 p-3">
-              {tokenOptionsToUse.map(
-                (
-                  { tokens, label, price, originalPrice, discountedPrice, discountPercentage },
-                  index,
-                ) => (
-                  <button
-                    key={tokens}
-                    onClick={() => handleSelect(tokens)}
-                    className={`flex h-[120px] flex-col items-center justify-center space-y-1 rounded border-2 p-3 text-white ${
-                      selectedTokens === tokens
-                        ? 'border-blue-600 bg-blue-700 ring-2 ring-blue-400 ring-offset-2'
-                        : 'bg-blue-600 hover:bg-blue-700 focus:bg-blue-700 focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 active:bg-blue-800 dark:hover:bg-blue-700'
-                    }`}
-                  >
-                    <div className="text-lg font-bold leading-tight">{localize(label)}</div>
-                    <div className="leading-tight">{localize('com_ui_payment_tokens')}</div>
-                    <div className="flex flex-col items-center space-y-1">
-                      {index === 0 && originalPrice === discountedPrice ? (
-                        <span className="text-sm leading-none">{discountedPrice}</span>
-                      ) : (
-                        <>
-                          <div className="flex items-center">
-                            <span className="mr-2 text-sm leading-none line-through">
-                              {originalPrice}
-                            </span>
-                            <span className="text-sm leading-none">{discountedPrice}</span>
-                          </div>
-                          {discountPercentage && (
-                            <span className="text-xs font-bold leading-none text-white">
-                              {discountPercentage}
-                            </span>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  </button>
-                ),
-              )}
+              {tokenOptionsToUse.map((option, index) => (
+                <TokenOptionButton
+                  key={option.tokens}
+                  {...option}
+                  isSelected={selectedTokens === option.tokens}
+                  onClick={() => handleSelect(option.tokens)}
+                />
+              ))}
             </div>
 
             <div className="my-2 flex w-full items-center">
@@ -140,33 +113,64 @@ export default function ErrorDialog({ open, onOpenChange }) {
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
 
-            <div className="my-4 flex justify-center space-x-4">
+            <div className="flex flex-wrap justify-center space-x-2">
               <PaymentOptionButton
                 option="wechat_pay"
                 isSelected={selectedPaymentOption === 'wechat_pay'}
-                onClick={() => setSelectedPaymentOption('wechat_pay')}
+                onClick={() => {
+                  console.log('WeChat Pay selected');
+                  setSelectedPaymentOption('wechat_pay');
+                }}
               />
               <PaymentOptionButton
                 option="alipay"
                 isSelected={selectedPaymentOption === 'alipay'}
-                onClick={() => setSelectedPaymentOption('alipay')}
+                onClick={() => {
+                  console.log('Alipay selected');
+                  setSelectedPaymentOption('alipay');
+                }}
               />
               <PaymentOptionButton
                 option="card"
                 isSelected={selectedPaymentOption === 'card'}
-                onClick={() => setSelectedPaymentOption('card')}
+                onClick={() => {
+                  console.log('Card selected');
+                  setSelectedPaymentOption('card');
+                }}
               />
               <PaymentOptionButton
                 option="bitcoin"
                 isSelected={selectedPaymentOption === 'bitcoin'}
-                onClick={() => setSelectedPaymentOption('bitcoin')}
+                onClick={() => {
+                  console.log('Bitcoin selected');
+                  setSelectedPaymentOption('bitcoin');
+                }}
+              />
+            </div>
+
+            <div className="flex flex-wrap justify-center space-x-2">
+              <PaymentOptionButton
+                option="google_pay"
+                isSelected={selectedPaymentOption === 'google_pay'}
+                onClick={() => {
+                  console.log('Google Pay selected');
+                  setSelectedPaymentOption('google_pay');
+                }}
+              />
+              <PaymentOptionButton
+                option="apple_pay"
+                isSelected={selectedPaymentOption === 'apple_pay'}
+                onClick={() => {
+                  console.log('Apple Pay selected');
+                  setSelectedPaymentOption('apple_pay');
+                }}
               />
             </div>
 
             <button
               onClick={handlePurchase}
               disabled={processingTokenAmount !== null}
-              className="w-full rounded-md bg-blue-600 px-4 py-2 text-white transition duration-200 ease-in-out hover:bg-blue-700 focus:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:bg-blue-800 disabled:cursor-not-allowed disabled:bg-blue-400 disabled:hover:bg-blue-400"
+              className="mt-4 w-full rounded-md bg-blue-600 px-4 py-2 text-white transition duration-200 ease-in-out hover:bg-blue-700 focus:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:bg-blue-800 disabled:cursor-not-allowed disabled:bg-blue-400 disabled:hover:bg-blue-400"
             >
               <span className="inline-flex items-center justify-center">
                 {processingTokenAmount !== null ? (
