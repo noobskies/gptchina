@@ -28,12 +28,21 @@ const priceDetailsConfig = {
 exports.createPaymentIntent = async (req, res) => {
   try {
     const { priceId, userId, domain, email, paymentMethod } = req.body;
+    console.log('Received payment intent request:', {
+      priceId,
+      userId,
+      domain,
+      email,
+      paymentMethod,
+    });
 
     if (!Object.prototype.hasOwnProperty.call(priceDetailsConfig, priceId)) {
+      console.error('Invalid price ID:', priceId);
       return res.status(400).json({ error: 'Invalid price ID' });
     }
 
     if (!userId || !email || !domain) {
+      console.error('Missing required fields:', { userId, email, domain });
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
@@ -49,6 +58,7 @@ exports.createPaymentIntent = async (req, res) => {
     }
 
     if (!isValidPaymentMethod) {
+      console.error('Invalid payment method:', paymentMethod);
       return res.status(400).json({ error: 'Invalid payment method' });
     }
 
@@ -59,6 +69,29 @@ exports.createPaymentIntent = async (req, res) => {
         client: 'web',
       };
     }
+
+    console.log('Creating Stripe Checkout session with options:', {
+      payment_method_types: [paymentMethod],
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      payment_intent_data: {
+        metadata: {
+          userId: userId.toString(),
+          email: email,
+          priceId: priceId,
+          domain: domain,
+        },
+      },
+      customer_email: email,
+      payment_method_options: paymentMethodOptions,
+      mode: 'payment',
+      success_url: `${process.env.DOMAIN_CLIENT}`,
+      cancel_url: `${process.env.DOMAIN_CLIENT}`,
+    });
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: [paymentMethod],
@@ -83,6 +116,8 @@ exports.createPaymentIntent = async (req, res) => {
       cancel_url: `${process.env.DOMAIN_CLIENT}`,
     });
 
+    console.log('Stripe Checkout session created:', session);
+
     res.status(200).json({ sessionId: session.id });
   } catch (error) {
     console.error('Error creating payment intent:', error);
@@ -105,6 +140,8 @@ exports.handleWebhook = async (req, res) => {
     return res.status(400).json({ error: `Webhook Error: ${err.message}` });
   }
 
+  console.log('Received Stripe webhook event:', event.type);
+
   let paymentIntent;
   let userId;
   let priceId;
@@ -115,7 +152,11 @@ exports.handleWebhook = async (req, res) => {
       paymentIntent = event.data.object;
       userId = paymentIntent.metadata.userId;
       priceId = paymentIntent.metadata.priceId;
-      console.log('paymentIntent.metadata.email:', paymentIntent.metadata.email);
+      console.log('Payment intent succeeded:', {
+        userId,
+        priceId,
+        email: paymentIntent.metadata.email,
+      });
 
       if (!Object.prototype.hasOwnProperty.call(priceDetailsConfig, priceId)) {
         console.error('Invalid price ID:', priceId);

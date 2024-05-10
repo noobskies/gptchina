@@ -61,8 +61,8 @@ export default function ErrorDialog({ open, onOpenChange }) {
       if (selectedPaymentOption === 'bitcoin') {
         await processBitcoinPayment(selectedTokens, selectedOption, userId, email, isChina);
       } else {
-        // Use 'card' payment method type for both card and Google Pay payments
-        await processStripePayment(selectedOption, 'card', userId, email);
+        console.log('Selected payment option:', selectedPaymentOption);
+        await processStripePayment(selectedOption, selectedPaymentOption, userId, email);
       }
     } catch (error) {
       console.error('Payment error:', error);
@@ -145,27 +145,42 @@ export default function ErrorDialog({ open, onOpenChange }) {
               <PaymentOptionButton
                 option="wechat_pay"
                 isSelected={selectedPaymentOption === 'wechat_pay'}
-                onClick={() => setSelectedPaymentOption('wechat_pay')}
+                onClick={() => {
+                  console.log('WeChat Pay selected');
+                  setSelectedPaymentOption('wechat_pay');
+                }}
               />
               <PaymentOptionButton
                 option="alipay"
                 isSelected={selectedPaymentOption === 'alipay'}
-                onClick={() => setSelectedPaymentOption('alipay')}
+                onClick={() => {
+                  console.log('Alipay selected');
+                  setSelectedPaymentOption('alipay');
+                }}
               />
               <PaymentOptionButton
                 option="card"
                 isSelected={selectedPaymentOption === 'card'}
-                onClick={() => setSelectedPaymentOption('card')}
+                onClick={() => {
+                  console.log('Card selected');
+                  setSelectedPaymentOption('card');
+                }}
               />
               <PaymentOptionButton
                 option="bitcoin"
                 isSelected={selectedPaymentOption === 'bitcoin'}
-                onClick={() => setSelectedPaymentOption('bitcoin')}
+                onClick={() => {
+                  console.log('Bitcoin selected');
+                  setSelectedPaymentOption('bitcoin');
+                }}
               />
               <PaymentOptionButton
                 option="google_pay"
                 isSelected={selectedPaymentOption === 'google_pay'}
-                onClick={() => setSelectedPaymentOption('google_pay')}
+                onClick={() => {
+                  console.log('Google Pay selected');
+                  setSelectedPaymentOption('google_pay');
+                }}
               />
             </div>
 
