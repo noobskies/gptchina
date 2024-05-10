@@ -153,6 +153,14 @@ export default function ErrorDialog({ open, onOpenChange }) {
                   setSelectedPaymentOption('google_pay');
                 }}
               />
+              <PaymentOptionButton
+                option="apple_pay"
+                isSelected={selectedPaymentOption === 'apple_pay'}
+                onClick={() => {
+                  console.log('Google Pay selected');
+                  setSelectedPaymentOption('apple_pay');
+                }}
+              />
             </div>
 
             <button
