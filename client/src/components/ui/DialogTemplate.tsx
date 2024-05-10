@@ -26,6 +26,7 @@ type DialogTemplateProps = {
   className?: string;
   headerClassName?: string;
   showCloseButton?: boolean;
+  fullscreen?: boolean; // Add the fullscreen prop
 };
 
 const DialogTemplate = forwardRef((props: DialogTemplateProps, ref: Ref<HTMLDivElement>) => {
@@ -40,17 +41,23 @@ const DialogTemplate = forwardRef((props: DialogTemplateProps, ref: Ref<HTMLDivE
     className,
     headerClassName,
     showCloseButton,
+    fullscreen = false, // Set a default value for fullscreen
   } = props;
   const { selectHandler, selectClasses, selectText } = selection || {};
   const Cancel = localize('com_ui_cancel');
 
   const defaultSelect =
     'bg-gray-800 text-white transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-200 dark:text-gray-800 dark:hover:bg-gray-200';
+
   return (
     <DialogContent
       showCloseButton={showCloseButton}
       ref={ref}
-      className={cn('shadow-2xl dark:bg-gray-700', className || '')}
+      className={cn(
+        'shadow-2xl dark:bg-gray-700',
+        fullscreen ? 'fixed inset-0 z-50' : '',
+        className || '',
+      )} // Apply fullscreen styles conditionally
       onClick={(e) => e.stopPropagation()}
     >
       <DialogHeader className={cn(headerClassName ?? '')}>

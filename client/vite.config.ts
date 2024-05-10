@@ -51,44 +51,6 @@ logger.warn = (msg, options) => {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
-  const domainConfigs = {
-    'gptchina.io': {
-      port: 3090,
-      apiTarget: 'http://localhost:3080',
-    },
-    'gptafrica.io': {
-      port: 3091,
-      apiTarget: 'http://localhost:3081',
-    },
-    'gptglobal.io': {
-      port: 3092,
-      apiTarget: 'http://localhost:3082',
-    },
-    'gptiran.io': {
-      port: 3093,
-      apiTarget: 'http://localhost:3083',
-    },
-    'gptitaly.io': {
-      port: 3094,
-      apiTarget: 'http://localhost:3084',
-    },
-    'gptrussia.io': {
-      port: 3095,
-      apiTarget: 'http://localhost:3085',
-    },
-    'gptusa.io': {
-      port: 3096,
-      apiTarget: 'http://localhost:3086',
-    },
-    'novlisky.io': {
-      port: 3097,
-      apiTarget: 'http://localhost:3087',
-    },
-  };
-
-  const currentDomain = process.env.VITE_CURRENT_DOMAIN || 'gptglobal.io';
-  const { port, apiTarget } = domainConfigs[currentDomain] || domainConfigs['gptglobal.io'];
-
   return {
     customLogger: logger,
     server: {
@@ -96,15 +58,15 @@ export default defineConfig(({ mode }) => {
         cachedChecks: false,
       },
       host: 'localhost',
-      port,
+      port: 3090,
       strictPort: false,
       proxy: {
         '/api': {
-          target: apiTarget,
+          target: 'http://localhost:3080',
           changeOrigin: true,
         },
         '/oauth': {
-          target: apiTarget,
+          target: 'http://localhost:3080',
           changeOrigin: true,
         },
       },
@@ -126,22 +88,33 @@ export default defineConfig(({ mode }) => {
           maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         },
         manifest: {
-          name: '%VITE_APP_TITLE%',
-          short_name: '%VITE_APP_TITLE%',
+          name: 'LibreChat',
+          short_name: 'LibreChat',
           start_url: '/',
           display: 'standalone',
           background_color: '#000000',
           theme_color: '#009688',
           icons: [
             {
-              src: '%VITE_APP_FAVICON_32%',
+              src: '/assets/favicon-32x32.png',
               sizes: '32x32',
               type: 'image/png',
             },
             {
-              src: '%VITE_APP_FAVICON_16%',
+              src: '/assets/favicon-16x16.png',
               sizes: '16x16',
               type: 'image/png',
+            },
+            {
+              src: '/assets/apple-touch-icon-180x180.png',
+              sizes: '180x180',
+              type: 'image/png',
+            },
+            {
+              src: '/assets/maskable-icon.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'maskable',
             },
           ],
         },
