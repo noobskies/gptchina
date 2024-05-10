@@ -6,8 +6,8 @@ const User = require('~/models/User');
 const PAYMENT_METHOD_CARD = 'card';
 const PAYMENT_METHOD_ALIPAY = 'alipay';
 const PAYMENT_METHOD_WECHAT_PAY = 'wechat_pay';
-const PAYMENT_OPTION_GOOGLE_PAY = 'google_pay';
-const PAYMENT_OPTION_APPLE_PAY = 'apple_pay';
+const PAYMENT_OPTION_GOOGLE_PAY = 'card';
+const PAYMENT_OPTION_APPLE_PAY = 'card';
 
 const PAYMENT_INTENT_SUCCEEDED = 'payment_intent.succeeded';
 const PAYMENT_INTENT_PAYMENT_FAILED = 'payment_intent.payment_failed';

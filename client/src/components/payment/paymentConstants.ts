@@ -107,5 +107,5 @@ export const PAYMENT_OPTION_WECHAT_PAY = 'wechat_pay';
 export const PAYMENT_OPTION_ALIPAY = 'alipay';
 export const PAYMENT_OPTION_CARD = 'card';
 export const PAYMENT_OPTION_BITCOIN = 'bitcoin';
-export const PAYMENT_OPTION_GOOGLE_PAY = 'google_pay';
-export const PAYMENT_OPTION_APPLE_PAY = 'apple_pay';
+export const PAYMENT_OPTION_GOOGLE_PAY = 'card';
+export const PAYMENT_OPTION_APPLE_PAY = 'card';
