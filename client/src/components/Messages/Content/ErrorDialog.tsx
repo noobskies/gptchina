@@ -91,9 +91,6 @@ export default function ErrorDialog({ open, onOpenChange }) {
                 <span>{errorMessage}</span>
               </div>
             )}
-            <div className="text-center text-sm dark:text-white">
-              {localize('com_ui_payment_please_note')}
-            </div>
             <div className="grid w-full grid-cols-2 gap-5 p-3">
               {tokenOptionsToUse.map((option, index) => (
                 <TokenOptionButton
