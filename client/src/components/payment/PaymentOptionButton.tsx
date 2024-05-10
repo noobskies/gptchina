@@ -21,9 +21,11 @@ const PaymentOptionButton = ({ option, isSelected, onClick }) => {
   return (
     <button
       onClick={handleClick}
-      className={`mb-2 rounded p-2 ${
-        isSelected ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
-      } transition-colors duration-150 hover:bg-blue-600 hover:text-white`}
+      className={`mb-2 rounded border-2 p-2 transition-colors duration-200 ease-in-out ${
+        isSelected
+          ? 'border-blue-600 bg-blue-600 text-white ring-2 ring-blue-400 ring-offset-2'
+          : 'border-gray-300 bg-white text-gray-700 hover:bg-blue-100 active:bg-blue-200'
+      }`}
     >
       <Icon size="2.5em" />
     </button>
