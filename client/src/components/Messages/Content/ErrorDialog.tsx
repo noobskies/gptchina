@@ -83,6 +83,7 @@ export default function ErrorDialog({ open, onOpenChange }) {
       <DialogTemplate
         title={localize('com_ui_payment_title')}
         className="max-w-[450px]"
+        showFooter={false}
         main={
           <div className="flex w-full flex-col items-center gap-2">
             {errorMessage && (
@@ -112,7 +113,7 @@ export default function ErrorDialog({ open, onOpenChange }) {
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
 
-            <div className="my-4 flex flex-wrap justify-center space-x-2 sm:space-x-4">
+            <div className="flex flex-wrap justify-center space-x-2">
               <PaymentOptionButton
                 option="wechat_pay"
                 isSelected={selectedPaymentOption === 'wechat_pay'}
@@ -145,6 +146,9 @@ export default function ErrorDialog({ open, onOpenChange }) {
                   setSelectedPaymentOption('bitcoin');
                 }}
               />
+            </div>
+
+            <div className="flex flex-wrap justify-center space-x-2">
               <PaymentOptionButton
                 option="google_pay"
                 isSelected={selectedPaymentOption === 'google_pay'}
@@ -157,7 +161,7 @@ export default function ErrorDialog({ open, onOpenChange }) {
                 option="apple_pay"
                 isSelected={selectedPaymentOption === 'apple_pay'}
                 onClick={() => {
-                  console.log('Google Pay selected');
+                  console.log('Apple Pay selected');
                   setSelectedPaymentOption('apple_pay');
                 }}
               />
@@ -166,7 +170,7 @@ export default function ErrorDialog({ open, onOpenChange }) {
             <button
               onClick={handlePurchase}
               disabled={processingTokenAmount !== null}
-              className="w-full rounded-md bg-blue-600 px-4 py-2 text-white transition duration-200 ease-in-out hover:bg-blue-700 focus:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:bg-blue-800 disabled:cursor-not-allowed disabled:bg-blue-400 disabled:hover:bg-blue-400"
+              className="mt-4 w-full rounded-md bg-blue-600 px-4 py-2 text-white transition duration-200 ease-in-out hover:bg-blue-700 focus:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:bg-blue-800 disabled:cursor-not-allowed disabled:bg-blue-400 disabled:hover:bg-blue-400"
             >
               <span className="inline-flex items-center justify-center">
                 {processingTokenAmount !== null ? (
