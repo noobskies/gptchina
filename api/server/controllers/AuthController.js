@@ -2,9 +2,11 @@ const crypto = require('crypto');
 const cookies = require('cookie');
 const jwt = require('jsonwebtoken');
 const { Session, User } = require('~/models');
+const Balance = require('~/models/Balance');
 const {
   registerUser,
   resetPassword,
+  verifyEmail,
   setAuthTokens,
   requestPasswordReset,
 } = require('~/server/services/AuthService');
@@ -18,11 +20,27 @@ const registrationController = async (req, res) => {
       let newUser = await User.findOne({ _id: user._id });
       if (!newUser) {
         newUser = new User(user);
-        await newUser.save();
       }
-      const token = await setAuthTokens(user._id, res);
-      res.setHeader('Authorization', `Bearer ${token}`);
-      res.status(status).send({ user });
+
+      newUser.lastTokenClaimTimestamp = new Date();
+      console.log(
+        'Setting lastTokenClaimTimestamp during registration:',
+        newUser.lastTokenClaimTimestamp,
+      );
+      await newUser.save();
+      console.log('User saved with lastTokenClaimTimestamp:', newUser.lastTokenClaimTimestamp);
+
+      // Create a new Balance document for the user with 25,000 token credits
+      const newBalance = new Balance({
+        user: newUser._id,
+        tokenCredits: 25000,
+      });
+      await newBalance.save();
+
+      // Do not set the authorization header or send the user object in the response
+      res.status(status).send({
+        message: 'Registration successful. Please check your email to verify your email address.',
+      });
     } else {
       const { status, message } = response;
       res.status(status).send({ message });
@@ -65,6 +83,20 @@ const resetPasswordController = async (req, res) => {
     }
   } catch (e) {
     logger.error('[resetPasswordController]', e);
+    return res.status(400).json({ message: e.message });
+  }
+};
+
+const verifyEmailController = async (req, res) => {
+  try {
+    const verifyEmailService = await verifyEmail(req.body.userId, req.body.token);
+    if (verifyEmailService instanceof Error) {
+      return res.status(400).json(verifyEmailService);
+    } else {
+      return res.status(200).json(verifyEmailService);
+    }
+  } catch (e) {
+    logger.error('[verifyEmailController]', e);
     return res.status(400).json({ message: e.message });
   }
 };
@@ -119,5 +151,6 @@ module.exports = {
   refreshController,
   registrationController,
   resetPasswordController,
+  verifyEmailController,
   resetPasswordRequestController,
 };

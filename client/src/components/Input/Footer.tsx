@@ -12,8 +12,8 @@ export default function Footer() {
         config.customFooter
       ) : (
         <>
-          <a href="https://librechat.ai" target="_blank" rel="noreferrer" className="underline">
-            {config?.appTitle || 'LibreChat'} {Constants.VERSION}
+          <a href="https://gptchina.io" target="_blank" rel="noreferrer" className="underline">
+            {config?.appTitle || 'GPT China'} {Constants.VERSION}
           </a>
           {' - '}. {localize('com_ui_pay_per_call')}
         </>

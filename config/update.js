@@ -63,19 +63,19 @@ async function validateDockerRunning() {
   await validateDockerRunning();
   const { docker, singleCompose, useSudo, skipGit, bun } = config;
   const sudo = useSudo ? 'sudo ' : '';
-  if (!skipGit) {
-    // Fetch latest repo
-    console.purple('Fetching the latest repo...');
-    execSync('git fetch origin', { stdio: 'inherit' });
+  // if (!skipGit) {
+  //   // Fetch latest repo
+  //   console.purple('Fetching the latest repo...');
+  //   execSync('git fetch origin', { stdio: 'inherit' });
 
-    // Switch to main branch
-    console.purple('Switching to main branch...');
-    execSync('git checkout main', { stdio: 'inherit' });
+  //   // Switch to main branch
+  //   console.purple('Switching to main branch...');
+  //   execSync('git checkout main', { stdio: 'inherit' });
 
-    // Git pull origin main
-    console.purple('Pulling the latest code from main...');
-    execSync('git pull origin main', { stdio: 'inherit' });
-  }
+  //   // Git pull origin main
+  //   console.purple('Pulling the latest code from main...');
+  //   execSync('git pull origin main', { stdio: 'inherit' });
+  // }
 
   if (docker) {
     console.purple('Removing previously made Docker container...');

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useGetStartupConfig } from 'librechat-data-provider/react-query';
 import LightningIcon from '~/components/svg/LightningIcon';
@@ -9,6 +9,40 @@ import { useLocalize } from '~/hooks';
 import store from '~/store';
 
 export default function Landing() {
+  const [logoSrc, setLogoSrc] = useState('');
+  const [altText, setAltText] = useState('');
+
+  useEffect(() => {
+    const host = window.location.hostname;
+    let logoPath = '';
+    let alt = '';
+
+    switch (host) {
+      case 'gptglobal.io':
+        logoPath = '/assets/logo-global.png';
+        alt = 'GPT Global';
+        break;
+      case 'gptchina.io':
+        logoPath = '/assets/logo-china.png';
+        alt = 'GPT China';
+        break;
+      case 'gptusa.io':
+        logoPath = '/assets/logo-usa.png';
+        alt = 'GPT USA';
+        break;
+      case 'gptrussia.io':
+        logoPath = '/assets/logo-russia.png';
+        alt = 'GPT Russia';
+        break;
+      default:
+        logoPath = '/assets/logo-china.png';
+        alt = 'GPT Global';
+    }
+
+    setLogoSrc(logoPath);
+    setAltText(alt);
+  }, []);
+
   const { data: config } = useGetStartupConfig();
   const setText = useSetRecoilState(store.text);
   const conversation = useRecoilValue(store.conversation);
@@ -30,9 +64,9 @@ export default function Landing() {
         <h1
           id="landing-title"
           data-testid="landing-title"
-          className="mb-10 ml-auto mr-auto mt-6 flex items-center justify-center gap-2 dark:text-gray-600 text-center text-4xl font-semibold sm:mb-16 md:mt-[10vh]"
+          className="mb-10 ml-auto mr-auto mt-6 flex items-center justify-center gap-2 text-center text-4xl font-semibold dark:text-gray-600 sm:mb-16 md:mt-[10vh]"
         >
-          {config?.appTitle || 'LibreChat'}
+          <img src={logoSrc} alt={altText} className="h-auto w-1/2 object-contain sm:w-1/3" />
         </h1>
         <div className="items-start gap-3.5 text-center md:flex">
           <div className="mb-8 flex flex-1 flex-col gap-3.5 md:mb-auto">

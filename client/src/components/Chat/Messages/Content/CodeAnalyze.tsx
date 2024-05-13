@@ -85,7 +85,7 @@ const CodeInProgress = ({
       style={{ opacity: 1, transform: 'none' }}
       data-projection-id="77"
     >
-      <div className='absolute right-[1.5px] bottom-[1.5px]'>
+      <div className="absolute bottom-[1.5px] right-[1.5px]">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           xmlnsXlink="http://www.w3.org/1999/xlink"

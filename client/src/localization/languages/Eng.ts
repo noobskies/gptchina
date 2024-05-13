@@ -3,6 +3,14 @@
 // file deepcode ignore HardcodedNonCryptoSecret: No hardcoded secrets present in this file
 
 export default {
+  com_ui_payment_title: 'Purchase Tokens',
+  com_ui_payment_tokens: 'Tokens',
+  com_ui_buy_token: 'Buy Tokens',
+  com_ui_payment_options: 'Select Payment Option',
+  com_ui_payment_purchase_button: 'Purchase',
+  com_ui_payment_please_note:
+    'Please Note! WeChat and Alipay valid only with a Chinese National ID-linked account',
+  com_ui_learn_more: 'Learn More',
   com_error_moderation:
     'It appears that the content submitted has been flagged by our moderation system for not aligning with our community guidelines. We\'re unable to proceed with this specific topic. If you have any other questions or topics you\'d like to explore, please edit your message, or create a new conversation.',
   com_error_no_user_key: 'No key found. Please provide a key and try again.',
@@ -208,6 +216,8 @@ export default {
     'Your account has been temporarily banned due to violations of our service.',
   com_auth_error_login_server:
     'There was an internal server error. Please wait a few moments and try again.',
+  com_auth_error_login_unverified:
+    'Your account has not been verified. Please check your email for a verification link.',
   com_auth_no_account: 'Don\'t have an account?',
   com_auth_sign_up: 'Sign up',
   com_auth_sign_in: 'Sign in',
@@ -259,6 +269,10 @@ export default {
   com_auth_submit_registration: 'Submit registration',
   com_auth_welcome_back: 'Welcome back',
   com_auth_back_to_login: 'Back to Login',
+  com_auth_email_verification_success: 'Email verification successful',
+  com_auth_email_verification_failed: 'Email verification failed',
+  com_auth_email_verification_invalid: 'Invalid email verification token',
+  com_auth_email_verification_in_progress: 'Email verification in progress',
   com_endpoint_open_menu: 'Open Menu',
   com_endpoint_bing_enable_sydney: 'Enable Sydney',
   com_endpoint_bing_to_enable_sydney: 'To enable Sydney',
@@ -514,5 +528,149 @@ export default {
   com_nav_lang_turkish: 'Türkçe',
   com_nav_lang_dutch: 'Nederlands',
   com_nav_lang_indonesia: 'Indonesia',
+  com_token_package_label_100k: '100k',
+  com_token_package_label_500k: '500k',
+  com_token_package_label_1m: '1 Million',
+  com_token_package_label_10m: '10 Million',
+  com_token_package_price_100k: '¥10',
+  com_token_package_price_500k: '¥35',
+  com_token_package_price_1m: '¥50',
+  com_token_package_price_10m: '¥250',
+  com_token_package_price_100k_global: '$1.50',
+  com_token_package_price_500k_global: '$5.00',
+  com_token_package_price_1m_global: '$7.50',
+  com_token_package_price_10m_global: '$40',
+  com_signin_title: 'Sign in to your account',
+  com_signin_or: 'Or',
+  com_signin_create_account: 'create an account',
+  com_insufficient_funds: 'Insufficient Funds',
+  com_tokens_remaining: 'Tokens Remaining:',
+  token_burn_rate: 'Click here for more info on Token Usage',
   com_nav_lang_hebrew: 'עברית',
+  com_privacy_policy_title: 'Privacy Policy for GPT China',
+  com_privacy_policy_last_updated: 'Last updated: April 4, 2024',
+  com_privacy_policy_intro:
+    'Welcome to GPT China, owned and operated by Badger Tech LLC. Your privacy is critically important to us, and this Privacy Policy outlines the types of personal information we collect, how it is used, and the measures we take to ensure your data is protected.',
+  com_privacy_policy_info_collection_title: '1. Information Collection and Use',
+  com_privacy_policy_info_collection_text1:
+    'We collect your name and email through our registration page. This information is used to inform you of system/site updates and notices.',
+  com_privacy_policy_info_collection_text2:
+    'For payment processing, we use Stripe for WeChat, Credit Card, and Alipay payments, and OpenNode for Bitcoin transactions. We do not store any payment information on our site; all payment data is handled directly by Stripe and OpenNode.',
+  com_privacy_policy_info_sharing_title: '2. Sharing and Disclosure of Information',
+  com_privacy_policy_info_sharing_text:
+    'We do not share any collected information with third parties, except as required for processing payments through Stripe and OpenNode. We will never disclose user information under any circumstances without your explicit consent.',
+  com_privacy_policy_user_rights_title: '3. User Rights',
+  com_privacy_policy_user_rights_text:
+    'You have the right to request the deletion of your data and account. To exercise this right, please contact us at hello@gptchina.io.',
+  com_privacy_policy_data_security_title: '4. Data Security',
+  com_privacy_policy_data_security_text:
+    'We are committed to protecting your personal information through the use of SSL encryption, ensuring the secure transmission of data on our platform.',
+  com_privacy_policy_third_party_title: '5. Third-party Services',
+  com_privacy_policy_third_party_text:
+    'Our website utilizes payment redirects to Stripe and OpenNode for processing payments. We do not host third-party links or services on our platform other than these payment gateways.',
+  com_privacy_policy_children_title: '6. Children\'s Privacy',
+  com_privacy_policy_children_text:
+    'GPT China does not knowingly collect personal information from children. If you are under the age of 18, please do not submit any personal information through our website.',
+  com_privacy_policy_changes_title: '7. Changes to This Privacy Policy',
+  com_privacy_policy_changes_text:
+    'We reserve the right to update or change our Privacy Policy at any time. You will be notified of any changes via email.',
+  com_privacy_policy_contact_title: '8. Contact Us',
+  com_privacy_policy_contact_text:
+    'If you have any questions about this Privacy Policy, please contact us by email at hello@gptchina.io.',
+  com_terms_title: 'Terms and Conditions for GPT China',
+  com_terms_effective_date: 'Effective Date: April 4, 2024',
+  com_terms_intro:
+    'Welcome to GPT China. By accessing our service, you agree to be bound by these Terms and Conditions. Please read them carefully.',
+  com_terms_service_description_title: '1. Service Description',
+  com_terms_service_description_text:
+    'GPT China provides users access to multiple large language models (LLMs) such as OpenAI\'s ChatGPT, Gemini Pro, Anthropic, and more through their APIs. Our service is designed to facilitate seamless interaction with these LLMs, with plans to include more models in the future. There are no age restrictions for using our service.',
+  com_terms_user_responsibilities_title: '2. User Responsibilities',
+  com_terms_user_responsibilities_text:
+    'Users are expected to interact with our service within the guardrails established by the LLMs to prevent harmful or hateful content. Users are responsible for maintaining the confidentiality of their account password and for all activities that occur under their account.',
+  com_terms_intellectual_property_title: '3. Intellectual Property',
+  com_terms_intellectual_property_text:
+    'The content provided through GPT China is owned by the respective LLM providers (OpenAI, Google\'s Gemini, Anthropic). Users retain ownership of their data from interactions with these LLMs. GPT China does not claim ownership of user-generated content.',
+  com_terms_user_generated_content_title: '4. User-Generated Content',
+  com_terms_user_generated_content_text:
+    'Users may upload photos/documents and create AI-generated images via plugins such as Dall-E 3. The use of uploaded content and AI-generated content is governed by the terms of the respective LLM providers.',
+  com_terms_service_availability_title: '5. Service Availability',
+  com_terms_service_availability_text:
+    'GPT China strives to maintain service uptime. In the event of downtime, users will be notified via email or through a maintenance page on our site.',
+  com_terms_termination_title: '6. Termination',
+  com_terms_termination_text:
+    'GPT China reserves the right to terminate a user\'s account for illegal activity, cheating, or attempts to undermine our system. Upon termination, the user\'s data will be deleted.',
+  com_terms_disclaimer_liability_title: '7. Disclaimer of Liability',
+  com_terms_disclaimer_liability_text:
+    'GPT China disclaims all liability related to the use of the service. Liability for any issues arising from interactions with the LLMs rests with the user or the respective LLM providers.',
+  com_terms_dispute_resolution_title: '8. Dispute Resolution',
+  com_terms_dispute_resolution_text:
+    'Any disputes arising under these terms will be resolved through arbitration in the United States, in accordance with the rules of the American Arbitration Association.',
+  com_terms_changes_title: '9. Changes to Terms and Conditions',
+  com_terms_changes_text:
+    'GPT China reserves the right to modify these terms at any time. Users will be notified of any changes via email.',
+  com_terms_contact_title: '10. Contact Information',
+  com_terms_contact_text:
+    'For any questions or concerns regarding these terms, please contact us at hello@gptchina.io.',
+  com_auth_registration_success:
+    'Registration successful. Please check your email to verify your email address.',
+  token_burn_rates_title: 'Token Usage Overview',
+  token_burn_rates_intro:
+    'Tokens can be used with various language models available on our platform. Each model has an associated "burn rate" (BR), which serves to compare token consumption across different models. This rate provides you with a multiplier that reflects the average token consumption for both input and output combined.',
+  token_burn_rates_br_explanation:
+    'If a model runs at a BR of 2, then the total number of words used in the input and output would be multiplied by 2 to give an approximation of the number tokens consumed.',
+  token_burn_rates_context_usage:
+    'It\'s important to note that models will use context as part of a user\'s input.',
+  token_burn_rates_new_chat_suggestion:
+    'To minimize the consumption of input tokens, it is advisable to start a new chat for each new topic when using powerful models such as Claude 3 Opus and GPT-4 Turbo.',
+  token_burn_rates_input_tokens:
+    'Input tokens are consumed at a lower rate than output but can begin to add up the longer your thread continues. In the table below, users can see burn rate of both input and output tokens as well as the average BR which should be used to quickly compare various AI models and their costs.',
+  token_burn_rates_table_model: 'Model',
+  token_burn_rates_table_input_br: 'Input Burn Rate',
+  token_burn_rates_table_output_br: 'Output Burn Rate',
+  token_burn_rates_table_average_br: 'Average Burn Rate (BR)',
+  token_burn_rates_table_gpt3_5_turbo: 'GPT-3.5 Turbo',
+  token_burn_rates_table_gpt4: 'GPT-4',
+  token_burn_rates_table_claude3_haiku: 'Claude-3 Haiku',
+  token_burn_rates_table_claude3_opus: 'Claude-3 Opus',
+  token_burn_rates_example_title: 'Example of Token Consumption',
+  token_burn_rates_example_intro:
+    'Let\'s consider two common models, GPT-3.5 Turbo and GPT-4, and compare their token consumption.',
+  token_burn_rates_example_given: 'Given:',
+  token_burn_rates_example_given_1: 'You\'re five messages into a conversation with each model.',
+  token_burn_rates_example_given_2:
+    'The previous context from the five messages is 500 input tokens.',
+  token_burn_rates_example_given_3:
+    'You write a 100-word prompt, bringing the total input tokens to 600.',
+  token_burn_rates_example_given_4:
+    'The AI model responds with 300 words, resulting in 600 input tokens and 300 output tokens.',
+  token_burn_rates_example_rates: 'Token consumption rates:',
+  token_burn_rates_example_calculations: 'Calculations:',
+  token_burn_rates_example_gpt3_5_turbo_consumption: 'GPT-3.5 Turbo token consumption',
+  token_burn_rates_example_gpt4_consumption: 'GPT-4 token consumption',
+  token_burn_rates_example_gpt3_5_turbo_input: 'Input tokens consumed = 600 × 0.1 = 60',
+  token_burn_rates_example_gpt4_input: 'Input tokens consumed = 600 × 3 = 1,800',
+  token_burn_rates_example_gpt3_5_turbo_output: 'Output tokens consumed = 300 × 0.3 = 90',
+  token_burn_rates_example_gpt4_output: 'Output tokens consumed = 300 × 8 = 2,400',
+  token_burn_rates_example_gpt3_5_turbo_total: 'Total tokens consumed = 60 + 90 =',
+  token_burn_rates_example_gpt4_total: 'Total tokens consumed = 1,800 + 2,400 =',
+  token_burn_rates_example_tokens: 'tokens',
+  token_burn_rates_calculation_challenge:
+    'Calculating the exact token usage for AI models can be challenging. To simplify this process, the average burn rate (BR) is used as a quick way to estimate how rapidly a model consumes tokens.',
+  token_burn_rates_experimentation:
+    'However, the most effective way to truly grasp the cost associated with each model is to experiment with them firsthand. This hands-on experience will provide you with a better understanding of how different models perform and consume tokens in various scenarios.',
+  token_burn_rates_new_conversations:
+    'When working with powerful models like Claude 3 Opus and GPT-4 Turbo, it\'s important to keep in mind that starting new conversations can significantly reduce the input token usage. By doing so, you can optimize your token consumption and manage costs more effectively.',
+  token_burn_rates_conclusion:
+    'Ultimately, finding the right balance between model performance and cost efficiency requires a combination of understanding the token consumption rates, experimenting with different models, and employing strategies like starting new conversations when appropriate.',
+  home_welcome_to: 'Welcome to',
+  home_intro_text_1: 'Your go-to platform for seamless interaction with cutting-edge AI models.',
+  home_intro_text_2: 'Here\'s what sets us apart:',
+  home_feature_1: '• No monthly subscriptions or upfront costs',
+  home_feature_2: '• Free daily tokens for all registered users',
+  home_feature_3: '• Access to top-tier AI models like Claude 3 Opus, GPT-4 Turbo, and more',
+  home_feature_4: '• All your favorite AI models under one roof',
+  home_feature_5: '• Flexibility to purchase additional tokens as needed',
+  home_feature_6: '• User-friendly experience tailored to your requirements',
+  claim_active: 'Claim 20K Tokens',
+  claim_inactive: 'Claim in',
 };

@@ -3,6 +3,13 @@
 // file deepcode ignore HardcodedNonCryptoSecret: No hardcoded secrets present in this file
 
 export default {
+  com_ui_payment_title: '购买算力',
+  com_ui_payment_tokens: '算力',
+  com_ui_buy_token: '购买算力',
+  com_ui_payment_options: '选择支付方式',
+  com_ui_payment_purchase_button: '购买',
+  com_ui_payment_please_note: '请注意！微信和支付宝仅适用于与中国身份证关联的账户。',
+  com_ui_learn_more: '了解更多',
   com_files_no_results: '无结果。',
   com_files_filter: '筛选文件...',
   com_files_number_selected: '已选择 {0} 个文件（共 {1} 个文件）',
@@ -55,6 +62,7 @@ export default {
   com_ui_example_quantum_computing: '如何给7岁小孩讲解量子计算？',
   com_ui_example_10_year_old_b_day: '如何举办生日宴才能耳目一新？',
   com_ui_example_http_in_js: '如何在Python中实现HTTP请求？',
+  test: '购买算力',
   com_ui_capabilities: '功能',
   com_ui_capability_remember: '记忆历史对话',
   com_ui_capability_correction: '允许更正内容',
@@ -164,6 +172,21 @@ export default {
   com_auth_email_max_length: '邮箱地址最多120个字符',
   com_auth_email_pattern: '请输入正确的电子邮箱格式',
   com_auth_email_address: '电子邮箱地址',
+  com_nav_help_faq: '帮助',
+  com_nav_settings: '设置',
+  com_nav_search_placeholder: '搜索对话及对话内容',
+  com_nav_setting_general: '通用',
+  com_nav_setting_data: '数据管理',
+  // com_nav_setting_account: '账户',
+  // New translations related to token purchase
+  purchase_tokens: '购买算力',
+  please_note: 'Please Note!', // Left in English as per instruction
+  token_amount_100k: '10万',
+  token_amount_500k: '50万',
+  token_amount_1m: '100万',
+  token_amount_10m: '1000万',
+  tokens_label: '标记',
+  purchase_action: '购买',
   com_auth_password: '密码',
   com_auth_password_required: '密码为必填项',
   com_auth_password_min_length: '密码至少8个字符',
@@ -409,13 +432,145 @@ export default {
   com_nav_archive_created_at: '创建时间',
   com_nav_clear_conversation: '清空对话',
   com_nav_clear_conversation_confirm_message: '请是否清空所有对话？该操作无法撤销',
-  com_nav_help_faq: '帮助',
-  com_nav_settings: '设置',
-  com_nav_search_placeholder: '搜索对话及对话内容',
-  com_nav_setting_general: '通用',
-  com_nav_setting_beta: '实验特性',
-  com_nav_setting_data: '数据管理',
   com_nav_setting_account: '账户',
+  com_token_package_label_100k: '10万',
+  com_token_package_label_500k: '50万',
+  com_token_package_label_1m: '100万',
+  com_token_package_label_10m: '1000万',
+  com_token_package_price_100k: '¥10',
+  com_token_package_price_500k: '¥35',
+  com_token_package_price_1m: '¥50',
+  com_token_package_price_10m: '¥250',
+  com_token_package_price_100k_global: '$1.50',
+  com_token_package_price_500k_global: '$5.00',
+  com_token_package_price_1m_global: '$7.50',
+  com_token_package_price_10m_global: '$40',
+  com_signin_title: '登录到您的账户',
+  com_signin_or: '或',
+  com_signin_create_account: '创建账户',
+  com_insufficient_funds: '算力不足! 余额:',
+  com_tokens_remaining: '剩余算力:',
+  token_burn_rate: 'Click here for more info on Token Usage',
+  com_privacy_policy_title: 'GPT China 隐私政策',
+  com_privacy_policy_last_updated: '最后更新：2024年4月4日',
+  com_privacy_policy_intro:
+    '欢迎来到 GPT China，Badger Tech LLC 拥有并运营。您的隐私对我们至关重要，本隐私政策概述了我们收集的个人信息类型、使用方式以及我们采取的措施以确保您的数据得到保护。',
+  com_privacy_policy_info_collection_title: '1. 信息收集与使用',
+  com_privacy_policy_info_collection_text1:
+    '我们通过注册页面收集您的姓名和电子邮件。此信息用于通知您系统/网站更新和通知。',
+  com_privacy_policy_info_collection_text2:
+    '对于支付处理，我们使用 Stripe 处理微信、信用卡和支付宝支付，以及使用 OpenNode 处理比特币交易。我们不在我们的网站上存储任何支付信息；所有支付数据均由 Stripe 和 OpenNode 直接处理。',
+  com_privacy_policy_info_sharing_title: '2. 信息共享与披露',
+  com_privacy_policy_info_sharing_text:
+    '除了通过 Stripe 和 OpenNode 处理支付所需的信息外，我们不与第三方分享任何收集的信息。在没有得到您明确同意的情况下，我们绝不会披露用户信息。',
+  com_privacy_policy_user_rights_title: '3. 用户权利',
+  com_privacy_policy_user_rights_text:
+    '您有权要求删除您的数据和账户。要行使此权利，请通过 hello@gptchina.io 与我们联系。',
+  com_privacy_policy_data_security_title: '4. 数据安全',
+  com_privacy_policy_data_security_text:
+    '我们致力于通过使用 SSL 加密来保护您的个人信息，确保在我们平台上数据的安全传输。',
+  com_privacy_policy_third_party_title: '5. 第三方服务',
+  com_privacy_policy_third_party_text:
+    '我们的网站使用支付重定向至 Stripe 和 OpenNode 以处理支付。除这些支付网关外，我们的平台不托管第三方链接或服务。',
+  com_privacy_policy_children_title: '6. 儿童隐私',
+  com_privacy_policy_children_text:
+    'GPT China 不会有意收集儿童的个人信息。如果您未满18岁，请不要通过我们的网站提交任何个人信息。',
+  com_privacy_policy_changes_title: '7. 本隐私政策的更改',
+  com_privacy_policy_changes_text:
+    '我们保留随时更新或更改我们的隐私政策的权利。我们将通过电子邮件通知您任何更改。',
+  com_privacy_policy_contact_title: '8. 联系我们',
+  com_privacy_policy_contact_text:
+    '如果您对本隐私政策有任何疑问，请通过电子邮件 hello@gptchina.io 与我们联系。',
+  com_terms_title: 'GPT China 服务条款',
+  com_terms_effective_date: '生效日期：2024年4月4日',
+  com_terms_intro:
+    '欢迎使用 GPT China。通过访问我们的服务，您同意受这些服务条款的约束。请仔细阅读。',
+  com_terms_service_description_title: '1. 服务描述',
+  com_terms_service_description_text:
+    'GPT China 为用户提供访问多个大型语言模型（LLMs），如 OpenAI 的 ChatGPT、Gemini Pro、Anthropic 等，通过他们的 API。我们的服务旨在促进与这些 LLM 的无缝互动，并计划未来包含更多模型。使用我们的服务没有年龄限制。',
+  com_terms_user_responsibilities_title: '2. 用户责任',
+  com_terms_user_responsibilities_text:
+    '用户在与我们的服务互动时，预期将遵守 LLMs 建立的防护措施，以防止有害或仇恨内容。用户负责保持其账户密码的机密性以及在其账户下发生的所有活动。',
+  com_terms_intellectual_property_title: '3. 知识产权',
+  com_terms_intellectual_property_text:
+    '通过 GPT China 提供的内容由相应的 LLM 提供商（OpenAI、谷歌的 Gemini、Anthropic）拥有。用户保留与这些 LLM 互动产生的数据的所有权。GPT China 不声称拥有用户生成内容的所有权。',
+  com_terms_user_generated_content_title: '4. 用户生成内容',
+  com_terms_user_generated_content_text:
+    '用户可以上传照片/文档并通过插件如 Dall-E 3 创建 AI 生成的图像。上传内容和 AI 生成的内容的使用受相应 LLM 提供商的条款的约束。',
+  com_terms_service_availability_title: '5. 服务可用性',
+  com_terms_service_availability_text:
+    'GPT China 力求保持服务的正常运行时间。在服务停机时，用户将通过电子邮件或我们网站上的维护页面被通知。',
+  com_terms_termination_title: '6. 终止',
+  com_terms_termination_text:
+    'GPT China 保留因非法活动、作弊或尝试破坏我们的系统而终止用户账户的权利。终止后，将删除用户的数据。',
+  com_terms_disclaimer_liability_title: '7. 免责声明',
+  com_terms_disclaimer_liability_text:
+    'GPT China 对使用服务相关的所有责任免责。与 LLMs 的互动产生的任何问题的责任由用户或相应的 LLM 提供商承担。',
+  com_terms_dispute_resolution_title: '8. 争议解决',
+  com_terms_dispute_resolution_text:
+    '根据美国仲裁协会的规则，在美国通过仲裁解决这些条款下产生的任何争议。',
+  com_terms_changes_title: '9. 更改服务条款',
+  com_terms_changes_text:
+    'GPT China 保留随时修改这些条款的权利。用户将通过电子邮件被通知任何更改。',
+  com_terms_contact_title: '10. 联系信息',
+  com_terms_contact_text: '如有任何关于这些条款的问题或担忧，请通过 hello@gptchina.io 与我们联系。',
+  com_auth_registration_success: '注册成功。请检查您的电子邮件以验证您的电子邮件地址。',
+  token_burn_rates_title: '算力使用概述',
+  token_burn_rates_intro:
+    '算力可用于我们平台上提供的各种语言模型。每个模型都有一个相关的 "燃烧率" (BR)，用于比较不同模型之间的算力消耗。该比率为您提供一个乘数,反映了输入和输出的平均算力消耗。',
+  token_burn_rates_br_explanation:
+    '如果一个模型以 BR 2 运行，那么输入和输出中使用的总字数将乘以 2，以估算消耗的算力数量。',
+  token_burn_rates_context_usage: '需要注意的是， 模型将使用上下文作为用户输入的一部分。',
+  token_burn_rates_new_chat_suggestion:
+    '为了最大限度地减少输入算力的消耗，建议在使用 Claude 3 Opus 和 GPT-4 Turbo 等强大模型时，为每个新主题开始新的对话。',
+  token_burn_rates_input_tokens:
+    '输入算力的消耗率低于输出,但随着线程的继续，可能会开始累积。在下表中,用户可以看到输入和输出算力的燃烧率以及平均 BR，应该用它来快速比较各种 AI 模型及其成本。',
+  token_burn_rates_table_model: '模型',
+  token_burn_rates_table_input_br: '输入燃烧率',
+  token_burn_rates_table_output_br: '输出燃烧率',
+  token_burn_rates_table_average_br: '平均燃烧率 (BR)',
+  token_burn_rates_table_gpt3_5_turbo: 'GPT-3.5 Turbo',
+  token_burn_rates_table_gpt4: 'GPT-4',
+  token_burn_rates_table_claude3_haiku: 'Claude-3 Haiku',
+  token_burn_rates_table_claude3_opus: 'Claude-3 Opus',
+  token_burn_rates_example_title: '算力消耗示例',
+  token_burn_rates_example_intro:
+    '让我们考虑两个常见的模型，GPT-3.5 Turbo 和 GPT-4，并比较它们的算力消耗。',
+  token_burn_rates_example_given: '给定:',
+  token_burn_rates_example_given_1: '您在与每个模型的对话中已有五条消息。',
+  token_burn_rates_example_given_2: '上下文自动消耗 500 个算力。',
+  token_burn_rates_example_given_3: '您编写了一个 100 字的提示，使总输入算力达到 600。',
+  token_burn_rates_example_given_4: 'AI 模型以 300 字回复，导致 600 个输入算力和 300 个输出算力。',
+  token_burn_rates_example_rates: '算力消耗率:',
+  token_burn_rates_example_calculations: '计算:',
+  token_burn_rates_example_gpt3_5_turbo_consumption: 'GPT-3.5 Turbo 算力消耗',
+  token_burn_rates_example_gpt4_consumption: 'GPT-4 算力消耗',
+  token_burn_rates_example_gpt3_5_turbo_input: '消耗的输入算力 = 600 × 0.1 = 60',
+  token_burn_rates_example_gpt4_input: '消耗的输入算力 = 600 × 3 = 1,800',
+  token_burn_rates_example_gpt3_5_turbo_output: '消耗的输出算力 = 300 × 0.3 = 90',
+  token_burn_rates_example_gpt4_output: '消耗的输出算力 = 300 × 8 = 2,400',
+  token_burn_rates_example_gpt3_5_turbo_total: '消耗的总算力 = 60 + 90 =',
+  token_burn_rates_example_gpt4_total: '消耗的总算力 = 1,800 + 2,400 =',
+  token_burn_rates_example_tokens: '算力',
+  token_burn_rates_calculation_challenge:
+    '计算 AI 模型的确切算力使用量可能具有挑战性。为了简化此过程， 平均燃烧率 (BR) 被用作快速估计模型消耗算力速度的方法。',
+  token_burn_rates_experimentation:
+    '然而，真正掌握每个模型相关成本的最有效方法是亲自尝试它们。这种实践经验将为您提供对不同模型在各种场景中的性能和算力消耗的更好理解。',
+  token_burn_rates_new_conversations:
+    '使用 Claude 3 Opus 和 GPT-4 Turbo 等强大模型时，请记住，开始新对话可以显著减少输入算力的使用。通过这样做，您可以优化算力消耗并更有效地管理成本。',
+  token_burn_rates_conclusion:
+    '最终，在模型性能和成本效率之间找到正确的平衡需要结合对算力消耗率的理解，尝试不同的模型以及在适当时采用开始新对话等策略。',
+  home_welcome_to: '欢迎来到',
+  home_intro_text_1: '这是您与尖端 AI 模型无缝互动的首选平台。',
+  home_intro_text_2: '以下是我们的与众不同之处:',
+  home_feature_1: '• 无需每月订阅或预付费用',
+  home_feature_2: '• 所有注册用户每天都有免费算力',
+  home_feature_3: '• 访问 Claude 3 Opus、GPT-4 Turbo 等顶级 AI 模型',
+  home_feature_4: '• 多款热门 AI 模型,一站即可体验',
+  home_feature_5: '• 根据需要灵活购买额外的算力',
+  home_feature_6: '• 根据您的需求量身定制的用户友好体验',
+  claim_active: '领取 20k 算力',
+  claim_inactive: '领取倒计时',
   /* The following are AI Translated */
   com_error_moderation:
     '很抱歉,您提交的内容被我们的审核系统标记为不符合社区指引。我们无法就此特定主题继续交流。如果您有任何其他问题或想探讨的话题,请编辑您的消息或开启新的对话。',

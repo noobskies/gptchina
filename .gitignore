@@ -1,5 +1,7 @@
 ### node etc ###
 
+.well-known/
+
 # Logs
 data-node
 meili_data*

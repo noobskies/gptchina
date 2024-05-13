@@ -216,6 +216,11 @@ export type TResetPassword = {
   confirm_password?: string;
 };
 
+export type TVerifyEmail = {
+  userId: string;
+  token: string;
+};
+
 export type TInterfaceConfig = {
   privacyPolicy?: {
     externalUrl?: string;

@@ -1,19 +1,99 @@
-import { useEffect } from 'react';
+import React from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGetStartupConfig } from 'librechat-data-provider/react-query';
 import { GoogleIcon, FacebookIcon, OpenIDIcon, GithubIcon, DiscordIcon } from '~/components';
 import { useAuthContext } from '~/hooks/AuthContext';
-import { ThemeSelector } from '~/components/ui';
 import SocialButton from './SocialButton';
 import { getLoginError } from '~/utils';
 import { useLocalize } from '~/hooks';
 import LoginForm from './LoginForm';
+import Particles, { initParticlesEngine } from '@tsparticles/react';
+import { type Container, type ISourceOptions, MoveDirection, OutMode } from '@tsparticles/engine';
+import { loadSlim } from '@tsparticles/slim';
+import { TypeAnimation } from 'react-type-animation';
+
+const apiUrl = process.env.REACT_APP_API_URL;
 
 function Login() {
   const { login, error, isAuthenticated } = useAuthContext();
   const { data: startupConfig } = useGetStartupConfig();
   const localize = useLocalize();
   const navigate = useNavigate();
+  const [init, setInit] = useState(false);
+
+  useEffect(() => {
+    initParticlesEngine(async (engine) => {
+      await loadSlim(engine);
+    }).then(() => {
+      setInit(true);
+    });
+  }, []);
+
+  const particlesLoaded = async (container?: Container): Promise<void> => {
+    console.log(container);
+  };
+
+  const options: ISourceOptions = useMemo(
+    () => ({
+      background: {
+        color: {
+          value: '#2563eb',
+        },
+      },
+      fpsLimit: 120,
+      interactivity: {
+        events: {
+          onClick: {
+            enable: true,
+            mode: 'push',
+          },
+        },
+        modes: {
+          push: {
+            quantity: 1,
+          },
+          repulse: {
+            distance: 100,
+            duration: 0.5,
+          },
+        },
+      },
+      particles: {
+        color: {
+          value: '#ffffff',
+        },
+        links: {
+          color: '#ffffff',
+          distance: 250,
+          enable: true,
+          opacity: 0.6,
+          width: 0.5,
+        },
+        number: {
+          density: {
+            enable: true,
+          },
+          value: 130,
+        },
+        shape: {
+          type: 'line',
+        },
+        size: {
+          value: { min: 1, max: 5 },
+        },
+        move: {
+          direction: 'none',
+          random: true,
+          enable: true,
+          speed: 1.5,
+          straight: false,
+        },
+      },
+      detectRetina: false,
+    }),
+    [],
+  );
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -94,44 +174,63 @@ function Login() {
   const privacyPolicy = startupConfig.interface?.privacyPolicy;
   const termsOfService = startupConfig.interface?.termsOfService;
 
-  const privacyPolicyRender = privacyPolicy?.externalUrl && (
+  const privacyPolicyRender = (
     <a
-      className="text-sm text-green-500"
-      href={privacyPolicy.externalUrl}
-      target={privacyPolicy.openNewTab ? '_blank' : undefined}
+      className="text-xs font-medium text-blue-500"
+      href={privacyPolicy?.externalUrl || 'privacy-policy'}
+      target="_blank"
       rel="noreferrer"
     >
-      {localize('com_ui_privacy_policy')}
+      {privacyPolicy?.externalUrl ? localize('com_ui_privacy_policy') : 'Privacy Policy'}
     </a>
   );
 
-  const termsOfServiceRender = termsOfService?.externalUrl && (
+  const termsOfServiceRender = (
     <a
-      className="text-sm text-green-500"
-      href={termsOfService.externalUrl}
-      target={termsOfService.openNewTab ? '_blank' : undefined}
+      className="text-xs font-medium text-blue-500"
+      href={termsOfService?.externalUrl || 'terms-of-service'}
+      target="_blank"
       rel="noreferrer"
     >
-      {localize('com_ui_terms_of_service')}
+      {termsOfService?.externalUrl ? localize('com_ui_terms_of_service') : 'Terms of Service'}
     </a>
   );
+
+  const domainLogos = {
+    'gptchina.io': 'logo-china.png',
+    'gptafrica.io': 'logo-africa.png',
+    'gptglobal.io': 'logo-global.png',
+    'gptiran.io': 'logo-iran.png',
+    'gptitaly.io': 'logo-italy.png',
+    'gptrussia.io': 'logo-russia.png',
+    'gptusa.io': 'logo-usa.png',
+    'novlisky.io': 'logo-novlisky.png',
+  };
+
+  const domainTitles = {
+    'gptchina.io': 'GPT China',
+    'gptafrica.io': 'GPT Africa',
+    'gptglobal.io': 'GPT Global',
+    'gptiran.io': 'GPT Iran',
+    'gptitaly.io': 'GPT Italy',
+    'gptrussia.io': 'GPT Russia',
+    'gptusa.io': 'GPT USA',
+    'novlisky.io': 'Novlisky',
+  };
+
+  const currentDomain = window.location.hostname;
+  const logoImageFilename = domainLogos[currentDomain] || 'logo-novlisky.png';
+  const domainTitle = domainTitles[currentDomain] || 'Novlisky';
 
   return (
-    <div className="relative flex min-h-screen flex-col bg-white dark:bg-gray-900">
-      <div className="mt-12 h-24 w-full bg-cover">
-        <img src="/assets/logo.svg" className="h-full w-full object-contain" alt="Logo" />
-      </div>
-      <div className="absolute bottom-0 left-0 md:m-4">
-        <ThemeSelector />
-      </div>
-      <div className="flex flex-grow items-center justify-center">
-        <div className="w-authPageWidth overflow-hidden bg-white px-6 py-4 dark:bg-gray-900 sm:max-w-md sm:rounded-lg">
-          <h1
-            className="mb-4 text-center text-3xl font-semibold text-black dark:text-white"
-            style={{ userSelect: 'none' }}
-          >
-            {localize('com_auth_welcome_back')}
-          </h1>
+    <section className="flex flex-col md:h-screen md:flex-row">
+      <div className="relative z-10 flex w-full flex-col items-center justify-center bg-white dark:bg-gray-800 md:w-1/2">
+        <div className="w-full overflow-hidden bg-white px-6 py-4 dark:bg-gray-800 sm:max-w-md sm:rounded-lg">
+          <img
+            src={`/assets/${logoImageFilename}`}
+            className="mx-auto mb-10 h-16 w-auto"
+            alt="Logo"
+          />
           {error && (
             <div
               className="rounded-md border border-red-500 bg-red-500/10 px-3 py-2 text-sm text-gray-600 dark:text-gray-200"
@@ -145,7 +244,7 @@ function Login() {
             <p className="my-4 text-center text-sm font-light text-gray-700 dark:text-white">
               {' '}
               {localize('com_auth_no_account')}{' '}
-              <a href="/register" className="p-1 text-green-500">
+              <a href="/register" className="p-1 font-medium text-blue-500">
                 {localize('com_auth_sign_up')}
               </a>
             </p>
@@ -154,7 +253,7 @@ function Login() {
             <>
               {startupConfig.emailLoginEnabled && (
                 <>
-                  <div className="relative mt-6 flex w-full items-center justify-center border border-t border-gray-300 uppercase dark:border-gray-600">
+                  <div className="relative mt-6 flex w-full items-center justify-center border border-t uppercase">
                     <div className="absolute bg-white px-3 text-xs text-black dark:bg-gray-900 dark:text-white">
                       Or
                     </div>
@@ -167,16 +266,49 @@ function Login() {
               </div>
             </>
           )}
+          <div className="mt-4 flex justify-center gap-4 align-middle">
+            {privacyPolicyRender}
+            {privacyPolicyRender && termsOfServiceRender && (
+              <div className="border-r-[1px] border-gray-300" />
+            )}
+            {termsOfServiceRender}
+          </div>
         </div>
       </div>
-      <div className="align-end m-4 flex justify-center gap-2">
-        {privacyPolicyRender}
-        {privacyPolicyRender && termsOfServiceRender && (
-          <div className="border-r-[1px] border-gray-300 dark:border-gray-600" />
-        )}
-        {termsOfServiceRender}
+      <div className="relative flex w-full flex-col justify-center bg-blue-500 p-8 dark:bg-blue-600 sm:p-12 md:w-1/2 md:p-16 lg:p-24">
+        <Particles
+          id="tsparticles"
+          particlesLoaded={particlesLoaded}
+          options={options}
+          className="absolute inset-0"
+        />
+        <div className="z-10 text-left">
+          <div className="z-10 text-left">
+            <TypeAnimation
+              sequence={[
+                // Same substring at the start will only be typed once, initially
+                `${localize('home_welcome_to')} ${domainTitle}`,
+                1000,
+              ]}
+              speed={50}
+              repeat={Infinity}
+              cursor={true}
+              className="mb-4 text-3xl font-bold text-white sm:text-4xl lg:text-5xl"
+            />
+          </div>
+          <p className="mb-4 text-base text-white sm:text-lg">{localize('home_intro_text_1')}</p>
+          <p className="mb-4 text-base text-white sm:text-lg">{localize('home_intro_text_2')}</p>
+          <ul className="mb-4 text-base text-white sm:text-lg">
+            <li className="mb-3 sm:mb-0">{localize('home_feature_1')}</li>
+            <li className="mb-3 sm:mb-0">{localize('home_feature_2')}</li>
+            <li className="mb-3 sm:mb-0">{localize('home_feature_3')}</li>
+            <li className="mb-3 sm:mb-0">{localize('home_feature_4')}</li>
+            <li className="mb-3 sm:mb-0">{localize('home_feature_5')}</li>
+            <li>{localize('home_feature_6')}</li>
+          </ul>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
 

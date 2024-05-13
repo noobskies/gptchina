@@ -1,4 +1,6 @@
 require('dotenv').config();
+const Sentry = require('@sentry/node');
+const { nodeProfilingIntegration } = require('@sentry/profiling-node');
 const path = require('path');
 require('module-alias')({ base: path.resolve(__dirname, '..') });
 const cors = require('cors');
@@ -32,15 +34,36 @@ const startServer = async () => {
   await indexSync();
 
   const app = express();
+
+  Sentry.init({
+    dsn: 'https://9fe618ffe956020b729289e4d4701167@o4507099226177536.ingest.us.sentry.io/4507099229192192',
+    integrations: [
+      new Sentry.Integrations.Http({ tracing: true }),
+      new Sentry.Integrations.Express({ app }),
+      nodeProfilingIntegration(),
+    ],
+    tracesSampleRate: 0.05,
+    profilesSampleRate: 0.05,
+  });
+
   app.disable('x-powered-by');
   await AppService(app);
 
   app.get('/health', (_req, res) => res.status(200).send('OK'));
 
   // Middleware
+  app.use(Sentry.Handlers.requestHandler());
+  app.use(Sentry.Handlers.tracingHandler());
   app.use(noIndex);
   app.use(errorController);
-  app.use(express.json({ limit: '3mb' }));
+  app.use(
+    express.json({
+      limit: '5mb',
+      verify: (req, res, buf) => {
+        req.rawBody = buf.toString();
+      },
+    }),
+  );
   app.use(mongoSanitize());
   app.use(express.urlencoded({ extended: true, limit: '3mb' }));
   app.use(express.static(app.locals.paths.dist));
@@ -82,6 +105,9 @@ const startServer = async () => {
   app.use('/api/models', routes.models);
   app.use('/api/plugins', routes.plugins);
   app.use('/api/config', routes.config);
+  app.use('/api/payment/stripe', routes.payment);
+  app.use('/api/payment/opennode', routes.openNodePayment);
+  app.use('/api/payment/paypal', routes.paypalPayment);
   app.use('/api/assistants', routes.assistants);
   app.use('/api/files', await routes.files.initialize());
   app.use('/images/', validateImageRequest, routes.staticRoute);
@@ -89,6 +115,8 @@ const startServer = async () => {
   app.use((req, res) => {
     res.status(404).sendFile(path.join(app.locals.paths.dist, 'index.html'));
   });
+
+  app.use(Sentry.Handlers.errorHandler());
 
   app.listen(port, host, () => {
     if (host == '0.0.0.0') {

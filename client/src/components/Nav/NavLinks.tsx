@@ -15,6 +15,11 @@ import Settings from './Settings';
 import NavLink from './NavLink';
 import Logout from './Logout';
 import { cn } from '~/utils/';
+import ErrorDialog from '~/components/Messages/Content/ErrorDialog';
+import numeral from 'numeral';
+import ClaimTokensButton from '~/components/ClaimTokensButton/ClaimTokensButton';
+import BuyTokensButton from './BuyTokensButton';
+
 import store from '~/store';
 
 function NavLinks() {
@@ -40,11 +45,31 @@ function NavLinks() {
     conversation = activeConvo;
   }
 
+  const [showBuyTokens, setShowBuyTokens] = useState(false);
+
+  function formatTokenCount(count) {
+    // For numbers below 10 million, format with 'k' for thousands and 'M' for millions, with up to 1 decimal place if needed.
+    // For numbers 10 million and above, it automatically formats with 'M' and no decimal places, adhering to standard formatting.
+    let formatted = numeral(count).format(count >= 1000 ? '0.[0]a' : '0');
+    formatted = formatted.toUpperCase();
+    return formatted;
+  }
+
   return (
     <>
       <Menu as="div" className="group relative">
         {({ open }) => (
           <>
+            <div className="m-1 ml-3 flex flex-col items-start whitespace-nowrap text-left text-sm text-gray-100">
+              <ClaimTokensButton refetchBalance={balanceQuery.refetch} />
+              <div className="flex items-center text-gray-800 dark:text-gray-200">
+                {`${localize('com_tokens_remaining')} ${formatTokenCount(balanceQuery.data)}`}
+              </div>
+              <a href="/token-burn-rates" target="_blank" className="text-xs text-blue-600">
+                {localize('com_ui_learn_more')}
+              </a>
+              <BuyTokensButton />
+            </div>
             <Menu.Button
               className={cn(
                 'group-ui-open:bg-gray-100 dark:group-ui-open:bg-gray-700 duration-350 mt-text-sm flex h-auto w-full items-center gap-2 rounded-lg p-2 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-gray-800',
@@ -137,6 +162,7 @@ function NavLinks() {
       </Menu>
       {showFiles && <FilesView open={showFiles} onOpenChange={setShowFiles} />}
       {showSettings && <Settings open={showSettings} onOpenChange={setShowSettings} />}
+      {showBuyTokens && <ErrorDialog open={showBuyTokens} onOpenChange={setShowBuyTokens} />}
     </>
   );
 }
