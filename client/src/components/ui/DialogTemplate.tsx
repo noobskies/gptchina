@@ -25,6 +25,7 @@ type DialogTemplateProps = {
   selection?: SelectionProps;
   className?: string;
   headerClassName?: string;
+  footerClassName?: string;
   showCloseButton?: boolean;
   fullscreen?: boolean;
   showFooter?: boolean;
@@ -42,6 +43,7 @@ const DialogTemplate = forwardRef((props: DialogTemplateProps, ref: Ref<HTMLDivE
     selection,
     className,
     headerClassName,
+    footerClassName,
     showCloseButton,
     fullscreen = false,
     showFooter = true,
