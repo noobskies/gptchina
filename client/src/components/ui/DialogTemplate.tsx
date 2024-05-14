@@ -25,10 +25,12 @@ type DialogTemplateProps = {
   selection?: SelectionProps;
   className?: string;
   headerClassName?: string;
+  footerClassName?: string;
   showCloseButton?: boolean;
   fullscreen?: boolean;
   showFooter?: boolean;
   footerContent?: ReactNode;
+  showCancelButton?: boolean;
 };
 
 const DialogTemplate = forwardRef((props: DialogTemplateProps, ref: Ref<HTMLDivElement>) => {
@@ -42,10 +44,12 @@ const DialogTemplate = forwardRef((props: DialogTemplateProps, ref: Ref<HTMLDivE
     selection,
     className,
     headerClassName,
+    footerClassName,
     showCloseButton,
     fullscreen = false,
     showFooter = true,
     footerContent,
+    showCancelButton = true,
   } = props;
   const { selectHandler, selectClasses, selectText } = selection || {};
   const Cancel = localize('com_ui_cancel');
@@ -100,6 +104,27 @@ const DialogTemplate = forwardRef((props: DialogTemplateProps, ref: Ref<HTMLDivE
           </DialogFooter>
         )
       )}
+      <DialogFooter className={footerClassName}>
+        <div>{leftButtons ? leftButtons : null}</div>
+        <div className="flex h-auto gap-3">
+          {showCancelButton && (
+            <DialogClose className="border-gray-100 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-600">
+              {Cancel}
+            </DialogClose>
+          )}
+          {buttons ? buttons : null}
+          {selection ? (
+            <DialogClose
+              onClick={selectHandler}
+              className={`${
+                selectClasses || defaultSelect
+              } inline-flex h-10 items-center justify-center rounded-lg border-none px-4 py-2 text-sm`}
+            >
+              {selectText}
+            </DialogClose>
+          ) : null}
+        </div>
+      </DialogFooter>
     </DialogContent>
   );
 });

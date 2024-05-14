@@ -12,12 +12,13 @@ const tokenValues = {
   '32k': { prompt: 60, completion: 120 },
   '4k': { prompt: 1.5, completion: 2 },
   '16k': { prompt: 3, completion: 4 },
-  'gpt-3.5-turbo-1106': { prompt: 0.1, completion: 0.3 },
-  'gpt-4-1106': { prompt: 3, completion: 8 },
-  'gpt-3.5-turbo-0125': { prompt: 0.1, completion: 0.3 },
-  'claude-3-opus': { prompt: 8, completion: 20 },
-  'claude-3-sonnet': { prompt: 0.6, completion: 3.75 },
-  'claude-3-haiku': { prompt: 0.1, completion: 0.3 },
+  'gpt-3.5-turbo-1106': { prompt: 1, completion: 2 },
+  'gpt-4o': { prompt: 5, completion: 15 },
+  'gpt-4-1106': { prompt: 10, completion: 30 },
+  'gpt-3.5-turbo-0125': { prompt: 0.5, completion: 1.5 },
+  'claude-3-opus': { prompt: 15, completion: 75 },
+  'claude-3-sonnet': { prompt: 3, completion: 15 },
+  'claude-3-haiku': { prompt: 0.25, completion: 1.25 },
   'claude-2.1': { prompt: 8, completion: 24 },
   'claude-2': { prompt: 8, completion: 24 },
   'claude-': { prompt: 0.8, completion: 2.4 },
@@ -53,6 +54,8 @@ const getValueKey = (model, endpoint) => {
     return 'gpt-3.5-turbo-1106';
   } else if (modelName.includes('gpt-3.5')) {
     return '4k';
+  } else if (modelName.includes('gpt-4o')) {
+    return 'gpt-4o';
   } else if (modelName.includes('gpt-4-vision')) {
     return 'gpt-4-1106';
   } else if (modelName.includes('gpt-4-1106')) {
