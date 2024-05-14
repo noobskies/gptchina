@@ -12,13 +12,13 @@ const tokenValues = {
   '32k': { prompt: 60, completion: 120 },
   '4k': { prompt: 1.5, completion: 2 },
   '16k': { prompt: 3, completion: 4 },
-  'gpt-3.5-turbo-1106': { prompt: 1, completion: 2 },
-  'gpt-4o': { prompt: 5, completion: 15 },
-  'gpt-4-1106': { prompt: 10, completion: 30 },
-  'gpt-3.5-turbo-0125': { prompt: 0.5, completion: 1.5 },
-  'claude-3-opus': { prompt: 15, completion: 75 },
-  'claude-3-sonnet': { prompt: 3, completion: 15 },
-  'claude-3-haiku': { prompt: 0.25, completion: 1.25 },
+  'gpt-3.5-turbo-1106': { prompt: 0.1, completion: 0.3 },
+  'gpt-4o': { prompt: 1.5, completion: 4 },
+  'gpt-4-1106': { prompt: 3, completion: 8 },
+  'gpt-3.5-turbo-0125': { prompt: 0.1, completion: 0.3 },
+  'claude-3-opus': { prompt: 8, completion: 20 },
+  'claude-3-sonnet': { prompt: 0.6, completion: 3.75 },
+  'claude-3-haiku': { prompt: 0.1, completion: 0.3 },
   'claude-2.1': { prompt: 8, completion: 24 },
   'claude-2': { prompt: 8, completion: 24 },
   'claude-': { prompt: 0.8, completion: 2.4 },
@@ -27,10 +27,8 @@ const tokenValues = {
   /* cohere doesn't have rates for the older command models,
   so this was from https://artificialanalysis.ai/models/command-light/providers */
   command: { prompt: 0.38, completion: 0.38 },
-  // 'gemini-1.5': { prompt: 7, completion: 21 }, // May 2nd, 2024 pricing
-  // 'gemini': { prompt: 0.5, completion: 1.5 }, // May 2nd, 2024 pricing
-  'gemini-1.5': { prompt: 0, completion: 0 }, // currently free
-  gemini: { prompt: 0, completion: 0 }, // currently free
+  'gemini-1.5': { prompt: 2, completion: 6 }, // May 2nd, 2024 pricing
+  gemini: { prompt: 0.1, completion: 0.25 }, // May 2nd, 2024 pricing
 };
 
 /**
