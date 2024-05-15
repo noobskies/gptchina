@@ -52,6 +52,26 @@ function SelectDropDownPop({
   const hasSearchRender = Boolean(searchRender);
   const options = hasSearchRender ? filteredValues : availableValues;
 
+  const optionTitles = {
+    'gemini-pro': 'Gemini Pro',
+    'gemini-pro-vision': 'Gemini Pro Vision',
+    BingAI: 'Bing AI',
+    Sydney: 'Sydney',
+    'gpt-3.5-turbo-0125': '🔥GPT-3.5 Turbo',
+    'gpt-4-1106-preview': '🔥🔥GPT-4 Preview',
+    'gpt-4o': '🔥GPT-4 Optimized',
+    'claude-3-opus-20240229': 'Claude 3 Opus',
+    'claude-3-sonnet-20240229': 'Claude 3 Sonnet',
+    'claude-3-haiku-20240307': 'Claude 3 Haiku',
+    'claude-2.1': 'Claude 2.1',
+    'claude-2': 'Claude 2',
+    'claude-1.2': 'Claude 1.2',
+    'claude-1': 'Claude 1',
+    'claude-1-100k': 'Claude 1 (100k)',
+    'claude-instant-1': 'Claude Instant 1',
+    'claude-instant-1-100k': 'Claude Instant 1 (100k)',
+  };
+
   return (
     <Root>
       <div className={'flex items-center justify-center gap-2 '}>
@@ -68,18 +88,17 @@ function SelectDropDownPop({
               {showLabel && (
                 <label className="block text-xs text-gray-700 dark:text-gray-500 ">{title}</label>
               )}
-              <span className="inline-flex w-full ">
+              <span className="inline-flex w-full">
                 <span
                   className={cn(
-                    'flex h-6 items-center gap-1  text-sm text-gray-800 dark:text-white',
+                    'flex h-6 items-center gap-1 text-sm text-gray-800 dark:text-white',
                     !showLabel ? 'text-xs' : '',
                     'min-w-[75px] font-normal',
                   )}
                 >
-                  {/* {!showLabel && !emptyTitle && (
-                    <span className="text-xs text-gray-700 dark:text-gray-500">{title}:</span>
-                  )} */}
-                  {typeof value !== 'string' && value ? value?.label ?? '' : value ?? ''}
+                  {typeof value !== 'string' && value
+                    ? optionTitles[value] || value?.label || ''
+                    : optionTitles[value] || value || ''}
                 </span>
               </span>
               <span className="absolute inset-y-0 right-0 flex items-center pr-2">
@@ -112,10 +131,12 @@ function SelectDropDownPop({
             >
               {searchRender}
               {options.map((option) => {
+                const optionTitle = optionTitles[option] || option;
                 return (
                   <MenuItem
                     key={option}
-                    title={option}
+                    title={optionTitle}
+                    // description={option}
                     value={option}
                     selected={!!(value && value === option)}
                     onClick={() => setValue(option)}

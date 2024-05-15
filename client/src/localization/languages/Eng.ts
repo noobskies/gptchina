@@ -10,7 +10,7 @@ export default {
   com_ui_payment_purchase_button: 'Purchase',
   com_ui_payment_please_note:
     'Please Note! WeChat and Alipay valid only with a Chinese National ID-linked account',
-  com_ui_learn_more: 'Learn More',
+  com_ui_learn_more: 'Learn More 🔥',
   com_error_moderation:
     'It appears that the content submitted has been flagged by our moderation system for not aligning with our community guidelines. We\'re unable to proceed with this specific topic. If you have any other questions or topics you\'d like to explore, please edit your message, or create a new conversation.',
   com_error_no_user_key: 'No key found. Please provide a key and try again.',
@@ -649,6 +649,7 @@ export default {
   token_burn_rates_table_gpt3_5_turbo: 'GPT-3.5 Turbo',
   token_burn_rates_table_gpt4: 'GPT-4',
   token_burn_rates_table_claude3_haiku: 'Claude-3 Haiku',
+  token_burn_rates_table_claude3_sonnet: 'Claude-3 Sonnet',
   token_burn_rates_table_claude3_opus: 'Claude-3 Opus',
   token_burn_rates_example_title: 'Example of Token Consumption',
   token_burn_rates_example_intro:

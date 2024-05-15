@@ -9,7 +9,7 @@ export default {
   com_ui_payment_options: '选择支付方式',
   com_ui_payment_purchase_button: '购买',
   com_ui_payment_please_note: '请注意！微信和支付宝仅适用于与中国身份证关联的账户。',
-  com_ui_learn_more: '了解更多',
+  com_ui_learn_more: '了解更多 🔥',
   com_files_no_results: '无结果。',
   com_files_filter: '筛选文件...',
   com_files_number_selected: '已选择 {0} 个文件（共 {1} 个文件）',
@@ -532,6 +532,7 @@ export default {
   token_burn_rates_table_gpt3_5_turbo: 'GPT-3.5 Turbo',
   token_burn_rates_table_gpt4: 'GPT-4',
   token_burn_rates_table_claude3_haiku: 'Claude-3 Haiku',
+  token_burn_rates_table_claude3_sonnet: 'Claude-3 Sonnet',
   token_burn_rates_table_claude3_opus: 'Claude-3 Opus',
   token_burn_rates_example_title: '算力消耗示例',
   token_burn_rates_example_intro:

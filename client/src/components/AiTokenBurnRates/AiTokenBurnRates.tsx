@@ -65,7 +65,7 @@ const AiTokenBurnRates = () => {
             </tr>
             <tr>
               <td className="border border-gray-400 px-4 py-2">
-                {localize('token_burn_rates_table_claude3_haiku')}
+                {localize('token_burn_rates_table_claude3_sonnet')}
               </td>
               <td className="border border-gray-400 px-4 py-2">0.6</td>
               <td className="border border-gray-400 px-4 py-2">3.75</td>
