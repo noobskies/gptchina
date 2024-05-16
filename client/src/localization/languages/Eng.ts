@@ -10,7 +10,6 @@ export default {
   com_ui_payment_purchase_button: 'Purchase',
   com_ui_payment_please_note:
     'Please Note! WeChat and Alipay valid only with a Chinese National ID-linked account',
-  com_ui_learn_more: 'Learn More 🔥',
   com_error_moderation:
     'It appears that the content submitted has been flagged by our moderation system for not aligning with our community guidelines. We\'re unable to proceed with this specific topic. If you have any other questions or topics you\'d like to explore, please edit your message, or create a new conversation.',
   com_error_no_user_key: 'No key found. Please provide a key and try again.',
@@ -566,6 +565,8 @@ export default {
   token_burn_rate: 'Click here for more info on Token Usage',
   com_nav_lang_hebrew: 'עברית',
   com_privacy_policy_title: 'Privacy Policy for GPT China',
+
+  // custom translations
   com_privacy_policy_last_updated: 'Last updated: April 4, 2024',
   com_privacy_policy_intro:
     'Welcome to GPT China, owned and operated by Badger Tech LLC. Your privacy is critically important to us, and this Privacy Policy outlines the types of personal information we collect, how it is used, and the measures we take to ensure your data is protected.',
@@ -692,4 +693,5 @@ export default {
   home_feature_6: '• User-friendly experience tailored to your requirements',
   claim_active: 'Claim 20K Tokens',
   claim_inactive: 'Claim in',
+  com_ui_learn_more: 'Learn More 🔥',
 };
