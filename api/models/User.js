@@ -19,6 +19,7 @@ userSchema.methods.toJSON = function () {
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,
     lastTokenClaimTimestamp: this.lastTokenClaimTimestamp,
+    tokenClaimCount: this.tokenClaimCount,
   };
 };
 
