@@ -92,6 +92,7 @@ const startServer = async () => {
   app.use('/api/auth', routes.auth);
   app.use('/api/keys', routes.keys);
   app.use('/api/user', routes.user);
+  app.use('/api/claim-tokens', routes.claimTokens);
   app.use('/api/search', routes.search);
   app.use('/api/ask', routes.ask);
   app.use('/api/edit', routes.edit);

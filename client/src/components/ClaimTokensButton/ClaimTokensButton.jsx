@@ -13,7 +13,7 @@ const ClaimTokensButton = ({ refetchBalance }) => {
   useEffect(() => {
     const fetchLastTokenClaimTimestamp = async () => {
       try {
-        const response = await axios.get('/api/user/last-token-claim');
+        const response = await axios.get('/api/claim-tokens/last-claim-timestamp');
         const { lastTokenClaimTimestamp } = response.data;
         console.log('Last token claim timestamp:', lastTokenClaimTimestamp);
 
@@ -49,7 +49,7 @@ const ClaimTokensButton = ({ refetchBalance }) => {
     try {
       setIsLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 100)); // Fake 100ms delay
-      await axios.post('/api/user/claim-tokens');
+      await axios.post('/api/claim-tokens/claim');
       setIsActive(false);
       setCountdown(24 * 60 * 60 * 1000);
       setIsSuccess(true);

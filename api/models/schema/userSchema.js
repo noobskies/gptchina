@@ -85,6 +85,10 @@ const userSchema = mongoose.Schema(
       type: Date,
       default: null,
     },
+    tokenClaimCount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true },
 );
