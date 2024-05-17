@@ -6,7 +6,7 @@ const {
 } = require('../controllers/claimTokensController');
 const requireJwtAuth = require('../middleware/requireJwtAuth');
 
-router.get('/last-token-claim', requireJwtAuth, getUserLastTokenClaimTimestamp);
-router.post('/claim-tokens', requireJwtAuth, claimTokens);
+router.get('/last-claim-timestamp', requireJwtAuth, getUserLastTokenClaimTimestamp);
+router.post('/claim', requireJwtAuth, claimTokens);
 
 module.exports = router;
