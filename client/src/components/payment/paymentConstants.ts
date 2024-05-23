@@ -26,6 +26,7 @@ export const tokenOptions = [
     price: 'com_token_package_price_1m_global',
     amount: 7.5,
     priceId: 'price_1P6drEHKD0byXXClOjmSkPKm', // 7.50 USD - only for global users
+    currency: 'USD',
     originalPrice: '$15.00',
     discountedPrice: '$7.50',
     discountPercentage: '(50% off)',
