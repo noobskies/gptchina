@@ -634,21 +634,22 @@ export default {
     'Registration successful. Please check your email to verify your email address.',
   token_burn_rates_title: 'Token Usage Overview',
   token_burn_rates_intro:
-    'Tokens can be used with various language models available on our platform. Each model has an associated "burn rate" (BR), which serves to compare token consumption across different models. This rate provides you with a multiplier that reflects the average token consumption for both input and output combined.',
+    'Tokens can be used with various language models available on our platform. Each model has an associated "burn rate" (🔥), which serves to compare token consumption across different models. This rate provides you with a multiplier that reflects the average token consumption for both input and output combined.',
   token_burn_rates_br_explanation:
-    'If a model runs at a BR of 2, then the total number of words used in the input and output would be multiplied by 2 to give an approximation of the number tokens consumed.',
+    'If a model runs at a 🔥 of 2, then the total number of words used in the input and output would be multiplied by 2 to give an approximation of the number tokens consumed.',
   token_burn_rates_context_usage:
     'It\'s important to note that models will use context as part of a user\'s input.',
   token_burn_rates_new_chat_suggestion:
     'To minimize the consumption of input tokens, it is advisable to start a new chat for each new topic when using powerful models such as Claude 3 Opus and GPT-4 Turbo.',
   token_burn_rates_input_tokens:
-    'Input tokens are consumed at a lower rate than output but can begin to add up the longer your thread continues. In the table below, users can see burn rate of both input and output tokens as well as the average BR which should be used to quickly compare various AI models and their costs.',
+    'Input tokens are consumed at a lower rate than output but can begin to add up the longer your thread continues. In the table below, users can see burn rate of both input and output tokens as well as the average 🔥 which should be used to quickly compare various AI models and their costs.',
   token_burn_rates_table_model: 'Model',
   token_burn_rates_table_input_br: 'Input Burn Rate',
   token_burn_rates_table_output_br: 'Output Burn Rate',
-  token_burn_rates_table_average_br: 'Average Burn Rate (BR)',
+  token_burn_rates_table_average_br: 'Average Burn Rate (🔥)',
   token_burn_rates_table_gpt3_5_turbo: 'GPT-3.5 Turbo',
-  token_burn_rates_table_gpt4: 'GPT-4',
+  token_burn_rates_table_gpt4: 'GPT-4 Turbo',
+  token_burn_rates_table_gpt4o: 'GPT-4o',
   token_burn_rates_table_claude3_haiku: 'Claude-3 Haiku',
   token_burn_rates_table_claude3_sonnet: 'Claude-3 Sonnet',
   token_burn_rates_table_claude3_opus: 'Claude-3 Opus',
@@ -669,13 +670,15 @@ export default {
   token_burn_rates_example_gpt4_consumption: 'GPT-4 token consumption',
   token_burn_rates_example_gpt3_5_turbo_input: 'Input tokens consumed = 600 × 0.1 = 60',
   token_burn_rates_example_gpt4_input: 'Input tokens consumed = 600 × 3 = 1,800',
+  token_burn_rates_example_gpt4o_input: 'Input tokens consumed = 600 × 3 = 1,500',
   token_burn_rates_example_gpt3_5_turbo_output: 'Output tokens consumed = 300 × 0.3 = 90',
   token_burn_rates_example_gpt4_output: 'Output tokens consumed = 300 × 8 = 2,400',
+  token_burn_rates_example_gpt4o_output: 'Output tokens consumed = 300 × 8 = 2,400',
   token_burn_rates_example_gpt3_5_turbo_total: 'Total tokens consumed = 60 + 90 =',
   token_burn_rates_example_gpt4_total: 'Total tokens consumed = 1,800 + 2,400 =',
   token_burn_rates_example_tokens: 'tokens',
   token_burn_rates_calculation_challenge:
-    'Calculating the exact token usage for AI models can be challenging. To simplify this process, the average burn rate (BR) is used as a quick way to estimate how rapidly a model consumes tokens.',
+    'Calculating the exact token usage for AI models can be challenging. To simplify this process, the average burn rate (🔥) is used as a quick way to estimate how rapidly a model consumes tokens.',
   token_burn_rates_experimentation:
     'However, the most effective way to truly grasp the cost associated with each model is to experiment with them firsthand. This hands-on experience will provide you with a better understanding of how different models perform and consume tokens in various scenarios.',
   token_burn_rates_new_conversations:

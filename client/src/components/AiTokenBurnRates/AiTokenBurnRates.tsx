@@ -49,6 +49,14 @@ const AiTokenBurnRates = () => {
             </tr>
             <tr>
               <td className="border border-gray-400 px-4 py-2">
+                {localize('token_burn_rates_table_gpt4o')}
+              </td>
+              <td className="border border-gray-400 px-4 py-2">1.5</td>
+              <td className="border border-gray-400 px-4 py-2">4</td>
+              <td className="border border-gray-400 px-4 py-2">2.5</td>
+            </tr>
+            <tr>
+              <td className="border border-gray-400 px-4 py-2">
                 {localize('token_burn_rates_table_gpt4')}
               </td>
               <td className="border border-gray-400 px-4 py-2">3</td>
