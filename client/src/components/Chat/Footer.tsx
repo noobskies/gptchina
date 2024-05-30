@@ -39,7 +39,7 @@ export default function Footer({ className }: { className?: string }) {
       ) : (
         <>
           <a href="https://librechat.ai" target="_blank" rel="noreferrer" className="underline">
-            {config?.appTitle || 'LibreChat'} {Constants.VERSION}
+            {config?.appTitle || 'Novlisky'} {Constants.VERSION}
           </a>
           {' - '} {localize('com_ui_new_footer')}
         </>
