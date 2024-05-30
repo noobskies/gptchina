@@ -12,24 +12,9 @@ import { ToastProvider } from './Providers';
 import Toast from './components/ui/Toast';
 import { router } from './routes';
 import * as Sentry from '@sentry/react';
+import { getDomainData } from './utils/domainUtils';
 
-// Define the mapping of domains to tracking codes
-const domainTrackingCodes = {
-  'gptafrica.io': 'G-268NPHEPVM',
-  'gptchina.io': 'G-2HYZSSFTSV',
-  'gptglobal.io': 'G-FRZD0ZXQHP',
-  'gptiran.io': 'G-0NGSJ9SP6Z',
-  'gptitaly.io': 'G-40QF6KBX1L',
-  'gptrussia.io': 'G-N5L46P3PCX',
-  'gptusa.io': 'G-46JS78DD0K',
-  'novlisky.io': 'G-XYDFX0BJEY',
-};
-
-// Get the current domain
-const currentDomain = window.location.hostname;
-
-// Get the tracking code for the current domain (default to 'G-2HYZSSFTSV' if not found)
-const trackingCode = domainTrackingCodes[currentDomain] || 'G-2HYZSSFTSV';
+const { trackingCode } = getDomainData();
 
 // Initialize GA4 with the tracking code
 ReactGA.initialize(trackingCode);

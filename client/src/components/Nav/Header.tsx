@@ -3,23 +3,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaHome } from 'react-icons/fa';
 import { useLocalize } from '~/hooks';
+import { getDomainData } from '~/utils/domainUtils';
 
 const Header = () => {
   const localize = useLocalize();
-
-  const domainLogos = {
-    'gptchina.io': 'logo-china.png',
-    'gptafrica.io': 'logo-africa.png',
-    'gptglobal.io': 'logo-global.png',
-    'gptiran.io': 'logo-iran.png',
-    'gptitaly.io': 'logo-italy.png',
-    'gptrussia.io': 'logo-russia.png',
-    'gptusa.io': 'logo-usa.png',
-    'novlisky.io': 'logo-novlisky.png',
-  };
-
-  const currentDomain = window.location.hostname;
-  const logoImageFilename = domainLogos[currentDomain] || 'logo-novlisky.png';
+  const { logoFilename } = getDomainData();
 
   return (
     <header className="relative z-50 flex min-h-[70px] bg-white px-4 py-4 font-[sans-serif] tracking-wide shadow-lg sm:px-10">
@@ -28,7 +16,7 @@ const Header = () => {
           to="/"
           className="max-lg:left-10 lg:absolute lg:left-2/4 lg:top-2/4 lg:-translate-x-1/2 lg:-translate-y-1/2"
         >
-          <img src={`/assets/${logoImageFilename}`} alt="logo" className="w-36" />
+          <img src={`/assets/${logoFilename}`} alt="logo" className="w-36" />
         </Link>
 
         <div
@@ -58,7 +46,7 @@ const Header = () => {
           <ul className="z-50 max-lg:fixed max-lg:left-0 max-lg:top-0 max-lg:h-full max-lg:w-1/2 max-lg:min-w-[300px] max-lg:space-y-3 max-lg:overflow-auto max-lg:bg-white max-lg:p-6 max-lg:shadow-md lg:flex lg:gap-x-5">
             <li className="mb-6 hidden max-lg:block">
               <Link to="/">
-                <img src={`/assets/${logoImageFilename}`} alt="logo" className="w-36" />
+                <img src={`/assets/${logoFilename}`} alt="logo" className="w-36" />
               </Link>
             </li>
             <li className="px-3 max-lg:border-b max-lg:py-3">
