@@ -1,30 +1,16 @@
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import React, { useState, useEffect, useMemo } from 'react';
-import { useRegisterUserMutation, useGetStartupConfig } from 'librechat-data-provider/react-query';
-import type { TRegisterUser } from 'librechat-data-provider';
-import { GoogleIcon, FacebookIcon, OpenIDIcon, GithubIcon, DiscordIcon } from '~/components';
-import SocialButton from './SocialButton';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useRegisterUserMutation } from 'librechat-data-provider/react-query';
+import type { TRegisterUser, TError } from 'librechat-data-provider';
+import type { TLoginLayoutContext } from '~/common';
+import { ErrorMessage } from './ErrorMessage';
 import { useLocalize } from '~/hooks';
-import Particles, { initParticlesEngine } from '@tsparticles/react';
-import { type Container, type ISourceOptions, MoveDirection, OutMode } from '@tsparticles/engine';
-import { loadSlim } from '@tsparticles/slim';
-import { TypeAnimation } from 'react-type-animation';
 
 const Registration: React.FC = () => {
   const navigate = useNavigate();
-  const { data: startupConfig } = useGetStartupConfig();
   const localize = useLocalize();
-  const [registrationSuccess, setRegistrationSuccess] = useState(false);
-  const [init, setInit] = useState(false);
-
-  useEffect(() => {
-    initParticlesEngine(async (engine) => {
-      await loadSlim(engine);
-    }).then(() => {
-      setInit(true);
-    });
-  }, []);
+  const { startupConfig, startupConfigError, isFetching } = useOutletContext<TLoginLayoutContext>();
 
   const {
     register,
@@ -32,71 +18,6 @@ const Registration: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<TRegisterUser>({ mode: 'onChange' });
-
-  const particlesLoaded = async (container?: Container): Promise<void> => {
-    console.log(container);
-  };
-
-  const options: ISourceOptions = useMemo(
-    () => ({
-      background: {
-        color: {
-          value: '#2563eb',
-        },
-      },
-      fpsLimit: 120,
-      interactivity: {
-        events: {
-          onClick: {
-            enable: true,
-            mode: 'push',
-          },
-        },
-        modes: {
-          push: {
-            quantity: 1,
-          },
-          repulse: {
-            distance: 100,
-            duration: 0.5,
-          },
-        },
-      },
-      particles: {
-        color: {
-          value: '#ffffff',
-        },
-        links: {
-          color: '#ffffff',
-          distance: 250,
-          enable: true,
-          opacity: 0.6,
-          width: 0.5,
-        },
-        number: {
-          density: {
-            enable: true,
-          },
-          value: 130,
-        },
-        shape: {
-          type: 'line',
-        },
-        size: {
-          value: { min: 1, max: 5 },
-        },
-        move: {
-          direction: 'none',
-          random: true,
-          enable: true,
-          speed: 1.5,
-          straight: false,
-        },
-      },
-      detectRetina: false,
-    }),
-    [],
-  );
 
   const [error, setError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -106,13 +27,11 @@ const Registration: React.FC = () => {
   const onRegisterUserFormSubmit = async (data: TRegisterUser) => {
     try {
       await registerUser.mutateAsync(data);
-      setRegistrationSuccess(true);
+      navigate('/c/new');
     } catch (error) {
       setError(true);
-      //@ts-ignore - error is of type unknown
-      if (error.response?.data?.message) {
-        //@ts-ignore - error is of type unknown
-        setErrorMessage(error.response?.data?.message);
+      if ((error as TError).response?.data?.message) {
+        setErrorMessage((error as TError).response?.data?.message ?? '');
       }
     }
   };
@@ -122,12 +41,6 @@ const Registration: React.FC = () => {
       navigate('/login');
     }
   }, [startupConfig, navigate]);
-
-  if (!startupConfig) {
-    return null;
-  }
-
-  const socialLogins = startupConfig.socialLogins ?? [];
 
   const renderInput = (id: string, label: string, type: string, validation: object) => (
     <div className="mb-2">
@@ -142,13 +55,13 @@ const Registration: React.FC = () => {
             validation,
           )}
           aria-invalid={!!errors[id]}
-          className="webkit-dark-styles peer block w-full appearance-none rounded-md border border-gray-300 bg-transparent px-3.5 pb-3.5 pt-4 text-sm text-gray-900 focus:border-green-500 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-green-500"
+          className="webkit-dark-styles peer block w-full appearance-none rounded-md border border-black/10 bg-white px-2.5 pb-2.5 pt-5 text-sm text-gray-800 focus:border-blue-500 focus:outline-none dark:border-white/20 dark:bg-gray-900 dark:text-white dark:focus:border-blue-500"
           placeholder=" "
           data-testid={id}
-        ></input>
+        />
         <label
           htmlFor={id}
-          className="absolute start-1 top-2 z-10 origin-[0] -translate-y-4 scale-75 transform bg-white px-3 text-sm text-gray-500 duration-100 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-3 peer-focus:text-green-600 dark:bg-gray-900 dark:text-gray-400 dark:peer-focus:text-green-500 rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4"
+          className="absolute start-1 top-2 z-10 origin-[0] -translate-y-4 scale-75 transform bg-white px-3 text-sm text-gray-500 duration-100 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-3 peer-focus:text-blue-600 dark:bg-gray-900 dark:text-gray-400 dark:peer-focus:text-blue-500 rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4"
         >
           {localize(label)}
         </label>
@@ -161,153 +74,16 @@ const Registration: React.FC = () => {
     </div>
   );
 
-  const providerComponents = {
-    discord: (
-      <SocialButton
-        key="discord"
-        enabled={startupConfig.discordLoginEnabled}
-        serverDomain={startupConfig.serverDomain}
-        oauthPath="discord"
-        Icon={DiscordIcon}
-        label={localize('com_auth_discord_login')}
-        id="discord"
-      />
-    ),
-    facebook: (
-      <SocialButton
-        key="facebook"
-        enabled={startupConfig.facebookLoginEnabled}
-        serverDomain={startupConfig.serverDomain}
-        oauthPath="facebook"
-        Icon={FacebookIcon}
-        label={localize('com_auth_facebook_login')}
-        id="facebook"
-      />
-    ),
-    github: (
-      <SocialButton
-        key="github"
-        enabled={startupConfig.githubLoginEnabled}
-        serverDomain={startupConfig.serverDomain}
-        oauthPath="github"
-        Icon={GithubIcon}
-        label={localize('com_auth_github_login')}
-        id="github"
-      />
-    ),
-    google: (
-      <SocialButton
-        key="google"
-        enabled={startupConfig.googleLoginEnabled}
-        serverDomain={startupConfig.serverDomain}
-        oauthPath="google"
-        Icon={GoogleIcon}
-        label={localize('com_auth_google_login')}
-        id="google"
-      />
-    ),
-    openid: (
-      <SocialButton
-        key="openid"
-        enabled={startupConfig.openidLoginEnabled}
-        serverDomain={startupConfig.serverDomain}
-        oauthPath="openid"
-        Icon={() =>
-          startupConfig.openidImageUrl ? (
-            <img src={startupConfig.openidImageUrl} alt="OpenID Logo" className="h-5 w-5" />
-          ) : (
-            <OpenIDIcon />
-          )
-        }
-        label={startupConfig.openidLabel}
-        id="openid"
-      />
-    ),
-  };
-
-  const privacyPolicy = startupConfig.interface?.privacyPolicy;
-  const termsOfService = startupConfig.interface?.termsOfService;
-
-  const privacyPolicyRender = (
-    <a
-      className="text-xs font-medium text-blue-500"
-      href={privacyPolicy?.externalUrl || 'privacy-policy'}
-      target="_blank"
-      rel="noreferrer"
-    >
-      {privacyPolicy?.externalUrl ? localize('com_ui_privacy_policy') : 'Privacy Policy'}
-    </a>
-  );
-
-  const termsOfServiceRender = (
-    <a
-      className="text-xs font-medium text-blue-500"
-      href={termsOfService?.externalUrl || 'terms-of-service'}
-      target="_blank"
-      rel="noreferrer"
-    >
-      {termsOfService?.externalUrl ? localize('com_ui_terms_of_service') : 'Terms of Service'}
-    </a>
-  );
-
-  const domainLogos = {
-    'gptchina.io': 'logo-china.png',
-    'gptafrica.io': 'logo-africa.png',
-    'gptglobal.io': 'logo-global.png',
-    'gptiran.io': 'logo-iran.png',
-    'gptitaly.io': 'logo-italy.png',
-    'gptrussia.io': 'logo-russia.png',
-    'gptusa.io': 'logo-usa.png',
-    'novlisky.io': 'logo-novlisky.png',
-  };
-
-  const domainTitles = {
-    'gptchina.io': 'GPT China',
-    'gptafrica.io': 'GPT Africa',
-    'gptglobal.io': 'GPT Global',
-    'gptiran.io': 'GPT Iran',
-    'gptitaly.io': 'GPT Italy',
-    'gptrussia.io': 'GPT Russia',
-    'gptusa.io': 'GPT USA',
-    'novlisky.io': 'Novlisky',
-  };
-
-  const currentDomain = window.location.hostname;
-  const logoImageFilename = domainLogos[currentDomain] || 'logo-novlisky.png';
-  const domainTitle = domainTitles[currentDomain] || 'Novlisky';
-
   return (
-    <section className="flex flex-col md:h-screen md:flex-row">
-      <div className="relative z-10 flex w-full flex-col items-center justify-center bg-white dark:bg-gray-800 md:w-1/2">
-        <div className="w-full overflow-hidden bg-white px-6 py-4 dark:bg-gray-800 sm:max-w-md sm:rounded-lg">
-          <img
-            src={`/assets/${logoImageFilename}`}
-            className="mx-auto mb-10 h-16 w-auto"
-            alt="Logo"
-          />
-          <h1
-            className="mb-4 text-center text-3xl font-semibold text-black dark:text-white"
-            style={{ userSelect: 'none' }}
-          >
-            {localize('com_auth_create_account')}
-          </h1>
-          {registrationSuccess && (
-            <div
-              className="rounded-md border border-blue-500 bg-green-500/10 px-3 py-2 text-sm text-gray-600 dark:text-gray-200"
-              role="alert"
-            >
-              {localize('com_auth_registration_success')}
-            </div>
-          )}
-          {error && (
-            <div
-              className="rounded-md border border-red-500 bg-red-500/10 px-3 py-2 text-sm text-gray-600 dark:text-gray-200"
-              role="alert"
-              data-testid="registration-error"
-            >
-              {localize('com_auth_error_create')} {errorMessage}
-            </div>
-          )}
+    <>
+      {error && (
+        <ErrorMessage>
+          {localize('com_auth_error_create')} {errorMessage}
+        </ErrorMessage>
+      )}
+
+      {!startupConfigError && !isFetching && (
+        <>
           <form
             className="mt-6"
             aria-label="Registration form"
@@ -362,7 +138,8 @@ const Registration: React.FC = () => {
               },
             })}
             {renderInput('confirm_password', 'com_auth_password_confirm', 'password', {
-              validate: (value) => value === password || localize('com_auth_password_not_match'),
+              validate: (value: string) =>
+                value === password || localize('com_auth_password_not_match'),
             })}
             <div className="mt-6">
               <button
@@ -375,72 +152,16 @@ const Registration: React.FC = () => {
               </button>
             </div>
           </form>
+
           <p className="my-4 text-center text-sm font-light text-gray-700 dark:text-white">
             {localize('com_auth_already_have_account')}{' '}
-            <a href="/login" aria-label="Login" className="p-1 font-medium text-blue-500">
+            <a href="/login" aria-label="Login" className="p-1 text-blue-600">
               {localize('com_auth_login')}
             </a>
           </p>
-          {startupConfig.socialLoginEnabled && (
-            <>
-              {startupConfig.emailLoginEnabled && (
-                <>
-                  <div className="relative mt-6 flex w-full items-center justify-center border border-t uppercase">
-                    <div className="absolute bg-white px-3 text-xs text-black dark:bg-gray-900 dark:text-white">
-                      Or
-                    </div>
-                  </div>
-                  <div className="mt-8" />
-                </>
-              )}
-              <div className="mt-2">
-                {socialLogins.map((provider) => providerComponents[provider] || null)}
-              </div>
-            </>
-          )}
-          <div className="mt-4 flex justify-center gap-4 align-middle">
-            {privacyPolicyRender}
-            {privacyPolicyRender && termsOfServiceRender && (
-              <div className="border-r-[1px] border-gray-300" />
-            )}
-            {termsOfServiceRender}
-          </div>
-        </div>
-      </div>
-      <div className="relative flex w-full flex-col justify-center bg-blue-500 p-8 dark:bg-blue-600 sm:p-12 md:w-1/2 md:p-16 lg:p-24">
-        <Particles
-          id="tsparticles"
-          particlesLoaded={particlesLoaded}
-          options={options}
-          className="absolute inset-0"
-        />
-        <div className="z-10 text-left">
-          <div className="z-10 text-left">
-            <TypeAnimation
-              sequence={[
-                // Same substring at the start will only be typed once, initially
-                `${localize('home_welcome_to')} ${domainTitle}`,
-                1000,
-              ]}
-              speed={50}
-              repeat={Infinity}
-              cursor={true}
-              className="mb-4 text-3xl font-bold text-white sm:text-4xl lg:text-5xl"
-            />
-          </div>
-          <p className="mb-4 text-base text-white sm:text-lg">{localize('home_intro_text_1')}</p>
-          <p className="mb-4 text-base text-white sm:text-lg">{localize('home_intro_text_2')}</p>
-          <ul className="mb-4 text-base text-white sm:text-lg">
-            <li>{localize('home_feature_1')}</li>
-            <li>{localize('home_feature_2')}</li>
-            <li>{localize('home_feature_3')}</li>
-            <li>{localize('home_feature_4')}</li>
-            <li>{localize('home_feature_5')}</li>
-            <li>{localize('home_feature_6')}</li>
-          </ul>
-        </div>
-      </div>
-    </section>
+        </>
+      )}
+    </>
   );
 };
 

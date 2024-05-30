@@ -22,6 +22,7 @@ const assistants = require('./assistants');
 const files = require('./files');
 const staticRoute = require('./static');
 const claimTokens = require('./claimTokens');
+const share = require('./share');
 
 module.exports = {
   search,
@@ -48,4 +49,5 @@ module.exports = {
   files,
   staticRoute,
   claimTokens,
+  share,
 };

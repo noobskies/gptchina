@@ -4,8 +4,8 @@ import { getConfigDefaults } from 'librechat-data-provider';
 import { useGetStartupConfig } from 'librechat-data-provider/react-query';
 import type { ContextType } from '~/common';
 import { EndpointsMenu, ModelSpecsMenu, PresetsMenu, HeaderNewChat } from './Menus';
+import ExportAndShareMenu from './ExportAndShareMenu';
 import HeaderOptions from './Input/HeaderOptions';
-import ExportButton from './ExportButton';
 
 const defaultInterface = getConfigDefaults().interface;
 
@@ -28,7 +28,7 @@ export default function Header() {
           {<HeaderOptions interfaceConfig={interfaceConfig} />}
           {interfaceConfig.presets && <PresetsMenu />}
         </div>
-        <ExportButton />
+        <ExportAndShareMenu />
       </div>
       {/* Empty div for spacing */}
       <div />

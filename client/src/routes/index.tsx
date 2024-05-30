@@ -11,6 +11,9 @@ import AiTokenBurnRates from '~/components/AiTokenBurnRates/AiTokenBurnRates';
 import TermsOfService from '~/components/TermsOfService/TermsOfService';
 import PrivacyPolicy from '~/components/PrivacyPolicy/PrivacyPolicy';
 import { AuthContextProvider } from '~/hooks/AuthContext';
+import StartupLayout from './Layouts/Startup';
+import LoginLayout from './Layouts/Login';
+import ShareRoute from './ShareRoute';
 import ChatRoute from './ChatRoute';
 import Search from './Search';
 import Root from './Root';
@@ -24,16 +27,26 @@ const AuthLayout = () => (
 
 export const router = createBrowserRouter([
   {
-    path: 'register',
-    element: <Registration />,
+    path: 'share/:shareId',
+    element: <ShareRoute />,
   },
   {
-    path: 'forgot-password',
-    element: <RequestPasswordReset />,
-  },
-  {
-    path: 'reset-password',
-    element: <ResetPassword />,
+    path: '/',
+    element: <StartupLayout />,
+    children: [
+      {
+        path: 'register',
+        element: <Registration />,
+      },
+      {
+        path: 'forgot-password',
+        element: <RequestPasswordReset />,
+      },
+      {
+        path: 'reset-password',
+        element: <ResetPassword />,
+      },
+    ],
   },
   {
     path: 'verify',
@@ -43,8 +56,14 @@ export const router = createBrowserRouter([
     element: <AuthLayout />,
     children: [
       {
-        path: 'login',
-        element: <Login />,
+        path: '/',
+        element: <LoginLayout />,
+        children: [
+          {
+            path: 'login',
+            element: <Login />,
+          },
+        ],
       },
       {
         path: '/',
