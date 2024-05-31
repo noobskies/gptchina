@@ -29,6 +29,40 @@ const tokenValues = {
   command: { prompt: 0.38, completion: 0.38 },
   'gemini-1.5': { prompt: 2, completion: 6 }, // May 2nd, 2024 pricing
   gemini: { prompt: 0.1, completion: 0.25 }, // May 2nd, 2024 pricing
+  // start perplexity usage
+  'llama-3-sonar-small-32k-chat': { prompt: 0.2, completion: 0.2 },
+  'llama-3-sonar-small-32k-online': { prompt: 0.2, completion: 0.2 },
+  'llama-3-sonar-large-32k-chat': { prompt: 1.0, completion: 1.0 },
+  'llama-3-sonar-large-32k-online': { prompt: 1.0, completion: 1.0 },
+  // end perplexity usage
+
+  // groq
+  'llama3-70b-8192': { prompt: 0.59, completion: 0.79 },
+  'llama3-8b-8192': { prompt: 0.05, completion: 0.1 },
+  'llama2-70b-4096': { prompt: 0.7, completion: 0.8 },
+  'mixtral-8x7b-32768': { prompt: 0.24, completion: 0.24 },
+  'gemma-7b-it': { prompt: 0.1, completion: 0.1 },
+  // end groq
+
+  // mistral
+  'open-mistral-7b': { prompt: 0.05, completion: 0.05 },
+  'open-mixtral-8x7b': { prompt: 0.24, completion: 0.24 },
+  'mistral-tiny': { prompt: 0.05, completion: 0.05 },
+  'open-mixtral-8x22b': { prompt: 0.7, completion: 2.0 },
+  'open-mixtral-8x22b-2404': { prompt: 0.7, completion: 2.0 },
+  'mistral-small-2312': { prompt: 0.2, completion: 0.6 },
+  'mistral-small': { prompt: 0.2, completion: 0.6 },
+  'mistral-small-2402': { prompt: 0.2, completion: 0.6 },
+  'mistral-small-latest': { prompt: 0.2, completion: 0.6 },
+  'mistral-medium-latest': { prompt: 0.55, completion: 1.5 },
+  'mistral-medium-2312': { prompt: 0.5, completion: 1.5 },
+  'mistral-medium': { prompt: 0.5, completion: 1.5 },
+  'mistral-large-latest': { prompt: 0.8, completion: 2.5 },
+  'mistral-large-2402': { prompt: 0.8, completion: 2.5 },
+  'codestral-2405': { prompt: 0.25, completion: 0.75 },
+  'codestral-latest': { prompt: 0.25, completion: 0.75 },
+  'mistral-embed': { prompt: 0.05, completion: 0.05 },
+  // end mistral
 };
 
 /**

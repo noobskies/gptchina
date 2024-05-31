@@ -70,6 +70,35 @@ function SelectDropDownPop({
     'claude-1-100k': 'Claude 1 (100k)',
     'claude-instant-1': 'Claude Instant 1',
     'claude-instant-1-100k': 'Claude Instant 1 (100k)',
+    // Perplexity models
+    'llama-3-sonar-small-32k-chat': 'Llama 3 Sonar Small 32k Chat 🔥0.2',
+    'llama-3-sonar-small-32k-online': 'Llama 3 Sonar Small 32k Online 🔥0.2',
+    'llama-3-sonar-large-32k-chat': 'Llama 3 Sonar Large 32k Chat 🔥1',
+    'llama-3-sonar-large-32k-online': 'Llama 3 Sonar Large 32k Online 🔥1',
+    // Groq models
+    'llama3-70b-8192': 'Llama 3 70B 8192 🔥0.7',
+    'llama3-8b-8192': 'Llama 3 8B 8192 🔥0.07',
+    'llama2-70b-4096': 'Llama 2 70B 4096 🔥0.75',
+    'mixtral-8x7b-32768': 'Mixtral 8x7B 32768 🔥0.24',
+    'gemma-7b-it': 'Gemma 7B IT 🔥0.1',
+    // Mistral models
+    'open-mistral-7b': 'Open Mistral 7B 🔥0.05',
+    'open-mixtral-8x7b': 'Open Mixtral 8x7B 🔥0.7',
+    'mistral-tiny': 'Mistral Tiny 🔥0.05',
+    'open-mixtral-8x22b': 'Open Mixtral 8x22B 🔥1.4',
+    'open-mixtral-8x22b-2404': 'Open Mixtral 8x22B 2404 🔥1.4',
+    'mistral-small-2312': 'Mistral Small 2312 🔥0.4',
+    'mistral-small': 'Mistral Small 🔥0.4',
+    'mistral-small-2402': 'Mistral Small 2402 🔥0.4',
+    'mistral-small-latest': 'Mistral Small Latest 🔥0.4',
+    'mistral-medium-latest': 'Mistral Medium Latest 🔥1',
+    'mistral-medium-2312': 'Mistral Medium 2312 🔥1',
+    'mistral-medium': 'Mistral Medium 🔥1',
+    'mistral-large-latest': 'Mistral Large Latest 🔥1.6',
+    'mistral-large-2402': 'Mistral Large 2402 🔥1.6',
+    'codestral-2405': 'Codestral 2405 🔥0.5',
+    'codestral-latest': 'Codestral Latest 🔥0.5',
+    'mistral-embed': 'Mistral Embed 🔥0.05',
   };
 
   return (
