@@ -11,7 +11,6 @@ import { ScreenshotProvider, ThemeProvider, useApiErrorBoundary } from './hooks'
 import { ToastProvider } from './Providers';
 import Toast from './components/ui/Toast';
 import { router } from './routes';
-import * as Sentry from '@sentry/react';
 import { getDomainData } from './utils/domainUtils';
 
 const { trackingCode } = getDomainData();
@@ -45,26 +44,24 @@ const App = () => {
   });
 
   return (
-    <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
-      <QueryClientProvider client={queryClient}>
-        <RecoilRoot>
-          <ThemeProvider>
-            <RadixToast.Provider>
-              <ToastProvider>
-                <DndProvider backend={HTML5Backend}>
-                  <RouterProvider router={router}>
-                    <PageViewTracker />
-                  </RouterProvider>
-                  <ReactQueryDevtools initialIsOpen={false} position="top-right" />
-                  <Toast />
-                  <RadixToast.Viewport className="pointer-events-none fixed inset-0 z-[1000] mx-auto my-2 flex max-w-[560px] flex-col items-stretch justify-start md:pb-5" />
-                </DndProvider>
-              </ToastProvider>
-            </RadixToast.Provider>
-          </ThemeProvider>
-        </RecoilRoot>
-      </QueryClientProvider>
-    </Sentry.ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <RecoilRoot>
+        <ThemeProvider>
+          <RadixToast.Provider>
+            <ToastProvider>
+              <DndProvider backend={HTML5Backend}>
+                <RouterProvider router={router}>
+                  <PageViewTracker />
+                </RouterProvider>
+                <ReactQueryDevtools initialIsOpen={false} position="top-right" />
+                <Toast />
+                <RadixToast.Viewport className="pointer-events-none fixed inset-0 z-[1000] mx-auto my-2 flex max-w-[560px] flex-col items-stretch justify-start md:pb-5" />
+              </DndProvider>
+            </ToastProvider>
+          </RadixToast.Provider>
+        </ThemeProvider>
+      </RecoilRoot>
+    </QueryClientProvider>
   );
 };
 
