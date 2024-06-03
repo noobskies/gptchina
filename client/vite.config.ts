@@ -122,6 +122,7 @@ export default defineConfig(({ mode }) => {
       sourcemapExclude({ excludeNodeModules: true }),
       htmlPlugin(env),
     ],
+    filename: 'manifest.json',
     publicDir: './public',
     build: {
       sourcemap: process.env.NODE_ENV === 'development',
