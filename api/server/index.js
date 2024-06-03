@@ -53,7 +53,7 @@ const startServer = async () => {
 
   // Middleware
   app.use(Sentry.Handlers.requestHandler());
-  app.use(Sentry.Handlers.tracingHandler());
+  // app.use(Sentry.Handlers.tracingHandler());
   app.use(noIndex);
   app.use(errorController);
   app.use(
