@@ -106,3 +106,24 @@ uploads/
 
 # owner
 release/
+
+# Gradle files
+.gradle/
+buildOutputCleanup/
+checksums/
+executionHistory/
+fileChanges/
+fileContent/
+fileHashes/
+gc.properties
+vcs-1/
+
+# Android build files
+*.apk
+*.aab
+*.keystore
+
+# Other files
+manifest-checksum.txt
+twa-manifest.json
+store_icon.png
