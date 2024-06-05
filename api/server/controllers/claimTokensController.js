@@ -1,5 +1,5 @@
 // controllers/claimTokensController.js
-
+const sendEmail = require('../utils/sendEmail');
 const addTokensByUserId = require('../../../config/addTokens');
 const { User } = require('~/models');
 const { logger } = require('~/config');
@@ -70,7 +70,60 @@ const claimTokens = async (req, res) => {
   }
 };
 
+const sendReminderEmails = async () => {
+  try {
+    const user = {
+      email: 't.noobskie.alt@gmail.com',
+      name: 'Noobskie',
+    };
+
+    const currentTimestamp = new Date();
+    const lastClaimTimestamp = null; // Adjust this based on your testing scenario
+
+    if (!lastClaimTimestamp) {
+      // User has never claimed tokens, send the first reminder email
+      await sendEmail(
+        user.email,
+        'Reminder: Claim Your Tokens',
+        { name: user.name },
+        'claimTokensReminder.handlebars',
+      );
+    } else {
+      const timeSinceLastClaim = currentTimestamp - lastClaimTimestamp;
+
+      if (timeSinceLastClaim >= 72 * 60 * 60 * 1000) {
+        // User hasn't claimed tokens within 72 hours, send the second reminder email
+        await sendEmail(
+          user.email,
+          'Don\'t Forget to Claim Your Tokens',
+          { name: user.name },
+          'claimTokensReminder72Hours.handlebars',
+        );
+      } else if (timeSinceLastClaim >= 14 * 24 * 60 * 60 * 1000) {
+        // User hasn't claimed tokens after 2 weeks, send the final reminder email
+        await sendEmail(
+          user.email,
+          'Final Reminder: Claim Your Tokens',
+          { name: user.name },
+          'claimTokensFinalReminder.handlebars',
+        );
+      } else if (timeSinceLastClaim >= 2 * 30 * 24 * 60 * 60 * 1000) {
+        // User is inactive for 2 months, send periodic reminder emails every 2 months
+        await sendEmail(
+          user.email,
+          'Periodic Reminder: Claim Your Tokens',
+          { name: user.name },
+          'claimTokensPeriodicReminder.handlebars',
+        );
+      }
+    }
+  } catch (err) {
+    logger.error('[sendReminderEmails]', err);
+  }
+};
+
 module.exports = {
   getUserLastTokenClaimTimestamp,
   claimTokens,
+  sendReminderEmails,
 };

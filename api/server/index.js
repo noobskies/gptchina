@@ -17,6 +17,7 @@ const { isEnabled } = require('~/server/utils');
 const { logger } = require('~/config');
 const { ldapLogin } = require('~/strategies');
 const routes = require('./routes');
+require('../../cron');
 
 const { PORT, HOST, ALLOW_SOCIAL_LOGIN } = process.env ?? {};
 
