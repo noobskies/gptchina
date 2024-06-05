@@ -121,7 +121,7 @@ function NavLinks() {
                     clickHandler={() => setShowFiles(true)}
                   />
                 </Menu.Item>
-                {startupConfig?.helpAndFaqURL !== '/' && (
+                {/* {startupConfig?.helpAndFaqURL !== '/' && (
                   <Menu.Item as="div">
                     <NavLink
                       svg={() => <LinkIcon />}
@@ -129,7 +129,7 @@ function NavLinks() {
                       clickHandler={() => window.open(startupConfig?.helpAndFaqURL, '_blank')}
                     />
                   </Menu.Item>
-                )}
+                )} */}
                 <Menu.Item as="div">
                   <NavLink
                     svg={() => <GearIcon className="icon-md" />}

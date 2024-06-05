@@ -14,6 +14,8 @@ import Header from './Header';
 import Footer from './Footer';
 import store from '~/store';
 
+import JoyrideTour from '../Tools/JoyrideTour';
+
 function ChatView({ index = 0 }: { index?: number }) {
   const { conversationId } = useParams();
   const submissionAtIndex = useRecoilValue(store.submissionByIndex(0));
@@ -47,6 +49,7 @@ function ChatView({ index = 0 }: { index?: number }) {
           <ChatForm index={index} />
           <Footer />
         </div>
+        <JoyrideTour />
       </Presentation>
     </ChatContext.Provider>
   );

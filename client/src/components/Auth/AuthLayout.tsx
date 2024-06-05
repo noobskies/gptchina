@@ -41,6 +41,7 @@ function AuthLayout({
 }) {
   const localize = useLocalize();
   const { logoText, logoFilename, logoPath } = getDomainData();
+  const [init, setInit] = useState(false);
 
   const DisplayError = () => {
     if (startupConfigError !== null && startupConfigError !== undefined) {
