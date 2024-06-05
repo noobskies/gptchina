@@ -617,12 +617,12 @@ export default {
   com_tokens_remaining: 'Tokens Remaining:',
   token_burn_rate: 'Click here for more info on Token Usage',
   com_nav_lang_hebrew: 'עברית',
-  com_privacy_policy_title: 'Privacy Policy for GPT China',
+  com_privacy_policy_title: 'Privacy Policy',
 
   // custom translations
   com_privacy_policy_last_updated: 'Last updated: April 4, 2024',
   com_privacy_policy_intro:
-    'Welcome to GPT China, owned and operated by Badger Tech LLC. Your privacy is critically important to us, and this Privacy Policy outlines the types of personal information we collect, how it is used, and the measures we take to ensure your data is protected.',
+    'Welcome to our platform, owned and operated by Badger Tech LLC. Your privacy is critically important to us, and this Privacy Policy outlines the types of personal information we collect, how it is used, and the measures we take to ensure your data is protected.',
   com_privacy_policy_info_collection_title: '1. Information Collection and Use',
   com_privacy_policy_info_collection_text1:
     'We collect your name and email through our registration page. This information is used to inform you of system/site updates and notices.',
@@ -633,7 +633,7 @@ export default {
     'We do not share any collected information with third parties, except as required for processing payments through Stripe and OpenNode. We will never disclose user information under any circumstances without your explicit consent.',
   com_privacy_policy_user_rights_title: '3. User Rights',
   com_privacy_policy_user_rights_text:
-    'You have the right to request the deletion of your data and account. To exercise this right, please contact us at hello@gptchina.io.',
+    'You have the right to request the deletion of your data and account. To exercise this right, please contact us at hello@novlisky.io.',
   com_privacy_policy_data_security_title: '4. Data Security',
   com_privacy_policy_data_security_text:
     'We are committed to protecting your personal information through the use of SSL encryption, ensuring the secure transmission of data on our platform.',
@@ -642,47 +642,47 @@ export default {
     'Our website utilizes payment redirects to Stripe and OpenNode for processing payments. We do not host third-party links or services on our platform other than these payment gateways.',
   com_privacy_policy_children_title: '6. Children\'s Privacy',
   com_privacy_policy_children_text:
-    'GPT China does not knowingly collect personal information from children. If you are under the age of 18, please do not submit any personal information through our website.',
+    'Our service does not knowingly collect personal information from minors. If you are under the age of legal majority in your jurisdiction, please do not submit any personal information through our platform.',
   com_privacy_policy_changes_title: '7. Changes to This Privacy Policy',
   com_privacy_policy_changes_text:
     'We reserve the right to update or change our Privacy Policy at any time. You will be notified of any changes via email.',
   com_privacy_policy_contact_title: '8. Contact Us',
   com_privacy_policy_contact_text:
-    'If you have any questions about this Privacy Policy, please contact us by email at hello@gptchina.io.',
-  com_terms_title: 'Terms and Conditions for GPT China',
+    'If you have any questions about this Privacy Policy, please contact us by email at hello@novlisky.io.',
+  com_terms_title: 'Terms and Conditions',
   com_terms_effective_date: 'Effective Date: April 4, 2024',
   com_terms_intro:
-    'Welcome to GPT China. By accessing our service, you agree to be bound by these Terms and Conditions. Please read them carefully.',
+    'Welcome to our platform. By accessing our service, you agree to be bound by these Terms and Conditions. Please read them carefully.',
   com_terms_service_description_title: '1. Service Description',
   com_terms_service_description_text:
-    'GPT China provides users access to multiple large language models (LLMs) such as OpenAI\'s ChatGPT, Gemini Pro, Anthropic, and more through their APIs. Our service is designed to facilitate seamless interaction with these LLMs, with plans to include more models in the future. There are no age restrictions for using our service.',
+    'Our platform provides users access to multiple large language models (LLMs) such as OpenAI\'s ChatGPT, Gemini Pro, Anthropic, and more through their APIs. Our service is designed to facilitate seamless interaction with these LLMs, with plans to include more models in the future. There are no age restrictions for using our service.',
   com_terms_user_responsibilities_title: '2. User Responsibilities',
   com_terms_user_responsibilities_text:
     'Users are expected to interact with our service within the guardrails established by the LLMs to prevent harmful or hateful content. Users are responsible for maintaining the confidentiality of their account password and for all activities that occur under their account.',
   com_terms_intellectual_property_title: '3. Intellectual Property',
   com_terms_intellectual_property_text:
-    'The content provided through GPT China is owned by the respective LLM providers (OpenAI, Google\'s Gemini, Anthropic). Users retain ownership of their data from interactions with these LLMs. GPT China does not claim ownership of user-generated content.',
+    'The content provided through our platform is owned by the respective LLM providers (OpenAI, Google\'s Gemini, Anthropic). Users retain ownership of their data from interactions with these LLMs. our platform does not claim ownership of user-generated content.',
   com_terms_user_generated_content_title: '4. User-Generated Content',
   com_terms_user_generated_content_text:
     'Users may upload photos/documents and create AI-generated images via plugins such as Dall-E 3. The use of uploaded content and AI-generated content is governed by the terms of the respective LLM providers.',
   com_terms_service_availability_title: '5. Service Availability',
   com_terms_service_availability_text:
-    'GPT China strives to maintain service uptime. In the event of downtime, users will be notified via email or through a maintenance page on our site.',
+    'our platform strives to maintain service uptime. In the event of downtime, users will be notified via email or through a maintenance page on our site.',
   com_terms_termination_title: '6. Termination',
   com_terms_termination_text:
-    'GPT China reserves the right to terminate a user\'s account for illegal activity, cheating, or attempts to undermine our system. Upon termination, the user\'s data will be deleted.',
+    'our platform reserves the right to terminate a user\'s account for illegal activity, cheating, or attempts to undermine our system. Upon termination, the user\'s data will be deleted.',
   com_terms_disclaimer_liability_title: '7. Disclaimer of Liability',
   com_terms_disclaimer_liability_text:
-    'GPT China disclaims all liability related to the use of the service. Liability for any issues arising from interactions with the LLMs rests with the user or the respective LLM providers.',
+    'our platform disclaims all liability related to the use of the service. Liability for any issues arising from interactions with the LLMs rests with the user or the respective LLM providers.',
   com_terms_dispute_resolution_title: '8. Dispute Resolution',
   com_terms_dispute_resolution_text:
     'Any disputes arising under these terms will be resolved through arbitration in the United States, in accordance with the rules of the American Arbitration Association.',
   com_terms_changes_title: '9. Changes to Terms and Conditions',
   com_terms_changes_text:
-    'GPT China reserves the right to modify these terms at any time. Users will be notified of any changes via email.',
+    'our platform reserves the right to modify these terms at any time. Users will be notified of any changes via email.',
   com_terms_contact_title: '10. Contact Information',
   com_terms_contact_text:
-    'For any questions or concerns regarding these terms, please contact us at hello@gptchina.io.',
+    'For any questions or concerns regarding these terms, please contact us at hello@novlisky.io.',
   com_auth_registration_success:
     'Registration successful. Please check your email to verify your email address.',
   token_burn_rates_title: 'Token Usage Overview',
