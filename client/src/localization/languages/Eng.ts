@@ -750,4 +750,9 @@ export default {
   claim_active: 'Claim 20K Tokens',
   claim_inactive: 'Claim in',
   com_ui_learn_more: 'Learn More 🔥',
+  tour_step_1_title: 'Available AI Labs',
+  tour_step_1_content: 'Click here to see available AI Labs',
+  tour_step_2_title: 'Available AI Models',
+  tour_step_2_content: 'Click here to see all available AI Models',
+  tour_skip: 'Skip Tour',
 };

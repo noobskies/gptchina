@@ -1,31 +1,33 @@
 // JoyrideTour.tsx
 import React, { useState, useEffect } from 'react';
 import Joyride, { CallBackProps, STATUS } from 'react-joyride';
-
-const steps = [
-  {
-    target: '#step-1',
-    content: (
-      <div>
-        <h3 className="mb-2 text-lg font-semibold">Available AI Labs</h3>
-        <p className="text-gray-600">Click here to see available AI Labs</p>
-      </div>
-    ),
-  },
-  {
-    target: '#step-2',
-    content: (
-      <div className="rounded-lg bg-white">
-        <h3 className="mb-2 text-lg font-semibold">Available AI Models</h3>
-        <p className="text-gray-600">Click here to see all available AI Models</p>
-      </div>
-    ),
-  },
-  // Add more steps as needed
-];
+import { useLocalize } from '~/hooks';
 
 const JoyrideTour = () => {
+  const localize = useLocalize();
   const [run, setRun] = useState(false);
+
+  const steps = [
+    {
+      target: '#step-1',
+      content: (
+        <div>
+          <h3 className="mb-2 text-lg font-semibold">{localize('tour_step_1_title')}</h3>
+          <p className="text-gray-600">{localize('tour_step_1_content')}</p>
+        </div>
+      ),
+    },
+    {
+      target: '#step-2',
+      content: (
+        <div>
+          <h3 className="mb-2 text-lg font-semibold">{localize('tour_step_2_title')}</h3>
+          <p className="text-gray-600">{localize('tour_step_2_content')}</p>
+        </div>
+      ),
+    },
+    // Add more steps as needed
+  ];
 
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status } = data;
@@ -39,7 +41,9 @@ const JoyrideTour = () => {
 
   useEffect(() => {
     const tourCompleted = localStorage.getItem('tourCompleted');
+    console.log('tourCompleted', tourCompleted);
     if (!tourCompleted) {
+      console.log('Starting tour');
       setRun(true);
     }
   }, []);
