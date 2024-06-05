@@ -4,20 +4,20 @@ import Joyride, { CallBackProps, STATUS } from 'react-joyride';
 
 const steps = [
   {
-    target: '#tour',
+    target: '#step-1',
     content: (
-      <div className="p-4">
-        <h3 className="mb-2 text-lg font-semibold">First Step</h3>
-        <p className="text-gray-600">This is the first step of the tour</p>
+      <div>
+        <h3 className="mb-2 text-lg font-semibold">Available AI Labs</h3>
+        <p className="text-gray-600">Click here to see available AI Labs</p>
       </div>
     ),
   },
   {
-    target: '.my-second-target',
+    target: '#step-2',
     content: (
-      <div className="rounded-lg bg-white p-4 shadow-lg">
-        <h3 className="mb-2 text-lg font-semibold">Second Step</h3>
-        <p className="text-gray-600">This is the second step of the tour</p>
+      <div className="rounded-lg bg-white">
+        <h3 className="mb-2 text-lg font-semibold">Available AI Models</h3>
+        <p className="text-gray-600">Click here to see all available AI Models</p>
       </div>
     ),
   },
@@ -26,7 +26,6 @@ const steps = [
 
 const JoyrideTour = () => {
   const [run, setRun] = useState(false);
-  const [stepIndex, setStepIndex] = useState(0);
 
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status } = data;
@@ -34,25 +33,67 @@ const JoyrideTour = () => {
 
     if (finishedStatuses.includes(status)) {
       setRun(false);
+      localStorage.setItem('tourCompleted', 'true');
     }
   };
 
   useEffect(() => {
-    // Start the tour after the user logs in
-    setRun(true);
+    const tourCompleted = localStorage.getItem('tourCompleted');
+    if (!tourCompleted) {
+      setRun(true);
+    }
   }, []);
 
   return (
     <Joyride
       steps={steps}
       run={run}
-      stepIndex={stepIndex}
+      continuous={true}
       callback={handleJoyrideCallback}
       styles={{
         options: {
           primaryColor: '#2563eb', // Tailwind blue color
+          textColor: '#333',
+          backgroundColor: '#fff',
+          overlayColor: 'rgba(0, 0, 0, 0.5)',
+          spotlightShadow: '0 0 15px rgba(0, 0, 0, 0.5)',
+        },
+        buttonNext: {
+          backgroundColor: '#2563eb',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '4px',
+          padding: '10px 20px',
+        },
+        buttonBack: {
+          marginRight: 10,
+          color: '#2563eb',
+          backgroundColor: 'transparent',
+          border: 'none',
+          padding: '10px 20px',
+        },
+        buttonSkip: {
+          color: '#2563eb',
+          backgroundColor: 'transparent',
+          border: 'none',
+          padding: '10px 20px',
+        },
+        tooltip: {
+          borderRadius: '8px',
+          padding: '20px',
+        },
+        tooltipContent: {
+          fontSize: '16px',
+        },
+        tooltipTitle: {
+          fontSize: '18px',
+          marginBottom: '10px',
         },
       }}
+      locale={{
+        skip: 'Skip Tour',
+      }}
+      showSkipButton={true}
     />
   );
 };
