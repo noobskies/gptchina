@@ -43,8 +43,9 @@ const sendEmail = async (email, subject, payload, template) => {
       return {
         // Header address should contain name-addr
         from:
-          `"${process.env.APP_TITLE || process.env.EMAIL_FROM_NAME}"` +
-          `<${process.env.EMAIL_FROM}>`,
+          `"${
+            process.env.VITE_APP_AUTHOR || process.env.APP_TITLE || process.env.EMAIL_FROM_NAME
+          }"` + `<${process.env.EMAIL_FROM}>`,
         to: `"${payload.name}" <${email}>`,
         envelope: {
           // Envelope from should contain addr-spec

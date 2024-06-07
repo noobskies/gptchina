@@ -205,7 +205,7 @@ exports.handleWebhook = async (req, res) => {
             user.email, // Pass the user's email address as the first argument
             'Payment Confirmation',
             {
-              appName: process.env.APP_TITLE || 'Novlisk',
+              appName: process.env.VITE_APP_AUTHOR || process.env.APP_TITLE || 'Novlisky',
               name: user.name,
               email: user.email,
               tokens: tokens.toLocaleString(),
