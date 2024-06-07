@@ -17,6 +17,11 @@
   size-adjust: 94%;
 }
 
+.flex-1.overflow-hidden.overflow-y-auto {
+  overflow: hidden !important;
+  overflow-y: auto !important;
+}
+
 @font-face {
   font-display: swap;
   font-family: Inter;
