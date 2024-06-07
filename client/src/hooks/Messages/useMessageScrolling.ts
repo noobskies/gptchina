@@ -32,6 +32,8 @@ export default function useMessageScrolling(messagesTree?: TMessage[] | null) {
     if (!scrollableElement) {
       return;
     }
+    scrollableElement.style.overflow = 'auto';
+    scrollableElement.style.overflowY = 'auto';
     const timeoutId = setTimeout(checkIfAtBottom, 650);
 
     return () => {
