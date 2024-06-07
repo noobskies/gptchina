@@ -18,7 +18,7 @@ router.get('/', async function (req, res) {
   try {
     /** @type {TStartupConfig} */
     const payload = {
-      appTitle: process.env.APP_TITLE || 'Novlisky',
+      appTitle: process.env.VITE_APP_AUTHOR || process.env.APP_TITLE || 'Novlisky',
       socialLogins: req.app.locals.socialLogins ?? defaultSocialLogins,
       discordLoginEnabled: !!process.env.DISCORD_CLIENT_ID && !!process.env.DISCORD_CLIENT_SECRET,
       facebookLoginEnabled:
