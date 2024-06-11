@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const cookies = require('cookie');
 const jwt = require('jsonwebtoken');
 const { Session, User } = require('~/models');
-const getUserById = require('~/models/userMethods');
+const { getUserById } = require('~/models/userMethods');
 const Balance = require('~/models/Balance');
 const {
   registerUser,
@@ -108,6 +108,7 @@ const verifyEmailController = async (req, res) => {
 
 const refreshController = async (req, res) => {
   const refreshToken = req.headers.cookie ? cookies.parse(req.headers.cookie).refreshToken : null;
+  console.log('Refresh token:', refreshToken);
   if (!refreshToken) {
     return res.status(200).send('Refresh token not provided');
   }
