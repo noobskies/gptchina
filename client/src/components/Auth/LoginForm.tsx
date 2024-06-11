@@ -115,7 +115,7 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
                 maxLength: { value: 128, message: localize('com_auth_password_max_length') },
               })}
               aria-invalid={!!errors.password}
-              className="webkit-dark-styles peer block w-full appearance-none rounded-md border border-gray-300 bg-transparent px-3.5 pb-3.5 pt-4 text-sm text-gray-900 focus:border-green-500 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-green-500"
+              className="webkit-dark-styles peer block w-full appearance-none rounded-md border border-gray-300 bg-transparent px-3.5 pb-3.5 pt-4 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-green-500"
               placeholder=" "
             />
             <label
@@ -128,7 +128,7 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
           {renderError('password')}
         </div>
         {startupConfig.passwordResetEnabled && (
-          <a href="/forgot-password" className="text-sm text-green-500">
+          <a href="/forgot-password" className="text-sm text-blue-600">
             {localize('com_auth_password_forgot')}
           </a>
         )}
@@ -137,7 +137,7 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
             aria-label="Sign in"
             data-testid="login-button"
             type="submit"
-            className="w-full transform rounded-md bg-green-500 px-4 py-3 tracking-wide text-white transition-colors duration-200 hover:bg-green-550 focus:bg-green-550 focus:outline-none disabled:cursor-not-allowed disabled:hover:bg-green-500"
+            className="hover:bg-blue-550 focus:bg-blue-550 w-full transform rounded-md bg-blue-500 px-4 py-3 tracking-wide text-white transition-colors duration-200 focus:outline-none disabled:cursor-not-allowed disabled:hover:bg-blue-500"
           >
             {localize('com_auth_continue')}
           </button>
