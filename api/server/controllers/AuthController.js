@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const cookies = require('cookie');
 const jwt = require('jsonwebtoken');
 const { Session, User } = require('~/models');
+const getUserById = require('~/models/userMethods');
 const Balance = require('~/models/Balance');
 const {
   registerUser,
@@ -15,32 +16,40 @@ const { logger } = require('~/config');
 const registrationController = async (req, res) => {
   try {
     const response = await registerUser(req.body);
+    console.log('Response:', response);
     if (response.status === 200) {
       const { status, user } = response;
-      let newUser = await User.findOne({ _id: user._id });
-      if (!newUser) {
-        newUser = new User(user);
+      console.log('User:', user);
+      if (user && user._id) {
+        let newUser = await User.findOne({ _id: user._id });
+        if (!newUser) {
+          newUser = new User(user);
+        }
+
+        newUser.lastTokenClaimTimestamp = new Date();
+        console.log(
+          'Setting lastTokenClaimTimestamp during registration:',
+          newUser.lastTokenClaimTimestamp,
+        );
+        await newUser.save();
+        console.log('User saved with lastTokenClaimTimestamp:', newUser.lastTokenClaimTimestamp);
+
+        // Create a new Balance document for the user with 25,000 token credits
+        const newBalance = new Balance({
+          user: newUser._id,
+          tokenCredits: 25000,
+        });
+        await newBalance.save();
+
+        // Do not set the authorization header or send the user object in the response
+        res.status(status).send({
+          message: 'Registration successful. Please check your email to verify your email address.',
+        });
+      } else {
+        // Handle the case when user or user._id is undefined
+        logger.error('[registrationController] Invalid user object:', user);
+        return res.status(500).json({ message: 'Invalid user object' });
       }
-
-      newUser.lastTokenClaimTimestamp = new Date();
-      console.log(
-        'Setting lastTokenClaimTimestamp during registration:',
-        newUser.lastTokenClaimTimestamp,
-      );
-      await newUser.save();
-      console.log('User saved with lastTokenClaimTimestamp:', newUser.lastTokenClaimTimestamp);
-
-      // Create a new Balance document for the user with 25,000 token credits
-      const newBalance = new Balance({
-        user: newUser._id,
-        tokenCredits: 25000,
-      });
-      await newBalance.save();
-
-      // Do not set the authorization header or send the user object in the response
-      res.status(status).send({
-        message: 'Registration successful. Please check your email to verify your email address.',
-      });
     } else {
       const { status, message } = response;
       res.status(status).send({ message });
@@ -51,13 +60,9 @@ const registrationController = async (req, res) => {
   }
 };
 
-const getUserController = async (req, res) => {
-  return res.status(200).send(req.user);
-};
-
 const resetPasswordRequestController = async (req, res) => {
   try {
-    const resetService = await requestPasswordReset(req.body.email);
+    const resetService = await requestPasswordReset(req);
     if (resetService instanceof Error) {
       return res.status(400).json(resetService);
     } else {
@@ -109,7 +114,7 @@ const refreshController = async (req, res) => {
 
   try {
     const payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-    const user = await User.findOne({ _id: payload.id });
+    const user = await getUserById(payload.id, '-password -__v');
     if (!user) {
       return res.status(401).redirect('/login');
     }
@@ -118,8 +123,7 @@ const refreshController = async (req, res) => {
 
     if (process.env.NODE_ENV === 'CI') {
       const token = await setAuthTokens(userId, res);
-      const userObj = user.toJSON();
-      return res.status(200).send({ token, user: userObj });
+      return res.status(200).send({ token, user });
     }
 
     // Hash the refresh token
@@ -130,8 +134,7 @@ const refreshController = async (req, res) => {
     const session = await Session.findOne({ user: userId, refreshTokenHash: hashedToken });
     if (session && session.expiration > new Date()) {
       const token = await setAuthTokens(userId, res, session._id);
-      const userObj = user.toJSON();
-      res.status(200).send({ token, user: userObj });
+      res.status(200).send({ token, user });
     } else if (req?.query?.retry) {
       // Retrying from a refresh token request that failed (401)
       res.status(403).send('No session found');
@@ -147,7 +150,6 @@ const refreshController = async (req, res) => {
 };
 
 module.exports = {
-  getUserController,
   refreshController,
   registrationController,
   resetPasswordController,
