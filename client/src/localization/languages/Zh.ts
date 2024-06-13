@@ -583,7 +583,8 @@ export default {
   home_intro_text_2: '以下是我们的与众不同之处:',
   home_feature_1: '• 无需每月订阅或预付费用',
   home_feature_2: '• 所有注册用户每天都有免费算力',
-  home_feature_3: '• 访问 Claude 3 Opus、GPT-4 Turbo 等顶级 AI 模型',
+  home_feature_3:
+    '• 访问 Claude Opus、GPT-4o、Mistral、Llama 3、Perplexity、Gemini 等顶级 AI 模型。',
   home_feature_4: '• 多款热门 AI 模型,一站即可体验',
   home_feature_5: '• 根据需要灵活购买额外的算力',
   home_feature_6: '• 根据您的需求量身定制的用户友好体验',
