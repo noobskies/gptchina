@@ -102,6 +102,8 @@
     ]
   },
   "dependencies": {
+    "@capacitor/cli": "^6.1.0",
+    "@capacitor/core": "^6.1.0",
     "@paypal/checkout-server-sdk": "^1.0.3",
     "@sentry/node": "^7.110.1",
     "@sentry/profiling-node": "^7.110.1",
