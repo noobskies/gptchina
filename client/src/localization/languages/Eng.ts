@@ -771,6 +771,9 @@ export default {
   tour_step_1_title: 'Available AI Labs',
   tour_step_1_content: 'Click here to see available AI Labs',
   tour_step_2_title: 'Available AI Models',
-  tour_step_2_content: 'Click here to see all available AI Models',
+  tour_step_2_content:
+    'Click here to see all available AI Models. The number after the 🔥 icon represents how quickly the model consumes tokens. The higher the number the more quickly tokens are consumed. ',
+  tour_step_3_title: 'Token Usage Explained',
+  tour_step_3_content: 'Click "Learn More" for an in-depth explanation on token usage.',
   tour_skip: 'Skip Tour',
 };

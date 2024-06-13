@@ -26,7 +26,15 @@ const JoyrideTour = () => {
         </div>
       ),
     },
-    // Add more steps as needed
+    {
+      target: '#step-3',
+      content: (
+        <div>
+          <h3 className="mb-2 text-lg font-semibold">{localize('tour_step_3_title')}</h3>
+          <p className="text-gray-600">{localize('tour_step_3_content')}</p>
+        </div>
+      ),
+    },
   ];
 
   const handleJoyrideCallback = (data: CallBackProps) => {
@@ -56,7 +64,7 @@ const JoyrideTour = () => {
       callback={handleJoyrideCallback}
       styles={{
         options: {
-          primaryColor: '#2563eb', // Tailwind blue color
+          primaryColor: '#2563eb',
           textColor: '#333',
           backgroundColor: '#fff',
           overlayColor: 'rgba(0, 0, 0, 0.5)',
@@ -96,6 +104,7 @@ const JoyrideTour = () => {
       }}
       locale={{
         skip: 'Skip Tour',
+        last: 'Done',
       }}
       showSkipButton={true}
     />
