@@ -201,19 +201,20 @@ exports.handleWebhook = async (req, res) => {
             currency: currencyCode,
           });
 
-          await sendEmail(
-            user.email, // Pass the user's email address as the first argument
-            'Payment Confirmation',
-            {
+          await sendEmail({
+            email: user.email,
+            subject: 'Payment Confirmation',
+            payload: {
               appName: process.env.VITE_APP_AUTHOR || process.env.APP_TITLE || 'Novlisky',
               name: user.name,
               email: user.email,
               tokens: tokens.toLocaleString(),
               amount: formattedAmount,
               date: readableDate,
+              year: new Date().getFullYear(),
             },
-            'paymentConfirmation.handlebars',
-          );
+            template: 'paymentConfirmation.handlebars',
+          });
         } else {
           console.warn('User not found or user email not provided');
         }
