@@ -73,6 +73,10 @@ const sendVerificationEmail = async (user) => {
     subject = '请验证您的电子邮件';
   }
 
+  logger.info(`[sendVerificationEmail] DOMAIN_SERVER: ${process.env.DOMAIN_SERVER}`);
+  logger.info(`[sendVerificationEmail] Template: ${template}`);
+  logger.info(`[sendVerificationEmail] Subject: ${subject}`);
+
   await sendEmail({
     email: user.email,
     subject: subject,
