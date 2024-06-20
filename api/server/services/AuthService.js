@@ -65,16 +65,24 @@ const sendVerificationEmail = async (user) => {
   const verificationLink = `${
     domains.client
   }/verify?token=${verifyToken}&email=${encodeURIComponent(user.email)}`;
+
+  let template = 'verifyEmail.handlebars';
+  let subject = 'Verify your email';
+  if (process.env.DOMAIN_SERVER === 'https://gptchina.io') {
+    template = 'verifyEmailChinaServer.handlebars';
+    subject = '请验证您的电子邮件';
+  }
+
   await sendEmail({
     email: user.email,
-    subject: 'Verify your email',
+    subject: subject,
     payload: {
       appName: process.env.VITE_APP_AUTHOR || process.env.APP_TITLE || 'Novlisky',
       name: user.name,
       verificationLink: verificationLink,
       year: new Date().getFullYear(),
     },
-    template: 'verifyEmail.handlebars',
+    template: template,
   });
 
   await new Token({
@@ -370,16 +378,23 @@ const resendVerificationEmail = async (req) => {
       domains.client
     }/verify?token=${verifyToken}&email=${encodeURIComponent(user.email)}`;
 
+    let template = 'verifyEmail.handlebars';
+    let subject = 'Verify your email';
+    if (process.env.DOMAIN_SERVER === 'https://gptchina.io') {
+      template = 'verifyEmailChinaServer.handlebars';
+      subject = '请验证您的电子邮件';
+    }
+
     await sendEmail({
       email: user.email,
-      subject: 'Verify your email',
+      subject: subject,
       payload: {
         appName: process.env.VITE_APP_AUTHOR || process.env.APP_TITLE || 'Novlisky',
         name: user.name,
         verificationLink: verificationLink,
         year: new Date().getFullYear(),
       },
-      template: 'verifyEmail.handlebars',
+      template: template,
     });
 
     await new Token({
