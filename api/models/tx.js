@@ -21,7 +21,7 @@ const tokenValues = {
   'claude-3-haiku': { prompt: 0.1, completion: 0.3 },
   'claude-2.1': { prompt: 8, completion: 24 },
   'claude-2': { prompt: 8, completion: 24 },
-  'claude-': { prompt: 0.8, completion: 2.4 },
+  'claude-': { prompt: 5, completion: 10 },
   'command-r-plus': { prompt: 3, completion: 15 },
   'command-r': { prompt: 0.5, completion: 1.5 },
   /* cohere doesn't have rates for the older command models,
