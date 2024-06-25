@@ -10,14 +10,13 @@ const Header = () => {
   const { logoFilename } = getDomainData();
 
   return (
-    <header className="relative z-50 flex min-h-[70px] bg-white px-4 py-4 font-[sans-serif] tracking-wide shadow-lg sm:px-10">
+    <header className="relative z-50 flex min-h-[70px] bg-white px-4 font-[sans-serif] tracking-wide shadow-lg sm:px-10">
       <div className="flex w-full flex-wrap items-center justify-between gap-4">
-        <Link
-          to="/"
-          className="max-lg:left-10 lg:absolute lg:left-2/4 lg:top-2/4 lg:-translate-x-1/2 lg:-translate-y-1/2"
-        >
-          <img src={`/assets/${logoFilename}`} alt="logo" className="w-36" />
-        </Link>
+        <div className="flex items-center lg:mx-auto">
+          <Link to="/">
+            <img src={`/assets/${logoFilename}`} alt="logo" className="h-16 w-auto max-w-full" />
+          </Link>
+        </div>
 
         <div
           id="collapseMenu"
@@ -46,7 +45,11 @@ const Header = () => {
           <ul className="z-50 max-lg:fixed max-lg:left-0 max-lg:top-0 max-lg:h-full max-lg:w-1/2 max-lg:min-w-[300px] max-lg:space-y-3 max-lg:overflow-auto max-lg:bg-white max-lg:p-6 max-lg:shadow-md lg:flex lg:gap-x-5">
             <li className="mb-6 hidden max-lg:block">
               <Link to="/">
-                <img src={`/assets/${logoFilename}`} alt="logo" className="w-36" />
+                <img
+                  src={`/assets/${logoFilename}`}
+                  alt="logo"
+                  className="h-auto w-auto max-w-full"
+                />
               </Link>
             </li>
             <li className="px-3 max-lg:border-b max-lg:py-3">
@@ -60,7 +63,7 @@ const Header = () => {
           </ul>
         </div>
 
-        <div className="ml-auto flex items-center space-x-6">
+        <div className="ml-auto flex items-center space-x-6 lg:ml-0">
           {/* <button className="border-none text-[15px] font-semibold outline-none">
             <Link to="/login" className="text-[#007bff] hover:underline">
               Login
