@@ -723,8 +723,12 @@ export default {
   token_burn_rates_table_gpt4: 'GPT-4 Turbo',
   token_burn_rates_table_gpt4o: 'GPT-4o',
   token_burn_rates_table_claude3_haiku: 'Claude-3 Haiku',
-  token_burn_rates_table_claude3_sonnet: 'Claude-3 Sonnet',
+  token_burn_rates_table_claude3_sonnet: 'Claude-3.5 Sonnet',
   token_burn_rates_table_claude3_opus: 'Claude-3 Opus',
+  token_burn_rates_table_groq_llama_3_70b_8192: 'groq Llama 3 70B 8192',
+  token_burn_rates_table_perplexity_llama_3_sonar_large_32k_online:
+    'Perplexity Llama 3 Sonar Large 32k Online',
+  token_burn_rates_table_mistral_large_latest: 'Mistral Large Latest',
   token_burn_rates_example_title: 'Example of Token Consumption',
   token_burn_rates_example_intro:
     'Let\'s consider two common models, GPT-3.5 Turbo and GPT-4, and compare their token consumption.',

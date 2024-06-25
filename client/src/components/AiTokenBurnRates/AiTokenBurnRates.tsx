@@ -75,9 +75,9 @@ const AiTokenBurnRates = () => {
               <td className="border border-gray-400 px-4 py-2">
                 {localize('token_burn_rates_table_claude3_sonnet')}
               </td>
-              <td className="border border-gray-400 px-4 py-2">0.6</td>
-              <td className="border border-gray-400 px-4 py-2">3.75</td>
               <td className="border border-gray-400 px-4 py-2">1.5</td>
+              <td className="border border-gray-400 px-4 py-2">4</td>
+              <td className="border border-gray-400 px-4 py-2">2.5</td>
             </tr>
             <tr>
               <td className="border border-gray-400 px-4 py-2">
@@ -86,6 +86,30 @@ const AiTokenBurnRates = () => {
               <td className="border border-gray-400 px-4 py-2">8</td>
               <td className="border border-gray-400 px-4 py-2">20</td>
               <td className="border border-gray-400 px-4 py-2">12</td>
+            </tr>
+            <tr>
+              <td className="border border-gray-400 px-4 py-2">
+                {localize('token_burn_rates_table_groq_llama_3_70b_8192')}
+              </td>
+              <td className="border border-gray-400 px-4 py-2">0.59</td>
+              <td className="border border-gray-400 px-4 py-2">0.79</td>
+              <td className="border border-gray-400 px-4 py-2">0.7</td>
+            </tr>
+            <tr>
+              <td className="border border-gray-400 px-4 py-2">
+                {localize('token_burn_rates_table_perplexity_llama_3_sonar_large_32k_online')}
+              </td>
+              <td className="border border-gray-400 px-4 py-2">1</td>
+              <td className="border border-gray-400 px-4 py-2">1</td>
+              <td className="border border-gray-400 px-4 py-2">1</td>
+            </tr>
+            <tr>
+              <td className="border border-gray-400 px-4 py-2">
+                {localize('token_burn_rates_table_mistral_large_latest')}
+              </td>
+              <td className="border border-gray-400 px-4 py-2">0.8</td>
+              <td className="border border-gray-400 px-4 py-2">2.5</td>
+              <td className="border border-gray-400 px-4 py-2">1.6</td>
             </tr>
           </tbody>
         </table>
