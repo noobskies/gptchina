@@ -2,82 +2,79 @@ const { matchModelName } = require('../utils');
 const defaultRate = 3;
 
 /**
- * Mapping of model token sizes to their respective multipliers for prompt and completion.
- * The rates are 1 USD per 1M tokens.
- * @type {Object.<string, {prompt: number, completion: number}>}
- */
 
+Mapping of model token sizes to their respective multipliers for prompt and completion.
+The rates are 1 USD per 1M tokens.
+@type {Object.<string, {prompt: number, completion: number}>} */
 const tokenValues = {
-  '8k': { prompt: 30, completion: 60 },
-  '32k': { prompt: 60, completion: 120 },
-  '4k': { prompt: 1.5, completion: 2 },
-  '16k': { prompt: 3, completion: 4 },
-  'gpt-3.5-turbo-1106': { prompt: 0.1, completion: 0.3 },
-  'gpt-4o': { prompt: 1.5, completion: 4 },
-  'gpt-4-1106': { prompt: 3, completion: 8 },
-  'gpt-3.5-turbo-0125': { prompt: 0.1, completion: 0.3 },
-  'claude-3-opus': { prompt: 8, completion: 20 },
-  'claude-3-sonnet': { prompt: 0.6, completion: 3.75 },
-  'claude-3-haiku': { prompt: 0.1, completion: 0.3 },
-  'claude-2.1': { prompt: 8, completion: 24 },
-  'claude-2': { prompt: 8, completion: 24 },
-  'claude-': { prompt: 5, completion: 10 },
-  'command-r-plus': { prompt: 3, completion: 15 },
-  'command-r': { prompt: 0.5, completion: 1.5 },
+  '8k': { prompt: 30.25, completion: 60.25 },
+  '32k': { prompt: 60.25, completion: 120.25 },
+  '4k': { prompt: 1.75, completion: 2.25 },
+  '16k': { prompt: 3.25, completion: 4.25 },
+  'gpt-3.5-turbo-1106': { prompt: 0.35, completion: 0.55 },
+  'gpt-4o': { prompt: 1.75, completion: 4.25 },
+  'gpt-4-1106': { prompt: 3.25, completion: 8.25 },
+  'gpt-3.5-turbo-0125': { prompt: 0.35, completion: 0.55 },
+  'claude-3-opus': { prompt: 8.25, completion: 20.25 },
+  'claude-3-sonnet': { prompt: 0.85, completion: 4 },
+  'claude-3-haiku': { prompt: 0.35, completion: 0.55 },
+  'claude-2.1': { prompt: 8.25, completion: 24.25 },
+  'claude-2': { prompt: 8.25, completion: 24.25 },
+  'claude-': { prompt: 5.25, completion: 10.25 },
+  'command-r-plus': { prompt: 3.25, completion: 15.25 },
+  'command-r': { prompt: 0.75, completion: 1.75 },
   /* cohere doesn't have rates for the older command models,
-  so this was from https://artificialanalysis.ai/models/command-light/providers */
-  command: { prompt: 0.38, completion: 0.38 },
-  'gemini-1.5': { prompt: 2, completion: 6 }, // May 2nd, 2024 pricing
-  gemini: { prompt: 0.1, completion: 0.25 }, // May 2nd, 2024 pricing
+so this was from https://artificialanalysis.ai/models/command-light/providers */
+  command: { prompt: 0.63, completion: 0.63 },
+  'gemini-1.5': { prompt: 2.25, completion: 6.25 }, // May 2nd, 2024 pricing
+  gemini: { prompt: 0.35, completion: 0.5 }, // May 2nd, 2024 pricing
   // start perplexity usage
-  'llama-3-sonar-small-32k-chat': { prompt: 0.2, completion: 0.2 },
-  'llama-3-sonar-small-32k-online': { prompt: 0.2, completion: 0.2 },
-  'llama-3-sonar-large-32k-chat': { prompt: 1.0, completion: 1.0 },
-  'llama-3-sonar-large-32k-online': { prompt: 1.0, completion: 1.0 },
+  'llama-3-sonar-small-32k-chat': { prompt: 0.45, completion: 0.45 },
+  'llama-3-sonar-small-32k-online': { prompt: 0.45, completion: 0.45 },
+  'llama-3-sonar-large-32k-chat': { prompt: 1.25, completion: 1.25 },
+  'llama-3-sonar-large-32k-online': { prompt: 1.25, completion: 1.25 },
   // end perplexity usage
 
   // groq
-  'llama3-70b-8192': { prompt: 0.59, completion: 0.79 },
-  'llama3-8b-8192': { prompt: 0.05, completion: 0.1 },
-  'llama2-70b-4096': { prompt: 0.7, completion: 0.8 },
-  'mixtral-8x7b-32768': { prompt: 0.24, completion: 0.24 },
-  'gemma-7b-it': { prompt: 0.1, completion: 0.1 },
+  'llama3-70b-8192': { prompt: 0.84, completion: 1.04 },
+  'llama3-8b-8192': { prompt: 0.3, completion: 0.35 },
+  'llama2-70b-4096': { prompt: 0.95, completion: 1.05 },
+  'mixtral-8x7b-32768': { prompt: 0.49, completion: 0.49 },
+  'gemma-7b-it': { prompt: 0.35, completion: 0.35 },
   // end groq
 
   // mistral
-  'open-mistral-7b': { prompt: 0.05, completion: 0.05 },
-  'open-mixtral-8x7b': { prompt: 0.24, completion: 0.24 },
-  'mistral-tiny': { prompt: 0.05, completion: 0.05 },
-  'open-mixtral-8x22b': { prompt: 0.7, completion: 2.0 },
-  'open-mixtral-8x22b-2404': { prompt: 0.7, completion: 2.0 },
-  'mistral-small-2312': { prompt: 0.2, completion: 0.6 },
-  'mistral-small': { prompt: 0.2, completion: 0.6 },
-  'mistral-small-2402': { prompt: 0.2, completion: 0.6 },
-  'mistral-small-latest': { prompt: 0.2, completion: 0.6 },
-  'mistral-medium-latest': { prompt: 0.55, completion: 1.5 },
-  'mistral-medium-2312': { prompt: 0.5, completion: 1.5 },
-  'mistral-medium': { prompt: 0.5, completion: 1.5 },
-  'mistral-large-latest': { prompt: 0.8, completion: 2.5 },
-  'mistral-large-2402': { prompt: 0.8, completion: 2.5 },
-  'codestral-2405': { prompt: 0.25, completion: 0.75 },
-  'codestral-latest': { prompt: 0.25, completion: 0.75 },
-  'mistral-embed': { prompt: 0.05, completion: 0.05 },
+  'open-mistral-7b': { prompt: 0.3, completion: 0.3 },
+  'open-mixtral-8x7b': { prompt: 0.49, completion: 0.49 },
+  'mistral-tiny': { prompt: 0.3, completion: 0.3 },
+  'open-mixtral-8x22b': { prompt: 0.95, completion: 2.25 },
+  'open-mixtral-8x22b-2404': { prompt: 0.95, completion: 2.25 },
+  'mistral-small-2312': { prompt: 0.45, completion: 0.85 },
+  'mistral-small': { prompt: 0.45, completion: 0.85 },
+  'mistral-small-2402': { prompt: 0.45, completion: 0.85 },
+  'mistral-small-latest': { prompt: 0.45, completion: 0.85 },
+  'mistral-medium-latest': { prompt: 0.8, completion: 1.75 },
+  'mistral-medium-2312': { prompt: 0.75, completion: 1.75 },
+  'mistral-medium': { prompt: 0.75, completion: 1.75 },
+  'mistral-large-latest': { prompt: 1.05, completion: 2.75 },
+  'mistral-large-2402': { prompt: 1.05, completion: 2.75 },
+  'codestral-2405': { prompt: 0.5, completion: 1 },
+  'codestral-latest': { prompt: 0.5, completion: 1 },
+  'mistral-embed': { prompt: 0.3, completion: 0.3 },
   // end mistral
 };
 
 /**
- * Retrieves the key associated with a given model name.
- *
- * @param {string} model - The model name to match.
- * @param {string} endpoint - The endpoint name to match.
- * @returns {string|undefined} The key corresponding to the model name, or undefined if no match is found.
- */
+
+  Retrieves the key associated with a given model name.
+  @param {string} model - The model name to match.
+  @param {string} endpoint - The endpoint name to match.
+  @returns {string|undefined} The key corresponding to the model name, or undefined if no match is found. */
 const getValueKey = (model, endpoint) => {
   const modelName = matchModelName(model, endpoint);
   if (!modelName) {
     return undefined;
   }
-
   if (modelName.includes('gpt-3.5-turbo-16k')) {
     return '16k';
   } else if (modelName.includes('gpt-3.5-turbo-0125')) {
