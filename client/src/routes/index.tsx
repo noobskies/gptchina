@@ -13,6 +13,7 @@ import PrivacyPolicy from '~/components/PrivacyPolicy/PrivacyPolicy';
 import { AuthContextProvider } from '~/hooks/AuthContext';
 import StartupLayout from './Layouts/Startup';
 import LoginLayout from './Layouts/Login';
+import dashboardRoutes from './Dashboard';
 import ShareRoute from './ShareRoute';
 import ChatRoute from './ChatRoute';
 import Search from './Search';
@@ -65,6 +66,7 @@ export const router = createBrowserRouter([
           },
         ],
       },
+      dashboardRoutes,
       {
         path: '/',
         element: <Root />,

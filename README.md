@@ -27,7 +27,7 @@
 </p>
 
 <p align="center">
-<a href="https://railway.app/template/b5k2mn?referralCode=myKrVZ">
+<a href="https://railway.app/template/b5k2mn?referralCode=HI9hWz">
   <img src="https://railway.app/button.svg" alt="Deploy on Railway" height="30">
 </a>
 <a href="https://zeabur.com/templates/0X2ZY8">
@@ -50,7 +50,7 @@
 - 🔄 Edit, Resubmit, and Continue Messages with Conversation branching
 - 🌿 Fork Messages & Conversations for Advanced Context control
 - 💬 Multimodal Chat:
-    - Upload and analyze images with Claude 3, GPT-4 (including `gpt-4o`), and Gemini Vision 📸
+    - Upload and analyze images with Claude 3, GPT-4 (including `gpt-4o` and `gpt-4o-mini`), and Gemini Vision 📸
     - Chat with Files using Custom Endpoints, OpenAI, Azure, Anthropic, & Google. 🗃️
     - Advanced Agents with Files, Code Interpreter, Tools, and API Actions 🔦
       - Available through the [OpenAI Assistants API](https://platform.openai.com/docs/assistants/overview) 🌤️

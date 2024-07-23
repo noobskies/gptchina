@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
-const { errorsToString } = require('librechat-data-provider');
+const { SystemRoles, errorsToString } = require('librechat-data-provider');
 const {
   findUser,
   countUsers,
@@ -133,9 +133,10 @@ const verifyEmail = async (req) => {
 /**
  * Register a new user.
  * @param {MongoUser} user <email, password, name, username>
+ * @param {Partial<MongoUser>} [additionalData={}]
  * @returns {Promise<{status: number, message: string, user?: MongoUser}>}
  */
-const registerUser = async (user) => {
+const registerUser = async (user, additionalData = {}) => {
   const { error } = registerSchema.safeParse(user);
   if (error) {
     const errorMessage = errorsToString(error.errors);
@@ -183,13 +184,15 @@ const registerUser = async (user) => {
       username,
       name,
       avatar: null,
-      role: isFirstRegisteredUser ? 'ADMIN' : 'USER',
+      role: isFirstRegisteredUser ? SystemRoles.ADMIN : SystemRoles.USER,
       password: bcrypt.hashSync(password, salt),
+      ...additionalData,
     };
 
     const emailEnabled = checkEmailConfig();
-    newUserId = await createUser(newUserData, false);
-    if (emailEnabled) {
+    const newUser = await createUser(newUserData, false, true);
+    newUserId = newUser._id;
+    if (emailEnabled && !newUser.emailVerified) {
       await sendVerificationEmail({
         _id: newUserId,
         email,
@@ -199,8 +202,8 @@ const registerUser = async (user) => {
       await updateUser(newUserId, { emailVerified: true });
     }
 
-    const newUser = await getUserById(newUserId);
-    return { status: 200, message: genericVerificationMessage, user: newUser };
+    const updatedUser = await getUserById(newUserId);
+    return { status: 200, message: genericVerificationMessage, user: updatedUser };
   } catch (err) {
     logger.error('[registerUser] Error in registering user:', err);
     if (newUserId) {

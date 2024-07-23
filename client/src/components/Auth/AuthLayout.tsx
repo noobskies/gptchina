@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ThemeSelector } from '~/components/ui';
 import { useLocalize } from '~/hooks';
 import { BlinkAnimation } from './BlinkAnimation';
 import { TStartupConfig } from 'librechat-data-provider';
 import SocialLoginRender from './SocialLoginRender';
+import { ThemeSelector } from '~/components/ui';
 import Footer from './Footer';
 import Particles, { initParticlesEngine } from '@tsparticles/react';
 import { type Container, type ISourceOptions, MoveDirection, OutMode } from '@tsparticles/engine';

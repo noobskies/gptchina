@@ -69,7 +69,7 @@ const startServer = async () => {
   passport.use(passportLogin());
 
   // LDAP Auth
-  if (process.env.LDAP_URL && process.env.LDAP_BIND_DN && process.env.LDAP_USER_SEARCH_BASE) {
+  if (process.env.LDAP_URL && process.env.LDAP_USER_SEARCH_BASE) {
     passport.use(ldapLogin);
   }
 
@@ -90,6 +90,7 @@ const startServer = async () => {
   app.use('/api/convos', routes.convos);
   app.use('/api/presets', routes.presets);
   app.use('/api/prompts', routes.prompts);
+  app.use('/api/categories', routes.categories);
   app.use('/api/tokenizer', routes.tokenizer);
   app.use('/api/endpoints', routes.endpoints);
   app.use('/api/balance', routes.balance);
@@ -103,6 +104,7 @@ const startServer = async () => {
   app.use('/api/files', await routes.files.initialize());
   app.use('/images/', validateImageRequest, routes.staticRoute);
   app.use('/api/share', routes.share);
+  app.use('/api/roles', routes.roles);
 
   app.use((req, res) => {
     res.sendFile(path.join(app.locals.paths.dist, 'index.html'));

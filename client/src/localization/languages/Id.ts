@@ -39,8 +39,6 @@ export default {
   com_ui_submit: 'Kirim',
   com_ui_upload_success: 'Berhasil mengunggah file',
   com_ui_upload_error: 'Ada kesalahan saat mengunggah file Anda',
-  com_ui_upload_invalid:
-    'File tidak valid untuk diunggah. Harus berupa gambar yang tidak melebihi 2 MB',
   com_ui_cancel: 'Batal',
   com_ui_save: 'Simpan',
   com_ui_save_submit: 'Simpan & Kirim',
@@ -67,6 +65,8 @@ export default {
   com_ui_create_link: 'Buat tautan',
   com_ui_share_link_to_chat: 'Bagikan tautan ke chat',
   com_ui_share_error: 'Terjadi kesalahan saat membagikan tautan chat',
+  com_ui_share_retrieve_error: 'Terjadi kesalahan saat menghapus tautan yang dibagikan.',
+  com_ui_share_delete_error: 'Terjadi kesalahan saat menghapus tautan yang dibagikan.',
   com_ui_share_create_message:
     'Nama Anda dan pesan apa pun yang Anda tambahkan setelah berbagi tetap pribadi.',
   com_ui_share_created_message:
@@ -78,7 +78,7 @@ export default {
   com_ui_shared_link_not_found: 'Tautan berbagi tidak ditemukan',
   com_ui_delete: 'Hapus',
   com_ui_delete_conversation: 'Hapus chat?',
-  com_ui_delete_conversation_confirm: 'Ini akan menghapus',
+  com_ui_delete_confirm: 'Ini akan menghapus',
   com_ui_rename: 'Renombrar',
   com_ui_archive: 'Arsip',
   com_ui_archive_error: 'Gagal mengarsipkan percakapan',
@@ -618,6 +618,14 @@ export const comparisons = {
     english: 'Share link to chat',
     translated: 'Bagikan tautan ke chat',
   },
+  com_ui_share_retrieve_error: {
+    english: 'There was an error deleting the shared link.',
+    translated: 'Terjadi kesalahan saat menghapus tautan yang dibagikan.',
+  },
+  com_ui_share_delete_error: {
+    english: 'There was an error deleting the shared link.',
+    translated: 'Terjadi kesalahan saat menghapus tautan yang dibagikan.',
+  },
   com_ui_share_error: {
     english: 'There was an error sharing the chat link',
     translated: 'Terjadi kesalahan saat membagikan tautan chat',
@@ -655,7 +663,7 @@ export const comparisons = {
     english: 'Delete chat?',
     translated: 'Hapus chat?',
   },
-  com_ui_delete_conversation_confirm: {
+  com_ui_delete_confirm: {
     english: 'This will delete',
     translated: 'Ini akan menghapus',
   },

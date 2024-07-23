@@ -13,6 +13,7 @@ const tokenValues = {
   '16k': { prompt: 3.8, completion: 4.9 },
   'gpt-3.5-turbo-1106': { prompt: 0.6, completion: 0.8 },
   'gpt-4o': { prompt: 2.2, completion: 4.9 },
+  'gpt-4o-mini': { prompt: 0.15, completion: 0.6 },
   'gpt-4-1106': { prompt: 3.8, completion: 9.3 },
   'gpt-3.5-turbo-0125': { prompt: 0.6, completion: 0.8 },
   'claude-3-opus': { prompt: 9.3, completion: 22.5 },
@@ -83,6 +84,8 @@ const getValueKey = (model, endpoint) => {
     return 'gpt-3.5-turbo-1106';
   } else if (modelName.includes('gpt-3.5')) {
     return '4k';
+  } else if (modelName.includes('gpt-4o-mini')) {
+    return 'gpt-4o-mini';
   } else if (modelName.includes('gpt-4o')) {
     return 'gpt-4o';
   } else if (modelName.includes('gpt-4-vision')) {

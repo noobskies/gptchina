@@ -12,6 +12,8 @@ export const defaultSocialLogins = ['google', 'facebook', 'openid', 'github', 'd
 export const defaultRetrievalModels = [
   'gpt-4o',
   'gpt-4o-2024-05-13',
+  'gpt-4o-mini',
+  'gpt-4o-mini-2024-07-18',
   'gpt-4-turbo-preview',
   'gpt-3.5-turbo-0125',
   'gpt-4-0125-preview',
@@ -136,71 +138,81 @@ export const defaultAssistantsVersion = {
   [EModelEndpoint.azureAssistants]: 1,
 };
 
-export const assistantEndpointSchema = z.object({
-  /* assistants specific */
-  disableBuilder: z.boolean().optional(),
-  pollIntervalMs: z.number().optional(),
-  timeoutMs: z.number().optional(),
-  version: z.union([z.string(), z.number()]).default(2),
-  supportedIds: z.array(z.string()).min(1).optional(),
-  excludedIds: z.array(z.string()).min(1).optional(),
-  privateAssistants: z.boolean().optional(),
-  retrievalModels: z.array(z.string()).min(1).optional().default(defaultRetrievalModels),
-  capabilities: z
-    .array(z.nativeEnum(Capabilities))
-    .optional()
-    .default([
-      Capabilities.code_interpreter,
-      Capabilities.image_vision,
-      Capabilities.retrieval,
-      Capabilities.actions,
-      Capabilities.tools,
-    ]),
-  /* general */
-  apiKey: z.string().optional(),
-  baseURL: z.string().optional(),
-  models: z
-    .object({
-      default: z.array(z.string()).min(1),
-      fetch: z.boolean().optional(),
-      userIdQuery: z.boolean().optional(),
-    })
-    .optional(),
-  titleConvo: z.boolean().optional(),
-  titleMethod: z.union([z.literal('completion'), z.literal('functions')]).optional(),
-  titleModel: z.string().optional(),
-  headers: z.record(z.any()).optional(),
+export const baseEndpointSchema = z.object({
+  streamRate: z.number().optional(),
 });
+
+export type TBaseEndpoint = z.infer<typeof baseEndpointSchema>;
+
+export const assistantEndpointSchema = baseEndpointSchema.merge(
+  z.object({
+    /* assistants specific */
+    disableBuilder: z.boolean().optional(),
+    pollIntervalMs: z.number().optional(),
+    timeoutMs: z.number().optional(),
+    version: z.union([z.string(), z.number()]).default(2),
+    supportedIds: z.array(z.string()).min(1).optional(),
+    excludedIds: z.array(z.string()).min(1).optional(),
+    privateAssistants: z.boolean().optional(),
+    retrievalModels: z.array(z.string()).min(1).optional().default(defaultRetrievalModels),
+    capabilities: z
+      .array(z.nativeEnum(Capabilities))
+      .optional()
+      .default([
+        Capabilities.code_interpreter,
+        Capabilities.image_vision,
+        Capabilities.retrieval,
+        Capabilities.actions,
+        Capabilities.tools,
+      ]),
+    /* general */
+    apiKey: z.string().optional(),
+    baseURL: z.string().optional(),
+    models: z
+      .object({
+        default: z.array(z.string()).min(1),
+        fetch: z.boolean().optional(),
+        userIdQuery: z.boolean().optional(),
+      })
+      .optional(),
+    titleConvo: z.boolean().optional(),
+    titleMethod: z.union([z.literal('completion'), z.literal('functions')]).optional(),
+    titleModel: z.string().optional(),
+    headers: z.record(z.any()).optional(),
+  }),
+);
 
 export type TAssistantEndpoint = z.infer<typeof assistantEndpointSchema>;
 
-export const endpointSchema = z.object({
-  name: z.string().refine((value) => !eModelEndpointSchema.safeParse(value).success, {
-    message: `Value cannot be one of the default endpoint (EModelEndpoint) values: ${Object.values(
-      EModelEndpoint,
-    ).join(', ')}`,
+export const endpointSchema = baseEndpointSchema.merge(
+  z.object({
+    name: z.string().refine((value) => !eModelEndpointSchema.safeParse(value).success, {
+      message: `Value cannot be one of the default endpoint (EModelEndpoint) values: ${Object.values(
+        EModelEndpoint,
+      ).join(', ')}`,
+    }),
+    apiKey: z.string(),
+    baseURL: z.string(),
+    models: z.object({
+      default: z.array(z.string()).min(1),
+      fetch: z.boolean().optional(),
+      userIdQuery: z.boolean().optional(),
+    }),
+    titleConvo: z.boolean().optional(),
+    titleMethod: z.union([z.literal('completion'), z.literal('functions')]).optional(),
+    titleModel: z.string().optional(),
+    summarize: z.boolean().optional(),
+    summaryModel: z.string().optional(),
+    forcePrompt: z.boolean().optional(),
+    modelDisplayLabel: z.string().optional(),
+    headers: z.record(z.any()).optional(),
+    addParams: z.record(z.any()).optional(),
+    dropParams: z.array(z.string()).optional(),
+    customOrder: z.number().optional(),
+    directEndpoint: z.boolean().optional(),
+    titleMessageRole: z.string().optional(),
   }),
-  apiKey: z.string(),
-  baseURL: z.string(),
-  models: z.object({
-    default: z.array(z.string()).min(1),
-    fetch: z.boolean().optional(),
-    userIdQuery: z.boolean().optional(),
-  }),
-  titleConvo: z.boolean().optional(),
-  titleMethod: z.union([z.literal('completion'), z.literal('functions')]).optional(),
-  titleModel: z.string().optional(),
-  summarize: z.boolean().optional(),
-  summaryModel: z.string().optional(),
-  forcePrompt: z.boolean().optional(),
-  modelDisplayLabel: z.string().optional(),
-  headers: z.record(z.any()).optional(),
-  addParams: z.record(z.any()).optional(),
-  dropParams: z.array(z.string()).optional(),
-  customOrder: z.number().optional(),
-  directEndpoint: z.boolean().optional(),
-  titleMessageRole: z.string().optional(),
-});
+);
 
 export type TEndpoint = z.infer<typeof endpointSchema>;
 
@@ -213,6 +225,7 @@ export const azureEndpointSchema = z
   .and(
     endpointSchema
       .pick({
+        streamRate: true,
         titleConvo: true,
         titleMethod: true,
         titleModel: true,
@@ -229,6 +242,15 @@ export type TAzureConfig = Omit<z.infer<typeof azureEndpointSchema>, 'groups'> &
 const ttsOpenaiSchema = z.object({
   url: z.string().optional(),
   apiKey: z.string(),
+  model: z.string(),
+  voices: z.array(z.string()),
+});
+
+const ttsAzureOpenAISchema = z.object({
+  instanceName: z.string(),
+  apiKey: z.string(),
+  deploymentName: z.string(),
+  apiVersion: z.string(),
   model: z.string(),
   voices: z.array(z.string()),
 });
@@ -259,19 +281,62 @@ const ttsLocalaiSchema = z.object({
 
 const ttsSchema = z.object({
   openai: ttsOpenaiSchema.optional(),
+  azureOpenAI: ttsAzureOpenAISchema.optional(),
   elevenLabs: ttsElevenLabsSchema.optional(),
   localai: ttsLocalaiSchema.optional(),
 });
 
-const sttSchema = z.object({
-  openai: z
-    .object({
-      url: z.string().optional(),
-      apiKey: z.string().optional(),
-      model: z.string().optional(),
-    })
-    .optional(),
+const sttOpenaiSchema = z.object({
+  url: z.string().optional(),
+  apiKey: z.string(),
+  model: z.string(),
 });
+
+const sttAzureOpenAISchema = z.object({
+  instanceName: z.string(),
+  apiKey: z.string(),
+  deploymentName: z.string(),
+  apiVersion: z.string(),
+});
+
+const sttSchema = z.object({
+  openai: sttOpenaiSchema.optional(),
+  azureOpenAI: sttAzureOpenAISchema.optional(),
+});
+
+const speechTab = z
+  .object({
+    conversationMode: z.boolean().optional(),
+    advancedMode: z.boolean().optional(),
+    speechToText: z
+      .boolean()
+      .optional()
+      .or(
+        z.object({
+          engineSTT: z.string().optional(),
+          languageSTT: z.string().optional(),
+          autoTranscribeAudio: z.boolean().optional(),
+          decibelValue: z.number().optional(),
+          autoSendText: z.number().optional(),
+        }),
+      )
+      .optional(),
+    textToSpeech: z
+      .boolean()
+      .optional()
+      .or(
+        z.object({
+          engineTTS: z.string().optional(),
+          voice: z.string().optional(),
+          languageTTS: z.string().optional(),
+          automaticPlayback: z.boolean().optional(),
+          playbackRate: z.number().optional(),
+          cacheTTS: z.boolean().optional(),
+        }),
+      )
+      .optional(),
+  })
+  .optional();
 
 export enum RateLimitPrefix {
   FILE_UPLOAD = 'FILE_UPLOAD',
@@ -362,17 +427,27 @@ export const configSchema = z.object({
       allowedDomains: z.array(z.string()).optional(),
     })
     .default({ socialLogins: defaultSocialLogins }),
-  tts: ttsSchema.optional(),
-  stt: sttSchema.optional(),
+  speech: z
+    .object({
+      tts: ttsSchema.optional(),
+      stt: sttSchema.optional(),
+      speechTab: speechTab.optional(),
+    })
+    .optional(),
   rateLimits: rateLimitSchema.optional(),
   fileConfig: fileConfigSchema.optional(),
   modelSpecs: specsConfigSchema.optional(),
   endpoints: z
     .object({
+      all: baseEndpointSchema.optional(),
+      [EModelEndpoint.openAI]: baseEndpointSchema.optional(),
+      [EModelEndpoint.google]: baseEndpointSchema.optional(),
+      [EModelEndpoint.anthropic]: baseEndpointSchema.optional(),
+      [EModelEndpoint.gptPlugins]: baseEndpointSchema.optional(),
       [EModelEndpoint.azureOpenAI]: azureEndpointSchema.optional(),
       [EModelEndpoint.azureAssistants]: assistantEndpointSchema.optional(),
       [EModelEndpoint.assistants]: assistantEndpointSchema.optional(),
-      custom: z.array(endpointSchema.partial()).optional(),
+      [EModelEndpoint.custom]: z.array(endpointSchema.partial()).optional(),
     })
     .strict()
     .refine((data) => Object.keys(data).length > 0, {
@@ -457,7 +532,7 @@ const sharedOpenAIModels = [
 
 export const defaultModels = {
   [EModelEndpoint.azureAssistants]: sharedOpenAIModels,
-  [EModelEndpoint.assistants]: ['gpt-4o', ...sharedOpenAIModels],
+  [EModelEndpoint.assistants]: ['gpt-4o-mini', 'gpt-4o', ...sharedOpenAIModels],
   [EModelEndpoint.google]: [
     'gemini-pro',
     'gemini-pro-vision',
@@ -473,6 +548,7 @@ export const defaultModels = {
     'code-bison-32k',
   ],
   [EModelEndpoint.anthropic]: [
+    'claude-3-5-sonnet-20240620',
     'claude-3-opus-20240229',
     'claude-3-sonnet-20240229',
     'claude-3-haiku-20240307',
@@ -485,13 +561,12 @@ export const defaultModels = {
     'claude-instant-1-100k',
   ],
   [EModelEndpoint.openAI]: [
+    'gpt-4o-mini',
     'gpt-4o',
     ...sharedOpenAIModels,
     'gpt-4-vision-preview',
     'gpt-3.5-turbo-instruct-0914',
-    'gpt-3.5-turbo-0301',
     'gpt-3.5-turbo-instruct',
-    'text-davinci-003',
   ],
 };
 
@@ -547,6 +622,7 @@ export const supportsBalanceCheck = {
 
 export const visionModels = [
   'gpt-4o',
+  'gpt-4o-mini',
   'gpt-4-turbo',
   'gpt-4-vision',
   'llava',
@@ -586,6 +662,32 @@ export function validateVisionModel({
 export const imageGenTools = new Set(['dalle', 'dall-e', 'stable-diffusion']);
 
 /**
+ * Enum for collections using infinite queries
+ */
+export enum InfiniteCollections {
+  /**
+   * Collection for Prompt Groups
+   */
+  PROMPT_GROUPS = 'promptGroups',
+  /**
+   * Collection for Shared Links
+   */
+  SHARED_LINKS = 'sharedLinks',
+}
+
+/**
+ * Enum for time intervals
+ */
+export enum Time {
+  THIRTY_MINUTES = 1800000,
+  TEN_MINUTES = 600000,
+  FIVE_MINUTES = 300000,
+  TWO_MINUTES = 120000,
+  ONE_MINUTE = 60000,
+  THIRTY_SECONDS = 30000,
+}
+
+/**
  * Enum for cache keys.
  */
 export enum CacheKeys {
@@ -593,6 +695,10 @@ export enum CacheKeys {
    * Key for the config store namespace.
    */
   CONFIG_STORE = 'configStore',
+  /**
+   * Key for the config store namespace.
+   */
+  ROLES = 'roles',
   /**
    * Key for the plugins cache.
    */
@@ -614,6 +720,10 @@ export enum CacheKeys {
    * Key for the model queries cache.
    */
   MODEL_QUERIES = 'modelQueries',
+  /**
+   * Key for the default startup config cache.
+   */
+  STARTUP_CONFIG = 'startupConfig',
   /**
    * Key for the default endpoint config cache.
    */
@@ -647,6 +757,10 @@ export enum CacheKeys {
    * Key for the cached audio run Ids.
    */
   AUDIO_RUNS = 'audioRuns',
+  /**
+   * Key for in-progress messages.
+   */
+  MESSAGES = 'messages',
 }
 
 /**
@@ -762,9 +876,9 @@ export enum SettingsTabValues {
    */
   GENERAL = 'general',
   /**
-   * Tab for Messages Settings
+   * Tab for Chat Settings
    */
-  MESSAGES = 'messages',
+  CHAT = 'chat',
   /**
    * Tab for Speech Settings
    */
@@ -783,18 +897,56 @@ export enum SettingsTabValues {
   ACCOUNT = 'account',
 }
 
+export enum STTProviders {
+  /**
+   * Provider for OpenAI STT
+   */
+  OPENAI = 'openai',
+  /**
+   * Provider for Microsoft Azure STT
+   */
+  AZURE_OPENAI = 'azureOpenAI',
+}
+
+export enum TTSProviders {
+  /**
+   * Provider for OpenAI TTS
+   */
+  OPENAI = 'openai',
+  /**
+   * Provider for Microsoft Azure OpenAI TTS
+   */
+  AZURE_OPENAI = 'azureOpenAI',
+  /**
+   * Provider for ElevenLabs TTS
+   */
+  ELEVENLABS = 'elevenlabs',
+  /**
+   * Provider for LocalAI TTS
+   */
+  LOCALAI = 'localai',
+}
+
 /** Enum for app-wide constants */
 export enum Constants {
   /** Key for the app's version. */
   VERSION = 'v0.7.4-rc1',
   /** Key for the Custom Config's version (librechat.yaml). */
-  CONFIG_VERSION = '1.1.4',
+  CONFIG_VERSION = '1.1.5',
   /** Standard value for the first message's `parentMessageId` value, to indicate no parent exists. */
   NO_PARENT = '00000000-0000-0000-0000-000000000000',
+  /** Standard value for the initial conversationId before a request is sent */
+  NEW_CONVO = 'new',
   /** Fixed, encoded domain length for Azure OpenAI Assistants Function name parsing. */
   ENCODED_DOMAIN_LENGTH = 10,
   /** Identifier for using current_model in multi-model requests. */
   CURRENT_MODEL = 'current_model',
+  /** Common divider for text values */
+  COMMON_DIVIDER = '__',
+  /** Max length for commands */
+  COMMANDS_MAX_LENGTH = 56,
+  /** Default Stream Rate (ms) */
+  DEFAULT_STREAM_RATE = 1,
 }
 
 export enum LocalStorageKeys {
@@ -824,6 +976,8 @@ export enum LocalStorageKeys {
   TEXT_DRAFT = 'textDraft_',
   /** Key for saving file drafts */
   FILES_DRAFT = 'filesDraft_',
+  /** Key for last Selected Prompt Category */
+  LAST_PROMPT_CATEGORY = 'lastPromptCategory',
 }
 
 export enum ForkOptions {
@@ -859,4 +1013,11 @@ export enum CohereConstants {
    * Title message as required by Cohere
    */
   TITLE_MESSAGE = 'TITLE:',
+}
+
+export enum SystemCategories {
+  ALL = 'sys__all__sys',
+  MY_PROMPTS = 'sys__my__prompts__sys',
+  NO_CATEGORY = 'sys__no__category__sys',
+  SHARED_PROMPTS = 'sys__shared__prompts__sys',
 }

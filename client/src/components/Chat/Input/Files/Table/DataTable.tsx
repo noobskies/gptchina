@@ -32,7 +32,7 @@ import {
   DropdownMenuTrigger,
 } from '~/components/ui';
 import { useDeleteFilesFromTable } from '~/hooks/Files';
-import { NewTrashIcon, Spinner } from '~/components/svg';
+import { TrashIcon, Spinner } from '~/components/svg';
 import useLocalize from '~/hooks/useLocalize';
 
 interface DataTableProps<TData, TValue> {
@@ -96,13 +96,13 @@ export default function DataTable<TData, TValue>({ columns, data }: DataTablePro
             deleteFiles({ files: filesToDelete as TFile[] });
             setRowSelection({});
           }}
-          className="ml-1 gap-2 dark:hover:bg-gray-750/25 sm:ml-0"
+          className="ml-1 gap-2 dark:hover:bg-gray-850/25 sm:ml-0"
           disabled={!table.getFilteredSelectedRowModel().rows.length || isDeleting}
         >
           {isDeleting ? (
             <Spinner className="h-4 w-4" />
           ) : (
-            <NewTrashIcon className="h-4 w-4 text-red-400" />
+            <TrashIcon className="h-4 w-4 text-red-400" />
           )}
           {localize('com_ui_delete')}
         </Button>
@@ -121,7 +121,7 @@ export default function DataTable<TData, TValue>({ columns, data }: DataTablePro
           {/* Filter Menu */}
           <DropdownMenuContent
             align="end"
-            className="z-[1001] dark:border-gray-700 dark:bg-gray-750"
+            className="z-[1001] dark:border-gray-700 dark:bg-gray-850"
           >
             {table
               .getAllColumns()
