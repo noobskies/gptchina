@@ -113,6 +113,7 @@
     "@tsparticles/react": "^3.0.0",
     "body-parser": "^1.20.2",
     "ga-gtag": "^1.1.7",
+    "node-cron": "^3.0.3",
     "numeral": "^2.0.6",
     "opennode": "^1.5.0",
     "react-ga": "^3.3.1",
