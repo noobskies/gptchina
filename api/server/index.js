@@ -18,6 +18,8 @@ const AppService = require('./services/AppService');
 const noIndex = require('./middleware/noIndex');
 const routes = require('./routes');
 
+require('./cron');
+
 const { PORT, HOST, ALLOW_SOCIAL_LOGIN } = process.env ?? {};
 
 const port = Number(PORT) || 3080;
