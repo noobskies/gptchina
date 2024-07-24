@@ -26,12 +26,12 @@ async function getUserOverview() {
 // Function to send message to Discord
 async function sendUserOverviewToDiscord(overview) {
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
-  const appTitle = process.env.VITE_APP_AUTHOR || 'Application';
+  const appAuthor = process.env.VITE_APP_AUTHOR || 'Application Author';
 
   const message = {
     embeds: [
       {
-        title: `${appTitle} - User Overview (5-Minute Update)`,
+        title: `${appAuthor}'s App - Daily User Overview`,
         color: 3447003, // Blue color
         fields: [
           {
@@ -57,33 +57,36 @@ async function sendUserOverviewToDiscord(overview) {
 
   try {
     await axios.post(webhookUrl, message);
-    logger.info(`[cron] ${appTitle} user overview sent to Discord successfully`);
+    logger.info(`[cron] ${appAuthor}'s daily user overview sent to Discord successfully`);
   } catch (error) {
-    logger.error(`[cron] Error sending ${appTitle} user overview to Discord:`, error);
+    logger.error(`[cron] Error sending ${appAuthor}'s daily user overview to Discord:`, error);
   }
 }
 
 // Function to run the user overview job
 async function runUserOverviewJob() {
-  const appTitle = process.env.VITE_APP_AUTHOR || 'Application';
+  const appAuthor = process.env.VITE_APP_AUTHOR || 'Application Author';
   try {
-    logger.info(`[cron] Starting ${appTitle} user overview job`);
+    logger.info(`[cron] Starting ${appAuthor}'s daily user overview job`);
     const overview = await getUserOverview();
     await sendUserOverviewToDiscord(overview);
-    logger.info(`[cron] ${appTitle} user overview job completed`);
+    logger.info(`[cron] ${appAuthor}'s daily user overview job completed`);
   } catch (err) {
-    logger.error(`[cron] Error in ${appTitle} user overview job:`, err);
+    logger.error(`[cron] Error in ${appAuthor}'s daily user overview job:`, err);
   }
 }
 
-// Schedule the job to run every 5 minutes
-const job = cron.schedule('*/5 * * * *', runUserOverviewJob);
+// Schedule the job to run every day at 9 AM Chicago time
+const job = cron.schedule('0 9 * * *', runUserOverviewJob, {
+  scheduled: true,
+  timezone: 'America/Chicago',
+});
 
 // Log when the cron job is initialized
 logger.info(
   `[cron] ${
-    process.env.VITE_APP_AUTHOR || 'Application'
-  } user overview cron job initialized and scheduled to run every 5 minutes`,
+    process.env.VITE_APP_AUTHOR || 'Application Author'
+  }'s daily user overview cron job initialized and scheduled to run every day at 9 AM Chicago time`,
 );
 
 // Function to check if the cron job is running
@@ -95,11 +98,11 @@ module.exports = {
   isCronJobRunning,
 };
 
-// Log the cron job status every hour
-cron.schedule('0 * * * *', () => {
-  const appTitle = process.env.VITE_APP_AUTHOR || 'Application';
+// Log the cron job status once a day
+cron.schedule('0 0 * * *', () => {
+  const appAuthor = process.env.VITE_APP_AUTHOR || 'Application Author';
   logger.info(
-    `[cron] ${appTitle} user overview cron job status: ${
+    `[cron] ${appAuthor}'s daily user overview cron job status: ${
       isCronJobRunning() ? 'running' : 'stopped'
     }`,
   );
