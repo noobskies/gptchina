@@ -26,7 +26,7 @@ async function getUserOverview() {
 // Function to send message to Discord
 async function sendUserOverviewToDiscord(overview) {
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
-  const appTitle = process.env.APP_TITLE || 'Application';
+  const appTitle = process.env.VITE_APP_AUTHOR || 'Application';
 
   const message = {
     embeds: [
@@ -65,7 +65,7 @@ async function sendUserOverviewToDiscord(overview) {
 
 // Function to run the user overview job
 async function runUserOverviewJob() {
-  const appTitle = process.env.APP_TITLE || 'Application';
+  const appTitle = process.env.VITE_APP_AUTHOR || 'Application';
   try {
     logger.info(`[cron] Starting ${appTitle} user overview job`);
     const overview = await getUserOverview();
@@ -82,7 +82,7 @@ const job = cron.schedule('*/5 * * * *', runUserOverviewJob);
 // Log when the cron job is initialized
 logger.info(
   `[cron] ${
-    process.env.APP_TITLE || 'Application'
+    process.env.VITE_APP_AUTHOR || 'Application'
   } user overview cron job initialized and scheduled to run every 5 minutes`,
 );
 
