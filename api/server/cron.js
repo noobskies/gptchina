@@ -97,7 +97,7 @@ module.exports = {
 
 // Log the cron job status every hour
 cron.schedule('0 * * * *', () => {
-  const appTitle = process.env.APP_TITLE || 'Application';
+  const appTitle = process.env.VITE_APP_AUTHOR || 'Application';
   logger.info(
     `[cron] ${appTitle} user overview cron job status: ${
       isCronJobRunning() ? 'running' : 'stopped'
