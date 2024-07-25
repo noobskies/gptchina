@@ -31,7 +31,7 @@ async function sendUserOverviewToDiscord(overview) {
   const message = {
     embeds: [
       {
-        title: `${appAuthor}'s App - Daily User Overview`,
+        title: `${appAuthor} - Daily User Overview`,
         color: 3447003, // Blue color
         fields: [
           {
