@@ -36,7 +36,8 @@
     "vite.config.ts",
     "env.d.ts",
     "../vite.config.ts",
-    "capacitor.config.ts"
+    "capacitor.config.ts",
+    "../capacitor.config.ts"
   ],
   "references": [
     {
