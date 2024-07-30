@@ -72,6 +72,7 @@
   },
   "homepage": "https://librechat.ai/",
   "devDependencies": {
+    "@capacitor/cli": "6.1.1",
     "@playwright/test": "^1.38.1",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
@@ -91,7 +92,8 @@
     "prettier": "^2.8.8",
     "prettier-eslint": "^15.0.1",
     "prettier-eslint-cli": "^7.1.0",
-    "prettier-plugin-tailwindcss": "^0.2.2"
+    "prettier-plugin-tailwindcss": "^0.2.2",
+    "react-scripts": "5.0.1"
   },
   "nodemonConfig": {
     "ignore": [
@@ -103,10 +105,13 @@
     ]
   },
   "dependencies": {
-    "@capacitor/android": "^6.1.1",
-    "@capacitor/cli": "^6.1.1",
-    "@capacitor/core": "^6.1.1",
+    "@capacitor/android": "6.1.1",
+    "@capacitor/app": "6.0.0",
+    "@capacitor/core": "6.1.1",
+    "@capacitor/haptics": "6.0.0",
     "@capacitor/ios": "^6.1.1",
+    "@capacitor/keyboard": "6.0.1",
+    "@capacitor/status-bar": "6.0.0",
     "@paypal/checkout-server-sdk": "^1.0.3",
     "@sentry/node": "^7.110.1",
     "@sentry/profiling-node": "^7.110.1",
