@@ -3,7 +3,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'io.novlisky.twa',
   appName: 'Novlisky',
-  webDir: 'client/dist',
+  webDir: 'dist',
   server: {
     androidScheme: 'https',
   },
