@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "update": "node config/update.js",
+    "build": "cd client && npm run build && cd .. && npx cap sync",
     "add-balance": "node config/add-balance.js",
     "list-balances": "node config/list-balances.js",
     "user-stats": "node config/user-stats.js",
