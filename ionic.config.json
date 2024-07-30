@@ -1,5 +1,6 @@
 {
   "name": "Novlisky",
+  "root": "client",
   "integrations": {
     "capacitor": {}
   },
