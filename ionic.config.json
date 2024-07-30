@@ -4,5 +4,8 @@
     "capacitor": {}
   },
   "type": "react",
-  "root": "client"
+  "hooks": {
+    "build:before": "npm run build",
+    "capacitor:build:before": "npm run build"
+  }
 }
