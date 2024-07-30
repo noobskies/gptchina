@@ -1,0 +1,8 @@
+{
+  "name": "Novlisky",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react",
+  "root": "client"
+}
