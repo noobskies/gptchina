@@ -1,0 +1,17 @@
+{
+  "name": "Novlisky",
+  "root": "client",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite",
+  "hooks": {
+    "build": {
+      "command": "npm run build",
+      "working_directory": "client"
+    }
+  },
+  "build": {
+    "build_dir": "client/dist"
+  }
+}
