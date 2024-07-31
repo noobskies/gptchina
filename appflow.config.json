@@ -1,12 +1,12 @@
 {
-  "name": "Novlisky",
-  "root": "client",
-  "type": "react-vite",
-  "id": "0000000",
   "apps": [
     {
+      "appId": "02c98b92",
       "root": "client",
-      "name": "app"
+      "dependencyInstallCommand": "npm install",
+      "webBuildCommand": "npm run build",
+      "iosPath": "client/ios",
+      "androidPath": "client/android"
     }
   ]
 }
