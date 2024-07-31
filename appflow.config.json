@@ -3,7 +3,7 @@
     {
       "appId": "02c98b92",
       "root": ".",
-      "dependencyInstallCommand": "echo n | npm run update && npm install && npm run build:data-provider && cd client && npm ci",
+      "dependencyInstallCommand": "npm install && npm run build:data-provider && cd client && npm ci",
       "webBuildCommand": "cd client && npm run build",
       "iosPath": "client/ios",
       "androidPath": "client/android"
