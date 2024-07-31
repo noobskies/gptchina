@@ -3,7 +3,7 @@
     {
       "appId": "02c98b92",
       "root": ".",
-      "dependencyInstallCommand": "yes y | npm run update && cd client && npm ci",
+      "dependencyInstallCommand": "no n | npm run update && cd client && npm ci",
       "webBuildCommand": "cd client && npm install react-ga4 && npm run build",
       "iosPath": "client/ios",
       "androidPath": "client/android"
