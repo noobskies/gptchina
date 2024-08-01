@@ -30,10 +30,12 @@ so this was from https://artificialanalysis.ai/models/command-light/providers */
   'gemini-1.5': { prompt: 2.7, completion: 7.1 }, // May 2nd, 2024 pricing
   gemini: { prompt: 0.6, completion: 0.8 }, // May 2nd, 2024 pricing
   // start perplexity usage
-  'llama-3-sonar-small-32k-chat': { prompt: 0.7, completion: 0.7 },
-  'llama-3-sonar-small-32k-online': { prompt: 0.7, completion: 0.7 },
-  'llama-3-sonar-large-32k-chat': { prompt: 1.6, completion: 1.6 },
-  'llama-3-sonar-large-32k-online': { prompt: 1.6, completion: 1.6 },
+  'llama-3.1-sonar-small-128k-chat': { prompt: 0.7, completion: 0.7 },
+  'llama-3.1-sonar-small-128k-online': { prompt: 0.7, completion: 0.7 },
+  'llama-3.1-sonar-large-128k-chat': { prompt: 1.6, completion: 1.6 },
+  'llama-3.1-sonar-large-128k-online': { prompt: 1.6, completion: 1.6 },
+  'llama-3.1-70b-instruct': { prompt: 1.6, completion: 1.6 },
+  'llama-3.1-8b-instruct': { prompt: 0.7, completion: 0.7 },
   // end perplexity usage
 
   // groq
