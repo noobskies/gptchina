@@ -61,6 +61,7 @@ so this was from https://artificialanalysis.ai/models/command-light/providers */
   'mistral-medium': { prompt: 1.1, completion: 2.2 },
   'mistral-large-latest': { prompt: 1.4, completion: 3.3 },
   'mistral-large-2402': { prompt: 1.4, completion: 3.3 },
+  'mistral-large-2407': { prompt: 1.4, completion: 3.3 },
   'codestral-2405': { prompt: 0.8, completion: 1.3 },
   'codestral-latest': { prompt: 0.8, completion: 1.3 },
   'mistral-embed': { prompt: 0.6, completion: 0.6 },
