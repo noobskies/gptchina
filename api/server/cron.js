@@ -1,6 +1,7 @@
 const cron = require('node-cron');
 const { logger } = require('~/config');
 const User = require('~/models/User');
+const Balance = require('~/models/Balance');
 const axios = require('axios');
 
 // Ensure environment variables are loaded
@@ -8,18 +9,28 @@ require('dotenv').config();
 
 // Function to get user overview
 async function getUserOverview() {
-  const totalUsers = await User.countDocuments();
-  const newUsers = await User.countDocuments({
-    createdAt: { $gte: new Date(new Date().setHours(0, 0, 0, 0)) },
-  });
-  const activeUsers = await User.countDocuments({
-    updatedAt: { $gte: new Date(new Date().setHours(0, 0, 0, 0)) },
+  const now = new Date();
+  const startOfDay = new Date(now.setHours(0, 0, 0, 0));
+
+  const totalVerifiedUsers = await User.countDocuments({ emailVerified: true });
+  const newVerifiedUsers = await User.countDocuments({
+    createdAt: { $gte: startOfDay },
+    emailVerified: true,
   });
 
+  // Find verified users with balance changes today
+  const verifiedUserIds = await User.distinct('_id', { emailVerified: true });
+  const activeVerifiedUserIds = await Balance.distinct('user', {
+    user: { $in: verifiedUserIds },
+    updatedAt: { $gte: startOfDay },
+  });
+
+  const activeVerifiedUsers = activeVerifiedUserIds.length;
+
   return {
-    totalUsers,
-    newUsers,
-    activeUsers,
+    totalVerifiedUsers,
+    newVerifiedUsers,
+    activeVerifiedUsers,
   };
 }
 
@@ -31,22 +42,22 @@ async function sendUserOverviewToDiscord(overview) {
   const message = {
     embeds: [
       {
-        title: `${appAuthor} - Daily User Overview`,
+        title: `${appAuthor} - Daily Verified User Overview`,
         color: 3447003, // Blue color
         fields: [
           {
-            name: 'Total Users',
-            value: overview.totalUsers.toString(),
+            name: 'Total Verified Users',
+            value: overview.totalVerifiedUsers.toString(),
             inline: true,
           },
           {
-            name: 'New Users Today',
-            value: overview.newUsers.toString(),
+            name: 'New Verified Users Today',
+            value: overview.newVerifiedUsers.toString(),
             inline: true,
           },
           {
-            name: 'Active Users Today',
-            value: overview.activeUsers.toString(),
+            name: 'Active Verified Users Today',
+            value: overview.activeVerifiedUsers.toString(),
             inline: true,
           },
         ],
@@ -57,9 +68,12 @@ async function sendUserOverviewToDiscord(overview) {
 
   try {
     await axios.post(webhookUrl, message);
-    logger.info(`[cron] ${appAuthor}'s daily user overview sent to Discord successfully`);
+    logger.info(`[cron] ${appAuthor}'s daily verified user overview sent to Discord successfully`);
   } catch (error) {
-    logger.error(`[cron] Error sending ${appAuthor}'s daily user overview to Discord:`, error);
+    logger.error(
+      `[cron] Error sending ${appAuthor}'s daily verified user overview to Discord:`,
+      error,
+    );
   }
 }
 
@@ -67,12 +81,12 @@ async function sendUserOverviewToDiscord(overview) {
 async function runUserOverviewJob() {
   const appAuthor = process.env.VITE_APP_AUTHOR || 'Application Author';
   try {
-    logger.info(`[cron] Starting ${appAuthor}'s daily user overview job`);
+    logger.info(`[cron] Starting ${appAuthor}'s daily verified user overview job`);
     const overview = await getUserOverview();
     await sendUserOverviewToDiscord(overview);
-    logger.info(`[cron] ${appAuthor}'s daily user overview job completed`);
+    logger.info(`[cron] ${appAuthor}'s daily verified user overview job completed`);
   } catch (err) {
-    logger.error(`[cron] Error in ${appAuthor}'s daily user overview job:`, err);
+    logger.error(`[cron] Error in ${appAuthor}'s daily verified user overview job:`, err);
   }
 }
 
@@ -86,7 +100,7 @@ const job = cron.schedule('0 9 * * *', runUserOverviewJob, {
 logger.info(
   `[cron] ${
     process.env.VITE_APP_AUTHOR || 'Application Author'
-  }'s daily user overview cron job initialized and scheduled to run every day at 9 AM Chicago time`,
+  }'s daily verified user overview cron job initialized and scheduled to run every day at 9 AM Chicago time`,
 );
 
 // Function to check if the cron job is running
@@ -102,7 +116,7 @@ module.exports = {
 cron.schedule('0 0 * * *', () => {
   const appAuthor = process.env.VITE_APP_AUTHOR || 'Application Author';
   logger.info(
-    `[cron] ${appAuthor}'s daily user overview cron job status: ${
+    `[cron] ${appAuthor}'s daily verified user overview cron job status: ${
       isCronJobRunning() ? 'running' : 'stopped'
     }`,
   );
