@@ -1,0 +1,13 @@
+{
+  "apps": [
+    {
+      "appId": "02c98b92",
+      "root": ".",
+      "webBuildDir": "client/dist",
+      "script": {
+        "name": "build:web",
+        "args": []
+      }
+    }
+  ]
+}
