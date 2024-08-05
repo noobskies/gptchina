@@ -4,9 +4,8 @@
       "appId": "02c98b92",
       "root": ".",
       "webBuildDir": "client/dist",
-      "script": {
-        "name": "build:web",
-        "args": []
+      "build": {
+        "command": "npm run build:web"
       }
     }
   ]
