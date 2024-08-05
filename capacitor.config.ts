@@ -30,6 +30,7 @@ const config: CapacitorConfig = {
   },
   server: {
     androidScheme: 'https',
+    url: 'https://novlisky.io',
   },
 };
 
