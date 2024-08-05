@@ -3,7 +3,6 @@
     {
       "appId": "02c98b92",
       "root": ".",
-      "webBuildDir": "client/dist",
       "dependencyInstallCommand": "npm run build:web"
     }
   ]
