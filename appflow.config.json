@@ -3,7 +3,7 @@
     {
       "appId": "02c98b92",
       "root": ".",
-      "dependencyInstallCommand": "npm run build:web"
+      "dependencyInstallCommand": "npm ci && npm run build:web"
     }
   ]
 }
