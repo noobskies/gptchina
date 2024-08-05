@@ -1,7 +1,0 @@
-{
-  "iconSourceFile": "client/public/assets/logo-novlisky.png",
-  "splashSourceFile": "client/public/assets/logo-novlisky.png",
-  "iconBackgroundColor": "#ffffff",
-  "splashBackgroundColor": "#ffffff",
-  "configPath": "capacitor.config.ts"
-}

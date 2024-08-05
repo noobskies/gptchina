@@ -3,7 +3,7 @@
     {
       "appId": "02c98b92",
       "root": ".",
-      "dependencyInstallCommand": "npm install && npm run generate-assets && npm run build:web && npx cap sync"
+      "dependencyInstallCommand": "npm install && npm run generate-assets && npm run build:web"
     }
   ]
 }
