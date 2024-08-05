@@ -28,6 +28,7 @@
     "create-user": "node config/create-user.js",
     "ban-user": "node config/ban-user.js",
     "delete-user": "node config/delete-user.js",
+    "generate-assets": "npx @capacitor/assets generate --assetPath=client/public/assets --iconBackgroundColor '#eeeeee' --iconBackgroundColorDark '#222222' --splashBackgroundColor '#eeeeee' --splashBackgroundColorDark '#111111' --pwaManifestPath=client/dist",
     "backend": "cross-env NODE_ENV=production node api/server/index.js",
     "backend:dev": "cross-env NODE_ENV=development npx nodemon api/server/index.js",
     "backend:stop": "node config/stop-backend.js",
@@ -72,6 +73,7 @@
   },
   "homepage": "https://librechat.ai/",
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^6.1.1",
     "@playwright/test": "^1.38.1",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
