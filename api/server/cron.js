@@ -19,13 +19,37 @@ async function getUserOverview() {
   });
 
   // Find verified users with balance changes today
-  const verifiedUserIds = await User.distinct('_id', { emailVerified: true });
-  const activeVerifiedUserIds = await Balance.distinct('user', {
-    user: { $in: verifiedUserIds },
-    updatedAt: { $gte: startOfDay },
-  });
+  const activeUsers = await Balance.aggregate([
+    {
+      $match: {
+        updatedAt: { $gte: startOfDay },
+      },
+    },
+    {
+      $group: {
+        _id: '$user',
+        lastUpdate: { $last: '$updatedAt' },
+      },
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'userInfo',
+      },
+    },
+    {
+      $match: {
+        'userInfo.emailVerified': true,
+      },
+    },
+    {
+      $count: 'activeVerifiedUsers',
+    },
+  ]);
 
-  const activeVerifiedUsers = activeVerifiedUserIds.length;
+  const activeVerifiedUsers = activeUsers.length > 0 ? activeUsers[0].activeVerifiedUsers : 0;
 
   return {
     totalVerifiedUsers,
