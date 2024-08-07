@@ -16,6 +16,7 @@ const tokenValues = {
   'gpt-4o-mini': { prompt: 0.25, completion: 0.6 },
   'gpt-4-1106': { prompt: 3.8, completion: 9.3 },
   'gpt-3.5-turbo-0125': { prompt: 0.6, completion: 0.8 },
+  'claude-3-5-sonnet-20240620': { prompt: 2.2, completion: 4.9 },
   'claude-3-opus': { prompt: 9.3, completion: 22.5 },
   'claude-3-sonnet': { prompt: 1.2, completion: 4.6 },
   'claude-3-haiku': { prompt: 0.6, completion: 0.8 },
@@ -27,8 +28,19 @@ const tokenValues = {
   /* cohere doesn't have rates for the older command models,
 so this was from https://artificialanalysis.ai/models/command-light/providers */
   command: { prompt: 0.9, completion: 0.9 },
-  'gemini-1.5': { prompt: 2.7, completion: 7.1 }, // May 2nd, 2024 pricing
-  gemini: { prompt: 0.6, completion: 0.8 }, // May 2nd, 2024 pricing
+
+  // gemini
+  'gemini-1.5-flash-latest': { prompt: 0.35, completion: 1.05 },
+  'gemini-1.0-pro': { prompt: 0.5, completion: 1.5 },
+  'gemini-1.0-pro-001': { prompt: 0.5, completion: 1.5 },
+  'gemini-1.0-pro-latest': { prompt: 0.5, completion: 1.5 },
+  'gemini-1.0-pro-vision-latest': { prompt: 0.5, completion: 1.5 },
+  'gemini-1.5-pro-latest': { prompt: 2.2, completion: 4.9 },
+  'gemini-pro': { prompt: 0.5, completion: 1.5 }, // Alias for gemini-1.0-pro
+  'gemini-pro-vision': { prompt: 0.5, completion: 1.5 }, // Estimated based on gemini-1.0-pro
+  'gemini-1.5-pro-exp-0801': { prompt: 2.2, completion: 7.5 },
+  // end gemini
+
   // start perplexity usage
   'llama-3.1-sonar-small-128k-chat': { prompt: 0.7, completion: 0.7 },
   'llama-3.1-sonar-small-128k-online': { prompt: 0.7, completion: 0.7 },
