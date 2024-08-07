@@ -104,6 +104,14 @@ function SelectDropDownPop({
     'codestral-2405': 'Codestral 2405 🔥0.5',
     'codestral-latest': 'Codestral Latest 🔥0.5',
     'mistral-embed': 'Mistral Embed 🔥0.05',
+    // New Gemini models
+    'gemini-1.5-flash-latest': 'Gemini 1.5 Flash Latest 🔥0.4',
+    'gemini-1.0-pro': 'Gemini 1.0 Pro 🔥0.5',
+    'gemini-1.0-pro-001': 'Gemini 1.0 Pro 001 🔥0.5',
+    'gemini-1.0-pro-latest': 'Gemini 1.0 Pro Latest 🔥0.5',
+    'gemini-1.0-pro-vision-latest': 'Gemini 1.0 Pro Vision Latest 🔥0.5',
+    'gemini-1.5-pro-latest': 'Gemini 1.5 Pro Latest 🔥2.5',
+    'gemini-1.5-pro-exp-0801': 'Gemini 1.5 Pro Exp 0801 🔥2.5',
   };
 
   return (

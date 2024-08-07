@@ -38,7 +38,7 @@ so this was from https://artificialanalysis.ai/models/command-light/providers */
   'gemini-1.5-pro-latest': { prompt: 2.2, completion: 4.9 },
   'gemini-pro': { prompt: 0.5, completion: 1.5 }, // Alias for gemini-1.0-pro
   'gemini-pro-vision': { prompt: 0.5, completion: 1.5 }, // Estimated based on gemini-1.0-pro
-  'gemini-1.5-pro-exp-0801': { prompt: 2.2, completion: 7.5 },
+  'gemini-1.5-pro-exp-0801': { prompt: 2.2, completion: 4.9 },
   // end gemini
 
   // start perplexity usage
