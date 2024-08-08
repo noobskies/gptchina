@@ -17,4 +17,5 @@ module.exports = {
   endOfLine: 'auto',
   jsxSingleQuote: false,
   plugins: ['prettier-plugin-tailwindcss'],
+  ignore: ['android/**', 'ios/**'],
 };

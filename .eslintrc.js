@@ -23,6 +23,8 @@ module.exports = {
     'data-node/**/*',
     'meili_data/**/*',
     'node_modules/**/*',
+    'android/**/*',
+    'ios/**/*',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
