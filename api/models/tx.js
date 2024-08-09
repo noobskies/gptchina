@@ -115,6 +115,29 @@ const getValueKey = (model, endpoint) => {
     return '32k';
   } else if (modelName.includes('gpt-4')) {
     return '8k';
+  }
+  // Add Google/Gemini conditions here
+  else if (modelName.includes('gemini-1.5-flash-latest')) {
+    return 'gemini-1.5-flash-latest';
+  } else if (modelName.includes('gemini-1.5-pro-latest')) {
+    return 'gemini-1.5-pro-latest';
+  } else if (modelName.includes('gemini-1.0-pro-vision-latest')) {
+    return 'gemini-1.0-pro-vision-latest';
+  } else if (modelName.includes('gemini-1.0-pro-latest')) {
+    return 'gemini-1.0-pro-latest';
+  } else if (modelName.includes('gemini-1.0-pro-001')) {
+    return 'gemini-1.0-pro-001';
+  } else if (modelName.includes('gemini-1.0-pro')) {
+    return 'gemini-1.0-pro';
+  } else if (modelName.includes('gemini-pro-vision')) {
+    return 'gemini-pro-vision';
+  } else if (modelName.includes('gemini-pro')) {
+    return 'gemini-pro';
+  } else if (modelName.includes('gemini-1.5-pro-exp-0801')) {
+    return 'gemini-1.5-pro-exp-0801';
+  } else if (modelName.includes('gemini')) {
+    // Fallback for any other Gemini model
+    return 'gemini-1.0-pro';
   } else if (tokenValues[modelName]) {
     return modelName;
   }
