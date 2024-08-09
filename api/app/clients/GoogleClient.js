@@ -26,6 +26,7 @@ const {
   titleInstruction,
   truncateText,
 } = require('./prompts');
+const spendTokens = require('~/models/spendTokens');
 const BaseClient = require('./BaseClient');
 
 const loc = 'us-central1';
@@ -311,6 +312,19 @@ class GoogleClient extends BaseClient {
     );
     message.image_urls = image_urls.length ? image_urls : undefined;
     return files;
+  }
+
+  async recordTokenUsage({ promptTokens, completionTokens, model, context = 'message' }) {
+    await spendTokens(
+      {
+        context,
+        user: this.user,
+        conversationId: this.conversationId,
+        model: model ?? this.modelOptions.model,
+        endpointTokenConfig: this.options.endpointTokenConfig,
+      },
+      { promptTokens, completionTokens },
+    );
   }
 
   /**
@@ -706,34 +720,44 @@ class GoogleClient extends BaseClient {
         reply += chunkText;
         await sleep(streamRate);
       }
-      return reply;
-    }
-
-    const safetySettings = _payload.safetySettings;
-    const stream = await model.stream(messages, {
-      signal: abortController.signal,
-      timeout: 7000,
-      safetySettings: safetySettings,
-    });
-
-    let delay = this.options.streamRate || 8;
-
-    if (!this.options.streamRate) {
-      if (this.isGenerativeModel) {
-        delay = 12;
-      }
-      if (modelName.includes('flash')) {
-        delay = 5;
-      }
-    }
-
-    for await (const chunk of stream) {
-      const chunkText = chunk?.content ?? chunk;
-      await this.generateTextStream(chunkText, onProgress, {
-        delay,
+    } else {
+      const safetySettings = _payload.safetySettings;
+      const stream = await model.stream(messages, {
+        signal: abortController.signal,
+        timeout: 7000,
+        safetySettings: safetySettings,
       });
-      reply += chunkText;
+
+      let delay = this.options.streamRate || 8;
+
+      if (!this.options.streamRate) {
+        if (this.isGenerativeModel) {
+          delay = 12;
+        }
+        if (modelName.includes('flash')) {
+          delay = 5;
+        }
+      }
+
+      for await (const chunk of stream) {
+        const chunkText = chunk?.content ?? chunk;
+        await this.generateTextStream(chunkText, onProgress, {
+          delay,
+        });
+        reply += chunkText;
+      }
     }
+
+    // Calculate token usage
+    const promptTokens = this.getTokenCount(JSON.stringify(_payload));
+    const completionTokens = this.getTokenCount(reply);
+
+    // Record token usage
+    await this.recordTokenUsage({
+      promptTokens,
+      completionTokens,
+      model: this.modelOptions.model,
+    });
 
     return reply;
   }
