@@ -115,9 +115,7 @@ const getValueKey = (model, endpoint) => {
     return '32k';
   } else if (modelName.includes('gpt-4')) {
     return '8k';
-  }
-  // Add Google/Gemini conditions here
-  else if (modelName.includes('gemini-1.5-flash-latest')) {
+  } else if (modelName.includes('gemini-1.5-flash-latest')) {
     return 'gemini-1.5-flash-latest';
   } else if (modelName.includes('gemini-1.5-pro-latest')) {
     return 'gemini-1.5-pro-latest';
