@@ -3,12 +3,13 @@ import { Trigger } from '@radix-ui/react-popover';
 export default function TitleButton({ primaryText = '', secondaryText = '' }) {
   return (
     <Trigger asChild>
-      <div
+      <button
         id="step-1"
-        className="group flex cursor-pointer items-center gap-1 rounded-xl px-3 py-2 text-lg font-medium hover:bg-gray-50 radix-state-open:bg-gray-50 dark:hover:bg-gray-700 dark:radix-state-open:bg-gray-700"
-        // type="button"
+        className="group flex cursor-pointer items-center justify-between gap-1 rounded-xl px-3 py-2 text-lg font-medium hover:bg-gray-50 radix-state-open:bg-gray-50 dark:hover:bg-gray-700 dark:radix-state-open:bg-gray-700"
+        type="button"
+        aria-label={`Select ${primaryText}`}
       >
-        <div>
+        <div className="flex-grow text-center">
           {primaryText}{' '}
           {!!secondaryText && <span className="text-token-text-secondary">{secondaryText}</span>}
         </div>
@@ -17,7 +18,7 @@ export default function TitleButton({ primaryText = '', secondaryText = '' }) {
           height="17"
           viewBox="0 0 16 17"
           fill="none"
-          className="text-token-text-tertiary"
+          className="text-token-text-tertiary flex-shrink-0"
         >
           <path
             d="M11.3346 7.83203L8.00131 11.1654L4.66797 7.83203"
@@ -27,7 +28,7 @@ export default function TitleButton({ primaryText = '', secondaryText = '' }) {
             strokeLinejoin="round"
           />
         </svg>
-      </div>
+      </button>
     </Trigger>
   );
 }

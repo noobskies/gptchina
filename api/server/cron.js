@@ -1,8 +1,10 @@
 const cron = require('node-cron');
-const { logger } = require('./api/config');
-const User = require('./api/models/User');
-const Balance = require('./api/models/Balance');
+const { logger } = require('~/config');
+const User = require('~/models/User');
+const Balance = require('~/models/Balance');
 const axios = require('axios');
+
+// Ensure environment variables are loaded
 require('dotenv').config();
 
 // Function to get user overview
@@ -16,17 +18,44 @@ async function getUserOverview() {
     emailVerified: true,
   });
 
+  // Find verified users with balance changes today
   const activeUsers = await Balance.aggregate([
-    { $match: { updatedAt: { $gte: startOfDay } } },
-    { $group: { _id: '$user', lastUpdate: { $last: '$updatedAt' } } },
-    { $lookup: { from: 'users', localField: '_id', foreignField: '_id', as: 'userInfo' } },
-    { $match: { 'userInfo.emailVerified': true } },
-    { $count: 'activeVerifiedUsers' },
+    {
+      $match: {
+        updatedAt: { $gte: startOfDay },
+      },
+    },
+    {
+      $group: {
+        _id: '$user',
+        lastUpdate: { $last: '$updatedAt' },
+      },
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'userInfo',
+      },
+    },
+    {
+      $match: {
+        'userInfo.emailVerified': true,
+      },
+    },
+    {
+      $count: 'activeVerifiedUsers',
+    },
   ]);
 
   const activeVerifiedUsers = activeUsers.length > 0 ? activeUsers[0].activeVerifiedUsers : 0;
 
-  return { totalVerifiedUsers, newVerifiedUsers, activeVerifiedUsers };
+  return {
+    totalVerifiedUsers,
+    newVerifiedUsers,
+    activeVerifiedUsers,
+  };
 }
 
 // Function to send message to Discord
@@ -38,7 +67,7 @@ async function sendUserOverviewToDiscord(overview) {
     embeds: [
       {
         title: `${appAuthor} - Daily Verified User Overview`,
-        color: 3447003,
+        color: 3447003, // Blue color
         fields: [
           {
             name: 'Total Verified Users',
@@ -85,10 +114,34 @@ async function runUserOverviewJob() {
   }
 }
 
-// Run the job immediately for testing
-runUserOverviewJob();
+// Schedule the job to run every day at 9 AM Chicago time
+const job = cron.schedule('0 9 * * *', runUserOverviewJob, {
+  scheduled: true,
+  timezone: 'America/Chicago',
+});
 
-// Schedule the job to run every minute for testing purposes
-cron.schedule('* * * * *', runUserOverviewJob);
+// Log when the cron job is initialized
+logger.info(
+  `[cron] ${
+    process.env.VITE_APP_AUTHOR || 'Application Author'
+  }'s daily verified user overview cron job initialized and scheduled to run every day at 9 AM Chicago time`,
+);
 
-console.log('Cron job test script is running. Press Ctrl+C to exit.');
+// Function to check if the cron job is running
+function isCronJobRunning() {
+  return job.getStatus() === 'scheduled';
+}
+
+module.exports = {
+  isCronJobRunning,
+};
+
+// Log the cron job status once a day
+cron.schedule('0 0 * * *', () => {
+  const appAuthor = process.env.VITE_APP_AUTHOR || 'Application Author';
+  logger.info(
+    `[cron] ${appAuthor}'s daily verified user overview cron job status: ${
+      isCronJobRunning() ? 'running' : 'stopped'
+    }`,
+  );
+});

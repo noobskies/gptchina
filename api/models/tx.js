@@ -1,6 +1,40 @@
 const { matchModelName } = require('../utils');
 const defaultRate = 3;
 
+/** AWS Bedrock pricing */
+const bedrockValues = {
+  'anthropic.claude-3-haiku-20240307-v1:0': { prompt: 0.25, completion: 1.25 },
+  'anthropic.claude-3-sonnet-20240229-v1:0': { prompt: 3.0, completion: 15.0 },
+  'anthropic.claude-3-opus-20240229-v1:0': { prompt: 15.0, completion: 75.0 },
+  'anthropic.claude-3-5-sonnet-20240620-v1:0': { prompt: 3.0, completion: 15.0 },
+  'anthropic.claude-v2:1': { prompt: 8.0, completion: 24.0 },
+  'anthropic.claude-instant-v1': { prompt: 0.8, completion: 2.4 },
+  'meta.llama2-13b-chat-v1': { prompt: 0.75, completion: 1.0 },
+  'meta.llama2-70b-chat-v1': { prompt: 1.95, completion: 2.56 },
+  'meta.llama3-8b-instruct-v1:0': { prompt: 0.3, completion: 0.6 },
+  'meta.llama3-70b-instruct-v1:0': { prompt: 2.65, completion: 3.5 },
+  'meta.llama3-1-8b-instruct-v1:0': { prompt: 0.3, completion: 0.6 },
+  'meta.llama3-1-70b-instruct-v1:0': { prompt: 2.65, completion: 3.5 },
+  'meta.llama3-1-405b-instruct-v1:0': { prompt: 5.32, completion: 16.0 },
+  'mistral.mistral-7b-instruct-v0:2': { prompt: 0.15, completion: 0.2 },
+  'mistral.mistral-small-2402-v1:0': { prompt: 0.15, completion: 0.2 },
+  'mistral.mixtral-8x7b-instruct-v0:1': { prompt: 0.45, completion: 0.7 },
+  'mistral.mistral-large-2402-v1:0': { prompt: 4.0, completion: 12.0 },
+  'mistral.mistral-large-2407-v1:0': { prompt: 3.0, completion: 9.0 },
+  'cohere.command-text-v14': { prompt: 1.5, completion: 2.0 },
+  'cohere.command-light-text-v14': { prompt: 0.3, completion: 0.6 },
+  'cohere.command-r-v1:0': { prompt: 0.5, completion: 1.5 },
+  'cohere.command-r-plus-v1:0': { prompt: 3.0, completion: 15.0 },
+  'ai21.j2-mid-v1': { prompt: 12.5, completion: 12.5 },
+  'ai21.j2-ultra-v1': { prompt: 18.8, completion: 18.8 },
+  'amazon.titan-text-lite-v1': { prompt: 0.15, completion: 0.2 },
+  'amazon.titan-text-express-v1': { prompt: 0.2, completion: 0.6 },
+};
+
+for (const [key, value] of Object.entries(bedrockValues)) {
+  bedrockValues[`bedrock/${key}`] = value;
+}
+
 /**
 
 Mapping of model token sizes to their respective multipliers for prompt and completion.
@@ -99,6 +133,8 @@ const getValueKey = (model, endpoint) => {
     return 'gpt-3.5-turbo-1106';
   } else if (modelName.includes('gpt-3.5')) {
     return '4k';
+  } else if (modelName.includes('gpt-4o-2024-08-06')) {
+    return 'gpt-4o-2024-08-06';
   } else if (modelName.includes('gpt-4o-mini')) {
     return 'gpt-4o-mini';
   } else if (modelName.includes('gpt-4o')) {

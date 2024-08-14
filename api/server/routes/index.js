@@ -25,6 +25,7 @@ const claimTokens = require('./claimTokens');
 const share = require('./share');
 const categories = require('./categories');
 const roles = require('./roles');
+const tags = require('./tags');
 
 module.exports = {
   search,
@@ -54,4 +55,5 @@ module.exports = {
   share,
   categories,
   roles,
+  tags,
 };

@@ -123,9 +123,11 @@ function SelectDropDownPop({
               data-testid="select-dropdown-button"
               id="step-2"
               className={cn(
-                'pointer-cursor relative flex flex-col rounded-md border border-black/10 bg-white py-2 pl-3 pr-10 text-left focus:outline-none focus:ring-0 focus:ring-offset-0 dark:border-gray-700 dark:bg-gray-800 sm:text-sm',
+                'pointer-cursor relative flex flex-col rounded-md border border-black/10 bg-white py-2 pl-3 pr-10 text-left focus:ring-0 focus:ring-offset-0 dark:border-gray-700 dark:bg-gray-800 sm:text-sm',
                 'hover:bg-gray-50 radix-state-open:bg-gray-50 dark:hover:bg-gray-700 dark:radix-state-open:bg-gray-700',
               )}
+              aria-label={`Select ${title}`}
+              aria-haspopup="false"
             >
               {' '}
               {showLabel && (
@@ -139,9 +141,10 @@ function SelectDropDownPop({
                     'min-w-[75px] font-normal',
                   )}
                 >
-                  {typeof value !== 'string' && value
-                    ? optionTitles[value] || value?.label || ''
-                    : optionTitles[value] || value || ''}
+                  {/* {!showLabel && !emptyTitle && (
+                    <span className="text-xs text-gray-700 dark:text-gray-500">{title}:</span>
+                  )} */}
+                  {typeof value !== 'string' && value ? value.label ?? '' : value ?? ''}
                 </span>
               </span>
               <span className="absolute inset-y-0 right-0 flex items-center pr-2">
