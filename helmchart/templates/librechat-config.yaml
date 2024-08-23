@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "librechat.fullname" . }}-config
+data:
+  librechat.yaml: |
+    version: {{ .Values.librechat.version }}
+    cache: {{ .Values.librechat.cache }}
+    interface:
+      privacyPolicy:
+        externalUrl: {{ .Values.sites.privacyPolicy | default .Values.librechat.interface.privacyPolicy.externalUrl }}
+        openNewTab: {{ .Values.librechat.interface.privacyPolicy.openNewTab }}
+      termsOfService:
+        externalUrl: {{ .Values.sites.termsOfService | default .Values.librechat.interface.termsOfService.externalUrl }}
+        openNewTab: {{ .Values.librechat.interface.termsOfService.openNewTab }}
+    endpoints:
+      assistants:
+        disableBuilder: {{ .Values.librechat.endpoints.assistants.disableBuilder }}
+        pollIntervalMs: {{ .Values.librechat.endpoints.assistants.pollIntervalMs }}
+        timeoutMs: {{ .Values.librechat.endpoints.assistants.timeoutMs }}
+        privateAssistants: {{ .Values.librechat.endpoints.assistants.privateAssistants }}
+        retrievalModels: {{ .Values.librechat.endpoints.assistants.retrievalModels | toJson }}
+        capabilities: {{ .Values.librechat.endpoints.assistants.capabilities | toJson }}
+      custom:
+        {{- range .Values.librechat.endpoints.custom }}
+        - name: {{ .name | quote }}
+          apiKey: {{ .apiKey | quote }}
+          baseURL: {{ .baseURL | quote }}
+          models:
+            default: {{ .models.default | toJson }}
+            fetch: {{ .models.fetch }}
+          titleConvo: {{ .titleConvo }}
+          titleModel: {{ .titleModel | quote }}
+          modelDisplayLabel: {{ .modelDisplayLabel | quote }}
+          {{- if .summarize }}
+          summarize: {{ .summarize }}
+          {{- end }}
+          {{- if .summaryModel }}
+          summaryModel: {{ .summaryModel | quote }}
+          {{- end }}
+          {{- if .forcePrompt }}
+          forcePrompt: {{ .forcePrompt }}
+          {{- end }}
+          {{- if .dropParams }}
+          dropParams: {{ .dropParams | toJson }}
+          {{- end }}
+        {{- end }}
+    fileConfig:
+      endpoints:
+        assistants:
+          fileLimit: {{ .Values.librechat.fileConfig.endpoints.assistants.fileLimit }}
+          fileSizeLimit: {{ .Values.librechat.fileConfig.endpoints.assistants.fileSizeLimit }}
+          totalSizeLimit: {{ .Values.librechat.fileConfig.endpoints.assistants.totalSizeLimit }}
+        openAI:
+          disabled: {{ .Values.librechat.fileConfig.endpoints.openAI.disabled }}
+        default:
+          totalSizeLimit: {{ .Values.librechat.fileConfig.endpoints.default.totalSizeLimit }}
+      serverFileSizeLimit: {{ .Values.librechat.fileConfig.serverFileSizeLimit }}
+      avatarSizeLimit: {{ .Values.librechat.fileConfig.avatarSizeLimit }}
