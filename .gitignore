@@ -130,4 +130,36 @@ manifest-checksum.txt
 twa-manifest.json
 store_icon.png
 
-bubble/
+# Android build artifacts
+android/app/src/main/assets/public/
+
+# iOS build artifacts
+ios/App/App/public/
+
+# Capacitor build files
+android/app/capacitor.build.gradle
+android/capacitor.settings.gradle
+
+# iOS dependencies
+ios/App/Podfile.lock
+ios/App/Pods/
+
+# If you're using npm
+node_modules/
+npm-debug.log
+
+# If you're using yarn
+yarn-error.log
+
+# IDE files
+.idea/
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Build directories
+build/
+dist/
+www/
