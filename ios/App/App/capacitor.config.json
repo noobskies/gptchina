@@ -30,5 +30,5 @@
     "androidScheme": "https",
     "url": "https://novlisky.io"
   },
-  "packageClassList": []
+  "packageClassList": ["SafeAreaPlugin"]
 }

@@ -1,1 +1,6 @@
-[]
+[
+  {
+    "pkg": "capacitor-plugin-safe-area",
+    "classpath": "com.capacitor.safearea.SafeAreaPlugin"
+  }
+]
