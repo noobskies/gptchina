@@ -3,7 +3,7 @@
     {
       "appId": "02c98b92",
       "root": ".",
-      "dependencyInstallCommand": "npm install && npm install vite-plugin-pwa@latest && npm run build:web && npm run generate-assets && npx cap sync"
+      "dependencyInstallCommand": "npm install && npm install @rollup/rollup-darwin-arm64 vite-plugin-pwa@latest && npm run build:web && npm run generate-assets && npx cap sync"
     }
   ]
 }
