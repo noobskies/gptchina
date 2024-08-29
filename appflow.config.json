@@ -3,7 +3,7 @@
     {
       "appId": "02c98b92",
       "root": ".",
-      "dependencyInstallCommand": "npm install && npm install @rollup/rollup-darwin-arm64 && node -e \"const fs=require('fs');const p=require('./package.json');p.overrides=p.overrides||{};p.overrides.rollup='^3.21.0';fs.writeFileSync('./package.json',JSON.stringify(p,null,2));const v=require('./vite.config.js');v.optimizeDeps=v.optimizeDeps||{};v.optimizeDeps.esbuildOptions=v.optimizeDeps.esbuildOptions||{};v.optimizeDeps.esbuildOptions.target='es2020';v.esbuild=v.esbuild||{};v.esbuild.target='es2020';fs.writeFileSync('./vite.config.js','export default '+JSON.stringify(v,null,2))\" && npm run build:web && npm run generate-assets && npx cap sync"
+      "dependencyInstallCommand": "npm install && npm install @rollup/rollup-darwin-arm64 && node -e \"const fs=require('fs');const p=require('./package.json');p.overrides=p.overrides||{};p.overrides.rollup='^3.21.0';fs.writeFileSync('./package.json',JSON.stringify(p,null,2));const v=require('./vite.config.js');v.optimizeDeps=v.optimizeDeps||{};v.optimizeDeps.esbuildOptions=v.optimizeDeps.esbuildOptions||{};v.optimizeDeps.esbuildOptions.target='es2020';v.esbuild=v.esbuild||{};v.esbuild.target='es2020';fs.writeFileSync('./client/vite.config.ts','export default '+JSON.stringify(v,null,2))\" && npm run build:web && npm run generate-assets && npx cap sync"
     }
   ]
 }
