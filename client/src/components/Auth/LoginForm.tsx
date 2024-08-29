@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useGetStartupConfig } from 'librechat-data-provider/react-query';
 import type { TLoginUser, TStartupConfig } from 'librechat-data-provider';
 import type { TAuthContext } from '~/common';
 import { useResendVerificationEmail } from '~/data-provider';
@@ -21,6 +22,9 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
     formState: { errors },
   } = useForm<TLoginUser>();
   const [showResendLink, setShowResendLink] = useState<boolean>(false);
+
+  const { data: config } = useGetStartupConfig();
+  const useUsernameLogin = config?.ldap?.username;
 
   useEffect(() => {
     if (error && error.includes('422') && !showResendLink) {
@@ -100,15 +104,28 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
             <input
               type="text"
               id="email"
+              autoComplete={useUsernameLogin ? 'username' : 'email'}
+              aria-label={localize('com_auth_email')}
               {...register('email', {
                 required: localize('com_auth_email_required'),
                 maxLength: { value: 120, message: localize('com_auth_email_max_length') },
-                pattern: { value: /\S+@\S+\.\S+/, message: localize('com_auth_email_pattern') },
+                pattern: {
+                  value: useUsernameLogin ? /\S+/ : /\S+@\S+\.\S+/,
+                  message: localize('com_auth_email_pattern'),
+                },
               })}
               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 ps-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               placeholder="name@example.com"
               aria-invalid={!!errors.email}
             />
+            <label
+              htmlFor="email"
+              className="absolute start-1 top-2 z-10 origin-[0] -translate-y-4 scale-75 transform bg-white px-3 text-sm text-gray-500 duration-100 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-3 peer-focus:text-green-600 dark:bg-gray-900 dark:text-gray-400 dark:peer-focus:text-green-500 rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4"
+            >
+              {useUsernameLogin
+                ? localize('com_auth_username').replace(/ \(.*$/, '')
+                : localize('com_auth_email_address')}
+            </label>
           </div>
           {renderError('email')}
         </div>

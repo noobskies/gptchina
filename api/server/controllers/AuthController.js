@@ -1,4 +1,3 @@
-const crypto = require('crypto');
 const cookies = require('cookie');
 const jwt = require('jsonwebtoken');
 const { Session, User } = require('~/models');
@@ -11,6 +10,7 @@ const {
   setAuthTokens,
   requestPasswordReset,
 } = require('~/server/services/AuthService');
+const { hashToken } = require('~/server/utils/crypto');
 const { logger } = require('~/config');
 
 const registrationController = async (req, res) => {
@@ -128,8 +128,7 @@ const refreshController = async (req, res) => {
     }
 
     // Hash the refresh token
-    const hash = crypto.createHash('sha256');
-    const hashedToken = hash.update(refreshToken).digest('hex');
+    const hashedToken = await hashToken(refreshToken);
 
     // Find the session with the hashed refresh token
     const session = await Session.findOne({ user: userId, refreshTokenHash: hashedToken });

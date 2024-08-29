@@ -26,6 +26,7 @@ const {
   titleInstruction,
   truncateText,
 } = require('./prompts');
+const spendTokens = require('~/models/spendTokens');
 const BaseClient = require('./BaseClient');
 
 const loc = 'us-central1';
@@ -311,6 +312,19 @@ class GoogleClient extends BaseClient {
     );
     message.image_urls = image_urls.length ? image_urls : undefined;
     return files;
+  }
+
+  async recordTokenUsage({ promptTokens, completionTokens, model, context = 'message' }) {
+    await spendTokens(
+      {
+        context,
+        user: this.user,
+        conversationId: this.conversationId,
+        model: model ?? this.modelOptions.model,
+        endpointTokenConfig: this.options.endpointTokenConfig,
+      },
+      { promptTokens, completionTokens },
+    );
   }
 
   /**
@@ -677,7 +691,6 @@ class GoogleClient extends BaseClient {
 
     const modelName = clientOptions.modelName ?? clientOptions.model ?? '';
     if (modelName?.includes('1.5') && !this.project_id) {
-      /** @type {GenerativeModel} */
       const client = model;
       const requestOptions = {
         contents: _payload,
@@ -693,8 +706,7 @@ class GoogleClient extends BaseClient {
         };
       }
 
-      const safetySettings = _payload.safetySettings;
-      requestOptions.safetySettings = safetySettings;
+      requestOptions.safetySettings = _payload.safetySettings;
 
       const delay = modelName.includes('flash') ? 8 : 14;
       const result = await client.generateContentStream(requestOptions);
@@ -706,34 +718,44 @@ class GoogleClient extends BaseClient {
         reply += chunkText;
         await sleep(streamRate);
       }
-      return reply;
-    }
-
-    const safetySettings = _payload.safetySettings;
-    const stream = await model.stream(messages, {
-      signal: abortController.signal,
-      timeout: 7000,
-      safetySettings: safetySettings,
-    });
-
-    let delay = this.options.streamRate || 8;
-
-    if (!this.options.streamRate) {
-      if (this.isGenerativeModel) {
-        delay = 12;
-      }
-      if (modelName.includes('flash')) {
-        delay = 5;
-      }
-    }
-
-    for await (const chunk of stream) {
-      const chunkText = chunk?.content ?? chunk;
-      await this.generateTextStream(chunkText, onProgress, {
-        delay,
+    } else {
+      const safetySettings = _payload.safetySettings;
+      const stream = await model.stream(messages, {
+        signal: abortController.signal,
+        timeout: 7000,
+        safetySettings: safetySettings,
       });
-      reply += chunkText;
+
+      let delay = this.options.streamRate || 8;
+
+      if (!this.options.streamRate) {
+        if (this.isGenerativeModel) {
+          delay = 12;
+        }
+        if (modelName.includes('flash')) {
+          delay = 5;
+        }
+      }
+
+      for await (const chunk of stream) {
+        const chunkText = chunk?.content ?? chunk;
+        await this.generateTextStream(chunkText, onProgress, {
+          delay,
+        });
+        reply += chunkText;
+      }
     }
+
+    // Calculate token usage
+    const promptTokens = this.getTokenCount(JSON.stringify(_payload));
+    const completionTokens = this.getTokenCount(reply);
+
+    // Record token usage
+    await this.recordTokenUsage({
+      promptTokens,
+      completionTokens,
+      model: this.modelOptions.model,
+    });
 
     return reply;
   }
@@ -871,36 +893,34 @@ class GoogleClient extends BaseClient {
   }
 
   async sendCompletion(payload, opts = {}) {
-    const modelName = payload.parameters?.model;
-
-    if (modelName && modelName.toLowerCase().includes('gemini')) {
-      const safetySettings = [
-        {
-          category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
-          threshold:
-            process.env.GOOGLE_SAFETY_SEXUALLY_EXPLICIT || 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
-        },
-        {
-          category: 'HARM_CATEGORY_HATE_SPEECH',
-          threshold: process.env.GOOGLE_SAFETY_HATE_SPEECH || 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
-        },
-        {
-          category: 'HARM_CATEGORY_HARASSMENT',
-          threshold: process.env.GOOGLE_SAFETY_HARASSMENT || 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
-        },
-        {
-          category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
-          threshold:
-            process.env.GOOGLE_SAFETY_DANGEROUS_CONTENT || 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
-        },
-      ];
-
-      payload.safetySettings = safetySettings;
-    }
+    payload.safetySettings = this.getSafetySettings();
 
     let reply = '';
     reply = await this.getCompletion(payload, opts);
     return reply.trim();
+  }
+
+  getSafetySettings() {
+    return [
+      {
+        category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+        threshold:
+          process.env.GOOGLE_SAFETY_SEXUALLY_EXPLICIT || 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
+      },
+      {
+        category: 'HARM_CATEGORY_HATE_SPEECH',
+        threshold: process.env.GOOGLE_SAFETY_HATE_SPEECH || 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
+      },
+      {
+        category: 'HARM_CATEGORY_HARASSMENT',
+        threshold: process.env.GOOGLE_SAFETY_HARASSMENT || 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
+      },
+      {
+        category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+        threshold:
+          process.env.GOOGLE_SAFETY_DANGEROUS_CONTENT || 'HARM_BLOCK_THRESHOLD_UNSPECIFIED',
+      },
+    ];
   }
 
   /* TO-DO: Handle tokens with Google tokenization NOTE: these are required */

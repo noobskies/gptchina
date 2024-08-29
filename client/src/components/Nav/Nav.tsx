@@ -1,6 +1,7 @@
-import { useParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { useCallback, useEffect, useState, useMemo, memo } from 'react';
+import { useRecoilValue } from 'recoil';
+import { useParams } from 'react-router-dom';
+import type { ConversationListResponse } from 'librechat-data-provider';
 import {
   useMediaQuery,
   useAuthContext,
@@ -12,6 +13,7 @@ import {
 import { useConversationsInfiniteQuery } from '~/data-provider';
 import { TooltipProvider, Tooltip } from '~/components/ui';
 import { Conversations } from '~/components/Conversations';
+import BookmarkNav from './Bookmarks/BookmarkNav';
 import { useSearchContext } from '~/Providers';
 import { Spinner } from '~/components/svg';
 import SearchBar from './SearchBar';
@@ -19,7 +21,6 @@ import NavToggle from './NavToggle';
 import NavLinks from './NavLinks';
 import NewChat from './NewChat';
 import { cn } from '~/utils';
-import { ConversationListResponse } from 'librechat-data-provider';
 import store from '~/store';
 
 const Nav = ({ navVisible, setNavVisible }) => {
@@ -58,12 +59,21 @@ const Nav = ({ navVisible, setNavVisible }) => {
 
   const { refreshConversations } = useConversations();
   const { pageNumber, searchQuery, setPageNumber, searchQueryRes } = useSearchContext();
-
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useConversationsInfiniteQuery(
-    { pageNumber: pageNumber.toString(), isArchived: false },
-    { enabled: isAuthenticated },
-  );
-
+  const [tags, setTags] = useState<string[]>([]);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
+    useConversationsInfiniteQuery(
+      {
+        pageNumber: pageNumber.toString(),
+        isArchived: false,
+        tags: tags.length === 0 ? undefined : tags,
+      },
+      { enabled: isAuthenticated },
+    );
+  useEffect(() => {
+    // When a tag is selected, refetch the list of conversations related to that tag
+    refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tags]);
   const { containerRef, moveToTop } = useNavScrolling<ConversationListResponse>({
     setShowLoading,
     hasNextPage: searchQuery ? searchQueryRes.hasNextPage : hasNextPage,
@@ -73,9 +83,8 @@ const Nav = ({ navVisible, setNavVisible }) => {
 
   const conversations = useMemo(
     () =>
-      (searchQuery ? searchQueryRes?.data : data)?.pages.flatMap((page) => page.conversations) ||
-      [],
-    [data, searchQuery, searchQueryRes?.data],
+      (searchQuery ? searchQueryRes.data : data)?.pages.flatMap((page) => page.conversations) || [],
+    [data, searchQuery, searchQueryRes.data],
   );
 
   const clearSearch = () => {
@@ -129,7 +138,11 @@ const Nav = ({ navVisible, setNavVisible }) => {
                     'scrollbar-trigger relative h-full w-full flex-1 items-start border-white/20',
                   )}
                 >
-                  <nav className="flex h-full w-full flex-col px-3 pb-3.5">
+                  <nav
+                    id="chat-history-nav"
+                    aria-label="chat-history-nav"
+                    className="flex h-full w-full flex-col px-3 pb-3.5"
+                  >
                     <div
                       className={cn(
                         '-mr-2 flex-1 flex-col overflow-y-auto pr-2 transition-opacity duration-500',
@@ -141,7 +154,12 @@ const Nav = ({ navVisible, setNavVisible }) => {
                     >
                       <NewChat
                         toggleNav={itemToggleNav}
-                        subHeaders={isSearchEnabled && <SearchBar clearSearch={clearSearch} />}
+                        subHeaders={
+                          <>
+                            {isSearchEnabled && <SearchBar clearSearch={clearSearch} />}
+                            <BookmarkNav tags={tags} setTags={setTags} />
+                          </>
+                        }
                       />
                       <Conversations
                         conversations={conversations}
@@ -168,7 +186,18 @@ const Nav = ({ navVisible, setNavVisible }) => {
           navVisible={navVisible}
           className="fixed left-0 top-1/2 z-40 hidden md:flex"
         />
-        <div className={`nav-mask${navVisible ? ' active' : ''}`} onClick={toggleNavVisible} />
+        <div
+          role="button"
+          tabIndex={0}
+          className={`nav-mask ${navVisible ? 'active' : ''}`}
+          onClick={toggleNavVisible}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              toggleNavVisible();
+            }
+          }}
+          aria-label="Toggle navigation"
+        />
       </Tooltip>
     </TooltipProvider>
   );

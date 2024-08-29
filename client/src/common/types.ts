@@ -26,6 +26,11 @@ import type {
 import type { UseMutationResult } from '@tanstack/react-query';
 import type { LucideIcon } from 'lucide-react';
 
+export enum PromptsEditorMode {
+  SIMPLE = 'simple',
+  ADVANCED = 'advanced',
+}
+
 export type AudioChunk = {
   audio: string;
   isFinal: boolean;
@@ -83,7 +88,7 @@ export type NavLink = {
   label?: string;
   icon: LucideIcon | React.FC;
   Component?: React.ComponentType;
-  onClick?: () => void;
+  onClick?: (e?: React.MouseEvent) => void;
   variant?: 'default' | 'ghost';
   id: string;
 };

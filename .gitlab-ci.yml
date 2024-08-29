@@ -1,0 +1,39 @@
+variables:
+  AWS_DEFAULT_REGION: "us-east-1"
+  ECR_REGISTRY: "851438445814.dkr.ecr.us-east-1.amazonaws.com"
+  ECR_REPOSITORY: "librechat"
+
+build:
+  image: docker:latest
+  services:
+    - docker:dind
+  stage: build
+  script:
+    - apk add --no-cache aws-cli
+    - aws --version
+    - echo "AWS CLI installed successfully"
+    - echo "Checking AWS credentials and variables..."
+    - |
+      for var in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_DEFAULT_REGION ECR_REGISTRY ECR_REPOSITORY; do
+        eval value=\$$var
+        if [ -z "$value" ]; then
+          echo "Error: $var is not set"
+          exit 1
+        else
+          echo "$var is set"
+        fi
+      done
+    - echo "Attempting to get caller identity..."
+    - aws sts get-caller-identity
+    - echo "Attempting to describe ECR repositories..."
+    - aws ecr describe-repositories --region $AWS_DEFAULT_REGION
+    - echo "Attempting ECR login..."
+    - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+    - echo "Building Docker image..."
+    - docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$CI_COMMIT_SHA .
+    - echo "Pushing Docker image..."
+    - docker push $ECR_REGISTRY/$ECR_REPOSITORY:$CI_COMMIT_SHA
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      exists:
+        - Dockerfile

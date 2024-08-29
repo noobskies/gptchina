@@ -1,9 +1,9 @@
 const express = require('express');
 const AskController = require('~/server/controllers/AskController');
-const { initializeClient, addTitle } = require('~/server/services/Endpoints/google');
+const { addTitle, initializeClient } = require('~/server/services/Endpoints/google');
 const {
-  setHeaders,
   handleAbort,
+  setHeaders,
   validateModel,
   validateEndpoint,
   buildEndpointOption,

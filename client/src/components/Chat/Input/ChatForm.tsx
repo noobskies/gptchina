@@ -1,4 +1,4 @@
-import { memo, useRef, useMemo } from 'react';
+import { memo, useRef, useMemo, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   supportsFiles,
@@ -38,8 +38,8 @@ const ChatForm = ({ index = 0 }) => {
   const submitButtonRef = useRef<HTMLButtonElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const SpeechToText = useRecoilState<boolean>(store.speechToText);
-  const TextToSpeech = useRecoilState<boolean>(store.textToSpeech);
+  const SpeechToText = useRecoilValue(store.speechToText);
+  const TextToSpeech = useRecoilValue(store.textToSpeech);
   const automaticPlayback = useRecoilValue(store.automaticPlayback);
 
   const [showStopButton, setShowStopButton] = useRecoilState(store.showStopButtonByIndex(index));
@@ -106,7 +106,7 @@ const ChatForm = ({ index = 0 }) => {
     () =>
       isAssistantsEndpoint(conversation?.endpoint) &&
       (!conversation?.assistant_id ||
-        !assistantMap?.[conversation?.endpoint ?? '']?.[conversation?.assistant_id ?? '']),
+        !assistantMap[conversation.endpoint ?? ''][conversation.assistant_id ?? '']),
     [conversation?.assistant_id, conversation?.endpoint, assistantMap],
   );
   const disableInputs = useMemo(
@@ -120,6 +120,13 @@ const ChatForm = ({ index = 0 }) => {
       methods.setValue('text', e.target.value, { shouldValidate: true });
     },
   });
+
+  useEffect(() => {
+    // Focus the textarea when the component mounts
+    if (textAreaRef.current) {
+      textAreaRef.current.focus();
+    }
+  }, []);
 
   return (
     <form
@@ -162,7 +169,6 @@ const ChatForm = ({ index = 0 }) => {
             {endpoint && (
               <TextareaAutosize
                 {...registerProps}
-                autoFocus
                 ref={(e) => {
                   ref(e);
                   textAreaRef.current = e;
