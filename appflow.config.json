@@ -3,12 +3,7 @@
     {
       "appId": "02c98b92",
       "root": ".",
-      "dependencyInstallCommand": "npm install && npm run build:web && npm run generate-assets && npx cap sync",
-      "scripts": {
-        "prebuild": "node -e \"const fs=require('fs'); const pkg=JSON.parse(fs.readFileSync('package.json')); pkg.overrides = pkg.overrides || {}; pkg.overrides.rollup = '^3.21.0'; fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));\"",
-        "postinstall": "node -e \"try { require('@rollup/rollup-darwin-arm64') } catch (e) { console.log('ARM64 Rollup not required, skipping.'); }\"",
-        "build:web": "node -e \"const os=require('os'); if(os.platform() === 'darwin' && os.arch() === 'arm64') { console.log('Installing ARM64 Rollup...'); require('child_process').execSync('npm install @rollup/rollup-darwin-arm64', {stdio: 'inherit'}); }\" && npm run prebuild && cross-env NODE_ENV=production vite build"
-      }
+      "dependencyInstallCommand": "npm install && npm install @rollup/rollup-darwin-arm64 && node -e \"const fs=require('fs');const p=require('./package.json');p.overrides=p.overrides||{};p.overrides.rollup='^3.21.0';fs.writeFileSync('./package.json',JSON.stringify(p,null,2));const v=require('./vite.config.js');v.optimizeDeps=v.optimizeDeps||{};v.optimizeDeps.esbuildOptions=v.optimizeDeps.esbuildOptions||{};v.optimizeDeps.esbuildOptions.target='es2020';v.esbuild=v.esbuild||{};v.esbuild.target='es2020';fs.writeFileSync('./vite.config.js','export default '+JSON.stringify(v,null,2))\" && npm run build:web && npm run generate-assets && npx cap sync"
     }
   ]
 }
