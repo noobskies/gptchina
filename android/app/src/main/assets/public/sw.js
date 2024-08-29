@@ -19,9 +19,9 @@ if (!self.define) {
     const o = s || ('document' in self ? document.currentScript.src : '') || location.href;
     if (n[o]) return;
     let r = {};
-    const t = (s) => e(s, o),
-      a = { module: { uri: o }, exports: r, require: t };
-    n[o] = Promise.all(l.map((s) => a[s] || t(s))).then((s) => (i(...s), r));
+    const a = (s) => e(s, o),
+      t = { module: { uri: o }, exports: r, require: a };
+    n[o] = Promise.all(l.map((s) => t[s] || a(s))).then((s) => (i(...s), r));
   };
 }
 define(['./workbox-b23c3c24'], function (s) {
@@ -77,6 +77,7 @@ define(['./workbox-b23c3c24'], function (s) {
         { url: 'assets/bingai-jb.png', revision: null },
         { url: 'assets/bingai.png', revision: null },
         { url: 'assets/cohere.png', revision: null },
+        { url: 'assets/favicon-32x32.png', revision: null },
         { url: 'assets/favicon-africa-16x16.png', revision: null },
         { url: 'assets/favicon-africa-32x32.png', revision: null },
         { url: 'assets/favicon-china-16x16.png', revision: null },
@@ -97,6 +98,7 @@ define(['./workbox-b23c3c24'], function (s) {
         { url: 'assets/google-palm.svg', revision: null },
         { url: 'assets/groq.png', revision: null },
         { url: 'assets/huggingface.svg', revision: null },
+        { url: 'assets/icon-only.png', revision: null },
         { url: 'assets/logo-africa.png', revision: null },
         { url: 'assets/logo-china.png', revision: null },
         { url: 'assets/logo-global.png', revision: null },
@@ -115,22 +117,23 @@ define(['./workbox-b23c3c24'], function (s) {
         { url: 'assets/perplexity.png', revision: null },
         { url: 'assets/playstore.png', revision: null },
         { url: 'assets/shuttleai.png', revision: null },
+        { url: 'assets/splash.png', revision: null },
         { url: 'assets/together.png', revision: null },
         { url: 'assets/web-browser.svg', revision: null },
-        { url: 'assets/index-B8ws1t6k.js', revision: null },
-        { url: 'assets/index-DCmo6PAL.css', revision: null },
+        { url: 'assets/index-D90UovBb.js', revision: null },
+        { url: 'assets/index-DUE5bRXM.css', revision: null },
         { url: 'assets/Inter-Bold-CytjP_7U.woff2', revision: null },
         { url: 'assets/Inter-BoldItalic-B0T-BnK6.woff2', revision: null },
         { url: 'assets/Inter-Italic-B_ozvy2G.woff2', revision: null },
         { url: 'assets/Inter-Regular-B0QUfDW0.woff2', revision: null },
         { url: 'assets/Inter-SemiBold-_JLwM7Yv.woff2', revision: null },
         { url: 'assets/Inter-SemiBoldItalic-C4gNvuGw.woff2', revision: null },
-        { url: 'assets/markdown_highlight-DdZtPvay.js', revision: null },
-        { url: 'assets/markdown_large-7HSoBTS5.js', revision: null },
+        { url: 'assets/markdown_highlight-ByjxT0vp.js', revision: null },
+        { url: 'assets/markdown_large-C7B0LgcP.js', revision: null },
         { url: 'assets/roboto-mono-latin-400-italic-B6BBQVPU.woff2', revision: null },
         { url: 'assets/roboto-mono-latin-400-normal-C_5wUCW5.woff2', revision: null },
         { url: 'assets/roboto-mono-latin-700-normal-DpzZ8rK9.woff2', revision: null },
-        { url: 'assets/vendor-D4Rc_Tis.js', revision: null },
+        { url: 'assets/vendor-CXCa15a4.js', revision: null },
         { url: 'fonts/Inter-Bold.woff2', revision: '279e5a64038565325a5fda8f14a9b9ec' },
         { url: 'fonts/Inter-BoldItalic.woff2', revision: '33083aa00dfe1e31f0ff2fb645dc75be' },
         { url: 'fonts/Inter-Italic.woff2', revision: '8944f8c2a3dd2373bd6351e19e699d23' },
@@ -149,9 +152,10 @@ define(['./workbox-b23c3c24'], function (s) {
           url: 'fonts/roboto-mono-latin-700-normal.woff2',
           revision: '5900c2f9140f24ce86f85cb6a6bbffc8',
         },
-        { url: 'index.html', revision: 'b04af5f3754ec3cd721b1d32cc5fcb75' },
+        { url: 'index.html', revision: '5915a518f6d0f5ab6deb61103b43c756' },
         { url: 'registerSW.js', revision: '1872c500de691dce40960bb85481de07' },
-        { url: 'manifest.webmanifest', revision: '22f0f5443e9f402663e450e026426947' },
+        { url: 'assets/logo-novlisky-og.png', revision: '850fe921222709a161d112d5a3e3c414' },
+        { url: 'manifest.webmanifest', revision: '49177c95d5af404fec917688473eac6e' },
       ],
       {},
     ),
