@@ -28,7 +28,7 @@ const localStorageAtoms = {
   enterToSend: atomWithLocalStorage('enterToSend', true),
   chatDirection: atomWithLocalStorage('chatDirection', 'LTR'),
   showCode: atomWithLocalStorage('showCode', false),
-  saveDrafts: atomWithLocalStorage('saveDrafts', false),
+  saveDrafts: atomWithLocalStorage('saveDrafts', true),
   forkSetting: atomWithLocalStorage('forkSetting', ''),
   splitAtTarget: atomWithLocalStorage('splitAtTarget', false),
 
@@ -37,6 +37,9 @@ const localStorageAtoms = {
   // Beta features settings
   modularChat: atomWithLocalStorage('modularChat', true),
   LaTeXParsing: atomWithLocalStorage('LaTeXParsing', true),
+  codeArtifacts: atomWithLocalStorage('codeArtifacts', false),
+  includeShadcnui: atomWithLocalStorage('includeShadcnui', false),
+  customPromptMode: atomWithLocalStorage('customPromptMode', false),
 
   // Commands settings
   atCommand: atomWithLocalStorage('atCommand', true),

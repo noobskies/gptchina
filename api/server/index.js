@@ -7,6 +7,8 @@ const express = require('express');
 const compression = require('compression');
 const passport = require('passport');
 const mongoSanitize = require('express-mongo-sanitize');
+const fs = require('fs');
+const cookieParser = require('cookie-parser');
 const { jwtLogin, passportLogin } = require('~/strategies');
 const { connectDb, indexSync } = require('~/lib/db');
 const { isEnabled } = require('~/server/utils');
@@ -16,9 +18,9 @@ const validateImageRequest = require('./middleware/validateImageRequest');
 const errorController = require('./controllers/ErrorController');
 const configureSocialLogins = require('./socialLogins');
 const AppService = require('./services/AppService');
+const staticCache = require('./utils/staticCache');
 const noIndex = require('./middleware/noIndex');
 const routes = require('./routes');
-const staticCache = require('./utils/staticCache');
 
 require('./cron');
 
@@ -40,9 +42,12 @@ const startServer = async () => {
   app.disable('x-powered-by');
   await AppService(app);
 
+  const indexPath = path.join(app.locals.paths.dist, 'index.html');
+  const indexHTML = fs.readFileSync(indexPath, 'utf8');
+
   app.get('/health', (_req, res) => res.status(200).send('OK'));
 
-  // Middleware
+  /* Middleware */
   app.use(noIndex);
   app.use(errorController);
   app.use(
@@ -58,10 +63,11 @@ const startServer = async () => {
   app.use(staticCache(app.locals.paths.dist));
   app.use(staticCache(app.locals.paths.fonts));
   app.use(staticCache(app.locals.paths.assets));
-  app.set('trust proxy', 1); // trust first proxy
+  app.set('trust proxy', 1); /* trust first proxy */
   app.use(cors());
+  app.use(cookieParser());
 
-  if (DISABLE_COMPRESSION !== 'true') {
+  if (!isEnabled(DISABLE_COMPRESSION)) {
     app.use(compression());
   }
 
@@ -71,12 +77,12 @@ const startServer = async () => {
     );
   }
 
-  // OAUTH
+  /* OAUTH */
   app.use(passport.initialize());
   passport.use(await jwtLogin());
   passport.use(passportLogin());
 
-  // LDAP Auth
+  /* LDAP Auth */
   if (process.env.LDAP_URL && process.env.LDAP_USER_SEARCH_BASE) {
     passport.use(ldapLogin);
   }
@@ -86,7 +92,7 @@ const startServer = async () => {
   }
 
   app.use('/oauth', routes.oauth);
-  // API Endpoints
+  /* API Endpoints */
   app.use('/api/auth', routes.auth);
   app.use('/api/keys', routes.keys);
   app.use('/api/user', routes.user);
@@ -113,10 +119,15 @@ const startServer = async () => {
   app.use('/images/', validateImageRequest, routes.staticRoute);
   app.use('/api/share', routes.share);
   app.use('/api/roles', routes.roles);
+  app.use('/api/agents', routes.agents);
 
   app.use('/api/tags', routes.tags);
+
   app.use((req, res) => {
-    res.sendFile(path.join(app.locals.paths.dist, 'index.html'));
+    // Replace lang attribute in index.html with lang from cookies or accept-language header
+    const lang = req.cookies.lang || req.headers['accept-language']?.split(',')[0] || 'en-US';
+    const updatedIndexHtml = indexHTML.replace(/lang="en-US"/g, `lang="${lang}"`);
+    res.send(updatedIndexHtml);
   });
 
   app.listen(port, host, () => {

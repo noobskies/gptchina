@@ -2,8 +2,19 @@
 <html lang="en-US">
   <head>
     <meta charset="utf-8" />
-    <meta name="theme-color" content="#343541">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#171717">
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="viewport"
+      content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+
+    <!-- iOS specific -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="%VITE_APP_TITLE%" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
     <!-- Runtime config -->
     <script src="/config.js"></script>
@@ -28,8 +39,11 @@
     <meta property="twitter:description" content="%VITE_APP_DESCRIPTION%" />
     <meta property="twitter:image" content="%VITE_APP_TWITTER_IMAGE%" />
 
+    <link rel="shortcut icon" href="#" />
     <link rel="icon" type="image/png" sizes="32x32" href="%VITE_APP_FAVICON_32%" />
     <link rel="icon" type="image/png" sizes="16x16" href="%VITE_APP_FAVICON_16%" />
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon-180x180.png" />
+
     <script
       defer
       type="module"
@@ -46,7 +60,6 @@
       gtag('config', '%VITE_APP_GOOGLE_ADS_ID%');
     </script>
     <script>
-      // Replace placeholders with runtime values
       document.addEventListener('DOMContentLoaded', function() {
         if (window.ENV) {
           document.title = window.ENV.VITE_APP_TITLE || document.title;

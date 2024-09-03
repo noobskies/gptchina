@@ -130,7 +130,12 @@ const userSchema = mongoose.Schema(
       type: Date,
       expires: 604800, // 7 days in seconds
     },
+    termsAccepted: {
+      type: Boolean,
+      default: false,
+    },
   },
+
   { timestamps: true },
 );
 

@@ -25,7 +25,7 @@ export const ErrorMessage = ({
           <div className="text-message mb-[0.625rem] flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto">
             <div className="markdown prose dark:prose-invert light w-full break-words dark:text-gray-100">
               <div className="absolute">
-                <p className="relative">
+                <p className="submitting relative">
                   <span className="result-thinking" />
                 </p>
               </div>
@@ -77,18 +77,14 @@ const DisplayMessage = ({ text, isCreatedByUser, message, showCursor }: TDisplay
     <Container message={message}>
       <div
         className={cn(
+          isSubmitting ? 'submitting' : '',
           showCursorState && !!text.length ? 'result-streaming' : '',
           'markdown prose message-content dark:prose-invert light w-full break-words',
           isCreatedByUser ? 'whitespace-pre-wrap dark:text-gray-20' : 'dark:text-gray-100',
         )}
       >
         {!isCreatedByUser ? (
-          <Markdown
-            content={text}
-            isEdited={message.isEdited}
-            showCursor={showCursorState}
-            isLatestMessage={isLatestMessage}
-          />
+          <Markdown content={text} showCursor={showCursorState} isLatestMessage={isLatestMessage} />
         ) : (
           <>{text}</>
         )}

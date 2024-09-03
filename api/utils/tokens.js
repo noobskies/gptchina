@@ -60,6 +60,7 @@ const anthropicModels = {
   'claude-3-sonnet': 200000,
   'claude-3-opus': 200000,
   'claude-3-5-sonnet': 200000,
+  'claude-3.5-sonnet': 200000,
 };
 
 const aggregateModels = { ...openAIModels, ...googleModels, ...anthropicModels, ...cohereModels };
@@ -67,6 +68,7 @@ const aggregateModels = { ...openAIModels, ...googleModels, ...anthropicModels, 
 const maxTokensMap = {
   [EModelEndpoint.azureOpenAI]: openAIModels,
   [EModelEndpoint.openAI]: aggregateModels,
+  [EModelEndpoint.agents]: aggregateModels,
   [EModelEndpoint.custom]: aggregateModels,
   [EModelEndpoint.google]: googleModels,
   [EModelEndpoint.anthropic]: anthropicModels,
