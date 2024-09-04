@@ -131,7 +131,6 @@ export default defineConfig(({ mode }) => {
               'react-router-dom',
               '@tanstack/react-query',
               'recoil',
-              // Add other major dependencies here
             ],
           },
           entryFileNames: 'assets/[name].[hash].js',
