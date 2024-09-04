@@ -62,11 +62,11 @@ export default defineConfig(({ mode }) => {
       strictPort: false,
       proxy: {
         '/api': {
-          target: 'http://localhost:3080',
+          target: env.DOMAIN_SERVER,
           changeOrigin: true,
         },
         '/oauth': {
-          target: 'http://localhost:3080',
+          target: env.DOMAIN_SERVER,
           changeOrigin: true,
         },
         entryFileNames: 'assets/[name].[hash].js',
