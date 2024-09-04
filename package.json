@@ -31,6 +31,7 @@
     "delete-user": "node config/delete-user.js",
     "backend": "cross-env NODE_ENV=production node api/server/index.js",
     "backend:dev": "cross-env NODE_ENV=development npx nodemon api/server/index.js",
+    "generate-assets": "npx @capacitor/assets generate --assetPath=client/public/assets --iconBackgroundColor '#eeeeee' --iconBackgroundColorDark '#222222' --splashBackgroundColor '#eeeeee' --splashBackgroundColorDark '#111111' --pwaManifestPath=client/dist",
     "backend:stop": "node config/stop-backend.js",
     "build:data-provider": "cd packages/data-provider && npm run build",
     "frontend": "npm run build:data-provider && cd client && npm run build",

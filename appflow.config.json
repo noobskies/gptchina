@@ -1,0 +1,9 @@
+{
+  "apps": [
+    {
+      "appId": "02c98b92",
+      "root": ".",
+      "dependencyInstallCommand": "npm install && npm run build:web && npm run generate-assets && npx cap sync"
+    }
+  ]
+}
