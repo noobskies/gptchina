@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="theme-color" content="#171717">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Runtime config -->
+    <script src="/config.js"></script>
+
+    <!-- SEO meta tags -->
+    <title>GPT-4, Claude 3 Opus and more. No subscription. No rate limits.</title>
+    <meta name="description" content="Access multiple AI models under one roof. Pay-as-you-go. No rate limits. Bitcoin accepted." />
+    <meta name="keywords" content="GPT, AI, Machine Learning, Russia, Technology, Solutions, Business, Innovation" />
+    <meta name="author" content="Novlisky" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://novlisky.io/" />
+    <meta property="og:title" content="GPT-4, Claude 3 Opus and more. No subscription. No rate limits." />
+    <meta property="og:description" content="Access multiple AI models under one roof. Pay-as-you-go. No rate limits. Bitcoin accepted." />
+    <meta property="og:image" content="https://novlisky.io/assets/logo-novlisky-og.png" />
+
+    <!-- Twitter Card -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://novlisky.io/" />
+    <meta property="twitter:title" content="GPT-4, Claude 3 Opus and more. No subscription. No rate limits." />
+    <meta property="twitter:description" content="Access multiple AI models under one roof. Pay-as-you-go. No rate limits. Bitcoin accepted." />
+    <meta property="twitter:image" content="/assets/logo-novlisky-og.png" />
+
+    <link rel="shortcut icon" href="#" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-novlisky-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-novlisky-16x16.png" />
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon-180x180.png" />
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XYDFX0BJEY"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-XXXXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-XYDFX0BJEY');
+      gtag('config', 'AW-XXXXXXXXXXXX');
+    </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        if (window.ENV) {
+          document.title = window.ENV.VITE_APP_TITLE || document.title;
+          document.querySelector('meta[name="description"]').setAttribute("content", window.ENV.VITE_APP_DESCRIPTION);
+          document.querySelector('meta[name="keywords"]').setAttribute("content", window.ENV.VITE_APP_KEYWORDS);
+          document.querySelector('meta[name="author"]').setAttribute("content", window.ENV.VITE_APP_AUTHOR);
+          document.querySelector('meta[property="og:url"]').setAttribute("content", window.ENV.VITE_APP_URL);
+          document.querySelector('meta[property="og:title"]').setAttribute("content", window.ENV.VITE_APP_TITLE);
+          document.querySelector('meta[property="og:description"]').setAttribute("content", window.ENV.VITE_APP_DESCRIPTION);
+          document.querySelector('meta[property="twitter:url"]').setAttribute("content", window.ENV.VITE_APP_URL);
+          document.querySelector('meta[property="twitter:title"]').setAttribute("content", window.ENV.VITE_APP_TITLE);
+          document.querySelector('meta[property="twitter:description"]').setAttribute("content", window.ENV.VITE_APP_DESCRIPTION);
+          document.querySelector('meta[property="twitter:image"]').setAttribute("content", window.ENV.VITE_APP_TWITTER_IMAGE);
+          document.querySelector('link[sizes="32x32"]').setAttribute("href", window.ENV.VITE_APP_FAVICON_32);
+          document.querySelector('link[sizes="16x16"]').setAttribute("href", window.ENV.VITE_APP_FAVICON_16);
+          
+          // Update Google Analytics and Ads configuration
+          gtag('config', window.ENV.VITE_APP_GOOGLE_ANALYTICS_ID);
+          gtag('config', window.ENV.VITE_APP_GOOGLE_ADS_ID);
+        }
+      });
+    </script>
+    <script type="module" crossorigin src="/assets/index-B-3z6W-x.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/markdown_highlight-DdZtPvay.js">
+    <link rel="modulepreload" crossorigin href="/assets/markdown_large-Dfyhscvt.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-bRbQYdBg.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-Bs9S4GcU.css">
+  <link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
+  <body>
+    <div id="root"></div>
+
+  </body>
+</html>

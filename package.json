@@ -75,6 +75,8 @@
   "homepage": "https://librechat.ai/",
   "devDependencies": {
     "@axe-core/playwright": "^4.9.1",
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^6.1.2",
     "@playwright/test": "^1.38.1",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
@@ -107,6 +109,9 @@
     ]
   },
   "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/ios": "^6.1.2",
     "@paypal/checkout-server-sdk": "^1.0.3",
     "@sentry/node": "^7.110.1",
     "@sentry/profiling-node": "^7.110.1",
