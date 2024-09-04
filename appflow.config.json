@@ -3,7 +3,7 @@
     {
       "appId": "02c98b92",
       "root": ".",
-      "dependencyInstallCommand": "npm run frontend"
+      "dependencyInstallCommand": "npm install && npm run frontend"
     }
   ]
 }
