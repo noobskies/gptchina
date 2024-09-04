@@ -2296,6 +2296,7 @@ button.scroll-convo {
 
 /* iOS-specific CSS */
 @supports (-webkit-touch-callout: none) {
+  html{ display: none!important;}
   :root {
     --safe-area-top: env(safe-area-inset-top, 20px); /* Default fallback */
     --safe-area-bottom: env(safe-area-inset-bottom, 0px);
@@ -2303,7 +2304,7 @@ button.scroll-convo {
     --safe-area-right: env(safe-area-inset-right, 0px);
   }
 
-  #root, body {
+  #root, body, html {
     padding-top: calc(var(--safe-area-top) + 10px); /* Adjust 10px padding to ensure content is below status bar */
     padding-bottom: var(--safe-area-bottom);
     padding-left: var(--safe-area-left);
@@ -2311,10 +2312,4 @@ button.scroll-convo {
     min-height: 100vh;
     box-sizing: border-box;
   }
-}
-
-/* Fallback for non-iOS devices */
-#root, body {
-  min-height: 100vh;
-  box-sizing: border-box;
 }
