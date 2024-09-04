@@ -113,6 +113,7 @@
     "@capacitor/android": "^6.1.2",
     "@capacitor/core": "^6.1.2",
     "@capacitor/ios": "^6.1.2",
+    "@capacitor/status-bar": "^6.0.1",
     "@paypal/checkout-server-sdk": "^1.0.3",
     "@sentry/node": "^7.110.1",
     "@sentry/profiling-node": "^7.110.1",

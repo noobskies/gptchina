@@ -62,11 +62,11 @@ export default defineConfig(({ mode }) => {
       strictPort: false,
       proxy: {
         '/api': {
-          target: env.DOMAIN_SERVER,
+          target: `https://${env.DOMAIN_SERVER}`,
           changeOrigin: true,
         },
         '/oauth': {
-          target: env.DOMAIN_SERVER,
+          target: `https://${env.DOMAIN_SERVER}`,
           changeOrigin: true,
         },
         entryFileNames: 'assets/[name].[hash].js',
