@@ -13,23 +13,35 @@ import Toast from './components/ui/Toast';
 import { LiveAnnouncer } from '~/a11y';
 import { router } from './routes';
 import { getDomainData } from './utils/domainUtils';
-import { StatusBar, Style } from '@capacitor/status-bar'; // Import StatusBar
+import { StatusBar, Style } from '@capacitor/status-bar';
+import { Capacitor } from '@capacitor/core';
 
 const { trackingCode } = getDomainData();
 
-// Initialize GA4 with the tracking code
 ReactGA.initialize(trackingCode);
 
 const PageViewTracker = () => {
   const location = useLocation();
 
   useEffect(() => {
-    ReactGA.send('pageview', {
-      page_path: location.pathname,
-    });
+    ReactGA.send('pageview', { page_path: location.pathname });
   }, [location]);
 
   return null;
+};
+
+const configureStatusBar = async () => {
+  if (Capacitor.isNativePlatform()) {
+    try {
+      await StatusBar.setStyle({ style: Style.Dark }); // or Style.Light based on your app's theme
+      if (Capacitor.getPlatform() === 'android') {
+        await StatusBar.setBackgroundColor({ color: '#000000' }); // Set color for Android
+      }
+      await StatusBar.setOverlaysWebView({ overlay: false });
+    } catch (error) {
+      console.error('Error configuring StatusBar:', error);
+    }
+  }
 };
 
 const App = () => {
@@ -45,20 +57,9 @@ const App = () => {
     }),
   });
 
-  // Configure the StatusBar when the app loads
   useEffect(() => {
-    const configureStatusBar = async () => {
-      try {
-        await StatusBar.setStyle({ style: Style.Light }); // Set status bar style to light or dark
-        await StatusBar.setBackgroundColor({ color: '#ffffff' }); // Set the background color of the status bar
-        await StatusBar.setOverlaysWebView({ overlay: false }); // Disable overlay to prevent status bar from overlapping content
-      } catch (error) {
-        console.error('Error configuring the StatusBar:', error);
-      }
-    };
-  
     configureStatusBar();
-  }, []);  
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
