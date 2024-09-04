@@ -49,16 +49,16 @@ const App = () => {
   useEffect(() => {
     const configureStatusBar = async () => {
       try {
-        await StatusBar.setStyle({ style: Style.Light }); // Set the style to light or dark
-        await StatusBar.setBackgroundColor({ color: '#ffffff' }); // Match your app's background color
-        await StatusBar.setOverlaysWebView({ overlay: false }); // Prevents content overlap with status bar
+        await StatusBar.setStyle({ style: Style.Light }); // Set status bar style to light or dark
+        await StatusBar.setBackgroundColor({ color: '#ffffff' }); // Set the background color of the status bar
+        await StatusBar.setOverlaysWebView({ overlay: false }); // Disable overlay to prevent status bar from overlapping content
       } catch (error) {
         console.error('Error configuring the StatusBar:', error);
       }
     };
-
+  
     configureStatusBar();
-  }, []);
+  }, []);  
 
   return (
     <QueryClientProvider client={queryClient}>

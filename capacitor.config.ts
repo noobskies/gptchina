@@ -23,7 +23,7 @@ const config: CapacitorConfig = {
     },
     StatusBar: {
       style: 'dark',
-      overlays: true,
+      overlays: false,
     },
   },
   android: {

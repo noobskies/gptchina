@@ -21,7 +21,7 @@
     },
     "StatusBar": {
       "style": "dark",
-      "overlays": true
+      "overlays": false
     }
   },
   "android": {
