@@ -3,7 +3,7 @@
     {
       "appId": "02c98b92",
       "root": ".",
-      "dependencyInstallCommand": "node custom-build.js"
+      "dependencyInstallCommand": "npm run frontend"
     }
   ]
 }
