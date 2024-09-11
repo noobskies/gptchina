@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { RouterProvider, useLocation } from 'react-router-dom';
 import ReactGA from 'react-ga4';
 import { RecoilRoot } from 'recoil';
@@ -31,18 +31,21 @@ const PageViewTracker = () => {
 };
 
 const configureStatusBar = async () => {
-  if (Capacitor.isNativePlatform()) {
+  if (Capacitor.getPlatform() === 'ios') {
     try {
       await StatusBar.setStyle({ style: Style.Dark }); // or Style.Light based on your app's theme
-      if (Capacitor.getPlatform() === 'android') {
-        await StatusBar.setBackgroundColor({ color: '#000000' }); // Set color for Android
-      }
-      await StatusBar.setOverlaysWebView({ overlay: false });
+      await StatusBar.setOverlaysWebView({ overlay: true });
     } catch (error) {
       console.error('Error configuring StatusBar:', error);
     }
   }
 };
+
+const SafeAreaView = ({ children }) => (
+  <div style={{ paddingTop: 'var(--safe-area-inset-top)' }}>
+    {children}
+  </div>
+);
 
 const App = () => {
   const { setError } = useApiErrorBoundary();
@@ -69,12 +72,14 @@ const App = () => {
             <RadixToast.Provider>
               <ToastProvider>
                 <DndProvider backend={HTML5Backend}>
-                  <RouterProvider router={router}>
-                    <PageViewTracker />
-                  </RouterProvider>
-                  <ReactQueryDevtools initialIsOpen={false} position="top-right" />
-                  <Toast />
-                  <RadixToast.Viewport className="pointer-events-none fixed inset-0 z-[1000] mx-auto my-2 flex max-w-[560px] flex-col items-stretch justify-start md:pb-5" />
+                  <SafeAreaView>
+                    <RouterProvider router={router}>
+                      <PageViewTracker />
+                    </RouterProvider>
+                    <ReactQueryDevtools initialIsOpen={false} position="top-right" />
+                    <Toast />
+                    <RadixToast.Viewport className="pointer-events-none fixed inset-0 z-[1000] mx-auto my-2 flex max-w-[560px] flex-col items-stretch justify-start md:pb-5" />
+                  </SafeAreaView>
                 </DndProvider>
               </ToastProvider>
             </RadixToast.Provider>
