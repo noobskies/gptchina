@@ -25,6 +25,8 @@ import NavToggle from './NavToggle';
 import NewChat from './NewChat';
 import { cn } from '~/utils';
 import store from '~/store';
+import { Capacitor } from '@capacitor/core';
+import { StatusBar } from '@capacitor/status-bar';
 
 const Nav = ({
   navVisible,
@@ -42,6 +44,8 @@ const Nav = ({
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
   const [newUser, setNewUser] = useLocalStorage('newUser', true);
   const [isToggleHovering, setIsToggleHovering] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [statusBarHeight, setStatusBarHeight] = useState(0);
 
   const hasAccessToBookmarks = useHasAccess({
     permissionType: PermissionTypes.BOOKMARKS,
@@ -67,6 +71,24 @@ const Nav = ({
       setNavWidth('260px');
     }
   }, [isSmallScreen]);
+
+  useEffect(() => {
+    const checkPlatform = async () => {
+      const isIOS = Capacitor.getPlatform() === 'ios';
+      setIsIOS(isIOS);
+
+      if (isIOS) {
+        try {
+          const { height } = await StatusBar.getInfo();
+          setStatusBarHeight(height);
+        } catch (error) {
+          console.error('Error getting status bar info:', error);
+        }
+      }
+    };
+
+    checkPlatform();
+  }, []);
 
   const { newConversation } = useConversation();
   const [showLoading, setShowLoading] = useState(false);
@@ -135,12 +157,13 @@ const Nav = ({
         <div
           data-testid="nav"
           className={
-            'nav active max-w-[320px] flex-shrink-0 overflow-x-hidden bg-surface-primary-alt md:max-w-[260px] safe-top'
+            'nav active max-w-[320px] flex-shrink-0 overflow-x-hidden bg-surface-primary-alt md:max-w-[260px]'
           }
           style={{
             width: navVisible ? navWidth : '0px',
             visibility: navVisible ? 'visible' : 'hidden',
             transition: 'width 0.2s, visibility 0.2s',
+            paddingTop: isIOS ? `${statusBarHeight + 20}px` : '0', // Add extra padding for iOS
           }}
         >
           <div className="h-full w-[320px] md:w-[260px]">
