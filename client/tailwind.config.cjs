@@ -77,8 +77,8 @@ module.exports = {
         'border-xheavy': 'var(--border-xheavy)',
       },
       spacing: {
-        'safe-top': 'max(env(safe-area-inset-top), 20px)',
-        'safe-bottom': 'max(env(safe-area-inset-bottom), 20px)',
+        'safe-top': 'env(safe-area-inset-top)',
+        'safe-bottom': 'env(safe-area-inset-bottom)',
         'safe-left': 'env(safe-area-inset-left)',
         'safe-right': 'env(safe-area-inset-right)',
       },
@@ -90,10 +90,10 @@ module.exports = {
     function({ addUtilities }) {
       const newUtilities = {
         '.safe-top': {
-          paddingTop: 'max(env(safe-area-inset-top), 20px)',
+          paddingTop: 'env(safe-area-inset-top)',
         },
         '.safe-bottom': {
-          paddingBottom: 'max(env(safe-area-inset-bottom), 20px)',
+          paddingBottom: 'env(safe-area-inset-bottom)',
         },
         '.safe-left': {
           paddingLeft: 'env(safe-area-inset-left)',
@@ -106,14 +106,15 @@ module.exports = {
           paddingRight: 'env(safe-area-inset-right)',
         },
         '.safe-y': {
-          paddingTop: 'max(env(safe-area-inset-top), 20px)',
-          paddingBottom: 'max(env(safe-area-inset-bottom), 20px)',
+          paddingTop: 'env(safe-area-inset-top)',
+          paddingBottom: 'env(safe-area-inset-bottom)',
         },
         '.safe-all': {
-          paddingTop: 'max(env(safe-area-inset-top), 20px)',
-          paddingBottom: 'max(env(safe-area-inset-bottom), 20px)',
+          paddingTop: 'env(safe-area-inset-top)',
+          paddingBottom: 'env(safe-area-inset-bottom)',
           paddingLeft: 'env(safe-area-inset-left)',
           paddingRight: 'env(safe-area-inset-right)',
+          position: 'relative',
         },
       };
       addUtilities(newUtilities, ['responsive', 'hover']);
