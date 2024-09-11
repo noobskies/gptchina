@@ -41,12 +41,6 @@ const configureStatusBar = async () => {
   }
 };
 
-const SafeAreaView = ({ children }) => (
-  <div style={{ paddingTop: 'var(--safe-area-inset-top)' }}>
-    {children}
-  </div>
-);
-
 const App = () => {
   const { setError } = useApiErrorBoundary();
 
@@ -72,14 +66,14 @@ const App = () => {
             <RadixToast.Provider>
               <ToastProvider>
                 <DndProvider backend={HTML5Backend}>
-                  <SafeAreaView>
+                  <div className="min-h-screen flex flex-col safe-all">
                     <RouterProvider router={router}>
                       <PageViewTracker />
                     </RouterProvider>
                     <ReactQueryDevtools initialIsOpen={false} position="top-right" />
                     <Toast />
                     <RadixToast.Viewport className="pointer-events-none fixed inset-0 z-[1000] mx-auto my-2 flex max-w-[560px] flex-col items-stretch justify-start md:pb-5" />
-                  </SafeAreaView>
+                  </div>
                 </DndProvider>
               </ToastProvider>
             </RadixToast.Provider>

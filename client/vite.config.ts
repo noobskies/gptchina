@@ -62,11 +62,11 @@ export default defineConfig(({ mode }) => {
       strictPort: false,
       proxy: {
         '/api': {
-          target: 'http://localhost:3080',
+          target: 'https://novlisky.io',
           changeOrigin: true,
         },
         '/oauth': {
-          target: 'http://localhost:3080',
+          target: 'https://novlisky.io',
           changeOrigin: true,
         },
         entryFileNames: 'assets/[name].[hash].js',

@@ -1,19 +1,12 @@
-// const { fontFamily } = require('tailwindcss/defaultTheme');
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
-  // darkMode: 'class',
   darkMode: ['class'],
   theme: {
     fontFamily: {
       sans: ['Inter', 'sans-serif'],
       mono: ['Roboto Mono', 'monospace'],
     },
-    // fontFamily: {
-    //   sans: ['Söhne', 'sans-serif'],
-    //   mono: ['Söhne Mono', 'monospace'],
-    // },
     extend: {
       width: {
         authPageWidth: '370px',
@@ -83,11 +76,47 @@ module.exports = {
         'border-heavy': 'var(--border-heavy)',
         'border-xheavy': 'var(--border-xheavy)',
       },
+      spacing: {
+        'safe-top': 'max(env(safe-area-inset-top), 20px)',
+        'safe-bottom': 'max(env(safe-area-inset-bottom), 20px)',
+        'safe-left': 'env(safe-area-inset-left)',
+        'safe-right': 'env(safe-area-inset-right)',
+      },
     },
   },
   plugins: [
     require('tailwindcss-animate'),
     require('tailwindcss-radix')(),
-    // require('@tailwindcss/typography'),
+    function({ addUtilities }) {
+      const newUtilities = {
+        '.safe-top': {
+          paddingTop: 'max(env(safe-area-inset-top), 20px)',
+        },
+        '.safe-bottom': {
+          paddingBottom: 'max(env(safe-area-inset-bottom), 20px)',
+        },
+        '.safe-left': {
+          paddingLeft: 'env(safe-area-inset-left)',
+        },
+        '.safe-right': {
+          paddingRight: 'env(safe-area-inset-right)',
+        },
+        '.safe-x': {
+          paddingLeft: 'env(safe-area-inset-left)',
+          paddingRight: 'env(safe-area-inset-right)',
+        },
+        '.safe-y': {
+          paddingTop: 'max(env(safe-area-inset-top), 20px)',
+          paddingBottom: 'max(env(safe-area-inset-bottom), 20px)',
+        },
+        '.safe-all': {
+          paddingTop: 'max(env(safe-area-inset-top), 20px)',
+          paddingBottom: 'max(env(safe-area-inset-bottom), 20px)',
+          paddingLeft: 'env(safe-area-inset-left)',
+          paddingRight: 'env(safe-area-inset-right)',
+        },
+      };
+      addUtilities(newUtilities, ['responsive', 'hover']);
+    },
   ],
 };
