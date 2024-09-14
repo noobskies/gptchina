@@ -58,7 +58,7 @@ const Registration: React.FC = () => {
   });
 
   const renderInput = (id: string, label: string, type: string, validation: object) => (
-    <div className="mb-2">
+    <div className="mb-4">
       <div className="relative">
         <input
           id={id}
@@ -82,7 +82,7 @@ const Registration: React.FC = () => {
         </label>
       </div>
       {errors[id] && (
-        <span role="alert" className="mt-1 text-sm text-red-500 dark:text-red-900">
+        <span role="alert" className="mt-1 text-sm text-red-500">
           {String(errors[id]?.message) ?? ''}
         </span>
       )}

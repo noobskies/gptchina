@@ -3,7 +3,7 @@
 <html class="safe-top">
   <head>
     <meta charset="utf-8" />
-    <meta name="theme-color" content="#171717">
+    <meta name="theme-color" content="#171717" />
     <meta name="color-scheme" content="light dark" />
     <meta
       name="viewport"
@@ -12,11 +12,12 @@
     <meta name="format-detection" content="telephone=no" />
     <meta name="msapplication-tap-highlight" content="no" />
 
-    <!-- iOS specific -->
+    <!-- Mobile web app specific -->
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="%VITE_APP_TITLE%" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    
+
     <!-- Cache Busting -->
     <meta http-equiv='cache-control' content="no-cache, no-store, must-revalidate">
     <meta http-equiv='expires' content='0'>
@@ -45,16 +46,52 @@
     <meta property="twitter:description" content="%VITE_APP_DESCRIPTION%" />
     <meta property="twitter:image" content="%VITE_APP_TWITTER_IMAGE%" />
 
+    <!-- Icons -->
     <link rel="shortcut icon" href="#" />
     <link rel="icon" type="image/png" sizes="32x32" href="%VITE_APP_FAVICON_32%" />
     <link rel="icon" type="image/png" sizes="16x16" href="%VITE_APP_FAVICON_16%" />
     <link rel="apple-touch-icon" href="/assets/apple-touch-icon-180x180.png" />
 
-    <script
-      defer
-      type="module"
-      src="/src/main.jsx"
-    ></script>
+    <!-- Styles -->
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+    </style>
+
+    <!-- Theme loading container background -->
+    <script>
+      const theme = localStorage.getItem('color-theme');
+      const loadingContainerStyle = document.createElement('style');
+      let backgroundColor;
+
+      if (theme === 'dark') {
+        backgroundColor = '#0d0d0d';
+      } else if (theme === 'light') {
+        backgroundColor = '#ffffff';
+      } else if (theme === 'system') {
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        backgroundColor = prefersDarkScheme ? '#0d0d0d' : '#ffffff';
+      } else {
+        backgroundColor = '#ffffff';
+      }
+
+      loadingContainerStyle.innerHTML = `
+        #loading-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100vh;
+          background-color: ${backgroundColor};
+        }
+      `;
+      document.head.appendChild(loadingContainerStyle);
+    </script>
+
+    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=%VITE_APP_GOOGLE_ANALYTICS_ID%"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=%VITE_APP_GOOGLE_ADS_ID%"></script>
     <script>
@@ -65,6 +102,8 @@
       gtag('config', '%VITE_APP_GOOGLE_ANALYTICS_ID%');
       gtag('config', '%VITE_APP_GOOGLE_ADS_ID%');
     </script>
+
+    <!-- Update meta tags based on runtime config -->
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         if (window.ENV) {
@@ -88,13 +127,14 @@
         }
       });
     </script>
+
+    <!-- Main script -->
+    <script defer type="module" src="/src/main.jsx"></script>
+
   </head>
   <body>
-    <div id="root"></div>
-
-    <script
-      type="module"
-      src="/src/main.jsx"
-    ></script>
+    <div id="root">
+      <div id="loading-container"></div>
+    </div>
   </body>
 </html>

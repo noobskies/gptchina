@@ -4,6 +4,7 @@ import { BlinkAnimation } from './BlinkAnimation';
 import { TStartupConfig } from 'librechat-data-provider';
 import SocialLoginRender from './SocialLoginRender';
 import { ThemeSelector } from '~/components/ui';
+import { Banner } from '../Banners';
 import Footer from './Footer';
 import Particles, { initParticlesEngine } from '@tsparticles/react';
 import { type Container, type ISourceOptions, MoveDirection, OutMode } from '@tsparticles/engine';
@@ -161,17 +162,18 @@ function AuthLayout({
         </div>
       </div>
       <div className="relative flex w-full flex-col justify-center bg-blue-500 p-8 dark:bg-blue-600 sm:p-12 md:w-1/2 md:p-16 lg:p-24">
-        <Particles
-          id="tsparticles"
-          particlesLoaded={particlesLoaded}
-          options={options}
-          className="absolute inset-0"
-        />
+        {init && (
+          <Particles
+            id="tsparticles"
+            particlesLoaded={particlesLoaded}
+            options={options}
+            className="absolute inset-0"
+          />
+        )}
         <div className="z-10 text-left">
           <div className="z-10 text-left">
             <TypeAnimation
               sequence={[
-                // Same substring at the start will only be typed once, initially
                 `${localize('home_welcome_to')} ${logoText}`,
                 1000,
               ]}
