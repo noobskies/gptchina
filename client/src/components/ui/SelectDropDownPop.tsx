@@ -43,9 +43,7 @@ function SelectDropDownPop({
     title = localize('com_ui_model');
   }
 
-  // Detemine if we should to convert this component into a searchable select.  If we have enough elements, a search
-  // input will appear near the top of the menu, allowing correct filtering of different model menu items. This will
-  // reset once the component is unmounted (as per a normal search)
+  // Determine if we should convert this component into a searchable select.
   const [filteredValues, searchRender] = useMultiSearch<string[] | Option[]>({
     availableOptions: availableValues,
   });
@@ -116,8 +114,8 @@ function SelectDropDownPop({
 
   return (
     <Root>
-      <div className={'flex items-center justify-center gap-2 '}>
-        <div className={'relative w-full'}>
+      <div className="flex items-center justify-center gap-2">
+        <div className="relative w-full">
           <Trigger asChild>
             <button
               data-testid="select-dropdown-button"
@@ -129,21 +127,17 @@ function SelectDropDownPop({
               aria-label={`Select ${title}`}
               aria-haspopup="false"
             >
-              {' '}
               {showLabel && (
-                <label className="block text-xs text-gray-700 dark:text-gray-500 ">{title}</label>
+                <label className="block text-xs text-gray-700 dark:text-gray-500">{title}</label>
               )}
               <span className="inline-flex w-full">
                 <span
                   className={cn(
-                    'flex h-6 items-center gap-1 text-sm text-gray-800 dark:text-white',
+                    'flex h-6 items-center gap-1 text-sm text-black dark:text-white',
                     !showLabel ? 'text-xs' : '',
                     'min-w-[75px] font-normal',
                   )}
                 >
-                  {/* {!showLabel && !emptyTitle && (
-                    <span className="text-xs text-gray-700 dark:text-gray-500">{title}:</span>
-                  )} */}
                   {typeof value !== 'string' && value ? value.label ?? '' : value ?? ''}
                 </span>
               </span>
@@ -155,7 +149,7 @@ function SelectDropDownPop({
                   viewBox="0 0 24 24"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="h-4 w-4  text-gray-400"
+                  className="h-4 w-4 text-gray-800 dark:text-gray-400"
                   height="1em"
                   width="1em"
                   xmlns="http://www.w3.org/2000/svg"
@@ -171,7 +165,7 @@ function SelectDropDownPop({
               side="bottom"
               align="start"
               className={cn(
-                'mt-2 max-h-[52vh] min-w-full overflow-hidden overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-700 dark:text-white lg:max-h-[52vh]',
+                'mt-2 max-h-[52vh] min-w-full overflow-hidden overflow-y-auto rounded-lg border border-gray-200 bg-white text-black shadow-lg dark:border-gray-700 dark:bg-gray-700 dark:text-white lg:max-h-[52vh]',
                 hasSearchRender && 'relative',
               )}
             >

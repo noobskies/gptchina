@@ -18,8 +18,6 @@ type MenuItemProps = {
   selected: boolean;
   description?: string;
   userProvidesKey: boolean;
-  // iconPath: string;
-  // hoverContent?: string;
 };
 
 const MenuItem: FC<MenuItemProps> = ({
@@ -73,7 +71,7 @@ const MenuItem: FC<MenuItemProps> = ({
         preset: template,
       });
 
-      /* We don't reset the latest message, only when changing settings mid-converstion */
+      /* We don't reset the latest message, only when changing settings mid-conversation */
       newConversation({
         template: currentConvo,
         preset: currentConvo,
@@ -118,18 +116,18 @@ const MenuItem: FC<MenuItemProps> = ({
                   size={18}
                   endpoint={endpoint}
                   context={'menu-item'}
-                  className="icon-md shrink-0 dark:text-white"
+                  className="icon-md shrink-0 text-black dark:text-white"
                   iconURL={getEndpointField(endpointsConfig, endpoint, 'iconURL')}
                 />
               )}
               <div>
-                {title}
-                <div className="text-token-text-tertiary">{description}</div>
+                <div className="text-black dark:text-white">{title}</div>
+                <div className="text-gray-500 dark:text-gray-400">{description}</div>
               </div>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {userProvidesKey ? (
+            {userProvidesKey && (
               <div className="text-token-text-primary" key={`set-key-${endpoint}`}>
                 <button
                   className={cn(
@@ -143,13 +141,18 @@ const MenuItem: FC<MenuItemProps> = ({
                     setDialogOpen(true);
                   }}
                 >
-                  <div className={cn('invisible group-hover:visible', expiryTime ? 'text-xs' : '')}>
+                  <div
+                    className={cn(
+                      'invisible group-hover:visible text-black dark:text-white',
+                      expiryTime ? 'text-xs' : '',
+                    )}
+                  >
                     {localize('com_endpoint_config_key')}
                   </div>
                   <Settings className={cn(expiryTime ? 'icon-sm' : 'icon-md stroke-1')} />
                 </button>
               </div>
-            ) : null}
+            )}
             {selected && (
               <svg
                 width="24"
@@ -157,7 +160,7 @@ const MenuItem: FC<MenuItemProps> = ({
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="icon-md block group-hover:hidden"
+                className="icon-md block group-hover:hidden text-black dark:text-white"
               >
                 <path
                   fillRule="evenodd"
@@ -168,8 +171,8 @@ const MenuItem: FC<MenuItemProps> = ({
               </svg>
             )}
             {(!userProvidesKey || expiryTime) && (
-              <div className="text-token-text-primary hidden gap-x-1 group-hover:flex ">
-                {!userProvidesKey && <div className="">{localize('com_ui_new_chat')}</div>}
+              <div className="text-black dark:text-white hidden gap-x-1 group-hover:flex">
+                {!userProvidesKey && <div>{localize('com_ui_new_chat')}</div>}
                 <svg
                   width="24"
                   height="24"
