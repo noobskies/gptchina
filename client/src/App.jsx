@@ -32,9 +32,10 @@ const PageViewTracker = () => {
 
 const configureStatusBar = async () => {
   if (Capacitor.getPlatform() === 'ios') {
+    alert(Capacitor.getPlatform())
     try {
-      await StatusBar.setStyle({ style: Style.Dark }); // or Style.Light based on your app's theme
-      await StatusBar.setOverlaysWebView({ overlay: true });
+      await StatusBar.setStyle({ style: Style.Dark });
+      await StatusBar.setOverlaysWebView({ overlay: false });
     } catch (error) {
       console.error('Error configuring StatusBar:', error);
     }
@@ -66,7 +67,12 @@ const App = () => {
             <RadixToast.Provider>
               <ToastProvider>
                 <DndProvider backend={HTML5Backend}>
-                  <div className="min-h-screen flex flex-col safe-y">
+                  <div
+                    className="min-h-screen flex flex-col"
+                    style={{
+                      paddingBottom: 'env(safe-area-inset-bottom)',
+                    }}
+                  >
                     <RouterProvider router={router}>
                       <PageViewTracker />
                     </RouterProvider>
