@@ -66,7 +66,7 @@ const App = () => {
             <RadixToast.Provider>
               <ToastProvider>
                 <DndProvider backend={HTML5Backend}>
-                  <div className="min-h-screen flex flex-col safe-top">
+                  <div className="min-h-screen flex flex-col safe-y">
                     <RouterProvider router={router}>
                       <PageViewTracker />
                     </RouterProvider>
