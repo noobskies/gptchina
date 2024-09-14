@@ -1,8 +1,9 @@
+<!-- v0.7.5-rc1 -->
 <!DOCTYPE html>
-<html lang="en-US">
+<html class="safe-top">
   <head>
     <meta charset="utf-8" />
-    <meta name="theme-color" content="#171717">
+    <meta name="theme-color" content="#171717" />
     <meta name="color-scheme" content="light dark" />
     <meta
       name="viewport"
@@ -11,10 +12,16 @@
     <meta name="format-detection" content="telephone=no" />
     <meta name="msapplication-tap-highlight" content="no" />
 
-    <!-- iOS specific -->
+    <!-- Mobile web app specific -->
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="GPT-4, Claude 3 Opus and more. No subscription. No rate limits." />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- Cache Busting -->
+    <meta http-equiv='cache-control' content="no-cache, no-store, must-revalidate">
+    <meta http-equiv='expires' content='0'>
+    <meta http-equiv='pragma' content='no-cache'>
 
     <!-- Runtime config -->
     <script src="/config.js"></script>
@@ -39,11 +46,52 @@
     <meta property="twitter:description" content="Access multiple AI models under one roof. Pay-as-you-go. No rate limits. Bitcoin accepted." />
     <meta property="twitter:image" content="/assets/logo-novlisky-og.png" />
 
+    <!-- Icons -->
     <link rel="shortcut icon" href="#" />
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-novlisky-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-novlisky-16x16.png" />
     <link rel="apple-touch-icon" href="/assets/apple-touch-icon-180x180.png" />
 
+    <!-- Styles -->
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+    </style>
+
+    <!-- Theme loading container background -->
+    <script>
+      const theme = localStorage.getItem('color-theme');
+      const loadingContainerStyle = document.createElement('style');
+      let backgroundColor;
+
+      if (theme === 'dark') {
+        backgroundColor = '#0d0d0d';
+      } else if (theme === 'light') {
+        backgroundColor = '#ffffff';
+      } else if (theme === 'system') {
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        backgroundColor = prefersDarkScheme ? '#0d0d0d' : '#ffffff';
+      } else {
+        backgroundColor = '#ffffff';
+      }
+
+      loadingContainerStyle.innerHTML = `
+        #loading-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100vh;
+          background-color: ${backgroundColor};
+        }
+      `;
+      document.head.appendChild(loadingContainerStyle);
+    </script>
+
+    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XYDFX0BJEY"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-XXXXXXXXXXXX"></script>
     <script>
@@ -54,6 +102,8 @@
       gtag('config', 'G-XYDFX0BJEY');
       gtag('config', 'AW-XXXXXXXXXXXX');
     </script>
+
+    <!-- Update meta tags based on runtime config -->
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         if (window.ENV) {
@@ -77,14 +127,18 @@
         }
       });
     </script>
-    <script type="module" crossorigin src="/assets/index-jWIZ3zdj.js"></script>
+
+    <!-- Main script -->
+
+    <script type="module" crossorigin src="/assets/index-CxQ1jEgC.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/markdown_highlight-DdZtPvay.js">
     <link rel="modulepreload" crossorigin href="/assets/markdown_large-Dfyhscvt.js">
-    <link rel="modulepreload" crossorigin href="/assets/vendor-DkvxaOww.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DCVIVtcR.css">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-B2nvlrQn.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-DpyPKZ4a.css">
   <link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
   <body>
-    <div id="root"></div>
-
+    <div id="root">
+      <div id="loading-container"></div>
+    </div>
   </body>
 </html>
