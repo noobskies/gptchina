@@ -38,6 +38,8 @@ const tokenValues = {
   'gpt-3.5-turbo-1106': { prompt: 0.6, completion: 0.8 },
   'gpt-4o': { prompt: 2.2, completion: 4.9 },
   'gpt-4o-mini': { prompt: 0.25, completion: 0.6 },
+  'o1-preview': { prompt: 5, completion: 12 },
+  'o1-mini': { prompt: 1, completion: 3 },
   'gpt-4-1106': { prompt: 3.8, completion: 9.3 },
   'gpt-3.5-turbo-0125': { prompt: 0.6, completion: 0.8 },
   'claude-3-5-sonnet-20240620': { prompt: 2.2, completion: 4.9 },
