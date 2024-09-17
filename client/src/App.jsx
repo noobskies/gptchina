@@ -30,7 +30,6 @@ const PageViewTracker = () => {
 
 const App = () => {
   const { setError } = useApiErrorBoundary();
-  const [isIOS, setIsIOS] = useState(false);
 
   const queryClient = new QueryClient({
     queryCache: new QueryCache({
@@ -41,10 +40,6 @@ const App = () => {
       },
     }),
   });
-
-  useEffect(() => {
-    configureStatusBar();
-  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
