@@ -63,7 +63,7 @@ export default function Root() {
               className="flex flex-col h-full"
               style={{
                 minHeight: `calc(100vh - ${bannerHeight}px)`,
-                ...(platform === 'ios' && { paddingTop: '100px' }),
+                ...(platform === 'ios' && { paddingTop: 'env(safe-area-inset-top)' }),
               }}
             >
               <div className="relative z-0 flex flex-1 w-full">
