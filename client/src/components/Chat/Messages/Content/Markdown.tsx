@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useMemo, useState, useEffect } from 'react';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import supersub from 'remark-supersub';
@@ -125,6 +125,17 @@ const Markdown = memo(({ content = '', showCursor, isLatestMessage }: TContentPr
 
   const isInitializing = content === '';
 
+  const [dots, setDots] = useState('');
+
+  useEffect(() => {
+    if (isInitializing) {
+      const interval = setInterval(() => {
+        setDots((prev) => (prev.length >= 3 ? '' : prev + '.'));
+      }, 500); // Adjust the speed of animation here
+      return () => clearInterval(interval);
+    }
+  }, [isInitializing]);
+
   let currentContent = content;
   if (!isInitializing) {
     currentContent = currentContent.replace('z-index: 1;', '') || '';
@@ -146,7 +157,8 @@ const Markdown = memo(({ content = '', showCursor, isLatestMessage }: TContentPr
   if (isInitializing) {
     return (
       <div className="absolute">
-        <p className="relative">
+        <p className="relative text-gray-500">
+          Thinking{dots}
           <span className={isLatestMessage ? 'result-thinking' : ''} />
         </p>
       </div>
@@ -155,12 +167,12 @@ const Markdown = memo(({ content = '', showCursor, isLatestMessage }: TContentPr
 
   const remarkPlugins: Pluggable[] = codeArtifacts
     ? [
-      supersub,
-      remarkGfm,
-      [remarkMath, { singleDollarTextMath: true }],
-      remarkDirective,
-      artifactPlugin,
-    ]
+        supersub,
+        remarkGfm,
+        [remarkMath, { singleDollarTextMath: true }],
+        remarkDirective,
+        artifactPlugin,
+      ]
     : [supersub, remarkGfm, [remarkMath, { singleDollarTextMath: true }]];
 
   return (
@@ -169,7 +181,6 @@ const Markdown = memo(({ content = '', showCursor, isLatestMessage }: TContentPr
       remarkPlugins={remarkPlugins}
       /* @ts-ignore */
       rehypePlugins={rehypePlugins}
-      // linkTarget="_new"
       components={
         {
           code,
