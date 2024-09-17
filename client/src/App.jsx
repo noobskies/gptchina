@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RouterProvider, useLocation } from 'react-router-dom';
 import ReactGA from 'react-ga4';
 import { RecoilRoot } from 'recoil';
@@ -32,6 +32,7 @@ const PageViewTracker = () => {
 
 const App = () => {
   const { setError } = useApiErrorBoundary();
+  const [isIOS, setIsIOS] = useState(false);
 
   const queryClient = new QueryClient({
     queryCache: new QueryCache({
@@ -46,6 +47,7 @@ const App = () => {
   const configureStatusBar = async () => {
     const platform = Capacitor.getPlatform();
     if (platform === 'ios') {
+      setIsIOS(true);
       try {
         await StatusBar.setStyle({ style: Style.Dark });
         await StatusBar.setOverlaysWebView({ overlay: false });
@@ -59,9 +61,6 @@ const App = () => {
     configureStatusBar();
   }, []);
 
-  // Detect platform synchronously
-  const platform = Capacitor.getPlatform();
-
   return (
     <QueryClientProvider client={queryClient}>
       <RecoilRoot>
@@ -73,8 +72,8 @@ const App = () => {
                   <div
                     className="min-h-screen flex flex-col"
                     style={{
-                      paddingBottom: 'env(safe-area-inset-bottom)',
-                      ...(platform === 'ios' && { paddingTop: '50px' }),
+                      marginTop: 'env(safe-area-inset-top)',
+                      marginBottom: 'env(safe-area-inset-bottom)',
                     }}
                   >
                     <RouterProvider router={router}>
