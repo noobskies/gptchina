@@ -9,6 +9,7 @@ import { useAuthContext, useAssistantsMap, useAgentsMap, useFileMap, useSearch }
 import { Nav, MobileNav } from '~/components/Nav';
 import TermsAndConditionsModal from '~/components/ui/TermsAndConditionsModal';
 import { Banner } from '~/components/Banners';
+import { Capacitor } from '@capacitor/core';
 
 export default function Root() {
   const { isAuthenticated, logout, token } = useAuthContext();
@@ -50,16 +51,24 @@ export default function Root() {
     return null;
   }
 
+  const platform = Capacitor.getPlatform();
+
   return (
     <SearchContext.Provider value={search}>
       <FileMapContext.Provider value={fileMap}>
         <AssistantsMapContext.Provider value={assistantsMap}>
           <AgentsMapContext.Provider value={agentsMap}>
             <Banner onHeightChange={setBannerHeight} />
-            <div className="flex" style={{ height: `calc(100dvh - ${bannerHeight}px)` }}>
-              <div className="relative z-0 flex h-full w-full overflow-hidden">
+            <div
+              className="flex flex-col h-full"
+              style={{
+                minHeight: `calc(100vh - ${bannerHeight}px)`,
+                ...(platform === 'ios' && { paddingTop: '100px' }),
+              }}
+            >
+              <div className="relative z-0 flex flex-1 w-full">
                 <Nav navVisible={navVisible} setNavVisible={setNavVisible} />
-                <div className="relative flex h-full max-w-full flex-1 flex-col overflow-hidden">
+                <div className="relative flex flex-1 max-w-full flex-col">
                   <MobileNav setNavVisible={setNavVisible} />
                   <Outlet context={{ navVisible, setNavVisible } satisfies ContextType} />
                 </div>
