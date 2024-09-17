@@ -165,7 +165,6 @@ const Nav = ({
               width: navVisible ? navWidth : '0px',
               visibility: navVisible ? 'visible' : 'hidden',
               transition: 'width 0.2s, visibility 0.2s',
-              paddingTop: isIOS ? `${statusBarHeight + 20}px` : '0', // Add extra padding for iOS
             }}
           >
             <div className="h-full w-[320px] md:w-[260px]">
@@ -185,6 +184,9 @@ const Nav = ({
                       id="chat-history-nav"
                       aria-label={localize('com_ui_chat_history')}
                       className="flex h-full w-full flex-col px-3 pb-3.5"
+                      style={{
+                        paddingTop: 'env(safe-area-inset-top)'
+                      }}
                     >
                       <div
                         className={cn(
