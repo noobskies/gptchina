@@ -70,6 +70,7 @@ const App = () => {
                   <div
                     className="min-h-screen flex flex-col"
                     style={{
+                      paddingTop: 'env(safe-area-inset-top)',
                       paddingBottom: 'env(safe-area-inset-bottom)',
                     }}
                   >
