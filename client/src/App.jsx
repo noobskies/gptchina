@@ -30,18 +30,6 @@ const PageViewTracker = () => {
   return null;
 };
 
-const configureStatusBar = async () => {
-  if (Capacitor.getPlatform() === 'ios') {
-    alert(Capacitor.getPlatform())
-    try {
-      await StatusBar.setStyle({ style: Style.Dark });
-      await StatusBar.setOverlaysWebView({ overlay: false });
-    } catch (error) {
-      console.error('Error configuring StatusBar:', error);
-    }
-  }
-};
-
 const App = () => {
   const { setError } = useApiErrorBoundary();
 
@@ -55,9 +43,24 @@ const App = () => {
     }),
   });
 
+  const configureStatusBar = async () => {
+    const platform = Capacitor.getPlatform();
+    if (platform === 'ios') {
+      try {
+        await StatusBar.setStyle({ style: Style.Dark });
+        await StatusBar.setOverlaysWebView({ overlay: false });
+      } catch (error) {
+        console.error('Error configuring StatusBar:', error);
+      }
+    }
+  };
+
   useEffect(() => {
     configureStatusBar();
   }, []);
+
+  // Detect platform synchronously
+  const platform = Capacitor.getPlatform();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -70,8 +73,8 @@ const App = () => {
                   <div
                     className="min-h-screen flex flex-col"
                     style={{
-                      paddingTop: 'env(safe-area-inset-top)',
                       paddingBottom: 'env(safe-area-inset-bottom)',
+                      ...(platform === 'ios' && { paddingTop: '50px' }),
                     }}
                   >
                     <RouterProvider router={router}>
