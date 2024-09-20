@@ -1,4 +1,3 @@
-<!-- v0.7.5-rc1 -->
 <!DOCTYPE html>
 <html>
   <head>
@@ -34,7 +33,7 @@
     <meta property="og:url" content="%VITE_APP_URL%" />
     <meta property="og:title" content="%VITE_APP_TITLE%" />
     <meta property="og:description" content="%VITE_APP_DESCRIPTION%" />
-    <meta property="og:image" content="https://novlisky.io/assets/logo-novlisky-og.png" />
+    <meta property="og:image" content="%VITE_APP_OG_IMAGE%" />
 
     <!-- Twitter Card -->
     <meta property="twitter:card" content="summary_large_image" />
@@ -98,31 +97,6 @@
 
       gtag('config', '%VITE_APP_GOOGLE_ANALYTICS_ID%');
       gtag('config', '%VITE_APP_GOOGLE_ADS_ID%');
-    </script>
-
-    <!-- Update meta tags based on runtime config -->
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        if (window.ENV) {
-          document.title = window.ENV.VITE_APP_TITLE || document.title;
-          document.querySelector('meta[name="description"]').setAttribute("content", window.ENV.VITE_APP_DESCRIPTION);
-          document.querySelector('meta[name="keywords"]').setAttribute("content", window.ENV.VITE_APP_KEYWORDS);
-          document.querySelector('meta[name="author"]').setAttribute("content", window.ENV.VITE_APP_AUTHOR);
-          document.querySelector('meta[property="og:url"]').setAttribute("content", window.ENV.VITE_APP_URL);
-          document.querySelector('meta[property="og:title"]').setAttribute("content", window.ENV.VITE_APP_TITLE);
-          document.querySelector('meta[property="og:description"]').setAttribute("content", window.ENV.VITE_APP_DESCRIPTION);
-          document.querySelector('meta[property="twitter:url"]').setAttribute("content", window.ENV.VITE_APP_URL);
-          document.querySelector('meta[property="twitter:title"]').setAttribute("content", window.ENV.VITE_APP_TITLE);
-          document.querySelector('meta[property="twitter:description"]').setAttribute("content", window.ENV.VITE_APP_DESCRIPTION);
-          document.querySelector('meta[property="twitter:image"]').setAttribute("content", window.ENV.VITE_APP_TWITTER_IMAGE);
-          document.querySelector('link[sizes="32x32"]').setAttribute("href", window.ENV.VITE_APP_FAVICON_32);
-          document.querySelector('link[sizes="16x16"]').setAttribute("href", window.ENV.VITE_APP_FAVICON_16);
-          
-          // Update Google Analytics and Ads configuration
-          gtag('config', window.ENV.VITE_APP_GOOGLE_ANALYTICS_ID);
-          gtag('config', window.ENV.VITE_APP_GOOGLE_ADS_ID);
-        }
-      });
     </script>
 
     <!-- Main script -->
