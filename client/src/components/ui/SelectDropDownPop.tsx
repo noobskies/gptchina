@@ -59,7 +59,7 @@ function SelectDropDownPop({
     'gpt-4-1106-preview': 'GPT-4 Turbo 🔥5',
     'gpt-4o': 'GPT-4o 🔥2.5',
     'gpt-4o-mini': 'GPT-4o Mini 🔥0.2',
-    'o1-preview': 'o1-preview 🔥7',
+    'o1-preview': 'o1-preview 🔥10',
     'o1-mini': 'o1-mini 🔥2',
     'claude-3-5-sonnet-20240620': 'Claude-3.5 Sonnet 🔥2.5',
     'claude-3-opus-20240229': 'Claude-3 Opus 🔥12',
