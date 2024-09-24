@@ -69,14 +69,6 @@ export default defineConfig(({ mode }) => {
           target: 'http://localhost:3080',
           changeOrigin: true,
         },
-        entryFileNames: 'assets/[name].[hash].js',
-        chunkFileNames: 'assets/[name].[hash].js',
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.name && /\.(woff|woff2|eot|ttf|otf)$/.test(assetInfo.name)) {
-            return 'assets/[name][extname]';
-          }
-          return 'assets/[name].[hash][extname]';
-        },
       },
     },
     // All other env variables are filtered out
@@ -135,6 +127,7 @@ export default defineConfig(({ mode }) => {
       sourcemap: process.env.NODE_ENV === 'development',
       outDir: './dist',
       rollupOptions: {
+        external: ['@capacitor/app'], // Added this line to externalize '@capacitor/app'
         output: {
           manualChunks: (id) => {
             if (id.includes('node_modules/highlight.js')) {
