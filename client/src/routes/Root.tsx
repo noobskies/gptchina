@@ -57,10 +57,10 @@ export default function Root() {
           <AgentsMapContext.Provider value={agentsMap}>
             <Banner onHeightChange={setBannerHeight} />
             <div
-              className="flex"
+              className="flex text-text-primary bg-surface-primary"  // Added text and background color classes
               style={{
                 height: `calc(100dvh - ${bannerHeight}px)`,
-                paddingTop: 'env(safe-area-inset-top, 0px)', // Added safe area padding
+                paddingTop: 'env(safe-area-inset-top, 0px)',
               }}
             >
               <div className="relative z-0 flex h-full w-full overflow-hidden">
@@ -80,6 +80,7 @@ export default function Root() {
               onDecline={handleDeclineTerms}
               title={config.interface.termsOfService.modalTitle}
               modalContent={config.interface.termsOfService.modalContent}
+              className="text-text-primary bg-surface-primary"  // Added text and background color classes
             />
           )}
         </AssistantsMapContext.Provider>

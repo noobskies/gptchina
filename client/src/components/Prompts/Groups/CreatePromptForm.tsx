@@ -99,7 +99,7 @@ const CreatePromptForm = ({
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full px-4 py-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full px-4 py-2 text-text-primary bg-surface-primary">
         <div className="mb-1 flex flex-col items-center justify-between font-bold sm:text-xl md:mb-0 md:text-2xl">
           <div className="flex w-full flex-col items-center justify-between sm:flex-row">
             <Controller
@@ -111,7 +111,7 @@ const CreatePromptForm = ({
                   <Input
                     {...field}
                     type="text"
-                    className="mr-2 w-full border border-border-medium p-2 text-2xl placeholder:text-text-tertiary dark:placeholder:text-text-secondary"
+                    className="mr-2 w-full border border-border-medium p-2 text-2xl text-text-primary placeholder:text-text-tertiary bg-surface-primary"
                     placeholder={`${localize('com_ui_prompt_name')}*`}
                     tabIndex={0}
                   />
@@ -131,10 +131,10 @@ const CreatePromptForm = ({
         </div>
         <div className="flex w-full flex-col gap-4 md:mt-[1.075rem]">
           <div>
-            <h2 className="flex items-center justify-between rounded-t-lg border border-border-medium py-2 pl-4 pr-1 text-base font-semibold dark:text-gray-200">
+            <h2 className="flex items-center justify-between rounded-t-lg border border-border-medium py-2 pl-4 pr-1 text-base font-semibold text-text-primary bg-surface-secondary">
               {localize('com_ui_prompt_text')}*
             </h2>
-            <div className="min-h-32 rounded-b-lg border border-border-medium p-4 transition-all duration-150">
+            <div className="min-h-32 rounded-b-lg border border-border-medium p-4 transition-all duration-150 bg-surface-primary">
               <Controller
                 name="prompt"
                 control={control}
@@ -143,7 +143,7 @@ const CreatePromptForm = ({
                   <div>
                     <TextareaAutosize
                       {...field}
-                      className="w-full rounded border border-border-medium px-2 py-1 focus:outline-none dark:bg-transparent dark:text-gray-200"
+                      className="w-full rounded border border-border-medium px-2 py-1 focus:outline-none text-text-primary bg-surface-primary"
                       minRows={6}
                       tabIndex={0}
                     />
