@@ -20,6 +20,9 @@ const config: CapacitorConfig = {
       splashImmersive: true,
       layoutName: 'launch_screen',
       useDialog: true,
+      scopes: ["profile", "email"],
+      serverClientId: "397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com",
+      forceCodeForRefreshToken: true
     },
     StatusBar: {
       style: 'dark',

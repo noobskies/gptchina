@@ -4,4 +4,5 @@
     <string name="title_activity_main">Novlisky</string>
     <string name="package_name">io.novlisky.twa</string>
     <string name="custom_url_scheme">io.novlisky.twa</string>
+    <string name="server_client_id">397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com</string>
 </resources>

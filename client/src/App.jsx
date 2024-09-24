@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { RouterProvider, useLocation } from 'react-router-dom';
 import ReactGA from 'react-ga4';
 import { RecoilRoot } from 'recoil';
@@ -13,8 +13,10 @@ import Toast from './components/ui/Toast';
 import { LiveAnnouncer } from '~/a11y';
 import { router } from './routes';
 import { getDomainData } from './utils/domainUtils';
+import { App as CapApp } from '@capacitor/app'; // Import Capacitor App
+import { Capacitor } from '@capacitor/core';
 
-const { trackingCode } = getDomainData();
+const { trackingCode, serverDomain } = getDomainData();
 
 ReactGA.initialize(trackingCode);
 
@@ -41,6 +43,44 @@ const App = () => {
     }),
   });
 
+  useEffect(() => {
+    // Check if running on a mobile device
+    if (Capacitor.isNativePlatform()) {
+      // Add event listener for deep links
+      const handler = CapApp.addListener('appUrlOpen', (event) => {
+        const url = new URL(event.url);
+        if (url.pathname === '/oauth/callback') {
+          const code = url.searchParams.get('code');
+
+          // Send the authorization code to your backend
+          fetch(`${serverDomain}/oauth/callback?code=${code}`, {
+            method: 'GET',
+            credentials: 'include',
+          })
+            .then((response) => {
+              if (response.ok) {
+                // Authentication successful
+                // You may want to redirect the user or update the app state
+                window.location.href = '/';
+              } else {
+                // Handle errors from the backend
+                return response.json().then((errorData) => {
+                  console.error('Authentication error:', errorData);
+                });
+              }
+            })
+            .catch((error) => {
+              console.error('Authentication error:', error);
+            });
+        }
+      });
+
+      return () => {
+        handler.remove();
+      };
+    }
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <RecoilRoot>
@@ -49,9 +89,7 @@ const App = () => {
             <RadixToast.Provider>
               <ToastProvider>
                 <DndProvider backend={HTML5Backend}>
-                  <div
-                    className="min-h-screen flex flex-col"
-                  >
+                  <div className="min-h-screen flex flex-col">
                     <RouterProvider router={router}>
                       <PageViewTracker />
                     </RouterProvider>
