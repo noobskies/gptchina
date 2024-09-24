@@ -13,7 +13,6 @@ import Toast from './components/ui/Toast';
 import { LiveAnnouncer } from '~/a11y';
 import { router } from './routes';
 import { getDomainData } from './utils/domainUtils';
-import { App as CapApp } from '@capacitor/app'; // Import Capacitor App
 import { Capacitor } from '@capacitor/core';
 
 const { trackingCode, serverDomain } = getDomainData();
@@ -46,38 +45,44 @@ const App = () => {
   useEffect(() => {
     // Check if running on a mobile device
     if (Capacitor.isNativePlatform()) {
-      // Add event listener for deep links
-      const handler = CapApp.addListener('appUrlOpen', (event) => {
-        const url = new URL(event.url);
-        if (url.pathname === '/oauth/callback') {
-          const code = url.searchParams.get('code');
+      // Dynamically import @capacitor/app
+      import('@capacitor/app').then(({ App: CapApp }) => {
+        // Add event listener for deep links
+        const handler = CapApp.addListener('appUrlOpen', (event) => {
+          const url = new URL(event.url);
+          if (url.pathname === '/oauth/callback') {
+            const code = url.searchParams.get('code');
 
-          // Send the authorization code to your backend
-          fetch(`${serverDomain}/oauth/callback?code=${code}`, {
-            method: 'GET',
-            credentials: 'include',
-          })
-            .then((response) => {
-              if (response.ok) {
-                // Authentication successful
-                // You may want to redirect the user or update the app state
-                window.location.href = '/';
-              } else {
-                // Handle errors from the backend
-                return response.json().then((errorData) => {
-                  console.error('Authentication error:', errorData);
-                });
-              }
+            // Send the authorization code to your backend
+            fetch(`${serverDomain}/oauth/callback?code=${code}`, {
+              method: 'GET',
+              credentials: 'include',
             })
-            .catch((error) => {
-              console.error('Authentication error:', error);
-            });
-        }
-      });
+              .then((response) => {
+                if (response.ok) {
+                  // Authentication successful
+                  // You may want to redirect the user or update the app state
+                  window.location.href = '/';
+                } else {
+                  // Handle errors from the backend
+                  return response.json().then((errorData) => {
+                    console.error('Authentication error:', errorData);
+                  });
+                }
+              })
+              .catch((error) => {
+                console.error('Authentication error:', error);
+              });
+          }
+        });
 
-      return () => {
-        handler.remove();
-      };
+        // Clean up the event listener when the component unmounts
+        return () => {
+          if (handler && handler.remove) {
+            handler.remove();
+          }
+        };
+      });
     }
   }, []);
 
