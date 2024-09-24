@@ -1,5 +1,9 @@
 [
   {
+    "pkg": "@capacitor/browser",
+    "classpath": "com.capacitorjs.plugins.browser.BrowserPlugin"
+  },
+  {
     "pkg": "@capacitor/status-bar",
     "classpath": "com.capacitorjs.plugins.statusbar.StatusBarPlugin"
   },
