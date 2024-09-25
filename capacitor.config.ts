@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.novlisky.twa',
+  appId: 'twa.novlisky.io',
   appName: 'Novlisky',
   webDir: 'client/dist',
   bundledWebRuntime: false,

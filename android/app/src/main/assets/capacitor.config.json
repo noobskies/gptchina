@@ -1,5 +1,5 @@
 {
-  "appId": "io.novlisky.twa",
+  "appId": "twa.novlisky.io",
   "appName": "Novlisky",
   "webDir": "client/dist",
   "bundledWebRuntime": false,
