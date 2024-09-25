@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">Novlisky</string>
     <string name="title_activity_main">Novlisky</string>
-    <string name="package_name">io.novlisky.twa</string>
-    <string name="custom_url_scheme">io.novlisky.twa</string>
+    <string name="package_name">twa.novlisky.io</string>
+    <string name="custom_url_scheme">twa.novlisky.io</string>
 </resources>

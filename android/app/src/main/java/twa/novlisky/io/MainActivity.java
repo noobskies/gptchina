@@ -1,4 +1,4 @@
-package io.novlisky.twa;
+package twa.novlisky.io;
 
 import com.getcapacitor.BridgeActivity;
 
