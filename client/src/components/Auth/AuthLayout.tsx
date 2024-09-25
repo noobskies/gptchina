@@ -11,6 +11,7 @@ import { type Container, type ISourceOptions, MoveDirection, OutMode } from '@ts
 import { loadSlim } from '@tsparticles/slim';
 import { TypeAnimation } from 'react-type-animation';
 import { getDomainData } from '~/utils/domainUtils';
+import { Capacitor } from '@capacitor/core';
 
 const ErrorRender = ({ children }: { children: React.ReactNode }) => (
   <div className="mt-16 flex justify-center">
@@ -43,6 +44,16 @@ function AuthLayout({
   const localize = useLocalize();
   const { logoText, logoFilename, logoPath } = getDomainData();
   const [init, setInit] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkPlatform = async () => {
+      const platform = Capacitor.getPlatform();
+      setIsMobile(platform === 'ios' || platform === 'android');
+    };
+  
+    checkPlatform();
+  }, []);
 
   const DisplayError = () => {
     if (startupConfigError !== null && startupConfigError !== undefined) {
@@ -153,7 +164,7 @@ function AuthLayout({
                 </div>
               </BlinkAnimation>
               {children}
-              {(pathname.includes('login') || pathname.includes('register')) && (
+              {!isMobile && (pathname.includes('login') || pathname.includes('register')) && (
                 <SocialLoginRender startupConfig={startupConfig} />
               )}
             </div>
