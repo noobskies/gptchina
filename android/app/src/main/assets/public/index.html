@@ -1,14 +1,10 @@
-<!-- v0.7.5-rc1 -->
 <!DOCTYPE html>
-<html class="safe-top">
+<html>
   <head>
     <meta charset="utf-8" />
     <meta name="theme-color" content="#171717" />
     <meta name="color-scheme" content="light dark" />
-    <meta
-      name="viewport"
-      content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="format-detection" content="telephone=no" />
     <meta name="msapplication-tap-highlight" content="no" />
 
@@ -37,7 +33,7 @@
     <meta property="og:url" content="https://novlisky.io/" />
     <meta property="og:title" content="GPT-4, Claude 3 Opus and more. No subscription. No rate limits." />
     <meta property="og:description" content="Access multiple AI models under one roof. Pay-as-you-go. No rate limits. Bitcoin accepted." />
-    <meta property="og:image" content="https://novlisky.io/assets/logo-novlisky-og.png" />
+    <meta property="og:image" content="/assets/logo-novlisky-og.png" />
 
     <!-- Twitter Card -->
     <meta property="twitter:card" content="summary_large_image" />
@@ -103,38 +99,13 @@
       gtag('config', 'AW-XXXXXXXXXXXX');
     </script>
 
-    <!-- Update meta tags based on runtime config -->
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        if (window.ENV) {
-          document.title = window.ENV.VITE_APP_TITLE || document.title;
-          document.querySelector('meta[name="description"]').setAttribute("content", window.ENV.VITE_APP_DESCRIPTION);
-          document.querySelector('meta[name="keywords"]').setAttribute("content", window.ENV.VITE_APP_KEYWORDS);
-          document.querySelector('meta[name="author"]').setAttribute("content", window.ENV.VITE_APP_AUTHOR);
-          document.querySelector('meta[property="og:url"]').setAttribute("content", window.ENV.VITE_APP_URL);
-          document.querySelector('meta[property="og:title"]').setAttribute("content", window.ENV.VITE_APP_TITLE);
-          document.querySelector('meta[property="og:description"]').setAttribute("content", window.ENV.VITE_APP_DESCRIPTION);
-          document.querySelector('meta[property="twitter:url"]').setAttribute("content", window.ENV.VITE_APP_URL);
-          document.querySelector('meta[property="twitter:title"]').setAttribute("content", window.ENV.VITE_APP_TITLE);
-          document.querySelector('meta[property="twitter:description"]').setAttribute("content", window.ENV.VITE_APP_DESCRIPTION);
-          document.querySelector('meta[property="twitter:image"]').setAttribute("content", window.ENV.VITE_APP_TWITTER_IMAGE);
-          document.querySelector('link[sizes="32x32"]').setAttribute("href", window.ENV.VITE_APP_FAVICON_32);
-          document.querySelector('link[sizes="16x16"]').setAttribute("href", window.ENV.VITE_APP_FAVICON_16);
-          
-          // Update Google Analytics and Ads configuration
-          gtag('config', window.ENV.VITE_APP_GOOGLE_ANALYTICS_ID);
-          gtag('config', window.ENV.VITE_APP_GOOGLE_ADS_ID);
-        }
-      });
-    </script>
-
     <!-- Main script -->
 
-    <script type="module" crossorigin src="/assets/index-CxQ1jEgC.js"></script>
+    <script type="module" crossorigin src="/assets/index--nbt6Ytg.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/markdown_highlight-DdZtPvay.js">
     <link rel="modulepreload" crossorigin href="/assets/markdown_large-Dfyhscvt.js">
-    <link rel="modulepreload" crossorigin href="/assets/vendor-B2nvlrQn.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DpyPKZ4a.css">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-B7QwlwTh.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BCpbqQzO.css">
   <link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
   <body>
     <div id="root">

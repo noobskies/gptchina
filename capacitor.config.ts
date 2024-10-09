@@ -25,6 +25,12 @@ const config: CapacitorConfig = {
       style: 'dark',
       overlays: false,
     },
+    CapacitorUrlScheme: {
+      scheme: 'novlisky',
+    },
+    CapacitorHttp: {
+      enabled: true,
+    },
   },
   android: {
     backgroundColor: '#eeeeee',

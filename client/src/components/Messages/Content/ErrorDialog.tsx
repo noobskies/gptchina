@@ -7,10 +7,10 @@ import { useLocalize } from '~/hooks';
 import TokenOptionButton from '~/components/payment/TokenOptionButton';
 import PaymentOptionButton from '~/components/payment/PaymentOptionButton';
 import { tokenOptions, tokenOptionsChina } from '~/components/payment/paymentConstants';
-import { processBitcoinPayment } from '~/components/payment/BitcoinPayment';
-import { processStripePayment } from '~/components/payment/StripePayment';
+import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
 
-export default function ErrorDialog({ open, onOpenChange }) {
+export default function PaymentDialog({ open, onOpenChange }) {
   const { user } = useAuthContext();
   const userId = user?.id;
   const email = user?.email;
@@ -21,10 +21,10 @@ export default function ErrorDialog({ open, onOpenChange }) {
   const [errorMessage, setErrorMessage] = useState('');
   const localize = useLocalize();
 
-  // Determine the user's domain (China or global)
+  // Determine if the user is in China
   const isChina = window.location.hostname.includes('gptchina.io');
 
-  // Select the appropriate token options array based on the user's domain
+  // Select the appropriate token options array based on the user's location
   const tokenOptionsToUse = isChina ? tokenOptionsChina : tokenOptions;
 
   const fetchTokenBalance = useCallback(async () => {
@@ -34,12 +34,27 @@ export default function ErrorDialog({ open, onOpenChange }) {
       setTokenBalance(balance);
     } catch (error) {
       console.error('Error fetching token balance:', error);
+      setErrorMessage('Failed to fetch token balance. Please try again.');
     }
   }, []);
 
   const handleSelect = useCallback((tokens) => {
     setSelectedTokens(tokens);
   }, []);
+
+  const processPayment = async (paymentUrl) => {
+    if (Capacitor.isNativePlatform()) {
+      await Browser.open({ url: paymentUrl });
+      
+      Browser.addListener('browserFinished', () => {
+        fetchTokenBalance();
+        setProcessingTokenAmount(null);
+      });
+    } else {
+      // For web, open in a new tab
+      window.open(paymentUrl, '_blank');
+    }
+  };
 
   const handlePurchase = useCallback(async () => {
     if (!selectedTokens || !selectedPaymentOption) {
@@ -50,30 +65,42 @@ export default function ErrorDialog({ open, onOpenChange }) {
     setErrorMessage('');
 
     const selectedOption = tokenOptionsToUse.find((option) => option.tokens === selectedTokens);
-    console.log('selectedOption', selectedOption);
     if (!selectedOption) {
       console.error('Invalid token selection');
+      setErrorMessage('Invalid token selection. Please try again.');
       return;
     }
 
     setProcessingTokenAmount(selectedTokens);
 
     try {
-      if (selectedPaymentOption === 'bitcoin') {
-        await processBitcoinPayment(selectedTokens, selectedOption, userId, email, isChina);
-      } else if (selectedPaymentOption === 'google_pay' || selectedPaymentOption === 'apple_pay') {
-        console.log('Selected payment option:', selectedPaymentOption);
-        await processStripePayment(selectedOption, 'card', userId, email);
-      } else {
-        console.log('Selected payment option:', selectedPaymentOption);
-        await processStripePayment(selectedOption, selectedPaymentOption, userId, email);
+      let paymentUrl;
+
+      switch (selectedPaymentOption) {
+        case 'bitcoin':
+          paymentUrl = await processBitcoinPayment(selectedTokens, selectedOption, userId, email);
+          break;
+        case 'wechat_pay':
+        case 'alipay':
+          paymentUrl = await processChinesePayment(selectedOption, selectedPaymentOption, userId, email);
+          break;
+        case 'google_pay':
+        case 'apple_pay':
+        case 'card':
+          paymentUrl = await processStripePayment(selectedOption, selectedPaymentOption, userId, email);
+          break;
+        default:
+          throw new Error('Unsupported payment option');
       }
+
+      await processPayment(paymentUrl);
     } catch (error) {
       console.error('Payment error:', error);
+      setErrorMessage('An error occurred during payment. Please try again.');
     } finally {
       setProcessingTokenAmount(null);
     }
-  }, [selectedTokens, selectedPaymentOption, userId, email, isChina]);
+  }, [selectedTokens, selectedPaymentOption, userId, email, fetchTokenBalance]);
 
   useEffect(() => {
     if (open) {
@@ -94,8 +121,11 @@ export default function ErrorDialog({ open, onOpenChange }) {
                 <span>{errorMessage}</span>
               </div>
             )}
+            <div className="mb-4 text-center">
+              <p>{localize('com_ui_current_balance')}: {tokenBalance || '...'} tokens</p>
+            </div>
             <div className="grid w-full grid-cols-2 gap-5 p-3">
-              {tokenOptionsToUse.map((option, index) => (
+              {tokenOptionsToUse.map((option) => (
                 <TokenOptionButton
                   key={option.tokens}
                   {...option}
@@ -114,56 +144,42 @@ export default function ErrorDialog({ open, onOpenChange }) {
             </div>
 
             <div className="flex flex-wrap justify-center space-x-2">
-              <PaymentOptionButton
-                option="wechat_pay"
-                isSelected={selectedPaymentOption === 'wechat_pay'}
-                onClick={() => {
-                  console.log('WeChat Pay selected');
-                  setSelectedPaymentOption('wechat_pay');
-                }}
-              />
-              <PaymentOptionButton
-                option="alipay"
-                isSelected={selectedPaymentOption === 'alipay'}
-                onClick={() => {
-                  console.log('Alipay selected');
-                  setSelectedPaymentOption('alipay');
-                }}
-              />
-              <PaymentOptionButton
-                option="card"
-                isSelected={selectedPaymentOption === 'card'}
-                onClick={() => {
-                  console.log('Card selected');
-                  setSelectedPaymentOption('card');
-                }}
-              />
+              {isChina ? (
+                <>
+                  <PaymentOptionButton
+                    option="wechat_pay"
+                    isSelected={selectedPaymentOption === 'wechat_pay'}
+                    onClick={() => setSelectedPaymentOption('wechat_pay')}
+                  />
+                  <PaymentOptionButton
+                    option="alipay"
+                    isSelected={selectedPaymentOption === 'alipay'}
+                    onClick={() => setSelectedPaymentOption('alipay')}
+                  />
+                </>
+              ) : (
+                <>
+                  <PaymentOptionButton
+                    option="card"
+                    isSelected={selectedPaymentOption === 'card'}
+                    onClick={() => setSelectedPaymentOption('card')}
+                  />
+                  <PaymentOptionButton
+                    option="google_pay"
+                    isSelected={selectedPaymentOption === 'google_pay'}
+                    onClick={() => setSelectedPaymentOption('google_pay')}
+                  />
+                  <PaymentOptionButton
+                    option="apple_pay"
+                    isSelected={selectedPaymentOption === 'apple_pay'}
+                    onClick={() => setSelectedPaymentOption('apple_pay')}
+                  />
+                </>
+              )}
               <PaymentOptionButton
                 option="bitcoin"
                 isSelected={selectedPaymentOption === 'bitcoin'}
-                onClick={() => {
-                  console.log('Bitcoin selected');
-                  setSelectedPaymentOption('bitcoin');
-                }}
-              />
-            </div>
-
-            <div className="flex flex-wrap justify-center space-x-2">
-              <PaymentOptionButton
-                option="google_pay"
-                isSelected={selectedPaymentOption === 'google_pay'}
-                onClick={() => {
-                  console.log('Google Pay selected');
-                  setSelectedPaymentOption('google_pay');
-                }}
-              />
-              <PaymentOptionButton
-                option="apple_pay"
-                isSelected={selectedPaymentOption === 'apple_pay'}
-                onClick={() => {
-                  console.log('Apple Pay selected');
-                  setSelectedPaymentOption('apple_pay');
-                }}
+                onClick={() => setSelectedPaymentOption('bitcoin')}
               />
             </div>
 
