@@ -44,6 +44,7 @@ const ChatForm = ({ index = 0 }) => {
   const TextToSpeech = useRecoilValue(store.textToSpeech);
   const automaticPlayback = useRecoilValue(store.automaticPlayback);
 
+  const isSearching = useRecoilValue(store.isSearching);
   const [showStopButton, setShowStopButton] = useRecoilState(store.showStopButtonByIndex(index));
   const [showPlusPopover, setShowPlusPopover] = useRecoilState(store.showPlusPopoverFamily(index));
   const [showMentionPopover, setShowMentionPopover] = useRecoilState(
@@ -124,11 +125,10 @@ const ChatForm = ({ index = 0 }) => {
   });
 
   useEffect(() => {
-    // Focus the textarea when the component mounts
-    if (textAreaRef.current) {
+    if (!isSearching && textAreaRef.current && !disableInputs) {
       textAreaRef.current.focus();
     }
-  }, []);
+  }, [isSearching, disableInputs]);
 
   return (
     <form
@@ -171,9 +171,6 @@ const ChatForm = ({ index = 0 }) => {
             {endpoint && (
               <TextareaAutosize
                 {...registerProps}
-                // TODO: remove autofocus due to a11y issues
-                // eslint-disable-next-line jsx-a11y/no-autofocus
-                autoFocus
                 ref={(e) => {
                   ref(e);
                   textAreaRef.current = e;
