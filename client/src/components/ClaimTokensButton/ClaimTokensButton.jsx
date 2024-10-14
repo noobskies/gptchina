@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { FaRegThumbsUp, FaSpinner } from 'react-icons/fa';
 import { useLocalize } from '~/hooks';
@@ -10,32 +10,44 @@ const ClaimTokensButton = ({ refetchBalance }) => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchLastTokenClaimTimestamp = async () => {
-      try {
-        const response = await axios.get('/api/claim-tokens/last-claim-timestamp');
-        const { lastTokenClaimTimestamp } = response.data;
-        console.log('Last token claim timestamp:', lastTokenClaimTimestamp);
+  const fetchLastTokenClaimTimestamp = useCallback(async () => {
+    try {
+      const response = await axios.get('/api/claim-tokens/last-claim-timestamp');
+      const { lastTokenClaimTimestamp, serverCurrentTime } = response.data;
+      console.log('Last token claim timestamp:', lastTokenClaimTimestamp);
+      console.log('Server current time:', serverCurrentTime);
 
-        const currentTimestamp = new Date().getTime();
-        const elapsedTime = currentTimestamp - new Date(lastTokenClaimTimestamp).getTime();
+      if (lastTokenClaimTimestamp && serverCurrentTime) {
+        const elapsedTime = serverCurrentTime - lastTokenClaimTimestamp;
         const remainingTime = Math.max(0, 24 * 60 * 60 * 1000 - elapsedTime);
 
+        console.log('Elapsed time:', elapsedTime);
         console.log('Remaining time:', remainingTime);
         setCountdown(remainingTime);
         setIsActive(remainingTime <= 0);
-      } catch (error) {
-        console.error('Error fetching last token claim timestamp:', error);
+      } else {
+        console.error('Invalid response data:', response.data);
       }
-    };
-
-    fetchLastTokenClaimTimestamp();
+    } catch (error) {
+      console.error('Error fetching last token claim timestamp:', error);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchLastTokenClaimTimestamp();
+    const intervalId = setInterval(fetchLastTokenClaimTimestamp, 60000); // Refresh every minute
+
+    return () => clearInterval(intervalId);
+  }, [fetchLastTokenClaimTimestamp]);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCountdown((prevCountdown) => {
         const newCountdown = Math.max(0, prevCountdown - 1000);
+        if (newCountdown === 0) {
+          setIsActive(true);
+          console.log('Countdown reached zero, button should be active now');
+        }
         return newCountdown;
       });
     }, 1000);
@@ -46,14 +58,20 @@ const ClaimTokensButton = ({ refetchBalance }) => {
   }, []);
 
   const handleClaimTokens = async () => {
+    if (!isActive) {
+      console.log('Button clicked but not active');
+      return;
+    }
+
     try {
       setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 100)); // Fake 100ms delay
-      await axios.post('/api/claim-tokens/claim');
+      console.log('Claiming tokens...');
+      const response = await axios.post('/api/claim-tokens/claim');
+      console.log('Claim response:', response.data);
       setIsActive(false);
       setCountdown(24 * 60 * 60 * 1000);
       setIsSuccess(true);
-      refetchBalance(); // Refetch the user's balance
+      refetchBalance();
 
       // Reset success state after 2 seconds
       setTimeout(() => {
@@ -76,44 +94,42 @@ const ClaimTokensButton = ({ refetchBalance }) => {
   };
 
   return (
-    <>
-      <button
-        className={`relative mb-1 w-full rounded py-1 transition-colors duration-300 ${
-          isSuccess
-            ? 'bg-green-600 text-white'
-            : isActive
-              ? 'bg-blue-600 text-white hover:bg-blue-600'
-              : 'cursor-not-allowed bg-gray-300 text-gray-500'
-        }`}
-        onClick={handleClaimTokens}
-        disabled={!isActive || isSuccess || isLoading}
-      >
-        <div className="flex h-6 items-center justify-center">
-          {isLoading ? (
-            <span className="flex items-center">
-              <FaSpinner className="mr-2 animate-spin" />
-            </span>
-          ) : (
-            <>
-              <span className={`${isSuccess ? 'invisible' : ''}`}>
-                {isActive ? (
-                  localize('claim_active')
-                ) : (
-                  <>
-                    {localize('claim_inactive')} {formatTime(countdown)}
-                  </>
-                )}
-              </span>
-              {isSuccess && (
-                <span className="absolute inset-0 flex items-center justify-center animate-in fade-in">
-                  <FaRegThumbsUp />
-                </span>
+    <button
+      className={`relative mb-1 w-full rounded py-1 transition-colors duration-300 ${
+        isSuccess
+          ? 'bg-green-600 text-white'
+          : isActive
+            ? 'bg-blue-600 text-white hover:bg-blue-600'
+            : 'cursor-not-allowed bg-gray-300 text-gray-500'
+      }`}
+      onClick={handleClaimTokens}
+      disabled={!isActive || isSuccess || isLoading}
+    >
+      <div className="flex h-6 items-center justify-center">
+        {isLoading ? (
+          <span className="flex items-center">
+            <FaSpinner className="mr-2 animate-spin" />
+          </span>
+        ) : (
+          <>
+            <span className={`${isSuccess ? 'invisible' : ''}`}>
+              {isActive ? (
+                localize('claim_active')
+              ) : (
+                <>
+                  {localize('claim_inactive')} {formatTime(countdown)}
+                </>
               )}
-            </>
-          )}
-        </div>
-      </button>
-    </>
+            </span>
+            {isSuccess && (
+              <span className="absolute inset-0 flex items-center justify-center animate-in fade-in">
+                <FaRegThumbsUp />
+              </span>
+            )}
+          </>
+        )}
+      </div>
+    </button>
   );
 };
 
