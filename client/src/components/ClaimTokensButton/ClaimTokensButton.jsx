@@ -6,20 +6,22 @@ import { useAuthContext } from '~/hooks/AuthContext';
 
 const ClaimTokensButton = ({ refetchBalance }) => {
   const localize = useLocalize();
-  const { isAuthenticated } = useAuthContext();
+  const { isAuthenticated, token, logout } = useAuthContext();
   const [isActive, setIsActive] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchLastTokenClaimTimestamp = useCallback(async () => {
-    if (!isAuthenticated) {
-      console.log('User is not authenticated');
+    if (!isAuthenticated || !token) {
+      console.log('User is not authenticated or token is missing');
       return;
     }
 
     try {
-      const response = await axios.get('/api/claim-tokens/last-claim-timestamp');
+      const response = await axios.get('/api/claim-tokens/last-claim-timestamp', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       const { lastTokenClaimTimestamp, serverCurrentTime } = response.data;
       console.log('Last token claim timestamp:', lastTokenClaimTimestamp);
       console.log('Server current time:', serverCurrentTime);
@@ -37,16 +39,19 @@ const ClaimTokensButton = ({ refetchBalance }) => {
       }
     } catch (error) {
       console.error('Error fetching last token claim timestamp:', error);
+      if (error.response && error.response.status === 401) {
+        logout(); // Force logout if unauthorized
+      }
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, token, logout]);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && token) {
       fetchLastTokenClaimTimestamp();
       const intervalId = setInterval(fetchLastTokenClaimTimestamp, 60000); // Refresh every minute
       return () => clearInterval(intervalId);
     }
-  }, [fetchLastTokenClaimTimestamp, isAuthenticated]);
+  }, [fetchLastTokenClaimTimestamp, isAuthenticated, token]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -66,15 +71,17 @@ const ClaimTokensButton = ({ refetchBalance }) => {
   }, []);
 
   const handleClaimTokens = async () => {
-    if (!isActive || !isAuthenticated) {
-      console.log('Button clicked but not active or user not authenticated');
+    if (!isActive || !isAuthenticated || !token) {
+      console.log('Button clicked but not active or user not authenticated or token missing');
       return;
     }
 
     try {
       setIsLoading(true);
       console.log('Claiming tokens...');
-      const response = await axios.post('/api/claim-tokens/claim');
+      const response = await axios.post('/api/claim-tokens/claim', {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       console.log('Claim response:', response.data);
       setIsActive(false);
       setCountdown(24 * 60 * 60 * 1000);
@@ -87,6 +94,9 @@ const ClaimTokensButton = ({ refetchBalance }) => {
       }, 2500);
     } catch (error) {
       console.error('Error claiming tokens:', error);
+      if (error.response && error.response.status === 401) {
+        logout(); // Force logout if unauthorized
+      }
     } finally {
       setIsLoading(false);
     }
@@ -101,8 +111,8 @@ const ClaimTokensButton = ({ refetchBalance }) => {
       .padStart(2, '0')}`;
   };
 
-  if (!isAuthenticated) {
-    return null; // Don't render the button if the user is not authenticated
+  if (!isAuthenticated || !token) {
+    return null; // Don't render the button if the user is not authenticated or token is missing
   }
 
   return (
