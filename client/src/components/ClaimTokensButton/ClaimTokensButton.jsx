@@ -2,15 +2,22 @@ import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { FaRegThumbsUp, FaSpinner } from 'react-icons/fa';
 import { useLocalize } from '~/hooks';
+import { useAuthContext } from '~/hooks/AuthContext';
 
 const ClaimTokensButton = ({ refetchBalance }) => {
   const localize = useLocalize();
+  const { isAuthenticated } = useAuthContext();
   const [isActive, setIsActive] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchLastTokenClaimTimestamp = useCallback(async () => {
+    if (!isAuthenticated) {
+      console.log('User is not authenticated');
+      return;
+    }
+
     try {
       const response = await axios.get('/api/claim-tokens/last-claim-timestamp');
       const { lastTokenClaimTimestamp, serverCurrentTime } = response.data;
@@ -31,14 +38,15 @@ const ClaimTokensButton = ({ refetchBalance }) => {
     } catch (error) {
       console.error('Error fetching last token claim timestamp:', error);
     }
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
-    fetchLastTokenClaimTimestamp();
-    const intervalId = setInterval(fetchLastTokenClaimTimestamp, 60000); // Refresh every minute
-
-    return () => clearInterval(intervalId);
-  }, [fetchLastTokenClaimTimestamp]);
+    if (isAuthenticated) {
+      fetchLastTokenClaimTimestamp();
+      const intervalId = setInterval(fetchLastTokenClaimTimestamp, 60000); // Refresh every minute
+      return () => clearInterval(intervalId);
+    }
+  }, [fetchLastTokenClaimTimestamp, isAuthenticated]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -58,8 +66,8 @@ const ClaimTokensButton = ({ refetchBalance }) => {
   }, []);
 
   const handleClaimTokens = async () => {
-    if (!isActive) {
-      console.log('Button clicked but not active');
+    if (!isActive || !isAuthenticated) {
+      console.log('Button clicked but not active or user not authenticated');
       return;
     }
 
@@ -92,6 +100,10 @@ const ClaimTokensButton = ({ refetchBalance }) => {
       .toString()
       .padStart(2, '0')}`;
   };
+
+  if (!isAuthenticated) {
+    return null; // Don't render the button if the user is not authenticated
+  }
 
   return (
     <button
