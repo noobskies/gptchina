@@ -21,6 +21,7 @@ export default function PaymentDialog({ open, onOpenChange }) {
   const [errorMessage, setErrorMessage] = useState('');
   const [paymentStatus, setPaymentStatus] = useState(null); // 'success', 'cancel', or null
   const [paymentMessage, setPaymentMessage] = useState('');
+  const [isLoadingBalance, setIsLoadingBalance] = useState(false);
   const localize = useLocalize();
 
   // Determine the user's domain (China or global)
@@ -34,8 +35,10 @@ export default function PaymentDialog({ open, onOpenChange }) {
       const response = await fetch('/api/balance');
       const balance = await response.text();
       setTokenBalance(balance);
+      return balance;
     } catch (error) {
       console.error('Error fetching token balance:', error);
+      return null;
     }
   }, []);
 
@@ -70,9 +73,12 @@ export default function PaymentDialog({ open, onOpenChange }) {
       }
 
       if (result.success) {
+        setIsLoadingBalance(true);
+        const newBalance = await fetchTokenBalance(); // Wait for the new balance
+        setIsLoadingBalance(false);
         setPaymentStatus('success');
         setPaymentMessage('Payment successful! Your tokens have been added to your account.');
-        fetchTokenBalance(); // Refresh the token balance
+        setTokenBalance(newBalance);
       } else {
         setPaymentStatus('cancel');
         setPaymentMessage('Payment was cancelled or failed. Please try again.');
@@ -107,9 +113,23 @@ export default function PaymentDialog({ open, onOpenChange }) {
                 </div>
                 {paymentStatus === 'success' && (
                   <div className="mb-4">
-                    <span>New token balance: {tokenBalance}</span>
+                    {isLoadingBalance ? (
+                      <span>Fetching new balance...</span>
+                    ) : (
+                      <span>New token balance: {tokenBalance}</span>
+                    )}
                   </div>
                 )}
+                <button
+                  onClick={() => {
+                    setPaymentStatus(null);
+                    setPaymentMessage('');
+                    onOpenChange(false);
+                  }}
+                  className="mt-4 w-full rounded-md bg-blue-600 px-4 py-2 text-white transition duration-200 ease-in-out hover:bg-blue-700 focus:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:bg-blue-800"
+                >
+                  Close
+                </button>
               </>
             ) : (
               <>
