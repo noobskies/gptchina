@@ -120,16 +120,6 @@ export default function PaymentDialog({ open, onOpenChange }) {
                     )}
                   </div>
                 )}
-                <button
-                  onClick={() => {
-                    setPaymentStatus(null);
-                    setPaymentMessage('');
-                    onOpenChange(false);
-                  }}
-                  className="mt-4 w-full rounded-md bg-blue-600 px-4 py-2 text-white transition duration-200 ease-in-out hover:bg-blue-700 focus:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:bg-blue-800"
-                >
-                  Close
-                </button>
               </>
             ) : (
               <>
