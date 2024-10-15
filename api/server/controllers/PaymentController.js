@@ -154,15 +154,13 @@ exports.handleWebhook = async (req, res) => {
 
   console.log('Received Stripe webhook event:', event.type);
 
-  let session, paymentIntent, userId, priceId, tokens;
-
   const handleSuccessfulPayment = async (userId, priceId, email, amount) => {
     if (!Object.prototype.hasOwnProperty.call(priceDetailsConfig, priceId)) {
       console.error('Invalid price ID:', priceId);
-      return res.status(400).json({ error: 'Invalid price ID' });
+      return { success: false, error: 'Invalid price ID' };
     }
 
-    tokens = priceDetailsConfig[priceId].tokens;
+    const tokens = priceDetailsConfig[priceId].tokens;
 
     try {
       const newBalance = await addTokensByUserId(userId, tokens);
@@ -213,66 +211,67 @@ exports.handleWebhook = async (req, res) => {
     }
   };
 
+  let result;
+
   switch (event.type) {
     case CHECKOUT_SESSION_COMPLETED:
-      session = event.data.object;
-      userId = session.metadata.userId;
-      priceId = session.metadata.priceId;
-      console.log('Checkout session completed:', {
-        userId,
-        priceId,
-        email: session.customer_email,
-      });
-
-      const checkoutResult = await handleSuccessfulPayment(userId, priceId, session.customer_email, session.amount_total);
-      if (checkoutResult.success) {
-        res.status(200).json({ message: `Payment succeeded. New balance is ${checkoutResult.newBalance}` });
-      } else {
-        res.status(500).json({ error: `Error processing payment: ${checkoutResult.error}` });
+      const session = event.data.object;
+      console.log('Checkout session completed:', session);
+      
+      // For Checkout Sessions, metadata is on the session object
+      const sessionUserId = session.metadata?.userId;
+      const sessionPriceId = session.metadata?.priceId;
+      
+      if (!sessionUserId || !sessionPriceId) {
+        console.error('Missing userId or priceId in session metadata');
+        return res.status(400).json({ error: 'Missing required metadata' });
       }
+
+      result = await handleSuccessfulPayment(sessionUserId, sessionPriceId, session.customer_email, session.amount_total);
       break;
 
     case PAYMENT_INTENT_SUCCEEDED:
-      paymentIntent = event.data.object;
-      userId = paymentIntent.metadata.userId;
-      priceId = paymentIntent.metadata.priceId;
-      console.log('Payment intent succeeded:', {
-        userId,
-        priceId,
-        email: paymentIntent.metadata.email,
-      });
-
-      const paymentIntentResult = await handleSuccessfulPayment(userId, priceId, paymentIntent.metadata.email, paymentIntent.amount);
-      if (paymentIntentResult.success) {
-        res.status(200).json({ message: `Payment succeeded. New balance is ${paymentIntentResult.newBalance}` });
-      } else {
-        res.status(500).json({ error: `Error processing payment: ${paymentIntentResult.error}` });
+      const paymentIntent = event.data.object;
+      console.log('Payment intent succeeded:', paymentIntent);
+      
+      // For Payment Intents, metadata is on the paymentIntent object
+      const paymentIntentUserId = paymentIntent.metadata?.userId;
+      const paymentIntentPriceId = paymentIntent.metadata?.priceId;
+      
+      if (!paymentIntentUserId || !paymentIntentPriceId) {
+        console.error('Missing userId or priceId in payment intent metadata');
+        return res.status(400).json({ error: 'Missing required metadata' });
       }
+
+      result = await handleSuccessfulPayment(paymentIntentUserId, paymentIntentPriceId, paymentIntent.metadata.email, paymentIntent.amount);
       break;
 
     case PAYMENT_INTENT_PAYMENT_FAILED:
       console.error('Payment failed:', event.data.object);
-      // Handle payment failure, e.g., send notifications or retry payment
-      res.status(200).json({ message: 'Payment failed' });
-      break;
+      return res.status(200).json({ message: 'Payment failed' });
 
     case PAYMENT_INTENT_CREATED:
       console.log('Payment intent created:', event.data.object);
-      res.status(200).json({ message: 'Payment intent created' });
-      break;
+      return res.status(200).json({ message: 'Payment intent created' });
 
     case CHARGE_SUCCEEDED:
       console.log('Charge succeeded:', event.data.object);
-      res.status(200).json({ message: 'Charge succeeded' });
-      break;
+      return res.status(200).json({ message: 'Charge succeeded' });
 
     case CHARGE_FAILED:
       console.error('Charge failed:', event.data.object);
-      res.status(200).json({ message: 'Charge failed' });
-      break;
+      return res.status(200).json({ message: 'Charge failed' });
 
     default:
       console.warn(`Unhandled event type: ${event.type}`);
-      res.status(200).json({ message: `Unhandled event type: ${event.type}` });
+      return res.status(200).json({ message: `Unhandled event type: ${event.type}` });
+  }
+
+  if (result) {
+    if (result.success) {
+      res.status(200).json({ message: `Payment succeeded. New balance is ${result.newBalance}` });
+    } else {
+      res.status(500).json({ error: `Error processing payment: ${result.error}` });
+    }
   }
 };
