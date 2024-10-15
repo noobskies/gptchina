@@ -103,8 +103,8 @@ exports.createPaymentIntent = async (req, res) => {
       customer_email: email,
       payment_method_options: paymentMethodOptions,
       mode: 'payment',
-      success_url: 'https://novlisky.io/payment-success',
-      cancel_url: 'https://novlisky.io/payment-cancel',
+      success_url: 'https://novlisky.io/?success=true',
+      cancel_url: 'https://novlisky.io/?cancel=true',
     });
 
     const session = await stripe.checkout.sessions.create({
@@ -130,8 +130,8 @@ exports.createPaymentIntent = async (req, res) => {
       customer_email: email,
       payment_method_options: paymentMethodOptions,
       mode: 'payment',
-      success_url: 'https://novlisky.io/payment-success',
-      cancel_url: 'https://novlisky.io/payment-cancel',
+      success_url: 'https://novlisky.io/?success=true',
+      cancel_url: 'https://novlisky.io/?cancel=true',
     });
 
     console.log('Stripe Checkout session created:', session);

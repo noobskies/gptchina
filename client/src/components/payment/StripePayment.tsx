@@ -22,8 +22,8 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
         domain, 
         email, 
         paymentMethod,
-        successUrl: 'https://novlisky.io/payment-success',
-        cancelUrl: 'https://novlisky.io/payment-cancel'
+        successUrl: 'https://novlisky.io/?success=true',
+        cancelUrl: 'https://novlisky.io/?cancel=true',
       }),
     });
 
