@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { RouterProvider, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { RouterProvider, useNavigate } from 'react-router-dom';
+import { Capacitor } from '@capacitor/core';
 import ReactGA from 'react-ga4';
 import { RecoilRoot } from 'recoil';
 import { DndProvider } from 'react-dnd';
@@ -28,6 +29,33 @@ const PageViewTracker = () => {
   return null;
 };
 
+const DeepLinkHandler = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (Capacitor.isNativePlatform()) {
+      CapacitorApp.addListener('appUrlOpen', (data) => {
+        console.log('Deep link received', data.url);
+        
+        // Parse the URL
+        const slug = data.url.split('https://novlisky.io/').pop();
+
+        // Navigate based on the slug
+        if (slug) {
+          if (slug.includes('payment-success')) {
+            navigate('/');
+          } else if (slug.includes('payment-cancel')) {
+            navigate('/');
+          }
+          // Add more conditions as needed
+        }
+      });
+    }
+  }, [navigate]);
+
+  return null;
+};
+
 const App = () => {
   const { setError } = useApiErrorBoundary();
 
@@ -49,11 +77,10 @@ const App = () => {
             <RadixToast.Provider>
               <ToastProvider>
                 <DndProvider backend={HTML5Backend}>
-                  <div
-                    className="min-h-screen flex flex-col"
-                  >
+                  <div className="min-h-screen flex flex-col">
                     <RouterProvider router={router}>
                       <PageViewTracker />
+                      <DeepLinkHandler />
                     </RouterProvider>
                     <ReactQueryDevtools initialIsOpen={false} position="top-right" />
                     <Toast />

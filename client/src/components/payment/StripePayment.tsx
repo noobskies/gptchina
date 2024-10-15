@@ -15,7 +15,15 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
   const res = await fetch('/api/payment/stripe/create-checkout-session', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ priceId, userId, domain, email, paymentMethod }),
+    body: JSON.stringify({ 
+      priceId, 
+      userId, 
+      domain, 
+      email, 
+      paymentMethod,
+      successUrl: 'https://novlisky.io/payment-success',
+      cancelUrl: 'https://novlisky.io/payment-cancel'
+    }),
   });
 
   console.log('res', res);
@@ -23,13 +31,11 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
 
   if (Capacitor.isNativePlatform()) {
     // For native platforms (Android, iOS)
-    const { url } = await Browser.open({ url: data.url });
+    await Browser.open({ url: data.url });
     
-    // Add an event listener for the 'browserFinished' event
     Browser.addListener('browserFinished', () => {
-      // Handle the redirect back to the app
-      // You may want to check the payment status here
       console.log('Browser finished, payment might be complete');
+      // You may want to check the payment status here
     });
   } else {
     // For web
