@@ -57,7 +57,7 @@ export default defineConfig(({ mode }) => {
       fs: {
         cachedChecks: false,
       },
-      host: 'localhost',
+      host: '0.0.0.0',
       port: 3090,
       strictPort: false,
       proxy: {

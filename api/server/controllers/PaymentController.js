@@ -126,9 +126,11 @@ exports.createPaymentIntent = async (req, res) => {
       cancel_url: `${process.env.DOMAIN_CLIENT}`,
     });
 
-    console.log('Stripe Checkout session created:', session);
-
-    res.status(200).json({ sessionId: session.id });
+    // Return both sessionId and URL
+    res.status(200).json({ 
+      sessionId: session.id,
+      url: session.url // Add this line
+    });
   } catch (error) {
     console.error('Error creating payment intent:', error);
     res.status(500).json({ error: 'An error occurred while creating the payment intent' });
