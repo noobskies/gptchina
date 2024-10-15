@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { RouterProvider, useNavigate } from 'react-router-dom';
+import { RouterProvider, useNavigate, useLocation } from 'react-router-dom';
 import { Capacitor } from '@capacitor/core';
 import ReactGA from 'react-ga4';
 import { RecoilRoot } from 'recoil';
@@ -34,20 +34,31 @@ const DeepLinkHandler = () => {
 
   useEffect(() => {
     if (Capacitor.isNativePlatform()) {
-      CapacitorApp.addListener('appUrlOpen', (data) => {
+      console.log('Native platform detected');
+      Capacitor.App.addListener('appUrlOpen', (data) => {
         console.log('Deep link received', data.url);
         
-        // Parse the URL
-        const slug = data.url.split('https://novlisky.io/').pop();
+        const url = new URL(data.url);
+        const path = url.pathname;
 
-        // Navigate based on the slug
-        if (slug) {
-          if (slug.includes('payment-success')) {
+        // Handle navigation based on the path
+        switch (path) {
+          case '/':
+            // Handle root path, possibly check for query parameters
+            const paymentStatus = url.searchParams.get('payment_status');
+            if (paymentStatus === 'success') {
+              console.log('Payment successful');
+              // You can dispatch an action or update state here
+            } else if (paymentStatus === 'cancel') {
+              console.log('Payment cancelled');
+              // Handle cancelled payment
+            }
             navigate('/');
-          } else if (slug.includes('payment-cancel')) {
+            break;
+          // Add more cases for other deep link paths as needed
+          default:
+            // For any unhandled paths, navigate to the home page
             navigate('/');
-          }
-          // Add more conditions as needed
         }
       });
     }
