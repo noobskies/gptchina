@@ -154,12 +154,84 @@ exports.handleWebhook = async (req, res) => {
 
   console.log('Received Stripe webhook event:', event.type);
 
-  let paymentIntent;
-  let userId;
-  let priceId;
-  let tokens;
+  let session, paymentIntent, userId, priceId, tokens;
+
+  const handleSuccessfulPayment = async (userId, priceId, email, amount) => {
+    if (!Object.prototype.hasOwnProperty.call(priceDetailsConfig, priceId)) {
+      console.error('Invalid price ID:', priceId);
+      return res.status(400).json({ error: 'Invalid price ID' });
+    }
+
+    tokens = priceDetailsConfig[priceId].tokens;
+
+    try {
+      const newBalance = await addTokensByUserId(userId, tokens);
+      console.log(`Payment succeeded. User ID: ${userId}, New balance: ${newBalance}`);
+
+      // Send payment confirmation email
+      const user = await User.findById(userId);
+      console.log('User object:', user);
+      if (user && user.email) {
+        console.log('User email:', user.email);
+        const currentDate = new Date();
+        const readableDate = currentDate.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+
+        const region = priceDetailsConfig[priceId].region;
+        const currencyCode = region === 'China' ? 'CNY' : 'USD';
+
+        const formattedAmount = (amount / 100).toLocaleString('en-US', {
+          style: 'currency',
+          currency: currencyCode,
+        });
+
+        await sendEmail({
+          email: user.email,
+          subject: 'Payment Confirmation',
+          payload: {
+            appName: process.env.VITE_APP_AUTHOR || process.env.APP_TITLE || 'Novlisky',
+            name: user.name,
+            email: user.email,
+            tokens: tokens.toLocaleString(),
+            amount: formattedAmount,
+            date: readableDate,
+            year: new Date().getFullYear(),
+          },
+          template: 'paymentConfirmation.handlebars',
+        });
+      } else {
+        console.warn('User not found or user email not provided');
+      }
+
+      return { success: true, newBalance };
+    } catch (error) {
+      console.error(`Error updating balance or sending email: ${error.message}`);
+      return { success: false, error: error.message };
+    }
+  };
 
   switch (event.type) {
+    case CHECKOUT_SESSION_COMPLETED:
+      session = event.data.object;
+      userId = session.metadata.userId;
+      priceId = session.metadata.priceId;
+      console.log('Checkout session completed:', {
+        userId,
+        priceId,
+        email: session.customer_email,
+      });
+
+      const checkoutResult = await handleSuccessfulPayment(userId, priceId, session.customer_email, session.amount_total);
+      if (checkoutResult.success) {
+        res.status(200).json({ message: `Payment succeeded. New balance is ${checkoutResult.newBalance}` });
+      } else {
+        res.status(500).json({ error: `Error processing payment: ${checkoutResult.error}` });
+      }
+      break;
+
     case PAYMENT_INTENT_SUCCEEDED:
       paymentIntent = event.data.object;
       userId = paymentIntent.metadata.userId;
@@ -170,84 +242,35 @@ exports.handleWebhook = async (req, res) => {
         email: paymentIntent.metadata.email,
       });
 
-      if (!Object.prototype.hasOwnProperty.call(priceDetailsConfig, priceId)) {
-        console.error('Invalid price ID:', priceId);
-        return res.status(400).json({ error: 'Invalid price ID' });
-      }
-
-      tokens = priceDetailsConfig[priceId].tokens;
-
-      try {
-        const newBalance = await addTokensByUserId(userId, tokens);
-        console.log(`Payment succeeded. User ID: ${userId}, New balance: ${newBalance}`);
-        res.status(200).json({ message: `Payment succeeded. New balance is ${newBalance}` });
-
-        // Send payment confirmation email
-        const user = await User.findById(userId);
-        console.log('User object:', user);
-        if (user && user.email) {
-          console.log('User email:', user.email);
-          // Validate the email address if needed
-          const currentDate = new Date();
-          const readableDate = currentDate.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          });
-
-          const region = priceDetailsConfig[priceId].region;
-          const currencyCode = region === 'China' ? 'CNY' : 'USD';
-
-          const formattedAmount = (paymentIntent.amount / 100).toLocaleString('en-US', {
-            style: 'currency',
-            currency: currencyCode,
-          });
-
-          await sendEmail({
-            email: user.email,
-            subject: 'Payment Confirmation',
-            payload: {
-              appName: process.env.VITE_APP_AUTHOR || process.env.APP_TITLE || 'Novlisky',
-              name: user.name,
-              email: user.email,
-              tokens: tokens.toLocaleString(),
-              amount: formattedAmount,
-              date: readableDate,
-              year: new Date().getFullYear(),
-            },
-            template: 'paymentConfirmation.handlebars',
-          });
-        } else {
-          console.warn('User not found or user email not provided');
-        }
-      } catch (error) {
-        console.error(`Error updating balance or sending email: ${error.message}`);
-        res
-          .status(500)
-          .json({ error: `Error updating balance or sending email: ${error.message}` });
+      const paymentIntentResult = await handleSuccessfulPayment(userId, priceId, paymentIntent.metadata.email, paymentIntent.amount);
+      if (paymentIntentResult.success) {
+        res.status(200).json({ message: `Payment succeeded. New balance is ${paymentIntentResult.newBalance}` });
+      } else {
+        res.status(500).json({ error: `Error processing payment: ${paymentIntentResult.error}` });
       }
       break;
+
     case PAYMENT_INTENT_PAYMENT_FAILED:
       console.error('Payment failed:', event.data.object);
       // Handle payment failure, e.g., send notifications or retry payment
       res.status(200).json({ message: 'Payment failed' });
       break;
+
     case PAYMENT_INTENT_CREATED:
       console.log('Payment intent created:', event.data.object);
       res.status(200).json({ message: 'Payment intent created' });
       break;
-    case CHECKOUT_SESSION_COMPLETED:
-      console.log('Checkout session completed:', event.data.object);
-      res.status(200).json({ message: 'Checkout session completed' });
-      break;
+
     case CHARGE_SUCCEEDED:
       console.log('Charge succeeded:', event.data.object);
       res.status(200).json({ message: 'Charge succeeded' });
       break;
+
     case CHARGE_FAILED:
       console.error('Charge failed:', event.data.object);
       res.status(200).json({ message: 'Charge failed' });
       break;
+
     default:
       console.warn(`Unhandled event type: ${event.type}`);
       res.status(200).json({ message: `Unhandled event type: ${event.type}` });
