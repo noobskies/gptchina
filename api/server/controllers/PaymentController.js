@@ -96,11 +96,15 @@ exports.createPaymentIntent = async (req, res) => {
           domain: domain,
         },
       },
+      metadata: {
+        userId: userId.toString(),
+        priceId: priceId,
+      },
       customer_email: email,
       payment_method_options: paymentMethodOptions,
       mode: 'payment',
-      success_url: `${process.env.DOMAIN_CLIENT}`,
-      cancel_url: `${process.env.DOMAIN_CLIENT}`,
+      success_url: 'https://novlisky.io/payment-success',
+      cancel_url: 'https://novlisky.io/payment-cancel',
     });
 
     const session = await stripe.checkout.sessions.create({
@@ -119,17 +123,23 @@ exports.createPaymentIntent = async (req, res) => {
           domain: domain,
         },
       },
+      metadata: {
+        userId: userId.toString(),
+        priceId: priceId,
+      },
       customer_email: email,
       payment_method_options: paymentMethodOptions,
       mode: 'payment',
-      success_url: `${process.env.DOMAIN_CLIENT}`,
-      cancel_url: `${process.env.DOMAIN_CLIENT}`,
+      success_url: 'https://novlisky.io/payment-success',
+      cancel_url: 'https://novlisky.io/payment-cancel',
     });
+
+    console.log('Stripe Checkout session created:', session);
 
     // Return both sessionId and URL
     res.status(200).json({ 
       sessionId: session.id,
-      url: session.url // Add this line
+      url: session.url
     });
   } catch (error) {
     console.error('Error creating payment intent:', error);
