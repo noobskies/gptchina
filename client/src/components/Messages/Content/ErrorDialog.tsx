@@ -19,7 +19,7 @@ export default function PaymentDialog({ open, onOpenChange }) {
   const [selectedTokens, setSelectedTokens] = useState(null);
   const [selectedPaymentOption, setSelectedPaymentOption] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
-  const [paymentStatus, setPaymentStatus] = useState(null); // 'success', 'cancel', or null
+  const [paymentStatus, setPaymentStatus] = useState(null); // 'success', 'cancel', 'pending', or null
   const [paymentMessage, setPaymentMessage] = useState('');
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
   const localize = useLocalize();
@@ -72,16 +72,19 @@ export default function PaymentDialog({ open, onOpenChange }) {
         result = await processStripePayment(selectedOption, selectedPaymentOption, userId, email);
       }
 
-      if (result.success) {
+      if (result.success === true) {
         setIsLoadingBalance(true);
-        const newBalance = await fetchTokenBalance(); // Wait for the new balance
+        const newBalance = await fetchTokenBalance();
         setIsLoadingBalance(false);
         setPaymentStatus('success');
         setPaymentMessage('Payment successful! Your tokens have been added to your account.');
         setTokenBalance(newBalance);
+      } else if (result.success === 'unknown') {
+        setPaymentStatus('pending');
+        setPaymentMessage('Payment status unknown. Please check your balance or contact support if your tokens are not added soon.');
       } else {
         setPaymentStatus('cancel');
-        setPaymentMessage('Payment was cancelled or failed. Please try again.');
+        setPaymentMessage(result.error || 'Payment was cancelled or failed. Please try again.');
       }
     } catch (error) {
       console.error('Payment error:', error);
@@ -90,7 +93,7 @@ export default function PaymentDialog({ open, onOpenChange }) {
     } finally {
       setProcessingTokenAmount(null);
     }
-  }, [selectedTokens, selectedPaymentOption, userId, email, isChina, fetchTokenBalance]);
+  }, [selectedTokens, selectedPaymentOption, userId, email, isChina, fetchTokenBalance, tokenOptionsToUse]);
 
   useEffect(() => {
     if (open) {
@@ -101,14 +104,23 @@ export default function PaymentDialog({ open, onOpenChange }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTemplate
-        title={paymentStatus ? (paymentStatus === 'success' ? 'Payment Successful' : 'Payment Failed') : localize('com_ui_payment_title')}
+        title={
+          paymentStatus === 'success' ? 'Payment Successful' :
+          paymentStatus === 'cancel' ? 'Payment Failed' :
+          paymentStatus === 'pending' ? 'Payment Pending' :
+          localize('com_ui_payment_title')
+        }
         className="max-w-[450px]"
         showFooter={false}
         main={
           <div className="flex w-full flex-col items-center gap-2">
             {paymentStatus ? (
               <>
-                <div className={`mb-4 rounded p-4 ${paymentStatus === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                <div className={`mb-4 rounded p-4 ${
+                  paymentStatus === 'success' ? 'bg-green-100 text-green-700' :
+                  paymentStatus === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                  'bg-red-100 text-red-700'
+                }`}>
                   <span>{paymentMessage}</span>
                 </div>
                 {paymentStatus === 'success' && (
@@ -120,6 +132,16 @@ export default function PaymentDialog({ open, onOpenChange }) {
                     )}
                   </div>
                 )}
+                <button
+                  onClick={() => {
+                    setPaymentStatus(null);
+                    setPaymentMessage('');
+                    onOpenChange(false);
+                  }}
+                  className="mt-4 w-full rounded-md bg-blue-600 px-4 py-2 text-white transition duration-200 ease-in-out hover:bg-blue-700 focus:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:bg-blue-800"
+                >
+                  Close
+                </button>
               </>
             ) : (
               <>
