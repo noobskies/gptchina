@@ -27,6 +27,9 @@ const priceDetailsConfig = {
   price_1P6drxHKD0byXXClVVLokkLh: { tokens: 10000000, region: 'global' },
 };
 
+// Create a Set to store processed payment intent IDs
+const processedPaymentIntents = new Set();
+
 exports.createPaymentIntent = async (req, res) => {
   try {
     const { priceId, userId, domain, email, paymentMethod } = req.body;
@@ -136,7 +139,6 @@ exports.createPaymentIntent = async (req, res) => {
 
     console.log('Stripe Checkout session created:', session);
 
-    // Return both sessionId and URL
     res.status(200).json({ 
       sessionId: session.id,
       url: session.url
@@ -164,7 +166,7 @@ exports.handleWebhook = async (req, res) => {
 
   console.log('Received Stripe webhook event:', event.type);
 
-  const handleSuccessfulPayment = async (userId, priceId, email, amount) => {
+  const handleSuccessfulPayment = async (userId, priceId, email, amount, paymentIntentId) => {
     if (!Object.prototype.hasOwnProperty.call(priceDetailsConfig, priceId)) {
       console.error('Invalid price ID:', priceId);
       return { success: false, error: 'Invalid price ID' };
@@ -172,15 +174,22 @@ exports.handleWebhook = async (req, res) => {
 
     const tokens = priceDetailsConfig[priceId].tokens;
 
+    // Check if this payment has already been processed
+    if (processedPaymentIntents.has(paymentIntentId)) {
+      console.log(`Payment ${paymentIntentId} already processed`);
+      return { success: true, message: 'Payment already processed' };
+    }
+
     try {
       const newBalance = await addTokensByUserId(userId, tokens);
       console.log(`Payment succeeded. User ID: ${userId}, New balance: ${newBalance}`);
 
+      // Mark this payment as processed
+      processedPaymentIntents.add(paymentIntentId);
+
       // Send payment confirmation email
       const user = await User.findById(userId);
-      console.log('User object:', user);
       if (user && user.email) {
-        console.log('User email:', user.email);
         const currentDate = new Date();
         const readableDate = currentDate.toLocaleDateString('en-US', {
           year: 'numeric',
@@ -210,8 +219,6 @@ exports.handleWebhook = async (req, res) => {
           },
           template: 'paymentConfirmation.handlebars',
         });
-      } else {
-        console.warn('User not found or user email not provided');
       }
 
       return { success: true, newBalance };
@@ -228,32 +235,37 @@ exports.handleWebhook = async (req, res) => {
       const session = event.data.object;
       console.log('Checkout session completed:', session);
       
-      // For Checkout Sessions, metadata is on the session object
-      const sessionUserId = session.metadata?.userId;
-      const sessionPriceId = session.metadata?.priceId;
-      
-      if (!sessionUserId || !sessionPriceId) {
-        console.error('Missing userId or priceId in session metadata');
-        return res.status(400).json({ error: 'Missing required metadata' });
+      if (session.payment_status === 'paid') {
+        result = await handleSuccessfulPayment(
+          session.metadata?.userId,
+          session.metadata?.priceId,
+          session.customer_email,
+          session.amount_total,
+          session.payment_intent
+        );
+      } else {
+        console.log('Checkout session not paid, skipping token addition');
+        return res.status(200).json({ message: 'Checkout session not paid' });
       }
-
-      result = await handleSuccessfulPayment(sessionUserId, sessionPriceId, session.customer_email, session.amount_total);
       break;
 
     case PAYMENT_INTENT_SUCCEEDED:
       const paymentIntent = event.data.object;
       console.log('Payment intent succeeded:', paymentIntent);
       
-      // For Payment Intents, metadata is on the paymentIntent object
-      const paymentIntentUserId = paymentIntent.metadata?.userId;
-      const paymentIntentPriceId = paymentIntent.metadata?.priceId;
-      
-      if (!paymentIntentUserId || !paymentIntentPriceId) {
-        console.error('Missing userId or priceId in payment intent metadata');
-        return res.status(400).json({ error: 'Missing required metadata' });
+      // Process the payment only if it hasn't been processed before
+      if (!processedPaymentIntents.has(paymentIntent.id)) {
+        result = await handleSuccessfulPayment(
+          paymentIntent.metadata?.userId,
+          paymentIntent.metadata?.priceId,
+          paymentIntent.metadata?.email,
+          paymentIntent.amount,
+          paymentIntent.id
+        );
+      } else {
+        console.log(`Payment ${paymentIntent.id} already processed, skipping`);
+        return res.status(200).json({ message: 'Payment already processed' });
       }
-
-      result = await handleSuccessfulPayment(paymentIntentUserId, paymentIntentPriceId, paymentIntent.metadata.email, paymentIntent.amount);
       break;
 
     case PAYMENT_INTENT_PAYMENT_FAILED:
@@ -279,7 +291,7 @@ exports.handleWebhook = async (req, res) => {
 
   if (result) {
     if (result.success) {
-      res.status(200).json({ message: `Payment succeeded. New balance is ${result.newBalance}` });
+      res.status(200).json({ message: result.message || `Payment succeeded. New balance is ${result.newBalance}` });
     } else {
       res.status(500).json({ error: `Error processing payment: ${result.error}` });
     }

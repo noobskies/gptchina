@@ -23,8 +23,6 @@ const ClaimTokensButton = ({ refetchBalance }) => {
         headers: { Authorization: `Bearer ${token}` }
       });
       const { lastTokenClaimTimestamp, serverCurrentTime } = response.data;
-      console.log('Last token claim timestamp:', lastTokenClaimTimestamp);
-      console.log('Server current time:', serverCurrentTime);
 
       if (lastTokenClaimTimestamp && serverCurrentTime) {
         const elapsedTime = serverCurrentTime - lastTokenClaimTimestamp;
@@ -40,7 +38,7 @@ const ClaimTokensButton = ({ refetchBalance }) => {
     } catch (error) {
       console.error('Error fetching last token claim timestamp:', error);
       if (error.response && error.response.status === 401) {
-        logout(); // Force logout if unauthorized
+        logout();
       }
     }
   }, [isAuthenticated, token, logout]);
@@ -48,7 +46,7 @@ const ClaimTokensButton = ({ refetchBalance }) => {
   useEffect(() => {
     if (isAuthenticated && token) {
       fetchLastTokenClaimTimestamp();
-      const intervalId = setInterval(fetchLastTokenClaimTimestamp, 60000); // Refresh every minute
+      const intervalId = setInterval(fetchLastTokenClaimTimestamp, 60000);
       return () => clearInterval(intervalId);
     }
   }, [fetchLastTokenClaimTimestamp, isAuthenticated, token]);

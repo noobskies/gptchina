@@ -12,9 +12,6 @@ const getUserLastTokenClaimTimestamp = async (req, res) => {
     const lastTokenClaimTimestamp = user.lastTokenClaimTimestamp ? user.lastTokenClaimTimestamp.getTime() : 0;
     const tokenClaimCount = user.tokenClaimCount || 0;
     const serverCurrentTime = Date.now();
-    console.log('Last token claim timestamp:', lastTokenClaimTimestamp);
-    console.log('Token claim count:', tokenClaimCount);
-    console.log('Server current time:', serverCurrentTime);
     res.status(200).json({ lastTokenClaimTimestamp, tokenClaimCount, serverCurrentTime });
   } catch (err) {
     logger.error('[getUserLastTokenClaimTimestamp]', err);
