@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Dialog } from '~/components/ui/';
 import DialogTemplate from '~/components/ui/DialogTemplate';
 import { useAuthContext } from '../../../hooks/AuthContext';
@@ -10,25 +10,22 @@ import { tokenOptions, tokenOptionsChina } from '~/components/payment/paymentCon
 import { processBitcoinPayment } from '~/components/payment/BitcoinPayment';
 import { processStripePayment } from '~/components/payment/StripePayment';
 
+const mainPaymentOptions = ['wechat_pay', 'alipay', 'card', 'bitcoin'];
+const mobilePaymentOptions = ['google_pay', 'apple_pay'];
+
 export default function PaymentDialog({ open, onOpenChange }) {
   const { user } = useAuthContext();
-  const userId = user?.id;
-  const email = user?.email;
+  const { id: userId, email } = user || {};
   const [processingTokenAmount, setProcessingTokenAmount] = useState(null);
   const [selectedTokens, setSelectedTokens] = useState(null);
   const [selectedPaymentOption, setSelectedPaymentOption] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const localize = useLocalize();
 
-  // Determine the user's domain (China or global)
   const isChina = window.location.hostname.includes('gptchina.io');
-
-  // Select the appropriate token options array based on the user's domain
   const tokenOptionsToUse = isChina ? tokenOptionsChina : tokenOptions;
 
-  const handleSelect = useCallback((tokens) => {
-    setSelectedTokens(tokens);
-  }, []);
+  const handleSelect = useCallback((tokens) => setSelectedTokens(tokens), []);
 
   const handlePurchase = useCallback(async () => {
     if (!selectedTokens || !selectedPaymentOption) {
@@ -51,7 +48,6 @@ export default function PaymentDialog({ open, onOpenChange }) {
       } else {
         await processStripePayment(selectedOption, selectedPaymentOption, userId, email);
       }
-      // Close the modal after initiating the payment process
       onOpenChange(false);
     } catch (error) {
       console.error('Payment error:', error);
@@ -60,6 +56,32 @@ export default function PaymentDialog({ open, onOpenChange }) {
       setProcessingTokenAmount(null);
     }
   }, [selectedTokens, selectedPaymentOption, userId, email, isChina, tokenOptionsToUse, onOpenChange]);
+
+  const renderTokenOptions = () => (
+    <div className="grid w-full grid-cols-2 gap-5 p-3">
+      {tokenOptionsToUse.map((option) => (
+        <TokenOptionButton
+          key={option.tokens}
+          {...option}
+          isSelected={selectedTokens === option.tokens}
+          onClick={() => handleSelect(option.tokens)}
+        />
+      ))}
+    </div>
+  );
+
+  const renderPaymentOptions = (options) => (
+    <div className="flex flex-wrap justify-center space-x-2">
+      {options.map((option) => (
+        <PaymentOptionButton
+          key={option}
+          option={option}
+          isSelected={selectedPaymentOption === option}
+          onClick={() => setSelectedPaymentOption(option)}
+        />
+      ))}
+    </div>
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -74,17 +96,7 @@ export default function PaymentDialog({ open, onOpenChange }) {
                 <span>{errorMessage}</span>
               </div>
             )}
-            <div className="grid w-full grid-cols-2 gap-5 p-3">
-              {tokenOptionsToUse.map((option) => (
-                <TokenOptionButton
-                  key={option.tokens}
-                  {...option}
-                  isSelected={selectedTokens === option.tokens}
-                  onClick={() => handleSelect(option.tokens)}
-                />
-              ))}
-            </div>
-
+            {renderTokenOptions()}
             <div className="my-2 flex w-full items-center">
               <div className="flex-grow border-t border-gray-300"></div>
               <span className="text-md mx-4 flex-shrink bg-transparent px-2 text-gray-700 dark:text-gray-300">
@@ -92,43 +104,10 @@ export default function PaymentDialog({ open, onOpenChange }) {
               </span>
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
-
-            <div className="flex flex-wrap justify-center space-x-2">
-              <PaymentOptionButton
-                option="wechat_pay"
-                isSelected={selectedPaymentOption === 'wechat_pay'}
-                onClick={() => setSelectedPaymentOption('wechat_pay')}
-              />
-              <PaymentOptionButton
-                option="alipay"
-                isSelected={selectedPaymentOption === 'alipay'}
-                onClick={() => setSelectedPaymentOption('alipay')}
-              />
-              <PaymentOptionButton
-                option="card"
-                isSelected={selectedPaymentOption === 'card'}
-                onClick={() => setSelectedPaymentOption('card')}
-              />
-              <PaymentOptionButton
-                option="bitcoin"
-                isSelected={selectedPaymentOption === 'bitcoin'}
-                onClick={() => setSelectedPaymentOption('bitcoin')}
-              />
+            {renderPaymentOptions(mainPaymentOptions)}
+            <div className="mt-2">
+              {renderPaymentOptions(mobilePaymentOptions)}
             </div>
-
-            <div className="flex flex-wrap justify-center space-x-2">
-              <PaymentOptionButton
-                option="google_pay"
-                isSelected={selectedPaymentOption === 'google_pay'}
-                onClick={() => setSelectedPaymentOption('google_pay')}
-              />
-              <PaymentOptionButton
-                option="apple_pay"
-                isSelected={selectedPaymentOption === 'apple_pay'}
-                onClick={() => setSelectedPaymentOption('apple_pay')}
-              />
-            </div>
-
             <button
               onClick={handlePurchase}
               disabled={processingTokenAmount !== null}
