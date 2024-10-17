@@ -58,6 +58,7 @@ const DeepLinkHandler = () => {
           // Add more cases for other deep link paths as needed
           default:
             // For any unhandled paths, navigate to the home page
+            console.log('Unhandled deep link path:', path);
             navigate('/');
         }
       });
