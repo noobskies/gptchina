@@ -93,7 +93,7 @@ const ClaimTokensButton = ({ refetchBalance }) => {
     } catch (error) {
       console.error('Error claiming tokens:', error);
       if (error.response && error.response.status === 401) {
-        logout(); // Force logout if unauthorized
+        console.log('An error occurred while claiming tokens. Please try again later.');
       }
     } finally {
       setIsLoading(false);
