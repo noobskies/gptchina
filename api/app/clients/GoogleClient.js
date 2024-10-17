@@ -26,7 +26,7 @@ const {
   titleInstruction,
   truncateText,
 } = require('./prompts');
-const spendTokens = require('~/models/spendTokens');
+const { spendTokens } = require('~/models/spendTokens');
 const BaseClient = require('./BaseClient');
 
 const loc = 'us-central1';
