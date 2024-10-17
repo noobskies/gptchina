@@ -38,7 +38,7 @@ const ClaimTokensButton = ({ refetchBalance }) => {
     } catch (error) {
       console.error('Error fetching last token claim timestamp:', error);
       if (error.response && error.response.status === 401) {
-        logout();
+        console.log('User is not authenticated');
       }
     }
   }, [isAuthenticated, token, logout]);
