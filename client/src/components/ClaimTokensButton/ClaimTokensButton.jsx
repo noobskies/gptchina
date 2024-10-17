@@ -4,97 +4,71 @@ import { FaRegThumbsUp, FaSpinner } from 'react-icons/fa';
 import { useLocalize } from '~/hooks';
 import { useAuthContext } from '~/hooks/AuthContext';
 
+const CLAIM_COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
 const ClaimTokensButton = ({ refetchBalance }) => {
   const localize = useLocalize();
-  const { isAuthenticated, token, logout } = useAuthContext();
+  const { isAuthenticated, token } = useAuthContext();
   const [isActive, setIsActive] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [lastClaimTimestamp, setLastClaimTimestamp] = useState(null);
+  const [error, setError] = useState(null);
 
-  const fetchLastTokenClaimTimestamp = useCallback(async () => {
-    if (!isAuthenticated || !token) {
-      console.log('User is not authenticated or token is missing');
-      return;
+  const updateCountdown = useCallback(() => {
+    if (lastClaimTimestamp) {
+      const now = Date.now();
+      const elapsedTime = now - lastClaimTimestamp;
+      const remainingTime = Math.max(0, CLAIM_COOLDOWN - elapsedTime);
+      setCountdown(remainingTime);
+      setIsActive(remainingTime <= 0);
     }
-
-    try {
-      const response = await axios.get('/api/claim-tokens/last-claim-timestamp', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const { lastTokenClaimTimestamp, serverCurrentTime } = response.data;
-
-      if (lastTokenClaimTimestamp && serverCurrentTime) {
-        const elapsedTime = serverCurrentTime - lastTokenClaimTimestamp;
-        const remainingTime = Math.max(0, 24 * 60 * 60 * 1000 - elapsedTime);
-
-        console.log('Elapsed time:', elapsedTime);
-        console.log('Remaining time:', remainingTime);
-        setCountdown(remainingTime);
-        setIsActive(remainingTime <= 0);
-      } else {
-        console.error('Invalid response data:', response.data);
-      }
-    } catch (error) {
-      console.error('Error fetching last token claim timestamp:', error);
-      if (error.response && error.response.status === 401) {
-        console.log('User is not authenticated');
-      }
-    }
-  }, [isAuthenticated, token, logout]);
+  }, [lastClaimTimestamp]);
 
   useEffect(() => {
-    if (isAuthenticated && token) {
-      fetchLastTokenClaimTimestamp();
-      const intervalId = setInterval(fetchLastTokenClaimTimestamp, 60000);
-      return () => clearInterval(intervalId);
-    }
-  }, [fetchLastTokenClaimTimestamp, isAuthenticated, token]);
+    const fetchLastClaimTimestamp = async () => {
+      if (!isAuthenticated || !token) return;
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdown((prevCountdown) => {
-        const newCountdown = Math.max(0, prevCountdown - 1000);
-        if (newCountdown === 0) {
-          setIsActive(true);
-          console.log('Countdown reached zero, button should be active now');
-        }
-        return newCountdown;
-      });
-    }, 1000);
-
-    return () => {
-      clearInterval(timer);
+      try {
+        const response = await axios.get('/api/claim-tokens/last-claim-timestamp', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setLastClaimTimestamp(response.data.lastTokenClaimTimestamp);
+      } catch (error) {
+        console.error('Error fetching last token claim timestamp:', error);
+        setError('Failed to fetch last claim timestamp');
+      }
     };
-  }, []);
+
+    fetchLastClaimTimestamp();
+  }, [isAuthenticated, token]);
+
+  useEffect(() => {
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 1000);
+    return () => clearInterval(timer);
+  }, [updateCountdown]);
 
   const handleClaimTokens = async () => {
-    if (!isActive || !isAuthenticated || !token) {
-      console.log('Button clicked but not active or user not authenticated or token missing');
-      return;
-    }
+    if (!isActive || !isAuthenticated || !token) return;
 
     try {
       setIsLoading(true);
-      console.log('Claiming tokens...');
+      setError(null);
       const response = await axios.post('/api/claim-tokens/claim', {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      console.log('Claim response:', response.data);
+      setLastClaimTimestamp(Date.now());
       setIsActive(false);
-      setCountdown(24 * 60 * 60 * 1000);
+      setCountdown(CLAIM_COOLDOWN);
       setIsSuccess(true);
       refetchBalance();
 
-      // Reset success state after 2 seconds
-      setTimeout(() => {
-        setIsSuccess(false);
-      }, 2500);
+      setTimeout(() => setIsSuccess(false), 2500);
     } catch (error) {
       console.error('Error claiming tokens:', error);
-      if (error.response && error.response.status === 401) {
-        console.log('An error occurred while claiming tokens. Please try again later.');
-      }
+      setError('Failed to claim tokens. Please try again later.');
     } finally {
       setIsLoading(false);
     }
@@ -104,52 +78,51 @@ const ClaimTokensButton = ({ refetchBalance }) => {
     const hours = Math.floor(time / (60 * 60 * 1000));
     const minutes = Math.floor((time % (60 * 60 * 1000)) / (60 * 1000));
     const seconds = Math.floor((time % (60 * 1000)) / 1000);
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds
-      .toString()
-      .padStart(2, '0')}`;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  if (!isAuthenticated || !token) {
-    return null; // Don't render the button if the user is not authenticated or token is missing
-  }
+  if (!isAuthenticated || !token) return null;
 
   return (
-    <button
-      className={`relative mb-1 w-full rounded py-1 transition-colors duration-300 ${
-        isSuccess
-          ? 'bg-green-600 text-white'
-          : isActive
-            ? 'bg-blue-600 text-white hover:bg-blue-600'
-            : 'cursor-not-allowed bg-gray-300 text-gray-500'
-      }`}
-      onClick={handleClaimTokens}
-      disabled={!isActive || isSuccess || isLoading}
-    >
-      <div className="flex h-6 items-center justify-center">
-        {isLoading ? (
-          <span className="flex items-center">
-            <FaSpinner className="mr-2 animate-spin" />
-          </span>
-        ) : (
-          <>
-            <span className={`${isSuccess ? 'invisible' : ''}`}>
-              {isActive ? (
-                localize('claim_active')
-              ) : (
-                <>
-                  {localize('claim_inactive')} {formatTime(countdown)}
-                </>
-              )}
+    <>
+      <button
+        className={`relative mb-1 w-full rounded py-1 transition-colors duration-300 ${
+          isSuccess
+            ? 'bg-green-600 text-white'
+            : isActive
+              ? 'bg-blue-600 text-white hover:bg-blue-600'
+              : 'cursor-not-allowed bg-gray-300 text-gray-500'
+        }`}
+        onClick={handleClaimTokens}
+        disabled={!isActive || isSuccess || isLoading}
+      >
+        <div className="flex h-6 items-center justify-center">
+          {isLoading ? (
+            <span className="flex items-center">
+              <FaSpinner className="mr-2 animate-spin" />
             </span>
-            {isSuccess && (
-              <span className="absolute inset-0 flex items-center justify-center animate-in fade-in">
-                <FaRegThumbsUp />
+          ) : (
+            <>
+              <span className={`${isSuccess ? 'invisible' : ''}`}>
+                {isActive ? (
+                  localize('claim_active')
+                ) : (
+                  <>
+                    {localize('claim_inactive')} {formatTime(countdown)}
+                  </>
+                )}
               </span>
-            )}
-          </>
-        )}
-      </div>
-    </button>
+              {isSuccess && (
+                <span className="absolute inset-0 flex items-center justify-center animate-in fade-in">
+                  <FaRegThumbsUp />
+                </span>
+              )}
+            </>
+          )}
+        </div>
+      </button>
+      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+    </>
   );
 };
 
