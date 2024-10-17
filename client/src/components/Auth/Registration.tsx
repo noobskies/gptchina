@@ -8,6 +8,27 @@ import { ErrorMessage } from './ErrorMessage';
 import { Spinner } from '~/components/svg';
 import { useLocalize } from '~/hooks';
 
+const AutofillStyleFix = () => (
+  <style jsx global>{`
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: #000000;
+      transition: background-color 5000s ease-in-out 0s;
+      box-shadow: inset 0 0 20px 20px #ffffff;
+    }
+    .dark input:-webkit-autofill,
+    .dark input:-webkit-autofill:hover,
+    .dark input:-webkit-autofill:focus,
+    .dark input:-webkit-autofill:active {
+      -webkit-text-fill-color: #ffffff;
+      box-shadow: inset 0 0 20px 20px #000000;
+    }
+  `}</style>
+);
+
 const Registration: React.FC = () => {
   const navigate = useNavigate();
   const localize = useLocalize();
@@ -70,7 +91,10 @@ const Registration: React.FC = () => {
             validation,
           )}
           aria-invalid={!!errors[id]}
-          className="webkit-dark-styles peer block w-full appearance-none rounded-md border border-black/10 bg-white px-2.5 pb-2.5 pt-5 text-sm text-gray-800 focus:border-blue-500 focus:outline-none dark:border-white/20 dark:bg-gray-900 dark:text-white dark:focus:border-blue-500"
+          className="
+          webkit-dark-styles transition-color peer w-full rounded-2xl border border-border-light
+          bg-surface-primary px-3.5 pb-2.5 pt-3 text-text-primary duration-200 
+          focus:border-green-500 focus:outline-none"
           placeholder=" "
           data-testid={id}
         />
@@ -91,6 +115,7 @@ const Registration: React.FC = () => {
 
   return (
     <>
+      <AutofillStyleFix />
       {errorMessage && (
         <ErrorMessage>
           {localize('com_auth_error_create')} {errorMessage}
