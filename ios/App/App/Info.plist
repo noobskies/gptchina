@@ -55,6 +55,12 @@
             <string>io.novlisky.app</string>
         </dict>
     </array>
+
+    <!-- Add this new key for Associated Domains -->
+    <key>com.apple.developer.associated-domains</key>
+    <array>
+        <string>applinks:novlisky.io</string>
+    </array>
     <!-- Added Key -->
     <key>UIRequiresFullScreen</key>
     <true/>
