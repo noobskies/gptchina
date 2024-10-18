@@ -95,16 +95,7 @@ const tokenValues = Object.assign(
     'gpt-4o-2024-08-06': { prompt: 2.5, completion: 10 },
     o1: { prompt: 15, completion: 60 },
     'gemini-1.5': { prompt: 2.2, completion: 4.9 },
-    gemini: { prompt: 0.5, completion: 1.5 },
-    'gemini-1.5-flash-latest': { prompt: 0.35, completion: 1.05 },
-    'gemini-1.0-pro': { prompt: 0.5, completion: 1.5 },
-    'gemini-1.0-pro-001': { prompt: 0.5, completion: 1.5 },
-    'gemini-1.0-pro-latest': { prompt: 0.5, completion: 1.5 },
-    'gemini-1.0-pro-vision-latest': { prompt: 0.5, completion: 1.5 },
-    'gemini-1.5-pro-latest': { prompt: 2.2, completion: 4.9 },
-    'gemini-pro': { prompt: 0.5, completion: 1.5 }, // Alias for gemini-1.0-pro
-    'gemini-pro-vision': { prompt: 0.5, completion: 1.5 }, // Estimated based on gemini-1.0-pro
-    'gemini-1.5-pro-exp-0801': { prompt: 2.2, completion: 4.9 },
+    gemini: { prompt: 2.2, completion: 4.9 },
   },
   bedrockValues,
 );
@@ -165,26 +156,6 @@ const getValueKey = (model, endpoint) => {
     return '32k';
   } else if (modelName.includes('gpt-4')) {
     return '8k';
-  } else if (modelName.includes('gemini-1.5-flash-latest')) {
-    return 'gemini-1.5-flash-latest';
-  } else if (modelName.includes('gemini-1.5-pro-latest')) {
-    return 'gemini-1.5-pro-latest';
-  } else if (modelName.includes('gemini-1.0-pro-vision-latest')) {
-    return 'gemini-1.0-pro-vision-latest';
-  } else if (modelName.includes('gemini-1.0-pro-latest')) {
-    return 'gemini-1.0-pro-latest';
-  } else if (modelName.includes('gemini-1.0-pro-001')) {
-    return 'gemini-1.0-pro-001';
-  } else if (modelName.includes('gemini-1.0-pro')) {
-    return 'gemini-1.0-pro';
-  } else if (modelName.includes('gemini-pro-vision')) {
-    return 'gemini-pro-vision';
-  } else if (modelName.includes('gemini-pro')) {
-    return 'gemini-pro';
-  } else if (modelName.includes('gemini-1.5-pro-exp-0801')) {
-    return 'gemini-1.5-pro-exp-0801';
-  } else if (modelName.includes('gemini')) {
-    return 'gemini-1.0-pro';
   } else if (tokenValues[modelName]) {
     return modelName;
   }
