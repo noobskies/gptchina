@@ -94,8 +94,17 @@ const tokenValues = Object.assign(
     'claude-3.5-sonnet': { prompt: 2.2, completion: 4.9 },
     'gpt-4o-2024-08-06': { prompt: 2.5, completion: 10 },
     o1: { prompt: 15, completion: 60 },
-    'gemini-1.5': { prompt: 7, completion: 21 },
+    'gemini-1.5': { prompt: 2.2, completion: 4.9 },
     gemini: { prompt: 0.5, completion: 1.5 },
+    'gemini-1.5-flash-latest': { prompt: 0.35, completion: 1.05 },
+    'gemini-1.0-pro': { prompt: 0.5, completion: 1.5 },
+    'gemini-1.0-pro-001': { prompt: 0.5, completion: 1.5 },
+    'gemini-1.0-pro-latest': { prompt: 0.5, completion: 1.5 },
+    'gemini-1.0-pro-vision-latest': { prompt: 0.5, completion: 1.5 },
+    'gemini-1.5-pro-latest': { prompt: 2.2, completion: 4.9 },
+    'gemini-pro': { prompt: 0.5, completion: 1.5 }, // Alias for gemini-1.0-pro
+    'gemini-pro-vision': { prompt: 0.5, completion: 1.5 }, // Estimated based on gemini-1.0-pro
+    'gemini-1.5-pro-exp-0801': { prompt: 2.2, completion: 4.9 },
   },
   bedrockValues,
 );
