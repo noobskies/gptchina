@@ -26,92 +26,99 @@ const bedrockValues = {
 };
 
 /**
+ * Mapping of model token sizes to their respective multipliers for prompt and completion.
+ * The rates are 1 USD per 1M tokens.
+ * @type {Object.<string, {prompt: number, completion: number}>}
+ */
+const tokenValues = Object.assign(
+  {
+    '8k': { prompt: 33.6, completion: 67.1 },
+    '32k': { prompt: 67.1, completion: 134.2 },
+    '4k': { prompt: 2.2, completion: 2.7 },
+    '16k': { prompt: 3.8, completion: 4.9 },
+    'gpt-3.5-turbo-1106': { prompt: 0.6, completion: 0.8 },
+    'gpt-4o': { prompt: 2.2, completion: 4.9 },
+    'gpt-4o-mini': { prompt: 0.25, completion: 0.6 },
+    'o1-preview': { prompt: 7.5, completion: 16 },
+    'o1-mini': { prompt: 1.5, completion: 4 },
+    'gpt-4-1106': { prompt: 3.8, completion: 9.3 },
+    'gpt-3.5-turbo-0125': { prompt: 0.6, completion: 0.8 },
+    'claude-3-5-sonnet-20240620': { prompt: 2.2, completion: 4.9 },
+    'claude-3-opus': { prompt: 9.3, completion: 22.5 },
+    'claude-3-sonnet': { prompt: 1.2, completion: 4.6 },
+    'claude-3-haiku': { prompt: 0.6, completion: 0.8 },
+    'claude-2.1': { prompt: 9.3, completion: 26.9 },
+    'claude-2': { prompt: 9.3, completion: 26.9 },
+    'claude-': { prompt: 6.0, completion: 11.5 },
+    'command-r-plus': { prompt: 3.8, completion: 17.0 },
+    'command-r': { prompt: 1.1, completion: 2.2 },
+    command: { prompt: 0.9, completion: 0.9 },
+    'gemini-1.5-flash-latest': { prompt: 0.35, completion: 1.05 },
+    'gemini-1.0-pro': { prompt: 0.5, completion: 1.5 },
+    'gemini-1.0-pro-001': { prompt: 0.5, completion: 1.5 },
+    'gemini-1.0-pro-latest': { prompt: 0.5, completion: 1.5 },
+    'gemini-1.0-pro-vision-latest': { prompt: 0.5, completion: 1.5 },
+    'gemini-1.5-pro-latest': { prompt: 2.2, completion: 4.9 },
+    'gemini-pro': { prompt: 0.5, completion: 1.5 },
+    'gemini-pro-vision': { prompt: 0.5, completion: 1.5 },
+    'gemini-1.5-pro-exp-0801': { prompt: 2.2, completion: 4.9 },
+    'llama-3.1-sonar-small-128k-chat': { prompt: 0.7, completion: 0.7 },
+    'llama-3.1-sonar-small-128k-online': { prompt: 0.7, completion: 0.7 },
+    'llama-3.1-sonar-large-128k-chat': { prompt: 1.6, completion: 1.6 },
+    'llama-3.1-sonar-large-128k-online': { prompt: 1.6, completion: 1.6 },
+    'llama-3.1-70b-instruct': { prompt: 1.6, completion: 1.6 },
+    'llama-3.1-8b-instruct': { prompt: 0.7, completion: 0.7 },
+    'llama3-70b-8192': { prompt: 1.2, completion: 1.4 },
+    'llama3-8b-8192': { prompt: 0.6, completion: 0.6 },
+    'llama2-70b-4096': { prompt: 1.3, completion: 1.4 },
+    'mixtral-8x7b-32768': { prompt: 0.8, completion: 0.8 },
+    'gemma-7b-it': { prompt: 0.6, completion: 0.6 },
+    'open-mistral-7b': { prompt: 0.6, completion: 0.6 },
+    'open-mixtral-8x7b': { prompt: 0.8, completion: 0.8 },
+    'mistral-tiny': { prompt: 0.6, completion: 0.6 },
+    'open-mixtral-8x22b': { prompt: 1.3, completion: 2.7 },
+    'open-mixtral-8x22b-2404': { prompt: 1.3, completion: 2.7 },
+    'mistral-small-2312': { prompt: 0.7, completion: 1.2 },
+    'mistral-small': { prompt: 0.7, completion: 1.2 },
+    'mistral-small-2402': { prompt: 0.7, completion: 1.2 },
+    'mistral-small-latest': { prompt: 0.7, completion: 1.2 },
+    'mistral-medium-latest': { prompt: 1.1, completion: 2.2 },
+    'mistral-medium-2312': { prompt: 1.1, completion: 2.2 },
+    'mistral-medium': { prompt: 1.1, completion: 2.2 },
+    'mistral-large-latest': { prompt: 1.4, completion: 3.3 },
+    'mistral-large-2402': { prompt: 1.4, completion: 3.3 },
+    'mistral-large-2407': { prompt: 1.4, completion: 3.3 },
+    'codestral-2405': { prompt: 0.8, completion: 1.3 },
+    'codestral-latest': { prompt: 0.8, completion: 1.3 },
+    'mistral-embed': { prompt: 0.6, completion: 0.6 },
+    'claude-3.5-sonnet': { prompt: 2.2, completion: 4.9 },
+    'gpt-4o-2024-08-06': { prompt: 2.5, completion: 10 },
+    o1: { prompt: 15, completion: 60 },
+    'gemini-1.5': { prompt: 7, completion: 21 },
+    gemini: { prompt: 0.5, completion: 1.5 },
+  },
+  bedrockValues,
+);
 
-Mapping of model token sizes to their respective multipliers for prompt and completion.
-The rates are 1 USD per 1M tokens.
-@type {Object.<string, {prompt: number, completion: number}>} */
-const tokenValues = {
-  '8k': { prompt: 33.6, completion: 67.1 },
-  '32k': { prompt: 67.1, completion: 134.2 },
-  '4k': { prompt: 2.2, completion: 2.7 },
-  '16k': { prompt: 3.8, completion: 4.9 },
-  'gpt-3.5-turbo-1106': { prompt: 0.6, completion: 0.8 },
-  'gpt-4o': { prompt: 2.2, completion: 4.9 },
-  'gpt-4o-mini': { prompt: 0.25, completion: 0.6 },
-  'o1-preview': { prompt: 7.5, completion: 16 },
-  'o1-mini': { prompt: 1.5, completion: 4 },
-  'gpt-4-1106': { prompt: 3.8, completion: 9.3 },
-  'gpt-3.5-turbo-0125': { prompt: 0.6, completion: 0.8 },
-  'claude-3-5-sonnet-20240620': { prompt: 2.2, completion: 4.9 },
-  'claude-3-opus': { prompt: 9.3, completion: 22.5 },
-  'claude-3-sonnet': { prompt: 1.2, completion: 4.6 },
-  'claude-3-haiku': { prompt: 0.6, completion: 0.8 },
-  'claude-2.1': { prompt: 9.3, completion: 26.9 },
-  'claude-2': { prompt: 9.3, completion: 26.9 },
-  'claude-': { prompt: 6.0, completion: 11.5 },
-  'command-r-plus': { prompt: 3.8, completion: 17.0 },
-  'command-r': { prompt: 1.1, completion: 2.2 },
-  /* cohere doesn't have rates for the older command models,
-so this was from https://artificialanalysis.ai/models/command-light/providers */
-  command: { prompt: 0.9, completion: 0.9 },
-
-  // gemini
-  'gemini-1.5-flash-latest': { prompt: 0.35, completion: 1.05 },
-  'gemini-1.0-pro': { prompt: 0.5, completion: 1.5 },
-  'gemini-1.0-pro-001': { prompt: 0.5, completion: 1.5 },
-  'gemini-1.0-pro-latest': { prompt: 0.5, completion: 1.5 },
-  'gemini-1.0-pro-vision-latest': { prompt: 0.5, completion: 1.5 },
-  'gemini-1.5-pro-latest': { prompt: 2.2, completion: 4.9 },
-  'gemini-pro': { prompt: 0.5, completion: 1.5 }, // Alias for gemini-1.0-pro
-  'gemini-pro-vision': { prompt: 0.5, completion: 1.5 }, // Estimated based on gemini-1.0-pro
-  'gemini-1.5-pro-exp-0801': { prompt: 2.2, completion: 4.9 },
-  // end gemini
-
-  // start perplexity usage
-  'llama-3.1-sonar-small-128k-chat': { prompt: 0.7, completion: 0.7 },
-  'llama-3.1-sonar-small-128k-online': { prompt: 0.7, completion: 0.7 },
-  'llama-3.1-sonar-large-128k-chat': { prompt: 1.6, completion: 1.6 },
-  'llama-3.1-sonar-large-128k-online': { prompt: 1.6, completion: 1.6 },
-  'llama-3.1-70b-instruct': { prompt: 1.6, completion: 1.6 },
-  'llama-3.1-8b-instruct': { prompt: 0.7, completion: 0.7 },
-  // end perplexity usage
-
-  // groq
-  'llama3-70b-8192': { prompt: 1.2, completion: 1.4 },
-  'llama3-8b-8192': { prompt: 0.6, completion: 0.6 },
-  'llama2-70b-4096': { prompt: 1.3, completion: 1.4 },
-  'mixtral-8x7b-32768': { prompt: 0.8, completion: 0.8 },
-  'gemma-7b-it': { prompt: 0.6, completion: 0.6 },
-  // end groq
-
-  // mistral
-  'open-mistral-7b': { prompt: 0.6, completion: 0.6 },
-  'open-mixtral-8x7b': { prompt: 0.8, completion: 0.8 },
-  'mistral-tiny': { prompt: 0.6, completion: 0.6 },
-  'open-mixtral-8x22b': { prompt: 1.3, completion: 2.7 },
-  'open-mixtral-8x22b-2404': { prompt: 1.3, completion: 2.7 },
-  'mistral-small-2312': { prompt: 0.7, completion: 1.2 },
-  'mistral-small': { prompt: 0.7, completion: 1.2 },
-  'mistral-small-2402': { prompt: 0.7, completion: 1.2 },
-  'mistral-small-latest': { prompt: 0.7, completion: 1.2 },
-  'mistral-medium-latest': { prompt: 1.1, completion: 2.2 },
-  'mistral-medium-2312': { prompt: 1.1, completion: 2.2 },
-  'mistral-medium': { prompt: 1.1, completion: 2.2 },
-  'mistral-large-latest': { prompt: 1.4, completion: 3.3 },
-  'mistral-large-2402': { prompt: 1.4, completion: 3.3 },
-  'mistral-large-2407': { prompt: 1.4, completion: 3.3 },
-  'codestral-2405': { prompt: 0.8, completion: 1.3 },
-  'codestral-latest': { prompt: 0.8, completion: 1.3 },
-  'mistral-embed': { prompt: 0.6, completion: 0.6 },
-  // end mistral
+/**
+ * Mapping of model token sizes to their respective multipliers for cached input, read and write.
+ * See Anthropic's documentation on this: https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching#pricing
+ * The rates are 1 USD per 1M tokens.
+ * @type {Object.<string, {write: number, read: number }>}
+ */
+const cacheTokenValues = {
+  'claude-3.5-sonnet': { write: 3.75, read: 0.3 },
+  'claude-3-5-sonnet': { write: 3.75, read: 0.3 },
+  'claude-3-haiku': { write: 0.3, read: 0.03 },
 };
 
 /**
-
-Retrieves the key associated with a given model name.
-@param {string} model - The model name to match.
-@param {string} endpoint - The endpoint name to match.
-@returns {string|undefined} The key corresponding to the model name, or undefined if no match is found. */
+ * Retrieves the key associated with a given model name.
+ *
+ * @param {string} model - The model name to match.
+ * @param {string} endpoint - The endpoint name to match.
+ * @returns {string|undefined} The key corresponding to the model name, or undefined if no match is found.
+ */
 const getValueKey = (model, endpoint) => {
   const modelName = matchModelName(model, endpoint);
   if (!modelName) {
@@ -168,7 +175,6 @@ const getValueKey = (model, endpoint) => {
   } else if (modelName.includes('gemini-1.5-pro-exp-0801')) {
     return 'gemini-1.5-pro-exp-0801';
   } else if (modelName.includes('gemini')) {
-    // Fallback for any other Gemini model
     return 'gemini-1.0-pro';
   } else if (tokenValues[modelName]) {
     return modelName;
