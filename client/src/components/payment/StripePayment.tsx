@@ -10,8 +10,6 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
   const { priceId } = selectedOption;
   const domain = window.location.hostname;
 
-  console.log('Payment method before sending request:', paymentMethod);
-
   try {
     const res = await fetch('/api/payment/stripe/create-checkout-session', {
       method: 'POST',
@@ -25,8 +23,6 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
       }),
     });
 
-    console.log('Server response:', res);
-
     if (!res.ok) {
       const errorData = await res.json();
       throw new Error(`Server error: ${errorData.error || res.statusText}`);
@@ -39,17 +35,27 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
     }
 
     if (Capacitor.isNativePlatform()) {
-      // For native platforms (Android, iOS)
-      await Browser.open({ url: data.url });
+      // Remove existing listeners
+      await Browser.removeAllListeners();
       
+      // Add browser finished listener
       Browser.addListener('browserFinished', () => {
-        console.log('Browser finished, payment might be complete');
-        // You may want to check the payment status here
+        console.log('Browser finished');
+        window.location.reload();
+      });
+
+      // Add page loaded listener
+      Browser.addListener('browserPageLoaded', () => {
+        console.log('Browser page loaded');
+      });
+
+      await Browser.open({
+        url: data.url,
+        presentationStyle: 'popover',
       });
 
       return { success: true };
     } else {
-      // For web
       const stripe = await stripePromise;
       const { error } = await stripe.redirectToCheckout({ sessionId: data.sessionId });
       if (error) {
