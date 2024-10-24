@@ -83,21 +83,9 @@ exports.createPaymentIntent = async (req, res) => {
         : paymentMethod,
     ];
 
-    // Create base URLs with query parameters
-    const baseUrl = 'https://novlisky.io';
-    const successUrl = new URL('/payment/success', baseUrl);
-    const cancelUrl = new URL('/payment/cancel', baseUrl);
-
-    // Add query parameters
-    successUrl.searchParams.append('session_id', '{CHECKOUT_SESSION_ID}');
-    successUrl.searchParams.append('user_id', userId.toString());
-    successUrl.searchParams.append('price_id', priceId);
-    successUrl.searchParams.append('status', 'success');
-
-    cancelUrl.searchParams.append('session_id', '{CHECKOUT_SESSION_ID}');
-    cancelUrl.searchParams.append('user_id', userId.toString());
-    cancelUrl.searchParams.append('price_id', priceId);
-    cancelUrl.searchParams.append('status', 'cancelled');
+    // Simple URL parameters
+    const successUrl = `https://novlisky.io?user_id=${userId}&price_id=${priceId}&status=success`;
+    const cancelUrl = `https://novlisky.io?user_id=${userId}&price_id=${priceId}&status=cancelled`;
 
     console.log('Creating Stripe Checkout session with options:', {
       payment_method_types,
@@ -122,8 +110,8 @@ exports.createPaymentIntent = async (req, res) => {
       customer_email: email,
       payment_method_options: paymentMethodOptions,
       mode: 'payment',
-      success_url: successUrl.toString(),
-      cancel_url: cancelUrl.toString(),
+      success_url: successUrl,
+      cancel_url: cancelUrl,
     });
 
     const session = await stripe.checkout.sessions.create({
@@ -149,8 +137,8 @@ exports.createPaymentIntent = async (req, res) => {
       customer_email: email,
       payment_method_options: paymentMethodOptions,
       mode: 'payment',
-      success_url: successUrl.toString(),
-      cancel_url: cancelUrl.toString(),
+      success_url: successUrl,
+      cancel_url: cancelUrl,
     });
 
     console.log('Stripe Checkout session created:', session);
