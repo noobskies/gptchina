@@ -44,14 +44,25 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
         window.location.reload();
       });
 
-      // Add page loaded listener
-      Browser.addListener('browserPageLoaded', () => {
+      // Add page loaded listener to detect redirect
+      Browser.addListener('browserPageLoaded', async () => {
         console.log('Browser page loaded');
+        try {
+          // Check if we're back on our domain
+          if (document.location.href.includes('novlisky.io')) {
+            console.log('Back on main site, closing browser');
+            await Browser.close();
+            window.location.reload();
+          }
+        } catch (err) {
+          console.error('Error handling page load:', err);
+        }
       });
 
       await Browser.open({
         url: data.url,
         presentationStyle: 'popover',
+        toolbarColor: '#ffffff'
       });
 
       return { success: true };
