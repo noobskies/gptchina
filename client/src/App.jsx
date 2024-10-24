@@ -1,7 +1,5 @@
-import React, { useEffect } from 'react';
-import { RouterProvider, useNavigate, useLocation } from 'react-router-dom';
-import { Capacitor } from '@capacitor/core';
-import ReactGA from 'react-ga4';
+import React from 'react';
+import { RouterProvider } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import { DndProvider } from 'react-dnd';
 import * as RadixToast from '@radix-ui/react-toast';
@@ -13,60 +11,7 @@ import { ToastProvider } from './Providers';
 import Toast from './components/ui/Toast';
 import { LiveAnnouncer } from '~/a11y';
 import { router } from './routes';
-import { getDomainData } from './utils/domainUtils';
-
-const { trackingCode } = getDomainData();
-
-ReactGA.initialize(trackingCode);
-
-const PageViewTracker = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    ReactGA.send('pageview', { page_path: location.pathname });
-  }, [location]);
-
-  return null;
-};
-
-const DeepLinkHandler = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (Capacitor.isNativePlatform()) {
-      console.log('Native platform detected');
-      Capacitor.App.addListener('appUrlOpen', (data) => {
-        console.log('Deep link received', data.url);
-        
-        const url = new URL(data.url);
-        const path = url.pathname;
-
-        // Handle navigation based on the path
-        switch (path) {
-          case '/':
-            // Handle root path, possibly check for query parameters
-            const paymentStatus = url.searchParams.get('payment_status');
-            if (paymentStatus === 'success') {
-              console.log('Payment successful');
-              // You can dispatch an action or update state here
-            } else if (paymentStatus === 'cancel') {
-              console.log('Payment cancelled');
-              // Handle cancelled payment
-            }
-            navigate('/');
-            break;
-          // Add more cases for other deep link paths as needed
-          default:
-            // For any unhandled paths, navigate to the home page
-            console.log('Unhandled deep link path:', path);
-            navigate('/');
-        }
-      });
-    }
-  }, [navigate]);
-
-  return null;
-};
+import DeepLinkHandler from './components/Tools/DeepLinkHandler';
 
 const App = () => {
   const { setError } = useApiErrorBoundary();
@@ -91,7 +36,6 @@ const App = () => {
                 <DndProvider backend={HTML5Backend}>
                   <div className="min-h-screen flex flex-col">
                     <RouterProvider router={router}>
-                      <PageViewTracker />
                       <DeepLinkHandler />
                     </RouterProvider>
                     <ReactQueryDevtools initialIsOpen={false} position="top-right" />
