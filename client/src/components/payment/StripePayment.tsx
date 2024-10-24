@@ -50,9 +50,17 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
         try {
           // Check if we're back on our domain
           if (document.location.href.includes('novlisky.io')) {
-            console.log('Back on main site, closing browser');
-            await Browser.close();
-            window.location.reload();
+            const urlParams = new URLSearchParams(document.location.search);
+            const status = urlParams.get('status');
+            
+            if (status === 'success' || status === 'cancelled') {
+              console.log('Payment flow completed with status:', status);
+              await Browser.close();
+              
+              if (status === 'success') {
+                window.location.reload();
+              }
+            }
           }
         } catch (err) {
           console.error('Error handling page load:', err);
