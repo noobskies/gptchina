@@ -37,21 +37,40 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
     if (Capacitor.isNativePlatform()) {
       // Remove existing listeners
       await Browser.removeAllListeners();
+      
+      // Add browser finished listener
+      Browser.addListener('browserFinished', () => {
+        console.log('Browser finished');
+        window.location.reload();
+      });
 
       // Add page loaded listener to detect redirect
       Browser.addListener('browserPageLoaded', async () => {
+        console.log('Browser page loaded');
         try {
-          await Browser.close();
-          window.location.reload();
+          // Check if we're back on our domain
+          if (document.location.href.includes('novlisky.io')) {
+            const urlParams = new URLSearchParams(document.location.search);
+            const status = urlParams.get('status');
+            
+            if (status === 'success' || status === 'cancelled') {
+              console.log('Payment flow completed with status:', status);
+              await Browser.close();
+              
+              if (status === 'success') {
+                window.location.reload();
+              }
+            }
+          }
         } catch (err) {
-          console.error('Error closing browser:', err);
+          console.error('Error handling page load:', err);
         }
       });
 
       await Browser.open({
         url: data.url,
         presentationStyle: 'popover',
-        toolbarColor: '#3b82f6'
+        toolbarColor: '#000000'
       });
 
       return { success: true };
