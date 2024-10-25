@@ -32,18 +32,15 @@ const processedPaymentIntents = new Set();
 
 exports.createPaymentIntent = async (req, res) => {
   try {
-    const { priceId, userId, domain, email, paymentMethod } = req.body;
+    const { priceId, userId, domain, email, paymentMethod, isNative } = req.body;
     console.log('Received payment intent request:', {
       priceId,
       userId,
       domain,
       email,
       paymentMethod,
+      isNative
     });
-
-    // Check if request is from Capacitor
-    const isCapacitor = req.headers['user-agent']?.includes('Capacitor');
-    console.log('Is Capacitor request:', isCapacitor);
 
     if (!Object.prototype.hasOwnProperty.call(priceDetailsConfig, priceId)) {
       console.error('Invalid price ID:', priceId);
@@ -87,15 +84,14 @@ exports.createPaymentIntent = async (req, res) => {
         : paymentMethod,
     ];
 
-    // Base URL for the domain
     const baseUrl = `https://${domain}`;
     
-    // Different URLs for Capacitor and web
-    const successUrl = isCapacitor
+    // Different URLs based on isNative
+    const successUrl = isNative
       ? `${baseUrl}/stripe-success?user_id=${userId}&price_id=${priceId}`
       : `${baseUrl}?user_id=${userId}&price_id=${priceId}&status=success`;
       
-    const cancelUrl = isCapacitor
+    const cancelUrl = isNative
       ? `${baseUrl}/stripe-cancel?user_id=${userId}&price_id=${priceId}`
       : `${baseUrl}?user_id=${userId}&price_id=${priceId}&status=cancelled`;
 
@@ -113,13 +109,13 @@ exports.createPaymentIntent = async (req, res) => {
           email: email,
           priceId: priceId,
           domain: domain,
-          isCapacitor: isCapacitor ? 'true' : 'false'
+          isNative: isNative ? 'true' : 'false'
         },
       },
       metadata: {
         userId: userId.toString(),
         priceId: priceId,
-        isCapacitor: isCapacitor ? 'true' : 'false'
+        isNative: isNative ? 'true' : 'false'
       },
       customer_email: email,
       payment_method_options: paymentMethodOptions,
@@ -142,13 +138,13 @@ exports.createPaymentIntent = async (req, res) => {
           email: email,
           priceId: priceId,
           domain: domain,
-          isCapacitor: isCapacitor ? 'true' : 'false'
+          isNative: isNative ? 'true' : 'false'
         },
       },
       metadata: {
         userId: userId.toString(),
         priceId: priceId,
-        isCapacitor: isCapacitor ? 'true' : 'false'
+        isNative: isNative ? 'true' : 'false'
       },
       customer_email: email,
       payment_method_options: paymentMethodOptions,

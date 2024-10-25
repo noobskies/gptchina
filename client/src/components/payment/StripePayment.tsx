@@ -9,25 +9,19 @@ const stripePromise = loadStripe(
 export const processStripePayment = async (selectedOption, paymentMethod, userId, email) => {
   const { priceId } = selectedOption;
   const domain = window.location.hostname;
+  const isNative = Capacitor.isNativePlatform();
 
   try {
-    // Add Capacitor user agent header for native platforms
-    const headers = {
-      'Content-Type': 'application/json',
-      ...(Capacitor.isNativePlatform() && {
-        'User-Agent': 'Capacitor'
-      })
-    };
-
     const res = await fetch('/api/payment/stripe/create-checkout-session', {
       method: 'POST',
-      headers,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
         priceId, 
         userId, 
         domain, 
         email, 
         paymentMethod,
+        isNative
       }),
     });
 
@@ -42,14 +36,14 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
       throw new Error('Invalid response from server: missing sessionId or url');
     }
 
-    if (Capacitor.isNativePlatform()) {
+    if (isNative) {
       console.log('Opening payment in Capacitor browser:', data.url);
       await Browser.open({
         url: data.url,
         presentationStyle: 'popover',
         toolbarColor: '#000000'
       });
-      return { success: true, pending: true }; // Added pending flag since we'll handle final status in success/cancel pages
+      return { success: true, pending: true };
     } else {
       const stripe = await stripePromise;
       const { error } = await stripe.redirectToCheckout({ sessionId: data.sessionId });
@@ -61,7 +55,7 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
     }
   } catch (error) {
     console.error('Payment processing error:', error);
-    if (Capacitor.isNativePlatform()) {
+    if (isNative) {
       alert('Payment processing error: ' + error.message);
     }
     return { success: false, error: error.message };
