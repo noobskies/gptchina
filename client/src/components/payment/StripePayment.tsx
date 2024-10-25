@@ -41,7 +41,8 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
       await Browser.open({
         url: data.url,
         presentationStyle: 'popover',
-        toolbarColor: '#000000'
+        toolbarColor: '#000000',
+        windowName: '_self'
       });
       return { success: true, pending: true };
     } else {
