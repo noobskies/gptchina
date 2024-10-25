@@ -10,7 +10,7 @@ const DeepLinkHandler = () => {
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
 
-    const handleUrl = async (url: string) => {
+    const handleUrl = async (url) => {
       console.log('Processing URL:', url);
       
       try {
