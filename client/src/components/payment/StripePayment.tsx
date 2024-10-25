@@ -11,9 +11,17 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
   const domain = window.location.hostname;
 
   try {
+    // Add Capacitor user agent header for native platforms
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(Capacitor.isNativePlatform() && {
+        'User-Agent': 'Capacitor'
+      })
+    };
+
     const res = await fetch('/api/payment/stripe/create-checkout-session', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ 
         priceId, 
         userId, 
@@ -35,13 +43,13 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
     }
 
     if (Capacitor.isNativePlatform()) {
-      alert('Opening payment page...');
+      console.log('Opening payment in Capacitor browser:', data.url);
       await Browser.open({
         url: data.url,
         presentationStyle: 'popover',
         toolbarColor: '#000000'
       });
-      return { success: true };
+      return { success: true, pending: true }; // Added pending flag since we'll handle final status in success/cancel pages
     } else {
       const stripe = await stripePromise;
       const { error } = await stripe.redirectToCheckout({ sessionId: data.sessionId });

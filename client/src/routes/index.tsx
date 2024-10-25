@@ -12,6 +12,7 @@ import TermsOfService from '~/components/TermsOfService/TermsOfService';
 import PrivacyPolicy from '~/components/PrivacyPolicy/PrivacyPolicy';
 import { AuthContextProvider } from '~/hooks/AuthContext';
 import DeepLinkHandler from '~/components/Tools/DeepLinkHandler';
+import { StripeSuccessPage, StripeCancelPage } from '~/components/Stripe/StripePaymentPages';
 import StartupLayout from './Layouts/Startup';
 import LoginLayout from './Layouts/Login';
 import dashboardRoutes from './Dashboard';
@@ -54,6 +55,15 @@ export const router = createBrowserRouter([
   {
     path: 'verify',
     element: <VerifyEmail />,
+  },
+  // Add these new routes at the root level
+  {
+    path: 'stripe-success',
+    element: <StripeSuccessPage />,
+  },
+  {
+    path: 'stripe-cancel',
+    element: <StripeCancelPage />,
   },
   {
     element: <AuthLayout />,
@@ -98,7 +108,7 @@ export const router = createBrowserRouter([
     element: <PrivacyPolicy />,
   },
   {
-    path: 'token-burn-rates', // New route for AI token burn rates
+    path: 'token-burn-rates',
     element: <AiTokenBurnRates />,
   },
 ]);

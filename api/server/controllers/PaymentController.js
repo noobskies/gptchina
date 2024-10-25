@@ -41,6 +41,10 @@ exports.createPaymentIntent = async (req, res) => {
       paymentMethod,
     });
 
+    // Check if request is from Capacitor
+    const isCapacitor = req.headers['user-agent']?.includes('Capacitor');
+    console.log('Is Capacitor request:', isCapacitor);
+
     if (!Object.prototype.hasOwnProperty.call(priceDetailsConfig, priceId)) {
       console.error('Invalid price ID:', priceId);
       return res.status(400).json({ error: 'Invalid price ID' });
@@ -83,9 +87,17 @@ exports.createPaymentIntent = async (req, res) => {
         : paymentMethod,
     ];
 
-    // Simple URL parameters
-    const successUrl = `https://novlisky.io?user_id=${userId}&price_id=${priceId}&status=success`;
-    const cancelUrl = `https://novlisky.io?user_id=${userId}&price_id=${priceId}&status=cancelled`;
+    // Base URL for the domain
+    const baseUrl = `https://${domain}`;
+    
+    // Different URLs for Capacitor and web
+    const successUrl = isCapacitor
+      ? `${baseUrl}/stripe-success?user_id=${userId}&price_id=${priceId}`
+      : `${baseUrl}?user_id=${userId}&price_id=${priceId}&status=success`;
+      
+    const cancelUrl = isCapacitor
+      ? `${baseUrl}/stripe-cancel?user_id=${userId}&price_id=${priceId}`
+      : `${baseUrl}?user_id=${userId}&price_id=${priceId}&status=cancelled`;
 
     console.log('Creating Stripe Checkout session with options:', {
       payment_method_types,
@@ -101,11 +113,13 @@ exports.createPaymentIntent = async (req, res) => {
           email: email,
           priceId: priceId,
           domain: domain,
+          isCapacitor: isCapacitor ? 'true' : 'false'
         },
       },
       metadata: {
         userId: userId.toString(),
         priceId: priceId,
+        isCapacitor: isCapacitor ? 'true' : 'false'
       },
       customer_email: email,
       payment_method_options: paymentMethodOptions,
@@ -128,11 +142,13 @@ exports.createPaymentIntent = async (req, res) => {
           email: email,
           priceId: priceId,
           domain: domain,
+          isCapacitor: isCapacitor ? 'true' : 'false'
         },
       },
       metadata: {
         userId: userId.toString(),
         priceId: priceId,
+        isCapacitor: isCapacitor ? 'true' : 'false'
       },
       customer_email: email,
       payment_method_options: paymentMethodOptions,
