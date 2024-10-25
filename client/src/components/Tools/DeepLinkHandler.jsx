@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
+import { Preferences } from '@capacitor/preferences';
 
 const DeepLinkHandler = () => {
   const navigate = useNavigate();
@@ -10,41 +11,29 @@ const DeepLinkHandler = () => {
   useEffect(() => {
     if (Capacitor.isNativePlatform()) {
       const handler = CapacitorApp.addListener('appUrlOpen', async (data) => {
-        alert('Deep link received:', data.url);
-        
+        alert('Deep link received: ' + data.url);
+
         try {
-          const url = new URL(data.url);
-          
-          // If this is a return from Stripe payment
-          if (url.host.includes('novlisky.io')) {
-            alert('Detected return to novlisky.io');
+          if (data.url.includes('novlisky.io') && data.url.includes('status=')) {
+            // Store payment status before closing
+            await Preferences.set({
+              key: 'paymentStatus',
+              value: data.url
+            });
             
-            const status = url.searchParams.get('status');
-            
-            // Close the browser first
+            alert('Closing browser');
             await Browser.close();
             
-            // Handle different payment statuses
-            if (status === 'success') {
+            // Check the status and show appropriate alert
+            if (data.url.includes('status=success')) {
               alert('Payment successful!');
-              // Refresh the app to update balance
               window.location.reload();
-            } else if (status === 'cancelled') {
-              alert('Payment was cancelled');
-              // Just navigate back to dashboard without refresh
-              navigate('/c/new', { replace: true });
-            } else {
-              // If no status, just close the browser
-              alert('No payment status found');
+            } else if (data.url.includes('status=cancelled')) {
+              alert('Payment cancelled');
             }
-          } else {
-            // Handle other deep links normally
-            const internalPath = url.pathname + url.search;
-            navigate(internalPath);
           }
         } catch (err) {
-          alert('Error handling deep link:', err);
-          alert('Error processing payment return: ' + err.message);
+          alert('Error: ' + err.message);
         }
       });
 
