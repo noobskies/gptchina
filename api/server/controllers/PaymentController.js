@@ -86,7 +86,6 @@ exports.createPaymentIntent = async (req, res) => {
 
     const baseUrl = `https://${domain}`;
     
-    // Different URLs based on isNative
     const successUrl = isNative
       ? `${baseUrl}/stripe-success?user_id=${userId}&price_id=${priceId}`
       : `${baseUrl}?user_id=${userId}&price_id=${priceId}&status=success`;

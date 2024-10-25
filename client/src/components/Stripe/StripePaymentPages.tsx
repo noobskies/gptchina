@@ -1,23 +1,41 @@
-// First, create these two new components in a new file (e.g., src/components/Stripe/StripePaymentPages.jsx)
-import { useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
+import { useSearchParams } from 'react-router-dom';
 
-export const StripeSuccessPage = () => {
+export const StripeSuccessPage: FC = () => {
+  const [searchParams] = useSearchParams();
+  console.log('StripeSuccessPage mounted');
+
   useEffect(() => {
-    const handleSuccess = async () => {
-      if (Capacitor.isNativePlatform()) {
-        try {
-          alert('Payment successful!');
+    console.log('StripeSuccessPage useEffect triggered');
+    
+    const userId = searchParams.get('user_id');
+    const priceId = searchParams.get('price_id');
+    console.log('Success URL params:', { userId, priceId });
+
+    const handleSuccess = async (): Promise<void> => {
+      try {
+        console.log('Processing success...');
+        alert('Payment successful! Closing browser...');
+        
+        if (Capacitor.isNativePlatform()) {
           await Browser.close();
-          window.location.reload();
-        } catch (err) {
-          console.error('Error handling success:', err);
+          console.log('Browser closed');
+          
+          setTimeout(() => {
+            console.log('Reloading page...');
+            window.location.reload();
+          }, 500);
         }
+      } catch (err) {
+        console.error('Error in success handler:', err);
+        alert(`Error processing success: ${err instanceof Error ? err.message : 'Unknown error'}`);
       }
     };
+
     handleSuccess();
-  }, []);
+  }, [searchParams]);
   
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
@@ -33,20 +51,34 @@ export const StripeSuccessPage = () => {
   );
 };
 
-export const StripeCancelPage = () => {
+export const StripeCancelPage: FC = () => {
+  const [searchParams] = useSearchParams();
+  console.log('StripeCancelPage mounted');
+
   useEffect(() => {
-    const handleCancel = async () => {
-      if (Capacitor.isNativePlatform()) {
-        try {
-          alert('Payment cancelled');
+    console.log('StripeCancelPage useEffect triggered');
+    
+    const userId = searchParams.get('user_id');
+    const priceId = searchParams.get('price_id');
+    console.log('Cancel URL params:', { userId, priceId });
+
+    const handleCancel = async (): Promise<void> => {
+      try {
+        console.log('Processing cancellation...');
+        alert('Payment cancelled. Closing browser...');
+        
+        if (Capacitor.isNativePlatform()) {
           await Browser.close();
-        } catch (err) {
-          console.error('Error handling cancel:', err);
+          console.log('Browser closed');
         }
+      } catch (err) {
+        console.error('Error in cancel handler:', err);
+        alert(`Error processing cancellation: ${err instanceof Error ? err.message : 'Unknown error'}`);
       }
     };
+
     handleCancel();
-  }, []);
+  }, [searchParams]);
   
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">

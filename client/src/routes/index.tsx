@@ -31,6 +31,14 @@ const AuthLayout = () => (
 
 export const router = createBrowserRouter([
   {
+    path: 'stripe-success',
+    element: <StripeSuccessPage />,
+  },
+  {
+    path: 'stripe-cancel',
+    element: <StripeCancelPage />,
+  },
+  {
     path: 'share/:shareId',
     element: <ShareRoute />,
   },
@@ -55,15 +63,6 @@ export const router = createBrowserRouter([
   {
     path: 'verify',
     element: <VerifyEmail />,
-  },
-  // Add these new routes at the root level
-  {
-    path: 'stripe-success',
-    element: <StripeSuccessPage />,
-  },
-  {
-    path: 'stripe-cancel',
-    element: <StripeCancelPage />,
   },
   {
     element: <AuthLayout />,
