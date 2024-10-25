@@ -11,6 +11,7 @@ import AiTokenBurnRates from '~/components/AiTokenBurnRates/AiTokenBurnRates';
 import TermsOfService from '~/components/TermsOfService/TermsOfService';
 import PrivacyPolicy from '~/components/PrivacyPolicy/PrivacyPolicy';
 import { AuthContextProvider } from '~/hooks/AuthContext';
+import DeepLinkHandler from '~/components/Tools/DeepLinkHandler';
 import StartupLayout from './Layouts/Startup';
 import LoginLayout from './Layouts/Login';
 import dashboardRoutes from './Dashboard';
@@ -21,6 +22,7 @@ import Root from './Root';
 
 const AuthLayout = () => (
   <AuthContextProvider>
+    <DeepLinkHandler />
     <Outlet />
     <ApiErrorWatcher />
   </AuthContextProvider>
