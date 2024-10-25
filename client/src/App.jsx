@@ -11,7 +11,6 @@ import { ToastProvider } from './Providers';
 import Toast from './components/ui/Toast';
 import { LiveAnnouncer } from '~/a11y';
 import { router } from './routes';
-import DeepLinkHandler from './components/Tools/DeepLinkHandler';
 
 const App = () => {
   const { setError } = useApiErrorBoundary();
@@ -36,7 +35,6 @@ const App = () => {
                 <DndProvider backend={HTML5Backend}>
                   <div className="min-h-screen flex flex-col">
                     <RouterProvider router={router}>
-                      <DeepLinkHandler />
                     </RouterProvider>
                     <ReactQueryDevtools initialIsOpen={false} position="top-right" />
                     <Toast />

@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
-import { Preferences } from '@capacitor/preferences';
 
 const DeepLinkHandler = () => {
   const navigate = useNavigate();
@@ -15,16 +14,9 @@ const DeepLinkHandler = () => {
 
         try {
           if (data.url.includes('novlisky.io') && data.url.includes('status=')) {
-            // Store payment status before closing
-            await Preferences.set({
-              key: 'paymentStatus',
-              value: data.url
-            });
-            
             alert('Closing browser');
             await Browser.close();
             
-            // Check the status and show appropriate alert
             if (data.url.includes('status=success')) {
               alert('Payment successful!');
               window.location.reload();

@@ -9,6 +9,7 @@ import { useAuthContext, useAssistantsMap, useAgentsMap, useFileMap, useSearch }
 import { Nav, MobileNav } from '~/components/Nav';
 import TermsAndConditionsModal from '~/components/ui/TermsAndConditionsModal';
 import { Banner } from '~/components/Banners';
+import DeepLinkHandler from '~/components/Tools/DeepLinkHandler';
 
 export default function Root() {
   const { isAuthenticated, logout } = useAuthContext();
@@ -55,6 +56,7 @@ export default function Root() {
       <FileMapContext.Provider value={fileMap}>
         <AssistantsMapContext.Provider value={assistantsMap}>
           <AgentsMapContext.Provider value={agentsMap}>
+            <DeepLinkHandler />
             <Banner onHeightChange={setBannerHeight} />
             <div
               className="flex text-text-primary bg-surface-primary"  // Added text and background color classes
