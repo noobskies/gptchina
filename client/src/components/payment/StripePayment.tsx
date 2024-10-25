@@ -18,7 +18,7 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
       body: JSON.stringify({ 
         priceId, 
         userId, 
-        domain, 
+        domain,
         email, 
         paymentMethod,
         isNative
