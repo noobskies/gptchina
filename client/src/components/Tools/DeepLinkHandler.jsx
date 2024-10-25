@@ -13,17 +13,38 @@ const DeepLinkHandler = () => {
         alert('Deep link received:', data.url);
         
         try {
-          if (data.url.includes('novlisky.io')) {
-            alert('Detected return to novlisky.io, closing browser');
-            alert('Payment process completed');
-            await Browser.close();
-          }
-          
           const url = new URL(data.url);
-          const internalPath = url.pathname + url.search;
-          navigate(internalPath);
+          
+          // If this is a return from Stripe payment
+          if (url.host.includes('novlisky.io')) {
+            alert('Detected return to novlisky.io');
+            
+            const status = url.searchParams.get('status');
+            
+            // Close the browser first
+            await Browser.close();
+            
+            // Handle different payment statuses
+            if (status === 'success') {
+              alert('Payment successful!');
+              // Refresh the app to update balance
+              window.location.reload();
+            } else if (status === 'cancelled') {
+              alert('Payment was cancelled');
+              // Just navigate back to dashboard without refresh
+              navigate('/c/new', { replace: true });
+            } else {
+              // If no status, just close the browser
+              alert('No payment status found');
+            }
+          } else {
+            // Handle other deep links normally
+            const internalPath = url.pathname + url.search;
+            navigate(internalPath);
+          }
         } catch (err) {
           alert('Error handling deep link:', err);
+          alert('Error processing payment return: ' + err.message);
         }
       });
 

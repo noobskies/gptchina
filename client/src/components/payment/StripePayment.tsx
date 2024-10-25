@@ -35,30 +35,12 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
     }
 
     if (Capacitor.isNativePlatform()) {
-      // Remove existing listeners
-      await Browser.removeAllListeners();
-
-      // Create the event handler function separately to match the type
-      const handlePageLoad = () => {
-        try {
-          // We'll use the DeepLinkHandler to handle the actual URL checking and closing
-          alert('Browser page loaded');
-        } catch (err) {
-          alert('Error handling page load:', err);
-        }
-      };
-
-      // Add the listener with the correct type signature
-      Browser.addListener('browserPageLoaded', handlePageLoad);
-
-      // Opening payment page
       alert('Opening payment page...');
       await Browser.open({
         url: data.url,
         presentationStyle: 'popover',
         toolbarColor: '#000000'
       });
-
       return { success: true };
     } else {
       const stripe = await stripePromise;
