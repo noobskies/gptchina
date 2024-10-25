@@ -1,7 +1,6 @@
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
 import { loadStripe } from '@stripe/stripe-js';
-import type { PluginListenerHandle } from '@capacitor/core';
 
 const stripePromise = loadStripe(
   'pk_live_51MwvEEHKD0byXXCl8IzAvUl0oZ7RE6vIz72lWUVYl5rW3zy0u3FiGtIAgsbmqSHbhkTJeZjs5VEbQMNStaaQL9xQ001pwxI3RP'
@@ -39,20 +38,18 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
       // Remove existing listeners
       await Browser.removeAllListeners();
 
-      // Listen for URL changes in the browser
-      Browser.addListener('browserPageLoaded', () => {
-        alert('Browser page loaded');
+      // Create the event handler function separately to match the type
+      const handlePageLoad = () => {
         try {
-          // Check if current URL includes novlisky.io
-          if (window.location.href.includes('novlisky.io')) {
-            alert('Detected return to novlisky.io, closing browser');
-            alert('Payment process completed');
-            Browser.close();
-          }
+          // We'll use the DeepLinkHandler to handle the actual URL checking and closing
+          console.log('Browser page loaded');
         } catch (err) {
           console.error('Error handling page load:', err);
         }
-      });
+      };
+
+      // Add the listener with the correct type signature
+      Browser.addListener('browserPageLoaded', handlePageLoad);
 
       // Opening payment page
       alert('Opening payment page...');

@@ -9,22 +9,21 @@ const DeepLinkHandler = () => {
 
   useEffect(() => {
     if (Capacitor.isNativePlatform()) {
-      const handler = CapacitorApp.addListener('appUrlOpen', async (event) => {
-        console.log('Deep link received:', event.url);
+      const handler = CapacitorApp.addListener('appUrlOpen', async (data) => {
+        alert('Deep link received:', data.url);
         
         try {
-          const url = new URL(event.url);
-          
-          // If we detect novlisky.io, close the browser
-          if (url.host.includes('novlisky.io')) {
+          if (data.url.includes('novlisky.io')) {
+            alert('Detected return to novlisky.io, closing browser');
+            alert('Payment process completed');
             await Browser.close();
           }
-
-          // Still handle the navigation
+          
+          const url = new URL(data.url);
           const internalPath = url.pathname + url.search;
           navigate(internalPath);
         } catch (err) {
-          console.error('Error handling deep link:', err);
+          alert('Error handling deep link:', err);
         }
       });
 
