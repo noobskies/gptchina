@@ -38,28 +38,35 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
       // Remove existing listeners
       await Browser.removeAllListeners();
       
+      // Track if payment was successful
+      let paymentSuccessful = false;
+
       // Add browser finished listener
       Browser.addListener('browserFinished', () => {
         console.log('Browser finished');
-        window.location.reload();
+        if (paymentSuccessful) {
+          alert('Payment completed successfully! Refreshing your balance...');
+          window.location.reload();
+        }
       });
 
-      // Add page loaded listener to detect redirect
+      // Listen for URL changes in the browser
       Browser.addListener('browserPageLoaded', async () => {
         console.log('Browser page loaded');
         try {
-          // Check if we're back on our domain
-          if (document.location.href.includes('novlisky.io')) {
-            const urlParams = new URLSearchParams(document.location.search);
+          if (window.location.href.includes('novlisky.io')) {
+            const urlParams = new URLSearchParams(window.location.search);
             const status = urlParams.get('status');
             
-            if (status === 'success' || status === 'cancelled') {
-              console.log('Payment flow completed with status:', status);
+            if (status === 'success') {
+              alert('Payment successful! Please wait while we process your order...');
+              console.log('Payment successful, closing browser');
+              paymentSuccessful = true;
               await Browser.close();
-              
-              if (status === 'success') {
-                window.location.reload();
-              }
+            } else if (status === 'cancelled') {
+              alert('Payment was cancelled');
+              console.log('Payment cancelled, closing browser');
+              await Browser.close();
             }
           }
         } catch (err) {
@@ -67,6 +74,8 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
         }
       });
 
+      // Opening payment page
+      alert('Opening payment page...');
       await Browser.open({
         url: data.url,
         presentationStyle: 'popover',
