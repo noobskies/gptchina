@@ -14,31 +14,17 @@ const DeepLinkHandler = () => {
         
         try {
           const url = new URL(event.url);
-          const urlParams = new URLSearchParams(url.search);
-          const status = urlParams.get('status');
-          const internalPath = url.pathname + url.search;
-
-          // Handle payment status if present
-          if (status) {
-            if (status === 'success') {
-              console.log('Payment successful via deep link');
-              alert('Payment completed successfully!');
-              // Close any open browser windows
-              await Browser.close();
-              // Refresh the page to update balance
-              window.location.reload();
-            } else if (status === 'cancelled') {
-              console.log('Payment cancelled via deep link');
-              alert('Payment was cancelled');
-              await Browser.close();
-            }
+          
+          // If we detect novlisky.io, close the browser
+          if (url.host.includes('novlisky.io')) {
+            await Browser.close();
           }
 
-          // Navigate to the appropriate route within your app
+          // Still handle the navigation
+          const internalPath = url.pathname + url.search;
           navigate(internalPath);
         } catch (err) {
           console.error('Error handling deep link:', err);
-          alert('Error processing payment redirect: ' + err.message);
         }
       });
 
