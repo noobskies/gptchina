@@ -6,9 +6,9 @@ import { Browser } from '@capacitor/browser';
 
 const DeepLinkHandler = () => {
   const navigate = useNavigate();
-
   useEffect(() => {
     if (Capacitor.isNativePlatform()) {
+      alert('Listening for deep links...');
       const handler = CapacitorApp.addListener('appUrlOpen', async (data) => {
         alert('Deep link received: ' + data.url);
 
