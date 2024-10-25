@@ -42,9 +42,9 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
       const handlePageLoad = () => {
         try {
           // We'll use the DeepLinkHandler to handle the actual URL checking and closing
-          console.log('Browser page loaded');
+          alert('Browser page loaded');
         } catch (err) {
-          console.error('Error handling page load:', err);
+          alert('Error handling page load:', err);
         }
       };
 
