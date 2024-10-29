@@ -2,6 +2,7 @@ import path, { resolve } from 'path';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { defineConfig, createLogger, loadEnv } from 'vite';
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import type { Plugin } from 'vite';
 
@@ -129,6 +130,11 @@ export default defineConfig(({ mode }) => {
       }),
       sourcemapExclude({ excludeNodeModules: true }),
       htmlPlugin(env),
+      sentryVitePlugin({
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+        org: "gpt-global",
+        project: "gpt",
+      }),
     ],
     publicDir: './public',
     build: {

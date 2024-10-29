@@ -11,6 +11,20 @@ import { ToastProvider } from './Providers';
 import Toast from './components/ui/Toast';
 import { LiveAnnouncer } from '~/a11y';
 import { router } from './routes';
+import * as Sentry from "@sentry/react";
+
+// Initialize Sentry
+Sentry.init({
+  dsn: "https://6e77bfde3b3ba578b2830947be88080f@o4507099226177536.ingest.us.sentry.io/4508207501672448",
+  integrations: [
+    Sentry.browserTracingIntegration(),
+    Sentry.replayIntegration(),
+  ],
+  tracesSampleRate: 1.0,
+  tracePropagationTargets: ["localhost", /^https:\/\/yourserver\.io\/api/],
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0,
+});
 
 const App = () => {
   const { setError } = useApiErrorBoundary();
@@ -26,27 +40,28 @@ const App = () => {
   });
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <RecoilRoot>
-        <LiveAnnouncer>
-          <ThemeProvider>
-            <RadixToast.Provider>
-              <ToastProvider>
-                <DndProvider backend={HTML5Backend}>
-                  <div className="min-h-screen flex flex-col">
-                    <RouterProvider router={router}>
-                    </RouterProvider>
-                    <ReactQueryDevtools initialIsOpen={false} position="top-right" />
-                    <Toast />
-                    <RadixToast.Viewport className="pointer-events-none fixed inset-0 z-[1000] mx-auto my-2 flex max-w-[560px] flex-col items-stretch justify-start md:pb-5" />
-                  </div>
-                </DndProvider>
-              </ToastProvider>
-            </RadixToast.Provider>
-          </ThemeProvider>
-        </LiveAnnouncer>
-      </RecoilRoot>
-    </QueryClientProvider>
+    <Sentry.ErrorBoundary fallback={<div>An error has occurred</div>}>
+      <QueryClientProvider client={queryClient}>
+        <RecoilRoot>
+          <LiveAnnouncer>
+            <ThemeProvider>
+              <RadixToast.Provider>
+                <ToastProvider>
+                  <DndProvider backend={HTML5Backend}>
+                    <div className="min-h-screen flex flex-col">
+                      <RouterProvider router={router} />
+                      <ReactQueryDevtools initialIsOpen={false} position="top-right" />
+                      <Toast />
+                      <RadixToast.Viewport className="pointer-events-none fixed inset-0 z-[1000] mx-auto my-2 flex max-w-[560px] flex-col items-stretch justify-start md:pb-5" />
+                    </div>
+                  </DndProvider>
+                </ToastProvider>
+              </RadixToast.Provider>
+            </ThemeProvider>
+          </LiveAnnouncer>
+        </RecoilRoot>
+      </QueryClientProvider>
+    </Sentry.ErrorBoundary>
   );
 };
 
