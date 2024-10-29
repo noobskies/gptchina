@@ -131,3 +131,4 @@ twa-manifest.json
 store_icon.png
 
 bubble/
+client/.env.sentry-build-plugin
