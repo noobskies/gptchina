@@ -8,6 +8,9 @@ WORKDIR /app
 
 USER node
 
+COPY --chown=${UID}:${GID} .env.production /app/.env.production
+COPY --chown=${UID}:${GID} .env.production /app/client/.env.production
+
 COPY --chown=node:node . .
 
 # Add debug steps before the build
