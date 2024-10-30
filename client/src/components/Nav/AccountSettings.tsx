@@ -1,7 +1,7 @@
 import { useRecoilState } from 'recoil';
 import * as Select from '@ariakit/react/select';
 import { Fragment, useState, memo } from 'react';
-import { FileText, LogOut } from 'lucide-react';
+import { FileText, LogOut, MessageSquare } from 'lucide-react';
 import { useGetUserBalance, useGetStartupConfig } from 'librechat-data-provider/react-query';
 import { LinkIcon, GearIcon, DropdownMenuSeparator } from '~/components';
 import FilesView from '~/components/Chat/Input/Files/FilesView';
@@ -18,6 +18,7 @@ import numeral from 'numeral';
 import ClaimTokensButton from '~/components/ClaimTokensButton/ClaimTokensButton';
 import BuyTokensButton from './BuyTokensButton';
 import store from '~/store';
+import * as Sentry from "@sentry/react";
 
 function AccountSettings() {
   const localize = useLocalize();
@@ -37,7 +38,31 @@ function AccountSettings() {
     formatted = formatted.toUpperCase();
     return formatted;
   }
+  
   const name = user?.avatar ?? user?.username ?? '';
+
+  const handleFeedback = () => {
+    Sentry.showReportDialog({
+      eventId: Sentry.captureMessage("User Feedback"),
+      // User info
+      user: {
+        name: user?.name || user?.username || 'Anonymous',
+        email: user?.email || undefined,
+      },
+      // Dialog configuration
+      title: 'Send Feedback',
+      subtitle: 'Tell us what happened',
+      subtitle2: '',
+      labelName: 'Name',
+      labelEmail: 'Email',
+      labelComments: 'What happened?',
+      labelClose: 'Close',
+      labelSubmit: 'Send Feedback',
+      errorGeneric: 'An error occurred while sending your feedback. Please try again.',
+      errorFormEntry: 'Please fill out all fields.',
+      successMessage: 'Your feedback has been sent. Thank you!',
+    });
+  };
 
   return (
     <>
@@ -105,16 +130,16 @@ function AccountSettings() {
             {user?.email ?? localize('com_nav_user')}
           </div>
           <DropdownMenuSeparator />
-        {startupConfig?.checkBalance === true &&
-          balanceQuery.data != null &&
-          !isNaN(parseFloat(balanceQuery.data)) && (
-          <>
-            <div className="text-token-text-secondary ml-3 mr-2 py-2 text-sm" role="note">
-              {`Balance: ${parseFloat(balanceQuery.data).toFixed(2)}`}
-            </div>
-            <DropdownMenuSeparator />
-          </>
-        )}
+          {startupConfig?.checkBalance === true &&
+            balanceQuery.data != null &&
+            !isNaN(parseFloat(balanceQuery.data)) && (
+            <>
+              <div className="text-token-text-secondary ml-3 mr-2 py-2 text-sm" role="note">
+                {`Balance: ${parseFloat(balanceQuery.data).toFixed(2)}`}
+              </div>
+              <DropdownMenuSeparator />
+            </>
+          )}
           <Select.SelectItem
             value=""
             onClick={() => setShowFiles(true)}
@@ -140,6 +165,14 @@ function AccountSettings() {
           >
             <GearIcon className="icon-md" aria-hidden="true" />
             {localize('com_nav_settings')}
+          </Select.SelectItem>
+          <Select.SelectItem
+            value=""
+            onClick={handleFeedback}
+            className="select-item text-sm"
+          >
+            <MessageSquare className="icon-md" aria-hidden="true" />
+            Send Feedback
           </Select.SelectItem>
           <DropdownMenuSeparator />
           <Select.SelectItem
