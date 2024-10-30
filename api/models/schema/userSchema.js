@@ -120,7 +120,7 @@ const userSchema = mongoose.Schema(
     },
     lastTokenClaimTimestamp: {
       type: Date,
-      default: null,
+      default: Date.now,
     },
     tokenClaimCount: {
       type: Number,
