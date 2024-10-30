@@ -81,10 +81,10 @@ const CreatePromptForm = ({
       CreateFormValues,
       'name' | 'category' | 'oneliner' | 'command'
     >;
-    if ((oneliner?.length || 0) > 0) {
+    if ((oneliner?.length ?? 0) > 0) {
       groupData.oneliner = oneliner;
     }
-    if ((command?.length || 0) > 0) {
+    if ((command?.length ?? 0) > 0) {
       groupData.command = command;
     }
     createPromptMutation.mutate({

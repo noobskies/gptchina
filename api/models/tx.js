@@ -138,8 +138,8 @@ const getValueKey = (model, endpoint) => {
     return 'o1-mini';
   } else if (modelName.includes('o1')) {
     return 'o1';
-  } else if (modelName.includes('gpt-4o-2024-08-06')) {
-    return 'gpt-4o-2024-08-06';
+  } else if (modelName.includes('gpt-4o-2024-05-13')) {
+    return 'gpt-4o-2024-05-13';
   } else if (modelName.includes('gpt-4o-mini')) {
     return 'gpt-4o-mini';
   } else if (modelName.includes('gpt-4o')) {

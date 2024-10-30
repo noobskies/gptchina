@@ -26,7 +26,6 @@ import { cn } from '~/utils';
 import store from '~/store';
 import { Capacitor } from '@capacitor/core';
 import { StatusBar } from '@capacitor/status-bar';
-import { TooltipProvider, Tooltip } from '@radix-ui/react-tooltip';
 
 const Nav = ({
   navVisible,
@@ -108,10 +107,8 @@ const Nav = ({
     );
 
   useEffect(() => {
-    // When a tag is selected, refetch the list of conversations related to that tag
     refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tags]);
+  }, [tags, refetch]);
 
   const { containerRef, moveToTop } = useNavScrolling<ConversationListResponse>({
     setShowLoading,
@@ -154,101 +151,96 @@ const Nav = ({
 
   return (
     <>
-      <TooltipProvider delayDuration={250}>
-        <Tooltip>
-          <div
-            data-testid="nav"
-            className={
-              'nav active max-w-[320px] flex-shrink-0 overflow-x-hidden bg-surface-primary-alt md:max-w-[260px]'
-            }
-            style={{
-              width: navVisible ? navWidth : '0px',
-              visibility: navVisible ? 'visible' : 'hidden',
-              transition: 'width 0.2s, visibility 0.2s',
-            }}
-          >
-            <div className="h-full w-[320px] md:w-[260px]">
-              <div className="flex h-full min-h-0 flex-col">
-                <div
-                  className={cn(
-                    'flex h-full min-h-0 flex-col transition-opacity',
-                    isToggleHovering && !isSmallScreen ? 'opacity-50' : 'opacity-100',
-                  )}
+      <div
+        data-testid="nav"
+        className={
+          'nav active max-w-[320px] flex-shrink-0 overflow-x-hidden bg-surface-primary-alt md:max-w-[260px]'
+        }
+        style={{
+          width: navVisible ? navWidth : '0px',
+          visibility: navVisible ? 'visible' : 'hidden',
+          transition: 'width 0.2s, visibility 0.2s',
+        }}
+      >
+        <div className="h-full w-[320px] md:w-[260px]">
+          <div className="flex h-full min-h-0 flex-col">
+            <div
+              className={cn(
+                'flex h-full min-h-0 flex-col transition-opacity',
+                isToggleHovering && !isSmallScreen ? 'opacity-50' : 'opacity-100',
+              )}
+            >
+              <div
+                className={cn(
+                  'scrollbar-trigger relative h-full w-full flex-1 items-start border-white/20',
+                )}
+              >
+                <nav
+                  id="chat-history-nav"
+                  aria-label={localize('com_ui_chat_history')}
+                  className="flex h-full w-full flex-col px-3 pb-3.5"
+                  style={{
+                    paddingTop: 'env(safe-area-inset-top)',
+                  }}
                 >
                   <div
                     className={cn(
-                      'scrollbar-trigger relative h-full w-full flex-1 items-start border-white/20',
+                      '-mr-2 flex-1 flex-col overflow-y-auto pr-2 transition-opacity duration-500',
+                      isHovering ? '' : 'scrollbar-transparent',
                     )}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    ref={containerRef}
                   >
-                    <nav
-                      id="chat-history-nav"
-                      aria-label={localize('com_ui_chat_history')}
-                      className="flex h-full w-full flex-col px-3 pb-3.5"
-                      style={{
-                        paddingTop: 'env(safe-area-inset-top)'
-                      }}
-                    >
-                      <div
-                        className={cn(
-                          '-mr-2 flex-1 flex-col overflow-y-auto pr-2 transition-opacity duration-500',
-                          isHovering ? '' : 'scrollbar-transparent',
+                    {isSmallScreen ? (
+                      <div className="pt-3.5">
+                        {isSearchEnabled && (
+                          <SearchBar clearSearch={clearSearch} isSmallScreen={isSmallScreen} />
                         )}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
-                        ref={containerRef}
-                      >
-                        {isSmallScreen == true ? (
-                          <div className="pt-3.5">
-                            {isSearchEnabled === true && (
+                        {hasAccessToBookmarks && (
+                          <BookmarkNav
+                            tags={tags}
+                            setTags={setTags}
+                            isSmallScreen={isSmallScreen}
+                          />
+                        )}
+                      </div>
+                    ) : (
+                      <NewChat
+                        toggleNav={itemToggleNav}
+                        isSmallScreen={isSmallScreen}
+                        subHeaders={
+                          <>
+                            {isSearchEnabled && (
                               <SearchBar clearSearch={clearSearch} isSmallScreen={isSmallScreen} />
                             )}
-                            {hasAccessToBookmarks === true && (
+                            {hasAccessToBookmarks && (
                               <BookmarkNav
                                 tags={tags}
                                 setTags={setTags}
                                 isSmallScreen={isSmallScreen}
                               />
                             )}
-                          </div>
-                        ) : (
-                          <NewChat
-                            toggleNav={itemToggleNav}
-                            subHeaders={
-                              <>
-                                {isSearchEnabled === true && (
-                                  <SearchBar
-                                    clearSearch={clearSearch}
-                                    isSmallScreen={isSmallScreen}
-                                  />
-                                )}
-                                <BookmarkNav
-                                  tags={tags}
-                                  setTags={setTags}
-                                  isSmallScreen={isSmallScreen}
-                                />
-                              </>
-                            }
-                          />
-                        )}
-
-                        <Conversations
-                          conversations={conversations}
-                          moveToTop={moveToTop}
-                          toggleNav={itemToggleNav}
-                        />
-                        {(isFetchingNextPage || showLoading) && (
-                          <Spinner className={cn('m-1 mx-auto mb-4 h-4 w-4 text-text-primary')} />
-                        )}
-                      </div>
-                      <AccountSettings />
-                    </nav>
+                          </>
+                        }
+                      />
+                    )}
+                    <Conversations
+                      conversations={conversations}
+                      moveToTop={moveToTop}
+                      toggleNav={itemToggleNav}
+                    />
+                    {(isFetchingNextPage || showLoading) && (
+                      <Spinner className={cn('m-1 mx-auto mb-4 h-4 w-4 text-text-primary')} />
+                    )}
                   </div>
-                </div>
+                  <AccountSettings />
+                </nav>
               </div>
             </div>
           </div>
-        </Tooltip>
-      </TooltipProvider>
+        </div>
+      </div>
       <NavToggle
         isHovering={isToggleHovering}
         setIsHovering={setIsToggleHovering}
