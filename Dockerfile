@@ -1,3 +1,5 @@
+# v0.7.5-rc2
+
 # Base node image
 FROM node:20-alpine AS node
 
@@ -12,9 +14,7 @@ COPY --chown=node:node . .
 
 RUN \
     # Allow mounting of these files, which have no default
-    touch .env && \
-    touch .env.production && \
-    cp .env.production client/.env.production ; \
+    touch .env ; \
     # Create directories for the volumes to inherit the correct permissions
     mkdir -p /app/client/public/images /app/api/logs ; \
     npm config set fetch-retry-maxtimeout 600000 ; \
