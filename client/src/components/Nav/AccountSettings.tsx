@@ -1,7 +1,7 @@
 import { useRecoilState } from 'recoil';
 import * as Select from '@ariakit/react/select';
 import { Fragment, useState, memo } from 'react';
-import { FileText, LogOut, MessageSquare } from 'lucide-react';
+import { FileText, LogOut } from 'lucide-react';
 import { useGetUserBalance, useGetStartupConfig } from 'librechat-data-provider/react-query';
 import { LinkIcon, GearIcon, DropdownMenuSeparator } from '~/components';
 import FilesView from '~/components/Chat/Input/Files/FilesView';
@@ -10,15 +10,12 @@ import useAvatar from '~/hooks/Messages/useAvatar';
 import { UserIcon } from '~/components/svg';
 import { useLocalize } from '~/hooks';
 import Settings from './Settings';
-import NavLink from './NavLink';
-import Logout from './Logout';
-import { cn } from '~/utils/';
 import ErrorDialog from '~/components/Messages/Content/ErrorDialog';
 import numeral from 'numeral';
 import ClaimTokensButton from '~/components/ClaimTokensButton/ClaimTokensButton';
 import BuyTokensButton from './BuyTokensButton';
 import store from '~/store';
-import * as Sentry from "@sentry/react";
+import FeedbackDialog, { handleSentryFeedback } from './FeedbackDialog';
 
 function AccountSettings() {
   const localize = useLocalize();
@@ -41,29 +38,6 @@ function AccountSettings() {
   
   const name = user?.avatar ?? user?.username ?? '';
 
-  const handleFeedback = () => {
-    Sentry.showReportDialog({
-      eventId: Sentry.captureMessage("User Feedback"),
-      // User info
-      user: {
-        name: user?.name || user?.username || 'Anonymous',
-        email: user?.email || undefined,
-      },
-      // Dialog configuration
-      title: 'Send Feedback',
-      subtitle: 'Tell us what happened',
-      subtitle2: '',
-      labelName: 'Name',
-      labelEmail: 'Email',
-      labelComments: 'What happened?',
-      labelClose: 'Close',
-      labelSubmit: 'Send Feedback',
-      errorGeneric: 'An error occurred while sending your feedback. Please try again.',
-      errorFormEntry: 'Please fill out all fields.',
-      successMessage: 'Your feedback has been sent. Thank you!',
-    });
-  };
-
   return (
     <>
       <div className="m-1 ml-3 flex flex-col items-start whitespace-nowrap text-left text-sm text-gray-100">
@@ -85,8 +59,8 @@ function AccountSettings() {
         <Select.Select
           aria-label={localize('com_nav_account_settings')}
           data-testid="nav-user"
-          className="duration-350 mt-text-sm flex h-auto w-full items-center gap-2 rounded-xl p-2 text-sm transition-all duration-200 ease-in-out hover:bg-accent"
-        >
+          className="mt-text-sm flex h-auto w-full items-center gap-2 rounded-xl p-2 text-sm transition-all duration-200 ease-in-out hover:bg-accent"
+          >
           <div className="-ml-0.9 -mt-0.8 h-8 w-8 flex-shrink-0">
             <div className="relative flex">
               {name.length === 0 ? (
@@ -168,11 +142,10 @@ function AccountSettings() {
           </Select.SelectItem>
           <Select.SelectItem
             value=""
-            onClick={handleFeedback}
+            onClick={() => handleSentryFeedback(user)}
             className="select-item text-sm"
           >
-            <MessageSquare className="icon-md" aria-hidden="true" />
-            Send Feedback
+            <FeedbackDialog user={user} />
           </Select.SelectItem>
           <DropdownMenuSeparator />
           <Select.SelectItem
