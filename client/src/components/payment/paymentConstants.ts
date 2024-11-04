@@ -1,3 +1,4 @@
+// client/src/components/payment/paymentConstants.ts
 export const tokenOptions = [
   {
     tokens: 100000,

@@ -1,3 +1,4 @@
+// components/Messages/Content/ErrorDialog.tsx
 import React, { useState, useCallback } from 'react';
 import { Dialog } from '~/components/ui/';
 import DialogTemplate from '~/components/ui/DialogTemplate';
@@ -55,7 +56,15 @@ export default function PaymentDialog({ open, onOpenChange }) {
     } finally {
       setProcessingTokenAmount(null);
     }
-  }, [selectedTokens, selectedPaymentOption, userId, email, isChina, tokenOptionsToUse, onOpenChange]);
+  }, [
+    selectedTokens,
+    selectedPaymentOption,
+    userId,
+    email,
+    isChina,
+    tokenOptionsToUse,
+    onOpenChange,
+  ]);
 
   const renderTokenOptions = () => (
     <div className="grid w-full grid-cols-2 gap-5 p-3">
@@ -105,9 +114,7 @@ export default function PaymentDialog({ open, onOpenChange }) {
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
             {renderPaymentOptions(mainPaymentOptions)}
-            <div className="mt-2">
-              {renderPaymentOptions(mobilePaymentOptions)}
-            </div>
+            <div className="mt-2">{renderPaymentOptions(mobilePaymentOptions)}</div>
             <button
               onClick={handlePurchase}
               disabled={processingTokenAmount !== null}

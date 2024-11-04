@@ -1,3 +1,4 @@
+// api/server/controllers/PaymentController.js
 const sendEmail = require('../utils/sendEmail');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const addTokensByUserId = require('../../../config/addTokens');
@@ -253,11 +254,9 @@ exports.handleWebhook = async (req, res) => {
 
   if (result) {
     if (result.success) {
-      res
-        .status(200)
-        .json({
-          message: result.message || `Payment succeeded. New balance is ${result.newBalance}`,
-        });
+      res.status(200).json({
+        message: result.message || `Payment succeeded. New balance is ${result.newBalance}`,
+      });
     } else {
       res.status(500).json({ error: `Error processing payment: ${result.error}` });
     }

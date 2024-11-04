@@ -1,3 +1,4 @@
+// components/payment/PaymentOptionButton.tsx
 import React from 'react';
 import { SiWechat, SiAlipay } from 'react-icons/si';
 import { FaCreditCard, FaBitcoin, FaGooglePay, FaApple } from 'react-icons/fa';

@@ -1,9 +1,10 @@
+// client/src/components/payment/StripePayment.tsx
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
 import { loadStripe } from '@stripe/stripe-js';
 
 const stripePromise = loadStripe(
-  'pk_live_51MwvEEHKD0byXXCl8IzAvUl0oZ7RE6vIz72lWUVYl5rW3zy0u3FiGtIAgsbmqSHbhkTJeZjs5VEbQMNStaaQL9xQ001pwxI3RP'
+  'pk_live_51MwvEEHKD0byXXCl8IzAvUl0oZ7RE6vIz72lWUVYl5rW3zy0u3FiGtIAgsbmqSHbhkTJeZjs5VEbQMNStaaQL9xQ001pwxI3RP',
 );
 
 export const processStripePayment = async (selectedOption, paymentMethod, userId, email) => {
@@ -15,13 +16,13 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
     const res = await fetch('/api/payment/stripe/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        priceId, 
-        userId, 
+      body: JSON.stringify({
+        priceId,
+        userId,
         domain,
-        email, 
+        email,
         paymentMethod,
-        isNative
+        isNative,
       }),
     });
 
@@ -42,7 +43,7 @@ export const processStripePayment = async (selectedOption, paymentMethod, userId
         url: data.url,
         presentationStyle: 'popover',
         toolbarColor: '#000000',
-        windowName: '_self'
+        windowName: '_self',
       });
       return { success: true, pending: true };
     } else {
