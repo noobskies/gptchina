@@ -1,3 +1,4 @@
+// api/server/routes/index.js
 const assistants = require('./assistants');
 const categories = require('./categories');
 const tokenizer = require('./tokenizer');
@@ -14,8 +15,6 @@ const models = require('./models');
 const convos = require('./convos');
 const config = require('./config');
 const payment = require('./payment');
-const openNodePayment = require('./openNodePayment');
-const paypalPayment = require('./paypalPayment');
 const files = require('./files');
 const claimTokens = require('./claimTokens');
 const share = require('./share');
@@ -50,8 +49,6 @@ module.exports = {
   models,
   plugins,
   payment,
-  openNodePayment,
-  paypalPayment,
   assistants,
   staticRoute,
   claimTokens,

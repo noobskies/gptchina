@@ -111,9 +111,9 @@ const startServer = async () => {
   app.use('/api/models', routes.models);
   app.use('/api/plugins', routes.plugins);
   app.use('/api/config', routes.config);
-  app.use('/api/payment/stripe', routes.payment);
-  app.use('/api/payment/opennode', routes.openNodePayment);
-  app.use('/api/payment/paypal', routes.paypalPayment);
+  app.use('/api/payment/stripe', routes.payment.stripe);
+  app.use('/api/payment/opennode', routes.payment.opennode);
+  app.use('/api/payment/inapp', routes.payment.inapp);
   app.use('/api/assistants', routes.assistants);
   app.use('/api/files', await routes.files.initialize());
   app.use('/images/', validateImageRequest, routes.staticRoute);

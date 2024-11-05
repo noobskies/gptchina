@@ -10,12 +10,9 @@ import useAvatar from '~/hooks/Messages/useAvatar';
 import { UserIcon } from '~/components/svg';
 import { useLocalize } from '~/hooks';
 import Settings from './Settings';
-import ErrorDialog from '~/components/Messages/Content/ErrorDialog';
-import numeral from 'numeral';
-import ClaimTokensButton from '~/components/ClaimTokensButton/ClaimTokensButton';
-import BuyTokensButton from './BuyTokensButton';
 import store from '~/store';
 import FeedbackDialog, { handleSentryFeedback } from './FeedbackDialog';
+import PaymentDialog from '~/components/payment/common/PaymentDialog';
 
 function AccountSettings() {
   const localize = useLocalize();
@@ -26,35 +23,19 @@ function AccountSettings() {
   });
   const [showSettings, setShowSettings] = useState(false);
   const [showFiles, setShowFiles] = useRecoilState(store.showFiles);
+  const [showPayment, setShowPayment] = useState(false);
 
   const avatarSrc = useAvatar(user);
-  const [showBuyTokens, setShowBuyTokens] = useState(false);
-
-  function formatTokenCount(count) {
-    let formatted = numeral(count).format(count >= 1000 ? '0.[0]a' : '0');
-    formatted = formatted.toUpperCase();
-    return formatted;
-  }
-  
   const name = user?.avatar ?? user?.username ?? '';
 
   return (
     <>
-      <div className="m-1 ml-3 flex flex-col items-start whitespace-nowrap text-left text-sm text-gray-100">
-        <ClaimTokensButton refetchBalance={balanceQuery.refetch} />
-        <div className="flex items-center text-gray-800 dark:text-gray-200">
-          {`${localize('com_tokens_remaining')} ${formatTokenCount(balanceQuery.data)}`}
-        </div>
-        <a
-          id="step-3"
-          href="/token-burn-rates"
-          target="_blank"
-          className="text-xs text-blue-600"
-        >
-          {localize('com_ui_learn_more')}
-        </a>
-        <BuyTokensButton />
-      </div>
+      <button
+        onClick={() => setShowPayment(true)}
+        className="focus:bg-blue-650 w-full rounded bg-blue-600 p-2 text-white transition-colors duration-200 hover:bg-blue-700 focus:outline-none active:bg-blue-800 disabled:cursor-not-allowed disabled:bg-blue-500 disabled:hover:bg-blue-500 dark:hover:bg-blue-700"
+      >
+        {localize('com_ui_buy_token')}
+      </button>
       <Select.SelectProvider>
         <Select.Select
           aria-label={localize('com_nav_account_settings')}
@@ -107,13 +88,13 @@ function AccountSettings() {
           {startupConfig?.checkBalance === true &&
             balanceQuery.data != null &&
             !isNaN(parseFloat(balanceQuery.data)) && (
-            <>
-              <div className="text-token-text-secondary ml-3 mr-2 py-2 text-sm" role="note">
-                {`Balance: ${parseFloat(balanceQuery.data).toFixed(2)}`}
-              </div>
-              <DropdownMenuSeparator />
-            </>
-          )}
+              <>
+                <div className="text-token-text-secondary ml-3 mr-2 py-2 text-sm" role="note">
+                  {`Balance: ${parseFloat(balanceQuery.data).toFixed(2)}`}
+                </div>
+                <DropdownMenuSeparator />
+              </>
+            )}
           <Select.SelectItem
             value=""
             onClick={() => setShowFiles(true)}
@@ -159,9 +140,12 @@ function AccountSettings() {
           </Select.SelectItem>
         </Select.SelectPopover>
       </Select.SelectProvider>
+
+      {/* Payment Dialog Modal */}
+      {showPayment && <PaymentDialog open={showPayment} onOpenChange={setShowPayment} />}
+
       {showFiles && <FilesView open={showFiles} onOpenChange={setShowFiles} />}
       {showSettings && <Settings open={showSettings} onOpenChange={setShowSettings} />}
-      {showBuyTokens && <ErrorDialog open={showBuyTokens} onOpenChange={setShowBuyTokens} />}
     </>
   );
 }
