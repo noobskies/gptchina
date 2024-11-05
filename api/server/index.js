@@ -1,6 +1,10 @@
+// Require Sentry first, before any other imports
+require('./instrument');
+
 require('dotenv').config();
 const path = require('path');
 require('module-alias')({ base: path.resolve(__dirname, '..') });
+const Sentry = require('@sentry/node');
 const cors = require('cors');
 const axios = require('axios');
 const express = require('express');
@@ -49,7 +53,6 @@ const startServer = async () => {
 
   /* Middleware */
   app.use(noIndex);
-  app.use(errorController);
   app.use(
     express.json({
       limit: '5mb',
@@ -122,7 +125,6 @@ const startServer = async () => {
   app.use('/api/agents', routes.agents);
   app.use('/api/banner', routes.banner);
   app.use('/api/bedrock', routes.bedrock);
-
   app.use('/api/tags', routes.tags);
 
   app.use((req, res) => {
@@ -138,6 +140,10 @@ const startServer = async () => {
     res.type('html');
     res.send(updatedIndexHtml);
   });
+
+  // Setup Sentry error handling after all routes but before error controller
+  Sentry.setupExpressErrorHandler(app);
+  app.use(errorController);
 
   app.listen(port, host, () => {
     if (host == '0.0.0.0') {
@@ -156,6 +162,7 @@ let messageCount = 0;
 process.on('uncaughtException', (err) => {
   if (!err.message.includes('fetch failed')) {
     logger.error('There was an uncaught error:', err);
+    Sentry.captureException(err);
   }
 
   if (err.message.includes('fetch failed')) {
@@ -163,7 +170,6 @@ process.on('uncaughtException', (err) => {
       logger.warn('Meilisearch error, search will be disabled');
       messageCount++;
     }
-
     return;
   }
 
@@ -171,6 +177,7 @@ process.on('uncaughtException', (err) => {
     logger.error(
       '\n\nAn Uncaught `OpenAIError` error may be due to your reverse-proxy setup or stream configuration, or a bug in the `openai` node package.',
     );
+    Sentry.captureException(err);
     return;
   }
 
