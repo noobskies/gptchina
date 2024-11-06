@@ -16,6 +16,7 @@ const { ldapLogin } = require('~/strategies');
 const { logger } = require('~/config');
 const validateImageRequest = require('./middleware/validateImageRequest');
 const errorController = require('./controllers/ErrorController');
+const StripeController = require('./controllers/payment/StripeController');
 const configureSocialLogins = require('./socialLogins');
 const AppService = require('./services/AppService');
 const staticCache = require('./utils/staticCache');
@@ -50,6 +51,21 @@ const startServer = async () => {
   /* Middleware */
   app.use(noIndex);
   app.use(errorController);
+  app.post('/api/payment/stripe/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+    const signature = req.headers['stripe-signature'];
+
+    logger.info('Webhook received with signature:', signature);
+
+    // Pass the raw buffer to the controller
+    StripeController.handleWebhook(req.body, signature)
+      .then((event) => {
+        res.json({ received: true });
+      })
+      .catch((err) => {
+        logger.error('Webhook error:', err);
+        res.status(400).json({ error: err.message });
+      });
+  });
   app.use(
     express.json({
       limit: '5mb',

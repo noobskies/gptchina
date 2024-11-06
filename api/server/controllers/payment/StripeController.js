@@ -1,4 +1,5 @@
 // server/controllers/payment/StripeController.js
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const StripeService = require('../../services/payment/StripeService');
 const User = require('~/models/User');
 const { logger } = require('~/config');
@@ -70,17 +71,36 @@ class StripeController {
     }
   }
 
-  static async handleWebhook(req, res) {
+  static async handleWebhook(rawBody, signature) {
     try {
-      const sig = req.headers['stripe-signature'];
-      await StripeService.handleWebhook(req.rawBody, sig);
-      res.json({ received: true });
-    } catch (error) {
-      logger.error('Webhook error:', error);
-      res.status(400).json({
-        error: 'Webhook error',
-        details: error.message,
+      if (!signature) {
+        throw new Error('No stripe signature found in headers');
+      }
+
+      const event = stripe.webhooks.constructEvent(
+        rawBody, // This will now be a raw buffer
+        signature,
+        process.env.STRIPE_WEBHOOK_SECRET,
+      );
+
+      logger.info('Webhook event constructed successfully:', {
+        type: event.type,
+        id: event.id,
       });
+
+      // Handle the event
+      switch (event.type) {
+        case 'payment_intent.succeeded':
+          const paymentIntent = event.data.object;
+          // Handle successful payment
+          break;
+        // ... handle other event types
+      }
+
+      return event;
+    } catch (error) {
+      logger.error('Webhook processing error:', error);
+      throw error;
     }
   }
 }
