@@ -1,5 +1,6 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const User = require('~/models/User');
+const { Transaction } = require('~/models/Transaction');
 const { logger } = require('~/config');
 
 // Price to token mapping based on your constants
@@ -17,18 +18,19 @@ const PRICE_TOKEN_MAPPING = {
   price_1ORgzMHKD0byXXClDCm5PkwO: 10000000, // ¥250 = 10M tokens
 };
 
+// Price amount mapping in cents
 const PRICE_AMOUNT_MAPPING = {
   // Global prices (USD)
-  price_1P6dqBHKD0byXXClWuA2RGY2: 150, // $1.50 in cents
-  price_1P6dqdHKD0byXXClcboa06Tu: 500, // $5.00 in cents
-  price_1P6drEHKD0byXXClOjmSkPKm: 750, // $7.50 in cents
-  price_1P6drxHKD0byXXClVVLokkLh: 4000, // $40.00 in cents
+  price_1P6dqBHKD0byXXClWuA2RGY2: 150, // $1.50
+  price_1P6dqdHKD0byXXClcboa06Tu: 500, // $5.00
+  price_1P6drEHKD0byXXClOjmSkPKm: 750, // $7.50
+  price_1P6drxHKD0byXXClVVLokkLh: 4000, // $40.00
 
   // China prices (CNY)
-  price_1ORgxoHKD0byXXClx3u1yLa0: 1000, // ¥10 in cents
-  price_1ORgyJHKD0byXXClfvOyCbp7: 3500, // ¥35 in cents
-  price_1ORgyiHKD0byXXClHetdaI3W: 5000, // ¥50 in cents
-  price_1ORgzMHKD0byXXClDCm5PkwO: 25000, // ¥250 in cents
+  price_1ORgxoHKD0byXXClx3u1yLa0: 1000, // ¥10
+  price_1ORgyJHKD0byXXClfvOyCbp7: 3500, // ¥35
+  price_1ORgyiHKD0byXXClHetdaI3W: 5000, // ¥50
+  price_1ORgzMHKD0byXXClDCm5PkwO: 25000, // ¥250
 };
 
 // Helper to validate price IDs
@@ -50,6 +52,12 @@ class StripeService {
 
       if (!isValidPriceId(priceId)) {
         throw new Error(`Invalid priceId: ${priceId}`);
+      }
+
+      // Validate amount matches the price
+      const expectedAmount = PRICE_AMOUNT_MAPPING[priceId];
+      if (amount !== expectedAmount) {
+        throw new Error(`Invalid amount for priceId. Expected: ${expectedAmount}, Got: ${amount}`);
       }
 
       logger.info('Creating payment intent', {
@@ -104,26 +112,37 @@ class StripeService {
 
       const tokenAmount = PRICE_TOKEN_MAPPING[priceId];
 
-      // Update user's token balance with the correct number of tokens
-      const updatedUser = await User.findByIdAndUpdate(
-        user._id,
-        {
-          $inc: { tokenBalance: tokenAmount },
-          $push: {
-            transactions: {
-              type: 'purchase',
-              tokens: tokenAmount,
-              amount: paymentIntent.amount,
-              paymentId: paymentIntentId,
-              priceId,
-              timestamp: new Date(),
-            },
-          },
-        },
-        { new: true },
-      );
+      // Check for existing transaction
+      const existingTransaction = await Transaction.findOne({
+        user: user._id,
+        tokenType: 'credits',
+        context: 'purchase',
+        paymentId: paymentIntentId,
+      });
 
-      return updatedUser;
+      if (existingTransaction) {
+        logger.info('Payment already processed', { id: paymentIntentId });
+        return;
+      }
+
+      // Create transaction record
+      const transaction = await Transaction.create({
+        user: user._id,
+        tokenType: 'credits',
+        context: 'purchase',
+        rawAmount: tokenAmount,
+        paymentId: paymentIntentId,
+        priceId: priceId,
+      });
+
+      logger.info('Payment confirmed and processed', {
+        id: paymentIntentId,
+        userId: user._id,
+        tokenAmount,
+        transactionId: transaction._id,
+      });
+
+      return transaction;
     } catch (error) {
       logger.error('Failed to confirm payment', { error, paymentIntentId, userId: user._id });
       throw error;
@@ -145,7 +164,6 @@ class StripeService {
 
       switch (event.type) {
         case 'payment_intent.created':
-          // Log the creation event
           logger.info('Payment intent created:', {
             id: event.data.object.id,
             amount: event.data.object.amount,
@@ -204,8 +222,13 @@ class StripeService {
         throw new Error('User not found');
       }
 
-      // Check if this payment has already been processed
-      const existingTransaction = user.transactions?.find((t) => t.paymentId === paymentIntent.id);
+      // Check for existing transaction
+      const existingTransaction = await Transaction.findOne({
+        user: userId,
+        tokenType: 'credits',
+        context: 'purchase',
+        paymentId: paymentIntent.id,
+      });
 
       if (existingTransaction) {
         logger.info('Payment already processed', { id: paymentIntent.id });
@@ -213,37 +236,38 @@ class StripeService {
       }
 
       const tokenAmount = PRICE_TOKEN_MAPPING[priceId];
-
-      // Update user's token balance
-      const updatedUser = await User.findByIdAndUpdate(
+      console.log('Adding tokens to user:', {
         userId,
-        {
-          $inc: { tokenBalance: tokenAmount },
-          $push: {
-            transactions: {
-              type: 'purchase',
-              tokens: tokenAmount,
-              amount: paymentIntent.amount,
-              paymentId: paymentIntent.id,
-              priceId,
-              status: paymentIntent.status,
-              timestamp: new Date(),
-            },
-          },
-        },
-        { new: true },
-      );
+        tokensToAdd: tokenAmount,
+        paymentIntentId: paymentIntent.id,
+      });
+
+      // Create transaction record
+      const transaction = await Transaction.create({
+        user: userId,
+        tokenType: 'credits',
+        context: 'purchase',
+        rawAmount: tokenAmount,
+        paymentId: paymentIntent.id,
+        priceId: priceId,
+      });
 
       logger.info('Successful payment processed via webhook', {
         id: paymentIntent.id,
         userId,
         tokenAmount,
-        newBalance: updatedUser.tokenBalance,
+        transactionId: transaction._id,
       });
 
-      return updatedUser;
+      return transaction;
     } catch (error) {
-      logger.error('Failed to process successful payment', { error, paymentIntent });
+      logger.error('Failed to process successful payment', {
+        error: error.message,
+        stack: error.stack,
+        paymentIntentId: paymentIntent.id,
+        userId,
+        priceId,
+      });
       throw error;
     }
   }
@@ -252,32 +276,25 @@ class StripeService {
     const { userId } = paymentIntent.metadata;
 
     try {
-      const user = await User.findById(userId);
-
-      if (!user) {
-        logger.error('User not found for failed payment', { userId });
-        return;
-      }
-
-      // Log the failed transaction
-      await User.findByIdAndUpdate(userId, {
-        $push: {
-          transactions: {
-            type: 'failed',
-            amount: paymentIntent.amount,
-            paymentId: paymentIntent.id,
-            priceId: paymentIntent.metadata.priceId,
-            error: paymentIntent.last_payment_error?.message,
-            timestamp: new Date(),
-          },
-        },
+      // Create failed transaction record
+      const transaction = await Transaction.create({
+        user: userId,
+        tokenType: 'credits',
+        context: 'purchase',
+        rawAmount: 0,
+        paymentId: paymentIntent.id,
+        priceId: paymentIntent.metadata.priceId,
+        error: paymentIntent.last_payment_error?.message,
       });
 
       logger.error('Payment failed', {
         id: paymentIntent.id,
         userId,
         error: paymentIntent.last_payment_error,
+        transactionId: transaction._id,
       });
+
+      return transaction;
     } catch (error) {
       logger.error('Failed to process failed payment', { error, paymentIntent });
       throw error;
@@ -286,12 +303,13 @@ class StripeService {
 
   static async listTransactions(userId) {
     try {
-      const user = await User.findById(userId);
-      if (!user) {
-        throw new Error('User not found');
-      }
+      const transactions = await Transaction.find({
+        user: userId,
+        tokenType: 'credits',
+        context: 'purchase',
+      }).sort({ createdAt: -1 });
 
-      return user.transactions || [];
+      return transactions;
     } catch (error) {
       logger.error('Failed to list transactions', { error, userId });
       throw error;

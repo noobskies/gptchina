@@ -33,10 +33,15 @@ const transactionSchema = mongoose.Schema(
     inputTokens: { type: Number },
     writeTokens: { type: Number },
     readTokens: { type: Number },
+    // Add payment-related fields
+    paymentId: { type: String, sparse: true }, // Stripe payment intent ID
+    priceId: { type: String, sparse: true }, // Stripe price ID
   },
   {
     timestamps: true,
   },
 );
+
+transactionSchema.index({ paymentId: 1 }, { sparse: true });
 
 module.exports = transactionSchema;
