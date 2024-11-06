@@ -42,11 +42,16 @@ const PaymentConfirmation: React.FC<PaymentConfirmationProps> = ({
         {localize('com_ui_payment_success_title')}
       </h3>
 
-      <p className="mb-6 text-center text-gray-600 dark:text-gray-400">
-        {localize('com_ui_payment_success_description', {
-          tokens: (tokens / 1000).toLocaleString('en-US', { maximumFractionDigits: 0 }) + 'K',
-        })}
-      </p>
+      {/* Token Amount on Its Own Line */}
+      <div className="mb-6 text-center">
+        <p className="text-gray-600 dark:text-gray-400">
+          {localize('com_ui_payment_success_description')}
+        </p>
+        <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{tokens} tokens</div>
+        <p className="text-gray-600 dark:text-gray-400">
+          have been successfully added to your account.
+        </p>
+      </div>
 
       {/* Transaction Details */}
       {transactionId && (

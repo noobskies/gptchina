@@ -13,14 +13,14 @@ interface StripePaymentProviderProps {
   children: React.ReactNode;
   amount: number;
   user: any;
-  priceId: string; // Add priceId to the interface
+  priceId: string;
 }
 
 export function StripePaymentProvider({
   children,
   amount,
   user,
-  priceId, // Add to destructuring
+  priceId,
 }: StripePaymentProviderProps) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
