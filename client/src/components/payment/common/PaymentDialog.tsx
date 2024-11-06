@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { OGDialog, OGDialogContent, OGDialogHeader, OGDialogTitle } from '~/components';
 import { useAuthContext } from '~/hooks/AuthContext';
 import { useLocalize } from '~/hooks';
@@ -26,8 +26,8 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
     null,
   );
   const [error, setError] = React.useState<string | null>(null);
+  const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
 
-  // Get the selected token package
   const selectedPackage = React.useMemo(
     () => tokenOptions.find((option) => option.tokens === selectedTokens),
     [selectedTokens],
@@ -43,10 +43,12 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
     setError(null);
   };
 
-  const handlePaymentComplete = () => {
+  const handlePaymentComplete = async (paymentIntentId?: string) => {
+    if (paymentIntentId) {
+      setPaymentIntentId(paymentIntentId);
+    }
     setStep('confirmation');
   };
-
   const handlePaymentError = (errorMessage: string) => {
     setError(errorMessage);
   };
@@ -77,11 +79,14 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
     const commonProps = {
       amount: selectedPackage.amount,
       tokens: selectedPackage.tokens,
+      priceId: selectedPackage.priceId,
       onSuccess: handlePaymentComplete,
       onError: handlePaymentError,
       onBack: () => setStep('select'),
       selectedPaymentMethod: selectedPaymentMethod!,
     };
+
+    console.log('selectedPaymentMethod', commonProps);
 
     switch (selectedPaymentMethod) {
       case PaymentMethod.Card:
@@ -91,7 +96,11 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
       case PaymentMethod.AliPay:
       case PaymentMethod.Bitcoin:
         return (
-          <StripePaymentProvider amount={selectedPackage.amount} user={user}>
+          <StripePaymentProvider
+            amount={selectedPackage.amount}
+            user={user}
+            priceId={selectedPackage.priceId}
+          >
             <StripePaymentForm {...commonProps} />
           </StripePaymentProvider>
         );

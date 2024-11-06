@@ -13,12 +13,18 @@ interface StripePaymentProviderProps {
   children: React.ReactNode;
   amount: number;
   user: any;
+  priceId: string; // Add priceId to the interface
 }
 
-export function StripePaymentProvider({ children, amount, user }: StripePaymentProviderProps) {
+export function StripePaymentProvider({
+  children,
+  amount,
+  user,
+  priceId, // Add to destructuring
+}: StripePaymentProviderProps) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { token, isAuthenticated } = useAuthContext(); // Get token from auth context
+  const { token, isAuthenticated } = useAuthContext();
 
   useEffect(() => {
     console.log('StripePaymentProvider mounted', {
@@ -26,10 +32,11 @@ export function StripePaymentProvider({ children, amount, user }: StripePaymentP
       user,
       isAuthenticated,
       hasToken: !!token,
+      priceId, // Log priceId
     });
 
     const fetchPaymentIntent = async () => {
-      console.log('Fetching payment intent...');
+      console.log('Fetching payment intent...', { amount, priceId });
       try {
         if (!token) {
           throw new Error('No authentication token available');
@@ -45,15 +52,16 @@ export function StripePaymentProvider({ children, amount, user }: StripePaymentP
           body: JSON.stringify({
             amount,
             userId: user._id,
+            priceId,
           }),
         });
 
         console.log('API Response status:', response.status);
 
         if (!response.ok) {
-          const errorText = await response.text();
-          console.error('API Error:', errorText);
-          throw new Error(errorText);
+          const errorData = await response.json();
+          console.error('API Error:', errorData);
+          throw new Error(JSON.stringify(errorData));
         }
 
         const data = await response.json();
@@ -76,9 +84,7 @@ export function StripePaymentProvider({ children, amount, user }: StripePaymentP
       });
       setError('Authentication required to process payment');
     }
-  }, [amount, user, token, isAuthenticated]);
-
-  console.log('Current state:', { clientSecret, error, isAuthenticated, hasToken: !!token });
+  }, [amount, user, token, isAuthenticated, priceId]); // Add priceId to dependency array
 
   const options = {
     clientSecret,

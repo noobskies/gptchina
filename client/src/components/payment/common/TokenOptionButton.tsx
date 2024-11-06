@@ -1,6 +1,19 @@
+// components/payment/TokenOptionButton.tsx
 import React from 'react';
 import { useLocalize } from '~/hooks';
-import type { TokenPackage } from '../constants/tokenOptions';
+
+// Update the TokenPackage interface to reflect our new structure
+interface TokenPackage {
+  tokens: number;
+  label: string;
+  price: string;
+  amount: number; // amount in cents
+  currency: 'USD' | 'CNY';
+  priceId: string;
+  originalPrice: string;
+  discountedPrice: string;
+  discountPercentage?: string;
+}
 
 interface TokenOptionButtonProps extends TokenPackage {
   isSelected: boolean;
@@ -10,9 +23,16 @@ interface TokenOptionButtonProps extends TokenPackage {
 const formatTokenAmount = (tokens: number): string =>
   tokens >= 1_000_000 ? `${tokens / 1_000_000} Million` : `${(tokens / 1000).toLocaleString()}k`;
 
+const formatCurrency = (amount: number, currency: 'USD' | 'CNY'): string => {
+  const value = (amount / 100).toFixed(2);
+  return currency === 'USD' ? `$${value}` : `¥${value}`;
+};
+
 const TokenOptionButton: React.FC<TokenOptionButtonProps> = ({
   tokens,
   label,
+  amount,
+  currency,
   originalPrice,
   discountedPrice,
   discountPercentage,
@@ -20,6 +40,11 @@ const TokenOptionButton: React.FC<TokenOptionButtonProps> = ({
   onClick,
 }) => {
   const localize = useLocalize();
+
+  // We'll keep using originalPrice and discountedPrice for display
+  // since they're pre-formatted strings that might include currency symbols
+  // But we could also format them from the amount if needed:
+  // const displayPrice = formatCurrency(amount, currency);
 
   return (
     <button

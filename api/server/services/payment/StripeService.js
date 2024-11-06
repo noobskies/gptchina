@@ -2,12 +2,61 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const User = require('~/models/User');
 const { logger } = require('~/config');
 
+// Price to token mapping based on your constants
+const PRICE_TOKEN_MAPPING = {
+  // Global prices (USD)
+  price_1P6dqBHKD0byXXClWuA2RGY2: 100000, // $1.50 = 100k tokens
+  price_1P6dqdHKD0byXXClcboa06Tu: 500000, // $5.00 = 500k tokens
+  price_1P6drEHKD0byXXClOjmSkPKm: 1000000, // $7.50 = 1M tokens
+  price_1P6drxHKD0byXXClVVLokkLh: 10000000, // $40.00 = 10M tokens
+
+  // China prices (CNY)
+  price_1ORgxoHKD0byXXClx3u1yLa0: 100000, // ¥10 = 100k tokens
+  price_1ORgyJHKD0byXXClfvOyCbp7: 500000, // ¥35 = 500k tokens
+  price_1ORgyiHKD0byXXClHetdaI3W: 1000000, // ¥50 = 1M tokens
+  price_1ORgzMHKD0byXXClDCm5PkwO: 10000000, // ¥250 = 10M tokens
+};
+
+const PRICE_AMOUNT_MAPPING = {
+  // Global prices (USD)
+  price_1P6dqBHKD0byXXClWuA2RGY2: 150, // $1.50 in cents
+  price_1P6dqdHKD0byXXClcboa06Tu: 500, // $5.00 in cents
+  price_1P6drEHKD0byXXClOjmSkPKm: 750, // $7.50 in cents
+  price_1P6drxHKD0byXXClVVLokkLh: 4000, // $40.00 in cents
+
+  // China prices (CNY)
+  price_1ORgxoHKD0byXXClx3u1yLa0: 1000, // ¥10 in cents
+  price_1ORgyJHKD0byXXClfvOyCbp7: 3500, // ¥35 in cents
+  price_1ORgyiHKD0byXXClHetdaI3W: 5000, // ¥50 in cents
+  price_1ORgzMHKD0byXXClDCm5PkwO: 25000, // ¥250 in cents
+};
+
+// Helper to validate price IDs
+const isValidPriceId = (priceId) => {
+  return !!PRICE_TOKEN_MAPPING[priceId];
+};
+
+// Helper to determine currency from priceId
+const getCurrencyFromPriceId = (priceId) => {
+  return priceId.startsWith('price_1ORg') ? 'cny' : 'usd';
+};
+
 class StripeService {
-  static async createPaymentIntent({ amount, userId, email }) {
+  static async createPaymentIntent({ amount, userId, email, priceId }) {
     try {
+      if (!priceId) {
+        throw new Error('priceId is required');
+      }
+
+      if (!isValidPriceId(priceId)) {
+        throw new Error(`Invalid priceId: ${priceId}`);
+      }
+
       logger.info('Creating payment intent', {
         amount,
         userId,
+        priceId,
+        email,
       });
 
       let customer;
@@ -17,11 +66,12 @@ class StripeService {
       }
 
       const paymentIntent = await stripe.paymentIntents.create({
-        amount, // Already in cents
-        currency: 'usd',
+        amount,
+        currency: getCurrencyFromPriceId(priceId),
         customer: customer?.id,
         metadata: {
           userId,
+          priceId,
         },
         automatic_payment_methods: {
           enabled: true,
@@ -30,12 +80,12 @@ class StripeService {
 
       return paymentIntent;
     } catch (error) {
-      logger.error('Failed to create payment intent', { error, amount, userId });
+      logger.error('Failed to create payment intent', { error, amount, userId, priceId });
       throw error;
     }
   }
 
-  static async confirmPayment({ paymentIntentId, amount, user }) {
+  static async confirmPayment({ paymentIntentId, user }) {
     try {
       const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
 
@@ -47,17 +97,25 @@ class StripeService {
         throw new Error('Payment intent does not match user');
       }
 
-      // Update user's token balance with the number of tokens purchased
+      const { priceId } = paymentIntent.metadata;
+      if (!priceId || !PRICE_TOKEN_MAPPING[priceId]) {
+        throw new Error('Invalid or missing priceId in payment metadata');
+      }
+
+      const tokenAmount = PRICE_TOKEN_MAPPING[priceId];
+
+      // Update user's token balance with the correct number of tokens
       const updatedUser = await User.findByIdAndUpdate(
         user._id,
         {
-          $inc: { tokenBalance: amount }, // Add the purchased tokens
+          $inc: { tokenBalance: tokenAmount },
           $push: {
             transactions: {
               type: 'purchase',
-              tokens: amount, // Number of tokens purchased
-              amount: paymentIntent.amount, // Cost in cents
+              tokens: tokenAmount,
+              amount: paymentIntent.amount,
               paymentId: paymentIntentId,
+              priceId,
               timestamp: new Date(),
             },
           },
@@ -76,7 +134,7 @@ class StripeService {
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     try {
-      console.log('Processing webhook payload:', JSON.parse(payload));
+      console.log('Processing webhook payload:', JSON.stringify(payload, null, 2));
 
       const event = stripe.webhooks.constructEvent(payload, signature, webhookSecret);
 
@@ -85,14 +143,37 @@ class StripeService {
         paymentIntent: event.data.object,
       });
 
-      if (event.type === 'payment_intent.succeeded') {
-        const paymentIntent = event.data.object;
-        console.log('Payment intent succeeded:', {
-          id: paymentIntent.id,
-          metadata: paymentIntent.metadata,
-          amount: paymentIntent.amount,
-        });
-        await this.handleSuccessfulPayment(paymentIntent);
+      switch (event.type) {
+        case 'payment_intent.created':
+          // Log the creation event
+          logger.info('Payment intent created:', {
+            id: event.data.object.id,
+            amount: event.data.object.amount,
+            metadata: event.data.object.metadata,
+            status: event.data.object.status,
+          });
+          break;
+
+        case 'payment_intent.succeeded':
+          await this.handleSuccessfulPayment(event.data.object);
+          break;
+
+        case 'payment_intent.payment_failed':
+          await this.handleFailedPayment(event.data.object);
+          break;
+
+        case 'payment_intent.canceled':
+          logger.info('Payment intent canceled:', {
+            id: event.data.object.id,
+            metadata: event.data.object.metadata,
+          });
+          break;
+
+        default:
+          logger.info(`Unhandled event type: ${event.type}`, {
+            id: event.id,
+            type: event.type,
+          });
       }
 
       return event;
@@ -111,13 +192,12 @@ class StripeService {
 
     const { userId, priceId } = paymentIntent.metadata || {};
 
-    if (!priceId) {
-      console.error('Missing priceId in payment metadata:', paymentIntent);
-      throw new Error('priceId is not defined');
+    if (!priceId || !PRICE_TOKEN_MAPPING[priceId]) {
+      console.error('Missing or invalid priceId in payment metadata:', paymentIntent);
+      throw new Error('Valid priceId is required');
     }
 
     try {
-      // Double-check that payment hasn't been processed already
       const user = await User.findById(userId);
 
       if (!user) {
@@ -132,16 +212,21 @@ class StripeService {
         return;
       }
 
+      const tokenAmount = PRICE_TOKEN_MAPPING[priceId];
+
       // Update user's token balance
       const updatedUser = await User.findByIdAndUpdate(
         userId,
         {
-          $inc: { tokenBalance: paymentIntent.amount }, // amount is in cents
+          $inc: { tokenBalance: tokenAmount },
           $push: {
             transactions: {
               type: 'purchase',
+              tokens: tokenAmount,
               amount: paymentIntent.amount,
               paymentId: paymentIntent.id,
+              priceId,
+              status: paymentIntent.status,
               timestamp: new Date(),
             },
           },
@@ -152,8 +237,11 @@ class StripeService {
       logger.info('Successful payment processed via webhook', {
         id: paymentIntent.id,
         userId,
+        tokenAmount,
         newBalance: updatedUser.tokenBalance,
       });
+
+      return updatedUser;
     } catch (error) {
       logger.error('Failed to process successful payment', { error, paymentIntent });
       throw error;
@@ -178,6 +266,7 @@ class StripeService {
             type: 'failed',
             amount: paymentIntent.amount,
             paymentId: paymentIntent.id,
+            priceId: paymentIntent.metadata.priceId,
             error: paymentIntent.last_payment_error?.message,
             timestamp: new Date(),
           },
@@ -191,6 +280,20 @@ class StripeService {
       });
     } catch (error) {
       logger.error('Failed to process failed payment', { error, paymentIntent });
+      throw error;
+    }
+  }
+
+  static async listTransactions(userId) {
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      return user.transactions || [];
+    } catch (error) {
+      logger.error('Failed to list transactions', { error, userId });
       throw error;
     }
   }

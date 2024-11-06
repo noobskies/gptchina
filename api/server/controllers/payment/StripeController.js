@@ -1,4 +1,3 @@
-// server/controllers/payment/StripeController.js
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const StripeService = require('../../services/payment/StripeService');
 const User = require('~/models/User');
@@ -8,9 +7,8 @@ class StripeController {
   static async createPaymentIntent(req, res) {
     try {
       console.log('Received payment intent request with body:', req.body);
-      const { amount } = req.body;
+      const { amount, priceId } = req.body;
 
-      // Get user from the request
       const user = await User.findById(req.user?._id);
 
       if (!user) {
@@ -21,13 +19,22 @@ class StripeController {
         return res.status(400).json({ error: 'Amount is required' });
       }
 
-      logger.info('Creating payment intent', { amount, userId: user._id });
-      console.log('Creating payment intent with amount:', amount);
+      if (!priceId) {
+        return res.status(400).json({ error: 'Price ID is required' });
+      }
+
+      logger.info('Creating payment intent', {
+        amount,
+        userId: user._id,
+        priceId,
+        email: user.email,
+      });
 
       const paymentIntent = await StripeService.createPaymentIntent({
         amount,
         userId: user._id.toString(),
-        email: user.email, // Optional: pass email for Stripe customer creation
+        email: user.email,
+        priceId,
       });
 
       res.json({
@@ -43,9 +50,40 @@ class StripeController {
     }
   }
 
+  static async handleWebhook(payload, signature) {
+    if (!signature) {
+      throw new Error('No stripe signature found in headers');
+    }
+
+    logger.info('Processing webhook', {
+      signatureExists: !!signature,
+      bodyLength: payload?.length,
+    });
+
+    try {
+      const event = await StripeService.handleWebhook(payload, signature);
+
+      logger.info('Webhook processed', {
+        type: event.type,
+        id: event.id,
+      });
+
+      return event;
+    } catch (error) {
+      logger.error('Webhook processing error:', error);
+      throw error;
+    }
+  }
+
   static async confirmPayment(req, res) {
     try {
-      const { paymentIntentId, amount } = req.body;
+      const { paymentIntentId } = req.body;
+
+      if (!paymentIntentId) {
+        return res.status(400).json({
+          error: 'Payment Intent ID is required',
+        });
+      }
 
       const user = await User.findById(req.user?._id);
 
@@ -55,16 +93,19 @@ class StripeController {
 
       const updatedUser = await StripeService.confirmPayment({
         paymentIntentId,
-        amount,
         user,
       });
 
       res.json({
         success: true,
-        balance: updatedUser.tokenBalance, // Or whatever field you use for tokens
+        balance: updatedUser.tokenBalance,
       });
     } catch (error) {
-      logger.error('Payment confirmation error:', error);
+      logger.error('Payment confirmation error:', {
+        error: error.message,
+        userId: req.user?._id,
+      });
+
       res.status(500).json({
         error: 'Failed to confirm payment',
         details: error.message,
@@ -72,38 +113,17 @@ class StripeController {
     }
   }
 
-  static async handleWebhook(rawBody, signature) {
-    try {
-      if (!signature) {
-        throw new Error('No stripe signature found in headers');
-      }
-
-      logger.info('Controller processing webhook', {
-        signatureExists: !!signature,
-        bodyLength: rawBody?.length,
-        bodyContent: JSON.parse(rawBody),
-      });
-
-      // Pass through to service
-      const event = await StripeService.handleWebhook(rawBody, signature);
-
-      logger.info('Controller processed webhook', {
-        eventType: event.type,
-        paymentIntent: event.data?.object,
-        metadata: event.data?.object?.metadata,
-      });
-
-      return event;
-    } catch (error) {
-      logger.error('Controller webhook error:', {
-        message: error.message,
-        name: error.name,
-        type: error.type,
-        stack: error.stack,
-        fullError: JSON.stringify(error),
-      });
-      throw error;
+  // Helper method to validate webhook event
+  static validateWebhookEvent(event) {
+    if (!event?.type) {
+      throw new Error('Invalid webhook event: missing type');
     }
+
+    if (!event?.data?.object) {
+      throw new Error('Invalid webhook event: missing data object');
+    }
+
+    return true;
   }
 }
 

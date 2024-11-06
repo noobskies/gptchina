@@ -6,9 +6,11 @@ import { Spinner } from '~/components/svg';
 import { useElements, useStripe, PaymentElement } from '@stripe/react-stripe-js';
 import { PaymentMethod } from '../constants/paymentMethods';
 
+// StripePaymentForm.tsx
 interface StripePaymentFormProps {
   amount: number;
-  tokens: number; // Add tokens prop
+  tokens: number;
+  priceId: string;
   onSuccess: () => void;
   onError: (error: string) => void;
   onBack: () => void;
@@ -18,6 +20,7 @@ interface StripePaymentFormProps {
 export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
   amount,
   tokens,
+  priceId,
   onSuccess,
   onError,
   onBack,
@@ -31,7 +34,6 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
   const formatTokens = (tokens: number) =>
     tokens >= 1_000_000 ? `${tokens / 1_000_000}M` : `${(tokens / 1000).toFixed(1)}K`;
 
-  // Rest of your payment method mapping...
   const getStripePaymentMethod = (method: PaymentMethod) => {
     const methodMap: Record<PaymentMethod, string> = {
       [PaymentMethod.Card]: 'card',
@@ -53,6 +55,7 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
     stripe,
     elements,
     amount,
+    priceId, // Pass priceId to the hook
     onSuccess,
     onError,
   });

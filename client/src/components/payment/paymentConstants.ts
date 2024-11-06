@@ -4,7 +4,7 @@ export const tokenOptions = [
     tokens: 100000,
     label: 'com_token_package_label_100k',
     price: 'com_token_package_price_100k_global',
-    amount: 1.5,
+    amount: 150,
     currency: 'USD',
     priceId: 'price_1P6dqBHKD0byXXClWuA2RGY2', // 1.50 USD - only for global users
     originalPrice: '$1.50',
@@ -14,7 +14,7 @@ export const tokenOptions = [
     tokens: 500000,
     label: 'com_token_package_label_500k',
     price: 'com_token_package_price_500k_global',
-    amount: 5.0,
+    amount: 500,
     currency: 'USD',
     priceId: 'price_1P6dqdHKD0byXXClcboa06Tu', // 5.00 USD - only for global users
     originalPrice: '$7.50',
@@ -25,7 +25,7 @@ export const tokenOptions = [
     tokens: 1000000,
     label: 'com_token_package_label_1m',
     price: 'com_token_package_price_1m_global',
-    amount: 7.5,
+    amount: 750,
     priceId: 'price_1P6drEHKD0byXXClOjmSkPKm', // 7.50 USD - only for global users
     currency: 'USD',
     originalPrice: '$15.00',
@@ -36,7 +36,7 @@ export const tokenOptions = [
     tokens: 10000000,
     label: 'com_token_package_label_10m',
     price: 'com_token_package_price_10m_global',
-    amount: 40.0,
+    amount: 4000,
     currency: 'USD',
     priceId: 'price_1P6drxHKD0byXXClVVLokkLh', // 40.00 USD - only for global users
     originalPrice: '$150.00',
@@ -50,7 +50,7 @@ export const tokenOptionsChina = [
     tokens: 100000,
     label: 'com_token_package_label_100k',
     price: 'com_token_package_price_100k',
-    amount: 10,
+    amount: 1000,
     currency: 'CNY',
     priceId: 'price_1ORgxoHKD0byXXClx3u1yLa0', // 10 CNY - only for China users
     originalPrice: '¥10',
@@ -60,7 +60,7 @@ export const tokenOptionsChina = [
     tokens: 500000,
     label: 'com_token_package_label_500k',
     price: 'com_token_package_price_500k',
-    amount: 35,
+    amount: 3500,
     currency: 'CNY',
     priceId: 'price_1ORgyJHKD0byXXClfvOyCbp7', // 35 CNY - only for China users
     originalPrice: '¥50',
@@ -71,7 +71,7 @@ export const tokenOptionsChina = [
     tokens: 1000000,
     label: 'com_token_package_label_1m',
     price: 'com_token_package_price_1m',
-    amount: 50,
+    amount: 5000,
     currency: 'CNY',
     priceId: 'price_1ORgyiHKD0byXXClHetdaI3W', // 50 CNY - only for China users
     originalPrice: '¥100',
@@ -82,7 +82,7 @@ export const tokenOptionsChina = [
     tokens: 10000000,
     label: 'com_token_package_label_10m',
     price: 'com_token_package_price_10m',
-    amount: 250,
+    amount: 25000,
     currency: 'CNY',
     priceId: 'price_1ORgzMHKD0byXXClDCm5PkwO', // 250 CNY - only for China users
     originalPrice: '¥1,000',

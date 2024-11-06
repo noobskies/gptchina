@@ -17,6 +17,7 @@ const { logger } = require('~/config');
 const validateImageRequest = require('./middleware/validateImageRequest');
 const errorController = require('./controllers/ErrorController');
 const StripeController = require('./controllers/payment/StripeController');
+const StripeService = require('./services/payment/StripeService');
 const configureSocialLogins = require('./socialLogins');
 const AppService = require('./services/AppService');
 const staticCache = require('./utils/staticCache');
@@ -51,24 +52,33 @@ const startServer = async () => {
   /* Middleware */
   app.use(noIndex);
   app.use(errorController);
-  app.post('/api/payment/stripe/webhook', express.raw({ type: 'application/json' }), (req, res) => {
-    const signature = req.headers['stripe-signature'];
+  app.post(
+    '/api/payment/stripe/webhook',
+    express.raw({ type: 'application/json' }),
+    async (req, res) => {
+      const signature = req.headers['stripe-signature'];
 
-    console.log('Webhook received:', {
-      body: JSON.parse(req.body),
-      signature: signature?.slice(0, 20) + '...',
-    });
+      console.log('Webhook received:', {
+        eventType: JSON.parse(req.body.toString()).type,
+        signature: signature?.slice(0, 20) + '...',
+      });
 
-    StripeController.handleWebhook(req.body, signature)
-      .then((event) => {
-        console.log('Webhook processed successfully:', event.data.object);
+      try {
+        const event = await StripeService.handleWebhook(req.body, signature);
+        console.log('Webhook processed successfully:', {
+          type: event.type,
+          paymentIntentId: event.data?.object?.id,
+          metadata: event.data?.object?.metadata,
+          amount: event.data?.object?.amount,
+        });
+
         res.json({ received: true });
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error('Webhook error:', err);
         res.status(400).json({ error: err.message });
-      });
-  });
+      }
+    },
+  );
   app.use(
     express.json({
       limit: '5mb',
