@@ -35,14 +35,14 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
     tokens >= 1_000_000 ? `${tokens / 1_000_000}M` : `${(tokens / 1000).toFixed(1)}K`;
 
   const getStripePaymentMethod = (method: PaymentMethod) => {
-    const methodMap: Record<PaymentMethod, string> = {
-      [PaymentMethod.Card]: 'card',
-      [PaymentMethod.GooglePay]: 'google_pay',
-      [PaymentMethod.ApplePay]: 'apple_pay',
-      [PaymentMethod.WeChatPay]: 'wechat_pay',
-      [PaymentMethod.AliPay]: 'alipay',
-      [PaymentMethod.Bitcoin]: 'crypto',
-      [PaymentMethod.InAppPurchase]: 'card',
+    const methodMap: Record<PaymentMethod, string[]> = {
+      [PaymentMethod.Card]: ['card'],
+      [PaymentMethod.GooglePay]: ['google_pay', 'card'],
+      [PaymentMethod.ApplePay]: ['apple_pay', 'card'],
+      [PaymentMethod.WeChatPay]: ['wechat_pay', 'card'],
+      [PaymentMethod.AliPay]: ['alipay', 'card'],
+      [PaymentMethod.Bitcoin]: ['crypto'],
+      [PaymentMethod.InAppPurchase]: ['card'],
     };
     return methodMap[method];
   };
@@ -124,7 +124,7 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
                   phone: '',
                 },
               },
-              paymentMethodOrder: [getStripePaymentMethod(selectedPaymentMethod)],
+              paymentMethodOrder: getStripePaymentMethod(selectedPaymentMethod),
               wallets: {
                 applePay: selectedPaymentMethod === PaymentMethod.ApplePay ? 'auto' : 'never',
                 googlePay: selectedPaymentMethod === PaymentMethod.GooglePay ? 'auto' : 'never',
