@@ -1,8 +1,6 @@
-// components/payment/common/PaymentOptionButton.tsx
 import React from 'react';
 import { useLocalize } from '~/hooks';
 import { PaymentMethod, PaymentMethodConfig } from '../constants/paymentMethods';
-
 import { FaCreditCard, FaBitcoin, FaGooglePay, FaApple } from 'react-icons/fa';
 import { SiWechat, SiAlipay } from 'react-icons/si';
 
@@ -23,26 +21,23 @@ const PaymentOptionButton: React.FC<PaymentOptionButtonProps> = ({
   const localize = useLocalize();
 
   const getPaymentIcon = (iconName: string) => {
+    const iconProps = { className: 'h-5 w-5' };
     switch (iconName) {
       case 'credit-card':
-        return <FaCreditCard className="h-5 w-5" />;
+        return <FaCreditCard {...iconProps} />;
       case 'bitcoin':
-        return <FaBitcoin className="h-5 w-5" />;
+        return <FaBitcoin {...iconProps} />;
       case 'wechat':
-        return <SiWechat className="h-5 w-5" />;
+        return <SiWechat {...iconProps} />;
       case 'alipay':
-        return <SiAlipay className="h-5 w-5" />;
+        return <SiAlipay {...iconProps} />;
       case 'google-pay':
-        return <FaGooglePay className="h-5 w-5" />;
+        return <FaGooglePay {...iconProps} />;
       case 'apple-pay':
-        return <FaApple className="h-5 w-5" />;
+        return <FaApple {...iconProps} />;
       default:
-        return <FaCreditCard className="h-5 w-5" />;
+        return <FaCreditCard {...iconProps} />;
     }
-  };
-
-  const getPaymentLabel = () => {
-    return name;
   };
 
   return (
@@ -51,7 +46,7 @@ const PaymentOptionButton: React.FC<PaymentOptionButtonProps> = ({
       onClick={onClick}
       disabled={disabled}
       className={`
-        flex w-full items-center gap-3 rounded-lg border-2 p-4 transition-all duration-200
+        flex w-full items-center justify-between rounded border-2 p-3 transition-all
         ${
           isSelected
             ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/20'
@@ -59,41 +54,36 @@ const PaymentOptionButton: React.FC<PaymentOptionButtonProps> = ({
         }
         ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
       `}
-      aria-label={`Pay with ${getPaymentLabel()}`}
+      aria-label={`Pay with ${name}`}
     >
-      {/* Payment Icon */}
-      <span
-        className={`
-        flex items-center justify-center
-        ${isSelected ? 'text-blue-500 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}
-      `}
-      >
-        {getPaymentIcon(icon)}
-      </span>
-
-      {/* Payment Name */}
-      <span
-        className={`
-        flex-1 text-left text-sm font-medium
-        ${isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300'}
-      `}
-      >
-        {getPaymentLabel()}
-      </span>
-
-      {/* Selected Indicator */}
-      {isSelected && (
-        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-white dark:bg-blue-400">
-          <svg
-            className="h-4 w-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
+      <div className="flex min-w-0 flex-1 items-center gap-3">
+        <span
+          className={
+            isSelected ? 'text-blue-500 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'
+          }
+        >
+          {getPaymentIcon(icon)}
         </span>
+
+        <span
+          className={`whitespace-nowrap text-sm font-medium ${
+            isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300'
+          }`}
+        >
+          {name}
+        </span>
+      </div>
+
+      {isSelected && (
+        <svg
+          className="h-5 w-5 flex-shrink-0 text-blue-500 dark:text-blue-400"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
       )}
     </button>
   );

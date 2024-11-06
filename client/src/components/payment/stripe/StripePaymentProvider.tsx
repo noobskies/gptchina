@@ -6,7 +6,7 @@ import { useAuthContext } from '~/hooks';
 import { Spinner } from '~/components/svg';
 
 const stripePromise = loadStripe(
-  'pk_live_51MwvEEHKD0byXXCl8IzAvUl0oZ7RE6vIz72lWUVYl5rW3zy0u3FiGtIAgsbmqSHbhkTJeZjs5VEbQMNStaaQL9xQ001pwxI3RP',
+  'pk_test_51MwvEEHKD0byXXClhlIY96bsuIIIcdGgTenVqBnktRp8fzoUHlcI29yTj9ktyqumu2Xk1uz7KptFryWfTZz5Sdj200f3cPZSa3',
 );
 
 interface StripePaymentProviderProps {
@@ -34,6 +34,9 @@ export function StripePaymentProvider({ children, amount, user }: StripePaymentP
         if (!token) {
           throw new Error('No authentication token available');
         }
+
+        // Amount is already in cents from tokenOptions
+        console.log('Creating payment intent with amount:', amount);
 
         const response = await fetch('/api/payment/stripe/create-intent', {
           method: 'POST',

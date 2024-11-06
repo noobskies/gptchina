@@ -1,4 +1,3 @@
-// components/payment/common/PaymentDialog.tsx
 import React from 'react';
 import { OGDialog, OGDialogContent, OGDialogHeader, OGDialogTitle } from '~/components';
 import { useAuthContext } from '~/hooks/AuthContext';
@@ -9,8 +8,6 @@ import PaymentConfirmation from './PaymentConfirmation';
 import { paymentMethods, PaymentMethod } from '../constants/paymentMethods';
 import { tokenOptions } from '../constants/tokenOptions';
 import { StripePaymentForm } from '../stripe/StripePaymentForm';
-import OpenNodePaymentForm from '../opennode/OpenNodePaymentForm';
-import InAppPurchaseForm from '../capacitor/InAppPurchaseForm';
 import { StripePaymentProvider } from '../stripe/StripePaymentProvider';
 
 interface PaymentDialogProps {
@@ -29,6 +26,12 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
     null,
   );
   const [error, setError] = React.useState<string | null>(null);
+
+  // Get the selected token package
+  const selectedPackage = React.useMemo(
+    () => tokenOptions.find((option) => option.tokens === selectedTokens),
+    [selectedTokens],
+  );
 
   const handleTokenSelect = (tokens: number) => {
     setSelectedTokens(tokens);
@@ -69,32 +72,28 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
   };
 
   const renderPaymentForm = () => {
+    if (!selectedPackage) return null;
+
     const commonProps = {
-      amount: selectedTokens!,
+      amount: selectedPackage.amount,
+      tokens: selectedPackage.tokens,
       onSuccess: handlePaymentComplete,
       onError: handlePaymentError,
       onBack: () => setStep('select'),
+      selectedPaymentMethod: selectedPaymentMethod!,
     };
-
-    console.log('Selected payment method:', selectedPaymentMethod);
-    console.log('Selected tokens:', selectedTokens);
-    console.log('User:', user);
 
     switch (selectedPaymentMethod) {
       case PaymentMethod.Card:
       case PaymentMethod.GooglePay:
       case PaymentMethod.ApplePay:
+      case PaymentMethod.WeChatPay:
+      case PaymentMethod.AliPay:
         return (
-          <StripePaymentProvider amount={selectedTokens!} user={user}>
+          <StripePaymentProvider amount={selectedPackage.amount} user={user}>
             <StripePaymentForm {...commonProps} />
           </StripePaymentProvider>
         );
-      case PaymentMethod.WeChatPay:
-      case PaymentMethod.AliPay:
-      case PaymentMethod.Bitcoin:
-        return <OpenNodePaymentForm {...commonProps} />;
-      case PaymentMethod.InAppPurchase:
-        return <InAppPurchaseForm {...commonProps} />;
       default:
         return null;
     }
@@ -104,10 +103,10 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
     switch (step) {
       case 'select':
         return (
-          <div className="flex w-full flex-col items-center gap-4">
-            {error && <div className="w-full rounded-md bg-red-100 p-4 text-red-700">{error}</div>}
+          <div className="flex flex-col gap-3 p-2">
+            {error && <div className="rounded bg-red-100 p-2 text-sm text-red-700">{error}</div>}
 
-            <div className="grid w-full grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
               {tokenOptions.map((option) => (
                 <TokenOptionButton
                   key={option.tokens}
@@ -118,15 +117,15 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
               ))}
             </div>
 
-            <div className="my-4 flex w-full items-center">
-              <div className="flex-grow border-t border-gray-300 dark:border-gray-700" />
-              <span className="mx-4 text-sm text-gray-600 dark:text-gray-400">
+            <div className="my-2 flex items-center">
+              <div className="flex-1 border-t border-gray-300 dark:border-gray-700" />
+              <span className="mx-2 text-xs text-gray-600 dark:text-gray-400">
                 {localize('com_ui_payment_options')}
               </span>
-              <div className="flex-grow border-t border-gray-300 dark:border-gray-700" />
+              <div className="flex-1 border-t border-gray-300 dark:border-gray-700" />
             </div>
 
-            <div className="grid w-full grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
               {paymentMethods.map((method) => (
                 <PaymentOptionButton
                   key={method.id}
@@ -140,7 +139,9 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
             <button
               onClick={handleContinue}
               disabled={!selectedTokens || !selectedPaymentMethod}
-              className="focus:bg-blue-650 mt-6 w-full rounded bg-blue-600 p-2 text-white transition-colors duration-200 hover:bg-blue-700 focus:outline-none active:bg-blue-800 disabled:cursor-not-allowed disabled:bg-blue-500 disabled:hover:bg-blue-500 dark:hover:bg-blue-700"
+              className="focus:bg-blue-650 mt-3 w-full rounded bg-blue-600 p-2 text-sm
+                text-white hover:bg-blue-700 active:bg-blue-800 
+                disabled:cursor-not-allowed disabled:bg-blue-500"
             >
               {localize('com_ui_payment_title')}
             </button>
@@ -157,14 +158,9 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
 
   return (
     <OGDialog open={open} onOpenChange={handleClose}>
-      <OGDialogContent
-        title={localize('com_ui_payment_title')}
-        className="w-11/12 max-w-2xl overflow-x-auto bg-background text-text-primary shadow-2xl hover:bg-background"
-      >
-        <OGDialogHeader>
-          <OGDialogTitle>{localize('com_ui_payment_title')}</OGDialogTitle>
-        </OGDialogHeader>
-        {renderContent()}
+      <OGDialogContent className="flex max-h-[90vh] w-11/12 max-w-xl flex-col bg-background">
+        <OGDialogHeader className="border-b border-gray-200 p-2 dark:border-gray-700" />
+        <div className="overflow-y-auto p-2">{renderContent()}</div>
       </OGDialogContent>
     </OGDialog>
   );

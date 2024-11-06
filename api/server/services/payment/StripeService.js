@@ -1,21 +1,15 @@
-// server/services/payment/StripeService.js
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const { calculateTokenAmount, validatePaymentAmount } = require('../../utils/payment');
 const User = require('~/models/User');
 const { logger } = require('~/config');
 
 class StripeService {
   static async createPaymentIntent({ amount, userId, email }) {
     try {
-      if (!validatePaymentAmount(amount)) {
-        throw new Error('Invalid payment amount');
-      }
+      logger.info('Creating payment intent', {
+        amount,
+        userId,
+      });
 
-      const amountInCents = calculateTokenAmount(amount);
-
-      logger.info('Creating payment intent', { amount, amountInCents, userId });
-
-      // Optionally create or get Stripe customer
       let customer;
       if (email) {
         const customers = await stripe.customers.list({ email });
@@ -23,19 +17,16 @@ class StripeService {
       }
 
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: amountInCents,
+        amount, // Already in cents
         currency: 'usd',
         customer: customer?.id,
         metadata: {
           userId,
-          tokens: amount,
         },
         automatic_payment_methods: {
           enabled: true,
         },
       });
-
-      logger.info('Payment intent created', { id: paymentIntent.id });
 
       return paymentIntent;
     } catch (error) {
@@ -56,32 +47,23 @@ class StripeService {
         throw new Error('Payment intent does not match user');
       }
 
-      if (parseInt(paymentIntent.metadata.tokens) !== amount) {
-        throw new Error('Payment amount mismatch');
-      }
-
-      // Update user's token balance
+      // Update user's token balance with the number of tokens purchased
       const updatedUser = await User.findByIdAndUpdate(
         user._id,
         {
-          $inc: { tokenBalance: amount }, // Increment token balance
+          $inc: { tokenBalance: amount }, // Add the purchased tokens
           $push: {
             transactions: {
               type: 'purchase',
-              amount: amount,
+              tokens: amount, // Number of tokens purchased
+              amount: paymentIntent.amount, // Cost in cents
               paymentId: paymentIntentId,
               timestamp: new Date(),
             },
           },
         },
-        { new: true }, // Return updated document
+        { new: true },
       );
-
-      logger.info('Payment confirmed and user updated', {
-        id: paymentIntentId,
-        userId: user._id,
-        newBalance: updatedUser.tokenBalance,
-      });
 
       return updatedUser;
     } catch (error) {
@@ -114,7 +96,7 @@ class StripeService {
   }
 
   static async handleSuccessfulPayment(paymentIntent) {
-    const { userId, tokens } = paymentIntent.metadata;
+    const { userId } = paymentIntent.metadata;
 
     try {
       // Double-check that payment hasn't been processed already
@@ -136,11 +118,11 @@ class StripeService {
       const updatedUser = await User.findByIdAndUpdate(
         userId,
         {
-          $inc: { tokenBalance: parseInt(tokens) },
+          $inc: { tokenBalance: paymentIntent.amount }, // amount is in cents
           $push: {
             transactions: {
               type: 'purchase',
-              amount: parseInt(tokens),
+              amount: paymentIntent.amount,
               paymentId: paymentIntent.id,
               timestamp: new Date(),
             },
@@ -176,7 +158,7 @@ class StripeService {
         $push: {
           transactions: {
             type: 'failed',
-            amount: parseInt(paymentIntent.metadata.tokens),
+            amount: paymentIntent.amount,
             paymentId: paymentIntent.id,
             error: paymentIntent.last_payment_error?.message,
             timestamp: new Date(),

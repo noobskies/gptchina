@@ -1,30 +1,49 @@
-// components/payment/stripe/StripePaymentForm.tsx
 import React from 'react';
 import { useLocalize } from '~/hooks';
 import { useStripePayment } from './hooks/useStripePayment';
-import { ArrowLeft, CreditCard, Lock } from 'lucide-react';
+import { ArrowLeft, Lock } from 'lucide-react';
 import { Spinner } from '~/components/svg';
-import { useElements, useStripe, CardElement } from '@stripe/react-stripe-js';
+import { useElements, useStripe, PaymentElement } from '@stripe/react-stripe-js';
+import { PaymentMethod } from '../constants/paymentMethods';
 
 interface StripePaymentFormProps {
   amount: number;
+  tokens: number; // Add tokens prop
   onSuccess: () => void;
   onError: (error: string) => void;
   onBack: () => void;
+  selectedPaymentMethod: PaymentMethod;
 }
 
 export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
   amount,
+  tokens,
   onSuccess,
   onError,
   onBack,
+  selectedPaymentMethod,
 }) => {
   const localize = useLocalize();
   const [isMounted, setIsMounted] = React.useState(false);
-
-  // Get Stripe elements from context
   const elements = useElements();
   const stripe = useStripe();
+
+  const formatTokens = (tokens: number) =>
+    tokens >= 1_000_000 ? `${tokens / 1_000_000}M` : `${(tokens / 1000).toFixed(1)}K`;
+
+  // Rest of your payment method mapping...
+  const getStripePaymentMethod = (method: PaymentMethod) => {
+    const methodMap: Record<PaymentMethod, string> = {
+      [PaymentMethod.Card]: 'card',
+      [PaymentMethod.GooglePay]: 'google_pay',
+      [PaymentMethod.ApplePay]: 'apple_pay',
+      [PaymentMethod.WeChatPay]: 'wechat_pay',
+      [PaymentMethod.AliPay]: 'alipay',
+      [PaymentMethod.Bitcoin]: 'crypto',
+      [PaymentMethod.InAppPurchase]: 'card',
+    };
+    return methodMap[method];
+  };
 
   const {
     handleSubmit,
@@ -42,9 +61,7 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
     setIsMounted(true);
   }, []);
 
-  if (!isMounted) {
-    return null; // Prevent hydration issues with Stripe Elements
-  }
+  if (!isMounted) return null;
 
   if (!stripe || !elements) {
     return (
@@ -59,7 +76,6 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
 
   return (
     <div className="flex flex-col">
-      {/* Header */}
       <div className="mb-6 flex items-center justify-between px-4">
         <button
           onClick={onBack}
@@ -74,53 +90,52 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
         </div>
       </div>
 
-      {/* Payment Form */}
       <form onSubmit={handleSubmit} className="space-y-6 px-4">
-        {/* Amount Display */}
+        {/* Amount and Tokens Display */}
         <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              {localize('com_ui_payment_amount')}
-            </span>
-            <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              ${amount.toFixed(2)}
-            </span>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600 dark:text-gray-400">Cost</span>
+              <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                ${(amount / 100).toFixed(2)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between border-t border-gray-200 pt-2 dark:border-gray-700">
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {localize('com_ui_payment_amount')} Tokens
+              </span>
+              <span className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                {formatTokens(tokens)}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Card Element */}
         <div className="space-y-4">
-          <div className="flex items-center">
-            <CreditCard className="mr-2 h-5 w-5 text-gray-400" />
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {localize('com_ui_payment_card_details')}
-            </span>
-          </div>
-          <div className="rounded-md border border-gray-200 p-4 dark:border-gray-700">
-            <CardElement
-              options={{
-                style: {
-                  base: {
-                    fontSize: '16px',
-                    color: '#6B7280',
-                    '::placeholder': {
-                      color: '#9CA3AF',
-                    },
-                  },
+          <PaymentElement
+            options={{
+              defaultValues: {
+                billingDetails: {
+                  name: '',
+                  email: '',
+                  phone: '',
                 },
-              }}
-            />
-          </div>
+              },
+              paymentMethodOrder: [getStripePaymentMethod(selectedPaymentMethod)],
+              wallets: {
+                applePay: selectedPaymentMethod === PaymentMethod.ApplePay ? 'auto' : 'never',
+                googlePay: selectedPaymentMethod === PaymentMethod.GooglePay ? 'auto' : 'never',
+              },
+            }}
+          />
         </div>
 
-        {/* Error Message */}
         {paymentError && (
           <div className="rounded-md bg-red-50 p-4 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400">
             {paymentError}
           </div>
         )}
 
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={isProcessing || !stripe || !elements}
@@ -132,12 +147,11 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
               {localize('com_ui_payment_processing')}
             </span>
           ) : (
-            localize('com_ui_payment_pay_now')
+            localize('com_ui_payment_purchase_button')
           )}
         </button>
       </form>
 
-      {/* Footer */}
       <div className="mt-6 px-4 text-center">
         <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
           <Lock className="h-4 w-4" />

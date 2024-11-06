@@ -1,4 +1,3 @@
-// components/payment/capacitor/InAppPurchaseForm.tsx
 import React from 'react';
 import { useInAppPurchase } from './hooks/useInAppPurchase';
 
@@ -9,12 +8,12 @@ interface InAppPurchaseFormProps {
   onBack: () => void;
 }
 
-const InAppPurchaseForm: React.FC<InAppPurchaseFormProps> = ({
+export default function InAppPurchaseForm({
   amount,
   onSuccess,
   onError,
   onBack,
-}) => {
+}: InAppPurchaseFormProps) {
   return (
     <div className="flex flex-col items-center p-4">
       <div className="mb-4 text-center text-gray-600 dark:text-gray-400">
@@ -28,6 +27,4 @@ const InAppPurchaseForm: React.FC<InAppPurchaseFormProps> = ({
       </button>
     </div>
   );
-};
-
-export default InAppPurchaseForm;
+}

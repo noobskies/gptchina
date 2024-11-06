@@ -20,6 +20,7 @@ class StripeController {
       }
 
       logger.info('Creating payment intent', { amount, userId: user._id });
+      console.log('Creating payment intent with amount:', amount);
 
       const paymentIntent = await StripeService.createPaymentIntent({
         amount,
