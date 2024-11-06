@@ -35,9 +35,6 @@ export function StripePaymentProvider({ children, amount, user }: StripePaymentP
           throw new Error('No authentication token available');
         }
 
-        // Amount is already in cents from tokenOptions
-        console.log('Creating payment intent with amount:', amount);
-
         const response = await fetch('/api/payment/stripe/create-intent', {
           method: 'POST',
           headers: {

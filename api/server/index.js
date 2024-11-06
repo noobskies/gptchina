@@ -59,7 +59,7 @@ const startServer = async () => {
     // Pass the raw buffer to the controller
     StripeController.handleWebhook(req.body, signature)
       .then((event) => {
-        res.json({ received: true });
+        res.json({ event: event });
       })
       .catch((err) => {
         logger.error('Webhook error:', err);

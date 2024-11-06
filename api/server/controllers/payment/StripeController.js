@@ -7,6 +7,7 @@ const { logger } = require('~/config');
 class StripeController {
   static async createPaymentIntent(req, res) {
     try {
+      console.log('Received payment intent request with body:', req.body);
       const { amount } = req.body;
 
       // Get user from the request
@@ -77,25 +78,18 @@ class StripeController {
         throw new Error('No stripe signature found in headers');
       }
 
-      const event = stripe.webhooks.constructEvent(
-        rawBody, // This will now be a raw buffer
-        signature,
-        process.env.STRIPE_WEBHOOK_SECRET,
-      );
-
-      logger.info('Webhook event constructed successfully:', {
-        type: event.type,
-        id: event.id,
+      logger.info('Processing webhook', {
+        signatureExists: !!signature,
+        bodyLength: rawBody?.length,
       });
 
-      // Handle the event
-      switch (event.type) {
-        case 'payment_intent.succeeded':
-          const paymentIntent = event.data.object;
-          // Handle successful payment
-          break;
-        // ... handle other event types
-      }
+      // Let the service handle the webhook
+      const event = await StripeService.handleWebhook(rawBody, signature);
+
+      logger.info('Webhook processed successfully', {
+        eventType: event.type,
+        paymentIntentId: event.data?.object?.id,
+      });
 
       return event;
     } catch (error) {
