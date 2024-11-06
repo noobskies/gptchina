@@ -76,27 +76,45 @@ class StripeService {
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     try {
+      console.log('Processing webhook payload:', JSON.parse(payload));
+
       const event = stripe.webhooks.constructEvent(payload, signature, webhookSecret);
 
-      switch (event.type) {
-        case 'payment_intent.succeeded':
-          await this.handleSuccessfulPayment(event.data.object);
-          break;
+      console.log('Webhook event constructed:', {
+        type: event.type,
+        paymentIntent: event.data.object,
+      });
 
-        case 'payment_intent.payment_failed':
-          await this.handleFailedPayment(event.data.object);
-          break;
+      if (event.type === 'payment_intent.succeeded') {
+        const paymentIntent = event.data.object;
+        console.log('Payment intent succeeded:', {
+          id: paymentIntent.id,
+          metadata: paymentIntent.metadata,
+          amount: paymentIntent.amount,
+        });
+        await this.handleSuccessfulPayment(paymentIntent);
       }
 
       return event;
     } catch (error) {
-      logger.error('Webhook error:', error);
-      throw new Error(`Webhook Error: ${error.message}`);
+      console.error('Webhook processing error:', error);
+      throw error;
     }
   }
 
   static async handleSuccessfulPayment(paymentIntent) {
-    const { userId } = paymentIntent.metadata;
+    console.log('Starting handleSuccessfulPayment:', {
+      id: paymentIntent.id,
+      metadata: paymentIntent.metadata,
+      amount: paymentIntent.amount,
+    });
+
+    const { userId, priceId } = paymentIntent.metadata || {};
+
+    if (!priceId) {
+      console.error('Missing priceId in payment metadata:', paymentIntent);
+      throw new Error('priceId is not defined');
+    }
 
     try {
       // Double-check that payment hasn't been processed already

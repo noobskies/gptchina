@@ -78,22 +78,30 @@ class StripeController {
         throw new Error('No stripe signature found in headers');
       }
 
-      logger.info('Processing webhook', {
+      logger.info('Controller processing webhook', {
         signatureExists: !!signature,
         bodyLength: rawBody?.length,
+        bodyContent: JSON.parse(rawBody),
       });
 
-      // Let the service handle the webhook
+      // Pass through to service
       const event = await StripeService.handleWebhook(rawBody, signature);
 
-      logger.info('Webhook processed successfully', {
+      logger.info('Controller processed webhook', {
         eventType: event.type,
-        paymentIntentId: event.data?.object?.id,
+        paymentIntent: event.data?.object,
+        metadata: event.data?.object?.metadata,
       });
 
       return event;
     } catch (error) {
-      logger.error('Webhook processing error:', error);
+      logger.error('Controller webhook error:', {
+        message: error.message,
+        name: error.name,
+        type: error.type,
+        stack: error.stack,
+        fullError: JSON.stringify(error),
+      });
       throw error;
     }
   }

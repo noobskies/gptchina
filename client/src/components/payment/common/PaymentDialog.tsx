@@ -89,6 +89,7 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
       case PaymentMethod.ApplePay:
       case PaymentMethod.WeChatPay:
       case PaymentMethod.AliPay:
+      case PaymentMethod.Bitcoin:
         return (
           <StripePaymentProvider amount={selectedPackage.amount} user={user}>
             <StripePaymentForm {...commonProps} />

@@ -54,15 +54,18 @@ const startServer = async () => {
   app.post('/api/payment/stripe/webhook', express.raw({ type: 'application/json' }), (req, res) => {
     const signature = req.headers['stripe-signature'];
 
-    logger.info('Webhook received with signature:', signature);
+    console.log('Webhook received:', {
+      body: JSON.parse(req.body),
+      signature: signature?.slice(0, 20) + '...',
+    });
 
-    // Pass the raw buffer to the controller
     StripeController.handleWebhook(req.body, signature)
       .then((event) => {
-        res.json({ event: event });
+        console.log('Webhook processed successfully:', event.data.object);
+        res.json({ received: true });
       })
       .catch((err) => {
-        logger.error('Webhook error:', err);
+        console.error('Webhook error:', err);
         res.status(400).json({ error: err.message });
       });
   });
