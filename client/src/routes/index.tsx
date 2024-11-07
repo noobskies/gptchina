@@ -12,7 +12,6 @@ import TermsOfService from '~/components/TermsOfService/TermsOfService';
 import PrivacyPolicy from '~/components/PrivacyPolicy/PrivacyPolicy';
 import { AuthContextProvider } from '~/hooks/AuthContext';
 import DeepLinkHandler from '~/components/Tools/DeepLinkHandler';
-import { StripeSuccessPage, StripeCancelPage } from '~/components/Stripe/StripePaymentPages';
 import StartupLayout from './Layouts/Startup';
 import LoginLayout from './Layouts/Login';
 import dashboardRoutes from './Dashboard';
@@ -30,14 +29,6 @@ const AuthLayout = () => (
 );
 
 export const router = createBrowserRouter([
-  {
-    path: 'stripe-success',
-    element: <StripeSuccessPage />,
-  },
-  {
-    path: 'stripe-cancel',
-    element: <StripeCancelPage />,
-  },
   {
     path: 'share/:shareId',
     element: <ShareRoute />,

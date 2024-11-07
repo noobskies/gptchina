@@ -1,7 +1,7 @@
 // BuyTokensButton.tsx
 import { useState } from 'react';
 import { useLocalize } from '~/hooks';
-import ErrorDialog from '~/components/Messages/Content/ErrorDialog';
+// import ErrorDialog from '~/components/Messages/Content/ErrorDialog';
 import { useGetUserBalance, useGetStartupConfig } from 'librechat-data-provider/react-query';
 import { useAuthContext } from '~/hooks/AuthContext';
 import numeral from 'numeral';
@@ -31,7 +31,7 @@ function BuyTokensButton({ fullWidth = true }) {
       >
         {localize('com_ui_buy_token')}
       </button>
-      {showBuyTokens && <ErrorDialog open={showBuyTokens} onOpenChange={setShowBuyTokens} />}
+      {/* {showBuyTokens && <ErrorDialog open={showBuyTokens} onOpenChange={setShowBuyTokens} />} */}
     </>
   );
 }
