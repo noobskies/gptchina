@@ -8,7 +8,7 @@ import { useLocalize } from '~/hooks';
 import TokenOptionButton from '~/components/payment/TokenOptionButton';
 import PaymentOptionButton from '~/components/payment/PaymentOptionButton';
 import { tokenOptions, tokenOptionsChina } from '~/components/payment/paymentConstants';
-import { processBitcoinPayment } from '~/components/payment/BitcoinPayment';
+// import { processBitcoinPayment } from '~/components/payment/BitcoinPayment';
 import { processStripePayment } from '~/components/payment/StripePayment';
 
 const mainPaymentOptions = ['wechat_pay', 'alipay', 'card', 'bitcoin'];

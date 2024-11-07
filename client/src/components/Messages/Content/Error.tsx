@@ -5,7 +5,7 @@ import type { LocalizeFunction } from '~/common';
 import { formatJSON, extractJson, isJson } from '~/utils/json';
 import useLocalize from '~/hooks/useLocalize';
 import CodeBlock from './CodeBlock';
-import BuyTokensButton from '~/components/Nav/BuyTokensButton';
+// import BuyTokensButton from '~/components/Nav/BuyTokensButton';
 
 const localizedErrorPrefix = 'com_error';
 
@@ -75,9 +75,7 @@ const errorMessages = {
     return (
       <div className="text-center">
         <p>{localize('com_error_token_balance')}</p>
-        <div className="flex justify-center">
-          <BuyTokensButton fullWidth={false} />
-        </div>
+        <div className="flex justify-center">{/* <BuyTokensButton fullWidth={false} /> */}</div>
       </div>
     );
   },
