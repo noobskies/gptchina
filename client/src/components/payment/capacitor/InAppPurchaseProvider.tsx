@@ -1,16 +1,18 @@
-// components/payment/capacitor/InAppPurchaseProvider.tsx
-
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, ReactNode } from 'react';
 import { useInAppPurchase } from './hooks/useInAppPurchase';
+import { TokenPackage } from '../constants/tokenOptions';
 
 interface InAppPurchaseContextType {
+  products: TokenPackage[];
   loading: boolean;
-  initialized: boolean;
-  purchase: (params: { priceId: string; tokens: number; amount: number }) => Promise<void>;
   error: string | null;
+  purchasing: boolean;
+  purchaseProduct: (productId: string) => Promise<void>;
+  restorePurchases: () => Promise<void>;
+  refreshProducts: () => Promise<void>;
 }
 
-const InAppPurchaseContext = createContext<InAppPurchaseContextType | undefined>(undefined);
+const InAppPurchaseContext = createContext<InAppPurchaseContextType | null>(null);
 
 export const useInAppPurchaseContext = () => {
   const context = useContext(InAppPurchaseContext);
@@ -21,38 +23,32 @@ export const useInAppPurchaseContext = () => {
 };
 
 interface InAppPurchaseProviderProps {
-  children: React.ReactNode;
-  onSuccess?: (paymentId?: string) => void;
+  children: ReactNode;
+  onSuccess?: (paymentIntentId?: string) => void;
   onError?: (error: string) => void;
 }
 
-export function InAppPurchaseProvider({
+export const InAppPurchaseProvider: React.FC<InAppPurchaseProviderProps> = ({
   children,
-  onSuccess = () => {},
-  onError = () => {},
-}: InAppPurchaseProviderProps) {
-  const [error, setError] = useState<string | null>(null);
+  onSuccess,
+  onError,
+}) => {
+  const inAppPurchase = useInAppPurchase();
 
-  const handleError = (errorMessage: string) => {
-    setError(errorMessage);
-    onError(errorMessage);
+  const handlePurchase = async (productId: string) => {
+    try {
+      await inAppPurchase.purchaseProduct(productId);
+      onSuccess?.();
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Purchase failed';
+      onError?.(errorMessage);
+    }
   };
 
-  const { loading, initialized, purchase, initialize } = useInAppPurchase({
-    onSuccess,
-    onError: handleError,
-  });
-
-  useEffect(() => {
-    initialize().catch(handleError);
-  }, [initialize]);
-
   const value = {
-    loading,
-    initialized,
-    purchase,
-    error,
+    ...inAppPurchase,
+    purchaseProduct: handlePurchase,
   };
 
   return <InAppPurchaseContext.Provider value={value}>{children}</InAppPurchaseContext.Provider>;
-}
+};

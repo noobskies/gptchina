@@ -7,9 +7,12 @@ android {
         applicationId "twa.novlisky.io"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 23
+        versionCode 24
         versionName "1.0.23"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [
+            BILLING_KEY: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAo18WpCmGSnM9WEpCTE4CqnedKTa/RoILf6u8Cy6MzWEC+46V2rO9WsyF00XHC6psK3xDBBtAT3y+AaLme9ANoOUXPOAmJCYQGrgxuWk/SndWkzwSz3Nw20NA1wHqPhbWH/HfHur4E+ty/NknLJVI1valYBtTWOCaX0sLkBSnI1JCnf9Gb1U1hfDyq01nBmglp6eWWPoHnW3/iUgODA4l5yLfzwcuh36mFDv+XNyooffADmUEG3buEgma8e9sVBL+u89CqJm5U+Egn5BuEjvl2zfvq987mqECeBbv1tEOAvtsvQ12YNBxqWoYLkNS6r3DBpJKRz4Q88I8rjGG8nlgewIDAQAB"
+        ]
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
              // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
@@ -31,6 +34,7 @@ repositories {
 }
 
 dependencies {
+    def billing_version = "7.1.1"
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
     implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
@@ -40,6 +44,7 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation project(':capacitor-cordova-android-plugins')
+    implementation "com.android.billingclient:billing:$billing_version"
 }
 
 apply from: 'capacitor.build.gradle'

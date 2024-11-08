@@ -15,9 +15,19 @@ interface TokenPackage {
   discountPercentage?: string;
 }
 
-interface TokenOptionButtonProps extends TokenPackage {
+interface TokenOptionButtonProps {
+  tokens: number;
+  label: string;
+  price: string;
+  amount: number;
+  currency: 'USD' | 'CNY';
+  priceId: string;
+  originalPrice?: string; // Make this prop optional
+  discountedPrice?: string; // Make this prop optional
+  discountPercentage?: string;
   isSelected: boolean;
   onClick: () => void;
+  disabled: boolean;
 }
 
 const formatTokenAmount = (tokens: number): string =>

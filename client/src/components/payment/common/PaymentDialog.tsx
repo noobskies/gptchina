@@ -7,7 +7,7 @@ import { useLocalize } from '~/hooks';
 import TokenOptionButton from './TokenOptionButton';
 import PaymentOptionButton from './PaymentOptionButton';
 import PaymentConfirmation from './PaymentConfirmation';
-import { paymentMethods, PaymentMethod } from '../constants/paymentMethods';
+import { getAvailablePaymentMethods, PaymentMethod } from '../constants/paymentMethods';
 import { tokenOptions } from '../constants/tokenOptions';
 import { StripePaymentForm } from '../stripe/StripePaymentForm';
 import { StripePaymentProvider } from '../stripe/StripePaymentProvider';
@@ -26,6 +26,7 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
   const localize = useLocalize();
   const [step, setStep] = React.useState<PaymentStep>('select');
   const [selectedTokens, setSelectedTokens] = React.useState<number | null>(null);
+  const availablePaymentMethods = React.useMemo(() => getAvailablePaymentMethods(), []);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = React.useState<PaymentMethod | null>(
     null,
   );
@@ -146,7 +147,7 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
             </div>
 
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {paymentMethods.map((method) => (
+              {availablePaymentMethods.map((method) => (
                 <PaymentOptionButton
                   key={method.id}
                   {...method}

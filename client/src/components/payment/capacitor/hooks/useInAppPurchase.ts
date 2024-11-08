@@ -1,205 +1,146 @@
-// components/payment/capacitor/hooks/useInAppPurchase.ts
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { Store } from 'cordova-plugin-purchase';
+import { Capacitor } from '@capacitor/core';
+import { TokenPackage } from '../../constants/tokenOptions';
 
-interface IAPTransaction {
-  id: string;
-  appStoreReceipt: string;
-}
-
-interface IAPProduct {
-  id: string;
-  transaction?: IAPTransaction;
-  finish: () => Promise<void>;
-}
-
-interface Store {
-  CONSUMABLE: string;
-  register: (product: { id: string; type: string }) => void;
-  when: (target: string) => {
-    approved: (callback: (product: IAPProduct) => void) => void;
-    error: (callback: (error: Error) => void) => void;
-    updated: (callback: (product: IAPProduct) => void) => void;
-  };
-  refresh: () => Promise<void>;
-  get: (productId: string) => IAPProduct | null;
-  order: (productId: string) => Promise<void>;
-}
-
-declare global {
-  interface Window {
-    store?: Store;
-  }
-}
-
-interface UseInAppPurchaseConfig {
-  onSuccess: (paymentId?: string) => void;
-  onError: (error: string) => void;
-}
-
-interface PurchaseRequest {
-  priceId: string;
-  tokens: number;
-  amount: number;
-}
-
-const getAppleProductId = (priceId: string): string => {
-  // Map your Stripe price IDs to Apple product IDs
-  const productMapping: Record<string, string> = {
-    price_1P6dqBHKD0byXXClWuA2RGY2: 'io.novlisky.twa.100k.tokens',
-    price_1P6dqdHKD0byXXClcboa06Tu: 'io.novlisky.twa.500k.tokens',
-    price_1P6drEHKD0byXXClOjmSkPKm: 'io.novlisky.twa.1m.tokens',
-    price_1P6drxHKD0byXXClVVLokkLh: 'io.novlisky.twa.10m.tokens',
-  };
-
-  return productMapping[priceId] || '';
-};
-
-export const useInAppPurchase = ({ onSuccess, onError }: UseInAppPurchaseConfig) => {
-  const [loading, setLoading] = useState(false);
+export const useInAppPurchase = () => {
+  const [store] = useState(() => new Store());
+  const [products, setProducts] = useState<TokenPackage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [purchasing, setPurchasing] = useState(false);
   const [initialized, setInitialized] = useState(false);
-  const [store, setStore] = useState<Store | undefined>(undefined);
-  const [availableProducts, setAvailableProducts] = useState<IAPProduct[]>([]);
-
-  useEffect(() => {
-    if (!window.store) {
-      console.warn('Cordova Purchase Plugin not available');
-      return;
-    }
-    setStore(window.store);
-  }, []);
 
   const initialize = useCallback(async () => {
-    if (!store || initialized) return;
+    if (initialized) return;
 
     try {
-      setLoading(true);
+      const platform = Capacitor.getPlatform();
+      const productIds = ['tokens_100k', 'tokens_500k', 'tokens_1m', 'tokens_10m'];
 
-      // Register all products
-      Object.values(getAppleProductId).forEach((productId) => {
+      productIds.forEach((id) => {
         store.register({
-          id: productId,
+          id,
           type: store.CONSUMABLE,
+          platform: platform === 'android' ? 'android' : 'ios',
         });
       });
 
-      // Setup purchase handling
-      store.when('product').approved(async (product: IAPProduct) => {
+      // Setup listeners
+      store.when('product').approved(async (product) => {
         try {
-          if (!product.transaction) {
-            throw new Error('No transaction data available');
+          const validationResult = await product.verify();
+          if (validationResult.verified) {
+            await product.finish();
           }
-
-          // Verify the purchase with your backend
-          const response = await fetch('/api/payment/inapp/confirm', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              transactionId: product.transaction.id,
-              receipt: product.transaction.appStoreReceipt,
-              productId: product.id,
-            }),
-            credentials: 'include',
-          });
-
-          if (!response.ok) {
-            throw new Error('Failed to verify purchase');
-          }
-
-          // Finish the transaction
-          await product.finish();
-
-          onSuccess(product.transaction.id);
-        } catch (error) {
-          onError(error instanceof Error ? error.message : 'Purchase verification failed');
+        } catch (err) {
+          console.error('Purchase verification failed:', err);
+          throw err;
         }
       });
 
-      store.when('product').updated((product: IAPProduct) => {
-        setAvailableProducts((prev) => {
-          const exists = prev.find((p) => p.id === product.id);
-          if (exists) {
-            return prev.map((p) => (p.id === product.id ? product : p));
-          }
-          return [...prev, product];
-        });
+      store.when('product').owned((product) => {
+        product.finish();
       });
 
-      store.when('product').error((error: Error) => {
-        onError(error.message);
+      store.error((err) => {
+        console.error('Store error:', err);
+        setError(err.message || 'Purchase failed');
       });
 
-      // Initialize the store
-      await store.refresh();
-
+      await store.ready();
       setInitialized(true);
+      await store.update();
     } catch (error) {
-      onError(error instanceof Error ? error.message : 'Failed to initialize store');
+      console.error('Failed to initialize store:', error);
+      setError(error instanceof Error ? error.message : 'Failed to initialize store');
+    }
+  }, [store, initialized]);
+
+  const loadProducts = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      if (!initialized) {
+        await initialize();
+      }
+      const storeProducts = store.products.filter((p) => p.valid);
+
+      // Map store products to your TokenPackage format
+      const mappedProducts = storeProducts.map((product) => ({
+        tokens: parseInt(
+          product.id.replace('tokens_', '').replace('k', '000').replace('m', '000000'),
+        ),
+        label: `com_token_package_label_${product.id.split('_')[1]}`,
+        price: product.price || '',
+        amount: product.price ? parseFloat(product.price.replace(/[^0-9\.]/g, '')) * 100 : 0,
+        currency: 'USD',
+        priceId: product.id,
+        originalPrice: product.price || '',
+        discountedPrice: product.price || '',
+      }));
+
+      setProducts(mappedProducts);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load products');
     } finally {
       setLoading(false);
     }
-  }, [store, initialized, onSuccess, onError]);
+  }, [store, initialized, initialize]);
 
-  const purchase = useCallback(
-    async ({ priceId, tokens, amount }: PurchaseRequest) => {
-      if (!store) {
-        onError('In-app purchases not available');
-        return;
-      }
-
+  const purchaseProduct = useCallback(
+    async (productId: string) => {
       try {
-        setLoading(true);
-
+        setPurchasing(true);
+        setError(null);
         if (!initialized) {
           await initialize();
         }
 
-        // Create purchase record on backend
-        const createResponse = await fetch('/api/payment/inapp/create-purchase', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            priceId,
-            tokens,
-            amount,
-          }),
-          credentials: 'include',
-        });
-
-        if (!createResponse.ok) {
-          throw new Error('Failed to create purchase');
-        }
-
-        const appleProductId = getAppleProductId(priceId);
-        if (!appleProductId) {
-          throw new Error('Invalid product configuration');
-        }
-
-        // Get the product
-        const product = store.get(appleProductId);
+        const product = store.get(productId);
         if (!product) {
-          throw new Error('Product not available');
+          throw new Error(`Product ${productId} not found`);
         }
-
-        // Order the product
-        await store.order(appleProductId);
-      } catch (error) {
-        onError(error instanceof Error ? error.message : 'Purchase failed');
+        return await product.order();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Purchase failed');
+        throw err;
       } finally {
-        setLoading(false);
+        setPurchasing(false);
       }
     },
-    [store, initialized, initialize, onError],
+    [store, initialized, initialize],
   );
 
+  const restorePurchases = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      if (!initialized) {
+        await initialize();
+      }
+      return store.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to restore purchases');
+    } finally {
+      setLoading(false);
+    }
+  }, [store, initialized, initialize]);
+
+  useEffect(() => {
+    const platform = Capacitor.getPlatform();
+    if (platform === 'android' || platform === 'ios') {
+      loadProducts();
+    }
+  }, [loadProducts]);
+
   return {
+    products,
     loading,
-    initialized,
-    purchase,
-    initialize,
-    availableProducts,
+    error,
+    purchasing,
+    purchaseProduct,
+    restorePurchases,
+    refreshProducts: loadProducts,
   };
 };
