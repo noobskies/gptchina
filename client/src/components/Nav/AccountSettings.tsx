@@ -13,6 +13,7 @@ import Settings from './Settings';
 import store from '~/store';
 import FeedbackDialog, { handleSentryFeedback } from './FeedbackDialog';
 import PaymentDialog from '~/components/payment/common/PaymentDialog';
+import TokenClaimButton from '../TokenClaim/TokenClaimButton';
 
 function AccountSettings() {
   const localize = useLocalize();
@@ -28,14 +29,44 @@ function AccountSettings() {
   const avatarSrc = useAvatar(user);
   const name = user?.avatar ?? user?.username ?? '';
 
+  const formatTokens = (num) => {
+    const n = parseFloat(num);
+    if (isNaN(n)) return '0';
+
+    if (n >= 1e9) return `${(n / 1e9).toFixed(1)}B`;
+    if (n >= 1e6) return `${(n / 1e6).toFixed(1)}M`;
+    if (n >= 1e3) return `${(n / 1e3).toFixed(1)}K`;
+    return n.toFixed(1);
+  };
+
   return (
     <>
-      <button
-        onClick={() => setShowPayment(true)}
-        className="focus:bg-blue-650 w-full rounded bg-blue-600 p-2 text-white transition-colors duration-200 hover:bg-blue-700 focus:outline-none active:bg-blue-800 disabled:cursor-not-allowed disabled:bg-blue-500 disabled:hover:bg-blue-500 dark:hover:bg-blue-700"
-      >
-        {localize('com_ui_buy_token')}
-      </button>
+      <div className="m-1 ml-3">
+        <TokenClaimButton />
+      </div>
+      {startupConfig?.checkBalance === true &&
+        balanceQuery.data != null &&
+        !isNaN(parseFloat(balanceQuery.data)) && (
+          <>
+            <div className="m-1 ml-3 flex flex-col items-start whitespace-nowrap">
+              <div className="flex items-center text-sm text-gray-800 dark:text-gray-200">
+                {`Tokens Remaining: ${formatTokens(balanceQuery.data)}`}
+              </div>
+              <a href="/token-burn-rates" target="_blank" className="text-xs text-blue-600">
+                Learn More 🔥
+              </a>
+              <DropdownMenuSeparator />
+            </div>
+          </>
+        )}
+      <div className="m-1 ml-3">
+        <button
+          onClick={() => setShowPayment(true)}
+          className="focus:bg-blue-650 w-full rounded bg-blue-600 p-2 text-white transition-colors duration-200 hover:bg-blue-700 focus:outline-none active:bg-blue-800 disabled:cursor-not-allowed disabled:bg-blue-500 disabled:hover:bg-blue-500 dark:hover:bg-blue-700"
+        >
+          {localize('com_ui_buy_token')}
+        </button>
+      </div>
       <Select.SelectProvider>
         <Select.Select
           aria-label={localize('com_nav_account_settings')}

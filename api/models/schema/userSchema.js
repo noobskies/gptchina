@@ -51,7 +51,7 @@ const userSchema = mongoose.Schema(
     },
     email: {
       type: String,
-      required: [true, 'can\'t be blank'],
+      required: [true, "can't be blank"],
       lowercase: true,
       unique: true,
       match: [/\S+@\S+\.\S+/, 'is invalid'],
@@ -117,14 +117,6 @@ const userSchema = mongoose.Schema(
     },
     refreshToken: {
       type: [Session],
-    },
-    lastTokenClaimTimestamp: {
-      type: Date,
-      default: Date.now,
-    },
-    tokenClaimCount: {
-      type: Number,
-      default: 0,
     },
     expiresAt: {
       type: Date,

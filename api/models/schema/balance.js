@@ -1,4 +1,6 @@
+// api/models/schema/balance.js
 const mongoose = require('mongoose');
+const { date } = require('zod');
 
 const balanceSchema = mongoose.Schema({
   user: {
@@ -7,10 +9,13 @@ const balanceSchema = mongoose.Schema({
     index: true,
     required: true,
   },
-  // 1000 tokenCredits = 1 mill ($0.001 USD)
   tokenCredits: {
     type: Number,
     default: 0,
+  },
+  lastTokenClaim: {
+    type: Date,
+    default: date.now,
   },
 });
 

@@ -1,5 +1,7 @@
+// components/payment/common/PaymentDialog.tsx
+
 import React, { useState } from 'react';
-import { OGDialog, OGDialogContent, OGDialogHeader, OGDialogTitle } from '~/components';
+import { OGDialog, OGDialogContent, OGDialogHeader } from '~/components';
 import { useAuthContext } from '~/hooks/AuthContext';
 import { useLocalize } from '~/hooks';
 import TokenOptionButton from './TokenOptionButton';
@@ -9,6 +11,8 @@ import { paymentMethods, PaymentMethod } from '../constants/paymentMethods';
 import { tokenOptions } from '../constants/tokenOptions';
 import { StripePaymentForm } from '../stripe/StripePaymentForm';
 import { StripePaymentProvider } from '../stripe/StripePaymentProvider';
+import { InAppPurchaseForm } from '../capacitor/InAppPurchaseForm';
+import { InAppPurchaseProvider } from '../capacitor/InAppPurchaseProvider';
 
 interface PaymentDialogProps {
   open: boolean;
@@ -49,6 +53,7 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
     }
     setStep('confirmation');
   };
+
   const handlePaymentError = (errorMessage: string) => {
     setError(errorMessage);
   };
@@ -83,12 +88,16 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
       onSuccess: handlePaymentComplete,
       onError: handlePaymentError,
       onBack: () => setStep('select'),
-      selectedPaymentMethod: selectedPaymentMethod!,
     };
 
-    console.log('selectedPaymentMethod', commonProps);
-
     switch (selectedPaymentMethod) {
+      case PaymentMethod.InAppPurchase:
+        return (
+          <InAppPurchaseProvider onSuccess={handlePaymentComplete} onError={handlePaymentError}>
+            <InAppPurchaseForm {...commonProps} />
+          </InAppPurchaseProvider>
+        );
+
       case PaymentMethod.Card:
       case PaymentMethod.GooglePay:
       case PaymentMethod.ApplePay:
@@ -101,9 +110,10 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
             user={user}
             priceId={selectedPackage.priceId}
           >
-            <StripePaymentForm {...commonProps} />
+            <StripePaymentForm {...commonProps} selectedPaymentMethod={selectedPaymentMethod} />
           </StripePaymentProvider>
         );
+
       default:
         return null;
     }

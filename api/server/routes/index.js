@@ -16,7 +16,6 @@ const convos = require('./convos');
 const config = require('./config');
 const payment = require('./payment');
 const files = require('./files');
-const claimTokens = require('./claimTokens');
 const share = require('./share');
 const agents = require('./agents');
 const roles = require('./roles');
@@ -51,7 +50,6 @@ module.exports = {
   payment,
   assistants,
   staticRoute,
-  claimTokens,
   presets,
   balance,
   messages,
