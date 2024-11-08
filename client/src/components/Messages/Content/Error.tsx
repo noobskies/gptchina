@@ -71,12 +71,47 @@ const errorMessages = {
       windowInMinutes > 1 ? `${windowInMinutes} minutes` : 'minute'
     }.`;
   },
-  token_balance: (json: TTokenBalance, localize: LocalizeFunction) => {
+  token_balance: (json: TTokenBalance) => {
+    const { balance, tokenCost, promptTokens, generations } = json;
+
+    // Round numbers to 2 decimal places
+    const formattedBalance = balance.toFixed(2);
+    const formattedCost = tokenCost.toFixed(2);
+    // Prompt tokens should be whole numbers
+    const formattedPromptTokens = Math.round(promptTokens);
+
     return (
-      <div className="text-center">
-        <p>{localize('com_error_token_balance')}</p>
-        <div className="flex justify-center">{/* <BuyTokensButton fullWidth={false} /> */}</div>
-      </div>
+      <>
+        <p className="text-red-800 dark:text-red-200">
+          Insufficient Funds! Balance: {formattedBalance}. Prompt tokens: {formattedPromptTokens}.
+          Cost: {formattedCost}.
+        </p>
+        <a
+          href="#payment"
+          onClick={(e) => {
+            e.preventDefault();
+            const paymentButton = document.querySelector('[data-payment-trigger]');
+            if (paymentButton && paymentButton instanceof HTMLElement) {
+              paymentButton.click();
+            }
+          }}
+          className="mt-4 block w-full rounded bg-blue-600 p-2 text-center text-white transition-colors duration-200 hover:bg-blue-700 focus:outline-none active:bg-blue-800"
+        >
+          Buy More Tokens
+        </a>
+
+        {generations && (
+          <>
+            <br />
+            <br />
+            <CodeBlock
+              lang="Generations"
+              error={true}
+              codeChildren={formatJSON(JSON.stringify(generations))}
+            />
+          </>
+        )}
+      </>
     );
   },
 };
