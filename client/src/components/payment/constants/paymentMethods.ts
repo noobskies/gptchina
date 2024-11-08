@@ -54,13 +54,13 @@ export const paymentMethods: PaymentMethodConfig[] = [
     icon: 'apple-pay',
     regions: ['GLOBAL'],
   },
-  {
-    id: PaymentMethod.InAppPurchase,
-    name: 'In-App Purchase',
-    icon: 'mobile',
-    platforms: ['ios', 'android'],
-    regions: ['GLOBAL'],
-  },
+  // {
+  //   id: PaymentMethod.InAppPurchase,
+  //   name: 'In-App Purchase',
+  //   icon: 'mobile',
+  //   platforms: ['ios', 'android'],
+  //   regions: ['GLOBAL'],
+  // },
 ];
 
 // You can also export a default object if you prefer

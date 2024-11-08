@@ -145,7 +145,7 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
               <div className="flex-1 border-t border-gray-300 dark:border-gray-700" />
             </div>
 
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {paymentMethods.map((method) => (
                 <PaymentOptionButton
                   key={method.id}
@@ -178,7 +178,7 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
 
   return (
     <OGDialog open={open} onOpenChange={handleClose}>
-      <OGDialogContent className="flex max-h-[90vh] w-11/12 max-w-xl flex-col bg-background">
+      <OGDialogContent className="flex h-[100dvh] w-full flex-col bg-background sm:h-auto sm:max-h-[90vh] sm:w-11/12 sm:max-w-xl">
         <OGDialogHeader className="border-b border-gray-200 p-2 dark:border-gray-700" />
         <div className="overflow-y-auto p-2">{renderContent()}</div>
       </OGDialogContent>
