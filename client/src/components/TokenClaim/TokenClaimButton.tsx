@@ -26,6 +26,7 @@ function TokenClaimButton({ fullWidth = true }) {
         });
 
         const data = await response.json();
+        console.log(data);
 
         if (!data.canClaim && data.nextClaimTime) {
           updateCountdown(new Date(data.nextClaimTime));
