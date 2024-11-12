@@ -128,13 +128,6 @@ export const useTokenClaim = () => {
     return () => clearInterval(interval);
   }, [checkClaimStatus]);
 
-  // Refresh balance whenever claim status changes
-  useEffect(() => {
-    if (!isLoading && !isCheckingStatus) {
-      refreshBalance();
-    }
-  }, [isLoading, isCheckingStatus, refreshBalance]);
-
   return {
     isLoading,
     isCheckingStatus,
