@@ -1,8 +1,8 @@
-// components/payment/common/PaymentConfirmation.tsx
 import React from 'react';
 import { useLocalize } from '~/hooks';
 import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface PaymentConfirmationProps {
   tokens: number;
@@ -17,6 +17,19 @@ const PaymentConfirmation: React.FC<PaymentConfirmationProps> = ({
 }) => {
   const localize = useLocalize();
   const [copied, setCopied] = useState(false);
+  const queryClient = useQueryClient();
+
+  // Invalidate the balance query when component mounts
+  React.useEffect(() => {
+    queryClient.invalidateQueries(['balance']); // This will trigger a refresh of the balance query
+  }, [queryClient]);
+
+  const handleClose = () => {
+    // Ensure balance is refreshed before closing
+    queryClient.invalidateQueries(['balance']).then(() => {
+      onClose();
+    });
+  };
 
   const handleCopyTransactionId = async () => {
     if (transactionId) {
@@ -93,7 +106,7 @@ const PaymentConfirmation: React.FC<PaymentConfirmationProps> = ({
       {/* Action Buttons */}
       <div className="flex w-full flex-col gap-3">
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:hover:bg-blue-600"
         >
           Continue
