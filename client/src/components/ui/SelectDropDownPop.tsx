@@ -61,6 +61,10 @@ function SelectDropDownPop({
     'gpt-4o-mini': 'GPT-4o Mini 🔥0.2',
     'o1-preview': 'o1-preview 🔥10',
     'o1-mini': 'o1-mini 🔥2',
+    'chatgpt-4o-latest': 'GPT-4o Latest 🔥2.5',
+    // Claude models
+    'claude-3-5-sonnet-latest': 'Claude-3.5 Sonnet Latest 🔥2.5',
+    'claude-3-5-haiku-20241022': 'Claude-3.5 Haiku 🔥1.5',
     'claude-3-5-sonnet-20240620': 'Claude-3.5 Sonnet 🔥2.5',
     'claude-3-opus-20240229': 'Claude-3 Opus 🔥12',
     'claude-3-sonnet-20240229': 'Claude-3 Sonnet 🔥1.5',
