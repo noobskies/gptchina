@@ -1,16 +1,15 @@
 // api/server/routes/balance.js
 const express = require('express');
 const router = express.Router();
-const { getBalance, claimTokens, getClaimStatus } = require('../controllers/Balance');
+const balanceController = require('../controllers/Balance');
+const { getClaimStatus, claimTokens } = require('../controllers/TokenClaim');
 const { requireJwtAuth } = require('../middleware/');
 
-// Get balance route
-router.get('/', requireJwtAuth, getBalance);
+// Original balance route
+router.get('/', requireJwtAuth, balanceController);
 
-// Get claim status route
+// Token claim routes
 router.get('/claim-tokens', requireJwtAuth, getClaimStatus);
-
-// Claim tokens route
 router.post('/claim-tokens', requireJwtAuth, claimTokens);
 
 module.exports = router;
