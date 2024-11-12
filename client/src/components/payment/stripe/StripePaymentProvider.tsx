@@ -32,7 +32,7 @@ export function StripePaymentProvider({
       user,
       isAuthenticated,
       hasToken: !!token,
-      priceId, // Log priceId
+      priceId,
     });
 
     const fetchPaymentIntent = async () => {
