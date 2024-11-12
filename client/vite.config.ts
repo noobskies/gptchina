@@ -2,7 +2,7 @@ import path, { resolve } from 'path';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { defineConfig, createLogger, loadEnv } from 'vite';
-import { sentryVitePlugin } from "@sentry/vite-plugin";
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import type { Plugin } from 'vite';
 
@@ -88,7 +88,7 @@ export default defineConfig(({ mode }) => {
       nodePolyfills(),
       VitePWA({
         injectRegister: 'auto', // 'auto' | 'manual' | 'disabled'
-        registerType: 'prompt', // 'prompt' | 'auto' | 'disabled'
+        registerType: 'autoUpdate', // 'prompt' | 'auto' | 'disabled'
         devOptions: {
           enabled: false, // enable/disable registering SW in development mode
         },
@@ -132,8 +132,8 @@ export default defineConfig(({ mode }) => {
       htmlPlugin(env),
       sentryVitePlugin({
         authToken: process.env.SENTRY_AUTH_TOKEN,
-        org: "gpt-global",
-        project: "gpt",
+        org: 'gpt-global',
+        project: 'gpt',
       }),
     ],
     publicDir: './public',
