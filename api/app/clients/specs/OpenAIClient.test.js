@@ -446,7 +446,7 @@ describe('OpenAIClient', () => {
         promptPrefix: 'Test Prefix',
       });
       expect(result).toHaveProperty('prompt');
-      const instructions = result.prompt.find((item) => item.name === 'instructions');
+      const instructions = result.prompt.find((item) => item.content.includes('Test Prefix'));
       expect(instructions).toBeDefined();
       expect(instructions.content).toContain('Test Prefix');
     });
@@ -476,7 +476,9 @@ describe('OpenAIClient', () => {
       const result = await client.buildMessages(messages, parentMessageId, {
         isChatCompletion: true,
       });
-      const instructions = result.prompt.find((item) => item.name === 'instructions');
+      const instructions = result.prompt.find((item) =>
+        item.content.includes('Test Prefix from options'),
+      );
       expect(instructions.content).toContain('Test Prefix from options');
     });
 
@@ -484,7 +486,7 @@ describe('OpenAIClient', () => {
       const result = await client.buildMessages(messages, parentMessageId, {
         isChatCompletion: true,
       });
-      const instructions = result.prompt.find((item) => item.name === 'instructions');
+      const instructions = result.prompt.find((item) => item.content.includes('Test Prefix'));
       expect(instructions).toBeUndefined();
     });
 
@@ -518,17 +520,17 @@ describe('OpenAIClient', () => {
         role: 'system',
         name: 'example_user',
         content:
-          'Let\'s circle back when we have more bandwidth to touch base on opportunities for increased leverage.',
+          "Let's circle back when we have more bandwidth to touch base on opportunities for increased leverage.",
       },
       {
         role: 'system',
         name: 'example_assistant',
-        content: 'Let\'s talk later when we\'re less busy about how to do better.',
+        content: "Let's talk later when we're less busy about how to do better.",
       },
       {
         role: 'user',
         content:
-          'This late pivot means we don\'t have time to boil the ocean for the client deliverable.',
+          "This late pivot means we don't have time to boil the ocean for the client deliverable.",
       },
     ];
 

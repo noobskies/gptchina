@@ -98,8 +98,8 @@ class AnthropicClient extends BaseClient {
     );
 
     const modelMatch = matchModelName(this.modelOptions.model, EModelEndpoint.anthropic);
-    this.isClaude3 = modelMatch.startsWith('claude-3');
-    this.isLegacyOutput = !modelMatch.startsWith('claude-3-5-sonnet');
+    this.isClaude3 = modelMatch.includes('claude-3');
+    this.isLegacyOutput = !modelMatch.includes('claude-3-5-sonnet');
     this.supportsCacheControl =
       this.options.promptCache && this.checkPromptCacheSupport(modelMatch);
 
@@ -379,13 +379,13 @@ class AnthropicClient extends BaseClient {
     const formattedMessages = orderedMessages.map((message, i) => {
       const formattedMessage = this.useMessages
         ? formatMessage({
-          message,
-          endpoint: EModelEndpoint.anthropic,
-        })
+            message,
+            endpoint: EModelEndpoint.anthropic,
+          })
         : {
-          author: message.isCreatedByUser ? this.userLabel : this.assistantLabel,
-          content: message?.content ?? message.text,
-        };
+            author: message.isCreatedByUser ? this.userLabel : this.assistantLabel,
+            content: message?.content ?? message.text,
+          };
 
       const needsTokenCount = this.contextStrategy && !orderedMessages[i].tokenCount;
       /* If tokens were never counted, or, is a Vision request and the message has files, count again */
@@ -634,7 +634,7 @@ class AnthropicClient extends BaseClient {
       );
     };
 
-    if (this.modelOptions.model.startsWith('claude-3')) {
+    if (this.modelOptions.model.includes('claude-3')) {
       await buildMessagesPayload();
       processTokens();
       return {
@@ -660,7 +660,7 @@ class AnthropicClient extends BaseClient {
   }
 
   getCompletion() {
-    logger.debug('AnthropicClient doesn\'t use getCompletion (all handled in sendCompletion)');
+    logger.debug("AnthropicClient doesn't use getCompletion (all handled in sendCompletion)");
   }
 
   /**
@@ -687,6 +687,7 @@ class AnthropicClient extends BaseClient {
     }
     if (
       modelMatch === 'claude-3-5-sonnet' ||
+      modelMatch === 'claude-3-5-haiku' ||
       modelMatch === 'claude-3-haiku' ||
       modelMatch === 'claude-3-opus'
     ) {
@@ -845,7 +846,7 @@ class AnthropicClient extends BaseClient {
   }
 
   getBuildMessagesOptions() {
-    logger.debug('AnthropicClient doesn\'t use getBuildMessagesOptions');
+    logger.debug("AnthropicClient doesn't use getBuildMessagesOptions");
   }
 
   static getTokenizer(encoding, isModelName = false, extendSpecialTokens = {}) {

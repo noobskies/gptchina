@@ -149,6 +149,15 @@ const Nav = ({
     }
   };
 
+  const renderSearchAndBookmarks = () => (
+    <>
+      {isSearchEnabled && <SearchBar clearSearch={clearSearch} isSmallScreen={isSmallScreen} />}
+      {hasAccessToBookmarks && (
+        <BookmarkNav tags={tags} setTags={setTags} isSmallScreen={isSmallScreen} />
+      )}
+    </>
+  );
+
   return (
     <>
       <div
@@ -193,36 +202,12 @@ const Nav = ({
                     ref={containerRef}
                   >
                     {isSmallScreen ? (
-                      <div className="pt-3.5">
-                        {isSearchEnabled && (
-                          <SearchBar clearSearch={clearSearch} isSmallScreen={isSmallScreen} />
-                        )}
-                        {hasAccessToBookmarks && (
-                          <BookmarkNav
-                            tags={tags}
-                            setTags={setTags}
-                            isSmallScreen={isSmallScreen}
-                          />
-                        )}
-                      </div>
+                      <div className="pt-3.5">{renderSearchAndBookmarks()}</div>
                     ) : (
                       <NewChat
                         toggleNav={itemToggleNav}
                         isSmallScreen={isSmallScreen}
-                        subHeaders={
-                          <>
-                            {isSearchEnabled && (
-                              <SearchBar clearSearch={clearSearch} isSmallScreen={isSmallScreen} />
-                            )}
-                            {hasAccessToBookmarks && (
-                              <BookmarkNav
-                                tags={tags}
-                                setTags={setTags}
-                                isSmallScreen={isSmallScreen}
-                              />
-                            )}
-                          </>
-                        }
+                        subHeaders={renderSearchAndBookmarks()}
                       />
                     )}
                     <Conversations
