@@ -1,4 +1,5 @@
-import { useTokenClaim, useCountdown } from '../../hooks/Balance/useCountdown';
+import { useCountdown } from '../../hooks/Balance/useCountdown';
+import { useTokenClaim } from '~/hooks/Balance/useTokenClaim';
 import { Spinner } from '~/components/svg';
 
 function TokenClaimButton({ fullWidth = true }) {
