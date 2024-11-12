@@ -3,7 +3,7 @@ const Balance = require('~/models/Balance');
 const { Transaction } = require('~/models/Transaction');
 
 const CLAIM_AMOUNT = 20000;
-const COOLDOWN_HOURS = 0.1;
+const COOLDOWN_HOURS = 24;
 
 const getClaimStatus = async (req, res) => {
   try {
