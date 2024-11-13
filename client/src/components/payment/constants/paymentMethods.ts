@@ -21,72 +21,71 @@ export interface PaymentMethodConfig {
 
 export const getAvailablePaymentMethods = (): PaymentMethodConfig[] => {
   const platform = Capacitor.getPlatform();
-  const isNativeMobile = platform === 'android' || platform === 'ios';
 
-  const methods: PaymentMethodConfig[] = [
+  // For Android, show only in-app purchase as Google Pay
+  if (platform === 'android') {
+    return [
+      {
+        id: PaymentMethod.InAppPurchase,
+        name: 'Google Pay',
+        icon: 'google-pay',
+        platforms: ['android'],
+        regions: ['GLOBAL'],
+      },
+    ];
+  }
+
+  // For iOS, only show App Store
+  if (platform === 'ios') {
+    return [
+      {
+        id: PaymentMethod.InAppPurchase,
+        name: 'App Store',
+        icon: 'apple',
+        platforms: ['ios'],
+        regions: ['GLOBAL'],
+      },
+    ];
+  }
+
+  // Web gets all other payment methods
+  return [
     {
       id: PaymentMethod.Card,
       name: 'Credit Card',
       icon: 'credit-card',
       providers: ['visa', 'mastercard', 'amex'],
-      platforms: ['web'],
     },
     {
       id: PaymentMethod.WeChatPay,
       name: 'WeChat Pay',
       icon: 'wechat',
       regions: ['CN'],
-      platforms: ['web'],
     },
     {
       id: PaymentMethod.AliPay,
       name: 'AliPay',
       icon: 'alipay',
       regions: ['CN'],
-      platforms: ['web'],
     },
     {
       id: PaymentMethod.Bitcoin,
       name: 'Bitcoin',
       icon: 'bitcoin',
-      platforms: ['web'],
     },
-  ];
-
-  // Only show Google Pay on web
-  if (platform === 'web') {
-    methods.push({
+    {
       id: PaymentMethod.GooglePay,
       name: 'Google Pay',
       icon: 'google-pay',
       regions: ['GLOBAL'],
-      platforms: ['web'],
-    });
-  }
-
-  // Only show Apple Pay on web
-  if (platform === 'web') {
-    methods.push({
+    },
+    {
       id: PaymentMethod.ApplePay,
       name: 'Apple Pay',
       icon: 'apple-pay',
       regions: ['GLOBAL'],
-      platforms: ['web'],
-    });
-  }
-
-  // Show In-App Purchase for native mobile apps
-  if (isNativeMobile) {
-    methods.push({
-      id: PaymentMethod.InAppPurchase,
-      name: platform === 'android' ? 'Google Play' : 'App Store',
-      icon: platform === 'android' ? 'google-play' : 'apple',
-      platforms: [platform],
-      regions: ['GLOBAL'],
-    });
-  }
-
-  return methods;
+    },
+  ];
 };
 
 export const paymentMethods = getAvailablePaymentMethods();

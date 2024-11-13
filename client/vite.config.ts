@@ -97,7 +97,7 @@ export default defineConfig(({ mode }) => {
           maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         },
         manifest: {
-          name: env.VITE_APP_AUTHOR || 'Novliisky',
+          name: env.VITE_APP_AUTHOR || 'Novlisky',
           short_name: env.VITE_APP_AUTHOR || 'Novlisky',
           start_url: '/',
           display: 'standalone',

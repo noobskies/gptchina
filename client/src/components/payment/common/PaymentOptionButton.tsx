@@ -34,6 +34,7 @@ const PaymentOptionButton: React.FC<PaymentOptionButtonProps> = ({
       case 'google-pay':
         return <FaGooglePay {...iconProps} />;
       case 'apple-pay':
+      case 'apple':
         return <FaApple {...iconProps} />;
       default:
         return <FaCreditCard {...iconProps} />;

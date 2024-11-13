@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Store } from 'cordova-plugin-purchase';
 import { Capacitor } from '@capacitor/core';
 import { TokenPackage } from '../../constants/tokenOptions';
+import 'cordova-plugin-purchase/www/store';
+
+// Get access to the global CdvPurchase object
+declare const CdvPurchase: any;
 
 export const useInAppPurchase = () => {
-  const [store] = useState(() => new Store());
   const [products, setProducts] = useState<TokenPackage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -12,62 +14,57 @@ export const useInAppPurchase = () => {
   const [initialized, setInitialized] = useState(false);
 
   const initialize = useCallback(async () => {
-    if (initialized) return;
+    if (initialized || !Capacitor.isNativePlatform()) return;
 
     try {
-      const platform = Capacitor.getPlatform();
+      const store = CdvPurchase.store;
+      // Set debug level
+      store.verbosity = CdvPurchase.LogLevel.DEBUG;
+
+      // Register your products
       const productIds = ['tokens_100k', 'tokens_500k', 'tokens_1m', 'tokens_10m'];
 
       productIds.forEach((id) => {
         store.register({
           id,
-          type: store.CONSUMABLE,
-          platform: platform === 'android' ? 'android' : 'ios',
+          type: CdvPurchase.ProductType.CONSUMABLE,
+          platform: CdvPurchase.Platform.GOOGLE_PLAY,
         });
       });
 
-      // Setup listeners
-      store.when('product').approved(async (product) => {
-        try {
-          const validationResult = await product.verify();
-          if (validationResult.verified) {
-            await product.finish();
-          }
-        } catch (err) {
-          console.error('Purchase verification failed:', err);
-          throw err;
-        }
-      });
-
-      store.when('product').owned((product) => {
-        product.finish();
-      });
-
-      store.error((err) => {
-        console.error('Store error:', err);
+      // Setup error handler
+      store.error((err: any) => {
+        console.error('Store Error', JSON.stringify(err));
         setError(err.message || 'Purchase failed');
       });
 
-      await store.ready();
-      setInitialized(true);
+      // Initialize the store
+      await store.initialize();
       await store.update();
+      await store.restorePurchases();
+
+      setInitialized(true);
     } catch (error) {
       console.error('Failed to initialize store:', error);
       setError(error instanceof Error ? error.message : 'Failed to initialize store');
     }
-  }, [store, initialized]);
+  }, [initialized]);
 
   const loadProducts = useCallback(async () => {
+    if (!Capacitor.isNativePlatform()) return;
+
     try {
       setLoading(true);
       setError(null);
       if (!initialized) {
         await initialize();
       }
-      const storeProducts = store.products.filter((p) => p.valid);
+
+      const store = CdvPurchase.store;
+      const storeProducts = store.products.filter((p: any) => p.valid);
 
       // Map store products to your TokenPackage format
-      const mappedProducts = storeProducts.map((product) => ({
+      const mappedProducts = storeProducts.map((product: any) => ({
         tokens: parseInt(
           product.id.replace('tokens_', '').replace('k', '000').replace('m', '000000'),
         ),
@@ -86,50 +83,49 @@ export const useInAppPurchase = () => {
     } finally {
       setLoading(false);
     }
-  }, [store, initialized, initialize]);
+  }, [initialized, initialize]);
 
-  const purchaseProduct = useCallback(
-    async (productId: string) => {
-      try {
-        setPurchasing(true);
-        setError(null);
-        if (!initialized) {
-          await initialize();
-        }
+  const purchaseProduct = useCallback(async (productId: string) => {
+    if (!Capacitor.isNativePlatform()) return;
 
-        const product = store.get(productId);
-        if (!product) {
-          throw new Error(`Product ${productId} not found`);
-        }
-        return await product.order();
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Purchase failed');
-        throw err;
-      } finally {
-        setPurchasing(false);
+    try {
+      setPurchasing(true);
+      setError(null);
+
+      const store = CdvPurchase.store;
+      const offer = store.get(productId)?.getOffer();
+
+      if (!offer) {
+        throw new Error(`Product ${productId} not found`);
       }
-    },
-    [store, initialized, initialize],
-  );
+
+      await store.order(offer);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Purchase failed');
+      throw err;
+    } finally {
+      setPurchasing(false);
+    }
+  }, []);
 
   const restorePurchases = useCallback(async () => {
+    if (!Capacitor.isNativePlatform()) return;
+
     try {
       setLoading(true);
       setError(null);
-      if (!initialized) {
-        await initialize();
-      }
-      return store.refresh();
+
+      const store = CdvPurchase.store;
+      await store.restorePurchases();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to restore purchases');
     } finally {
       setLoading(false);
     }
-  }, [store, initialized, initialize]);
+  }, []);
 
   useEffect(() => {
-    const platform = Capacitor.getPlatform();
-    if (platform === 'android' || platform === 'ios') {
+    if (Capacitor.isNativePlatform()) {
       loadProducts();
     }
   }, [loadProducts]);
