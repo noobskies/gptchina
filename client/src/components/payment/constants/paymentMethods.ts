@@ -26,6 +26,29 @@ export const getAvailablePaymentMethods = (): PaymentMethodConfig[] => {
   if (platform === 'android') {
     return [
       {
+        id: PaymentMethod.Card,
+        name: 'Credit Card',
+        icon: 'credit-card',
+        providers: ['visa', 'mastercard', 'amex'],
+      },
+      {
+        id: PaymentMethod.WeChatPay,
+        name: 'WeChat Pay',
+        icon: 'wechat',
+        regions: ['CN'],
+      },
+      {
+        id: PaymentMethod.AliPay,
+        name: 'AliPay',
+        icon: 'alipay',
+        regions: ['CN'],
+      },
+      {
+        id: PaymentMethod.Bitcoin,
+        name: 'Bitcoin',
+        icon: 'bitcoin',
+      },
+      {
         id: PaymentMethod.InAppPurchase,
         name: 'Google Pay',
         icon: 'google-pay',

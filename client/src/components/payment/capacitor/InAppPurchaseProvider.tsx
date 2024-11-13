@@ -1,15 +1,12 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { useInAppPurchase } from './hooks/useInAppPurchase';
-import { TokenPackage } from '../constants/tokenOptions';
 
 interface InAppPurchaseContextType {
-  products: TokenPackage[];
   loading: boolean;
   error: string | null;
   purchasing: boolean;
-  purchaseProduct: (productId: string) => Promise<void>;
+  purchaseProduct: (productId: string, onSuccess?: () => void) => Promise<void>;
   restorePurchases: () => Promise<void>;
-  refreshProducts: () => Promise<void>;
 }
 
 const InAppPurchaseContext = createContext<InAppPurchaseContextType | null>(null);
@@ -35,20 +32,24 @@ export const InAppPurchaseProvider: React.FC<InAppPurchaseProviderProps> = ({
 }) => {
   const inAppPurchase = useInAppPurchase();
 
-  const handlePurchase = async (productId: string) => {
+  const handlePurchase = async (productId: string, successCallback?: () => void) => {
     try {
       await inAppPurchase.purchaseProduct(productId);
-      onSuccess?.();
+      onSuccess?.(); // Global success handler
+      successCallback?.(); // Individual success handler
     } catch (err) {
-      alert(err);
       const errorMessage = err instanceof Error ? err.message : 'Purchase failed';
       onError?.(errorMessage);
+      throw err; // Re-throw to be handled by the form
     }
   };
 
   const value = {
-    ...inAppPurchase,
+    loading: inAppPurchase.loading,
+    error: inAppPurchase.error,
+    purchasing: inAppPurchase.purchasing,
     purchaseProduct: handlePurchase,
+    restorePurchases: inAppPurchase.restorePurchases,
   };
 
   return <InAppPurchaseContext.Provider value={value}>{children}</InAppPurchaseContext.Provider>;

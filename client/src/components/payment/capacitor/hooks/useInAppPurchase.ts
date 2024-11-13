@@ -35,21 +35,9 @@ export const useInAppPurchase = () => {
           const validationResult = await product.verify();
 
           if (validationResult.verified) {
-            // Create purchase
-            await fetch('/api/inapp/create-purchase', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                amount: product.price,
-                priceId: product.id,
-                platform: 'android',
-              }),
-            });
+            console.log('Purchase verified, calling backend...');
 
-            // Confirm purchase
-            const response = await fetch('/api/inapp/confirm', {
+            const confirmResponse = await fetch('/api/inapp/confirm', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -58,15 +46,14 @@ export const useInAppPurchase = () => {
                 productId: product.id,
                 transactionId: product.transaction.id,
                 receipt: product.transaction.receipt,
-                platform: 'android',
               }),
             });
 
-            if (!response.ok) {
+            if (!confirmResponse.ok) {
               throw new Error('Failed to confirm purchase with server');
             }
 
-            // Finish transaction
+            // Finish the purchase with store
             await product.finish();
 
             // Refresh balance
@@ -91,10 +78,10 @@ export const useInAppPurchase = () => {
       await store.update();
 
       setInitialized(true);
+      setLoading(false);
     } catch (error) {
       console.error('Failed to initialize store:', error);
       setError(error instanceof Error ? error.message : 'Failed to initialize store');
-    } finally {
       setLoading(false);
     }
   }, [initialized, queryClient]);
@@ -107,7 +94,7 @@ export const useInAppPurchase = () => {
       setError(null);
 
       const store = CdvPurchase.store;
-      console.log('Attempting to purchase:', productId);
+      console.log('Getting product:', productId);
 
       const product = store.get(productId);
       console.log('Found product:', product);
@@ -116,6 +103,7 @@ export const useInAppPurchase = () => {
         throw new Error(`Product ${productId} not found`);
       }
 
+      console.log('Getting offer...');
       const offer = product.getOffer();
       console.log('Got offer:', offer);
 
