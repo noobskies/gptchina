@@ -10,7 +10,7 @@ const PRODUCT_TOKEN_MAPPING = {
 };
 
 class InAppPurchaseService {
-  static async createPurchase({ amount, userId, priceId, platform }) {
+  static async createPurchase({ amount, userId, priceId }) {
     try {
       const normalizedPriceId = priceId.split('.').pop();
 
@@ -24,15 +24,8 @@ class InAppPurchaseService {
         context: 'purchase',
         rawAmount: PRODUCT_TOKEN_MAPPING[normalizedPriceId],
         priceId: normalizedPriceId,
-        platform,
+        platform: 'android',
         status: 'pending',
-      });
-
-      logger.info('Created in-app purchase transaction:', {
-        transactionId: transaction._id,
-        userId,
-        amount,
-        priceId,
       });
 
       return transaction;
@@ -42,66 +35,43 @@ class InAppPurchaseService {
     }
   }
 
-  static async confirmPurchase({ user, transactionId, receipt, productId, platform }) {
+  static async confirmPurchase({ userId, transactionId, productId }) {
     try {
       const normalizedProductId = productId.split('.').pop();
+      const tokenAmount = PRODUCT_TOKEN_MAPPING[normalizedProductId];
 
-      // Start session for transaction
-      const session = await Transaction.startSession();
-      let updatedUser;
+      if (!tokenAmount) {
+        throw new Error(`Invalid product ID: ${normalizedProductId}`);
+      }
 
-      await session.withTransaction(async () => {
-        // Find pending transaction
-        const transaction = await Transaction.findOne({
-          user: user._id,
-          status: 'pending',
-        }).sort({ createdAt: -1 });
+      // Update user's balance
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { $inc: { credits: tokenAmount } },
+        { new: true },
+      );
 
-        if (!transaction) {
-          throw new Error('No pending transaction found');
-        }
+      // Update or create transaction
+      await Transaction.findOneAndUpdate(
+        { user: userId, status: 'pending' },
+        {
+          status: 'completed',
+          paymentId: transactionId,
+          rawAmount: tokenAmount,
+        },
+        { upsert: true },
+      );
 
-        // Verify amount matches
-        if (transaction.rawAmount !== PRODUCT_TOKEN_MAPPING[normalizedProductId]) {
-          throw new Error('Transaction amount mismatch');
-        }
-
-        // Update user's token balance
-        updatedUser = await User.findByIdAndUpdate(
-          user._id,
-          {
-            $inc: { credits: transaction.rawAmount },
-          },
-          { new: true, session },
-        );
-
-        // Complete the transaction
-        transaction.status = 'completed';
-        transaction.paymentId = transactionId;
-        transaction.receiptData = receipt;
-        await transaction.save({ session });
-
-        logger.info('Purchase completed:', {
-          userId: user._id,
-          transactionId,
-          amount: transaction.rawAmount,
-        });
+      console.log('Purchase completed', {
+        userId,
+        productId: normalizedProductId,
+        tokenAmount,
+        newBalance: updatedUser.credits,
       });
 
       return updatedUser;
     } catch (error) {
       logger.error('Failed to confirm purchase:', error);
-      throw error;
-    }
-  }
-
-  static async handleWebhook(payload) {
-    try {
-      // Handle any Google Play notifications if needed
-      logger.info('Processing webhook payload:', payload);
-      return true;
-    } catch (error) {
-      logger.error('Failed to process webhook:', error);
       throw error;
     }
   }
