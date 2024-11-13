@@ -40,6 +40,7 @@ export const InAppPurchaseProvider: React.FC<InAppPurchaseProviderProps> = ({
       await inAppPurchase.purchaseProduct(productId);
       onSuccess?.();
     } catch (err) {
+      alert(err);
       const errorMessage = err instanceof Error ? err.message : 'Purchase failed';
       onError?.(errorMessage);
     }

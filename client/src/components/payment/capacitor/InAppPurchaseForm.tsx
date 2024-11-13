@@ -3,12 +3,11 @@ import { useLocalize } from '~/hooks';
 import { useInAppPurchaseContext } from './InAppPurchaseProvider';
 import { ArrowLeft, Lock } from 'lucide-react';
 import { Spinner } from '~/components/svg';
-import TokenOptionButton from '../common/TokenOptionButton';
 
 interface InAppPurchaseFormProps {
   amount: number;
   tokens: number;
-  priceId: string;
+  priceId: string; // This is coming as Stripe priceId
   onSuccess: () => void;
   onError: (error: string) => void;
   onBack: () => void;
@@ -17,7 +16,7 @@ interface InAppPurchaseFormProps {
 export const InAppPurchaseForm: React.FC<InAppPurchaseFormProps> = ({
   amount,
   tokens,
-  priceId,
+  priceId, // We'll convert this to the correct format
   onSuccess,
   onError,
   onBack,
@@ -31,15 +30,31 @@ export const InAppPurchaseForm: React.FC<InAppPurchaseFormProps> = ({
     restorePurchases,
   } = useInAppPurchaseContext();
 
+  // Convert tokens amount to the correct product ID format
+  const getGooglePlayProductId = (tokens: number) => {
+    if (tokens === 100000) return 'tokens_100k';
+    if (tokens === 500000) return 'tokens_500k';
+    if (tokens === 1000000) return 'tokens_1m';
+    if (tokens === 10000000) return 'tokens_10m';
+    return null;
+  };
+
   const handlePurchase = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await purchaseProduct(priceId);
+      const googlePlayProductId = getGooglePlayProductId(tokens);
+      if (!googlePlayProductId) {
+        throw new Error('Invalid product');
+      }
+      await purchaseProduct(googlePlayProductId);
       onSuccess();
     } catch (err) {
       onError(err instanceof Error ? err.message : 'Purchase failed');
     }
   };
+
+  const formatTokens = (value: number) =>
+    value >= 1_000_000 ? `${value / 1_000_000}M` : `${(value / 1000).toFixed(1)}K`;
 
   if (loading) {
     return (
@@ -69,17 +84,24 @@ export const InAppPurchaseForm: React.FC<InAppPurchaseFormProps> = ({
       </div>
 
       <form onSubmit={handlePurchase} className="space-y-6 px-4">
-        <TokenOptionButton
-          tokens={tokens}
-          price={`$${(amount / 100).toFixed(2)}`}
-          priceId={priceId}
-          isSelected={false} // Add this prop
-          label={localize('com_ui_payment_token_option')} // Add this prop
-          amount={amount} // Add this prop
-          currency="USD" // Add this prop
-          onClick={() => {}} // Handled by form submit
-          disabled={purchasing}
-        />
+        <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600 dark:text-gray-400">Cost</span>
+              <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                ${(amount / 100).toFixed(2)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between border-t border-gray-200 pt-2 dark:border-gray-700">
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {localize('com_ui_payment_amount')}
+              </span>
+              <span className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                {formatTokens(tokens)} Tokens
+              </span>
+            </div>
+          </div>
+        </div>
 
         {purchaseError && (
           <div className="rounded-md bg-red-50 p-4 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400">
@@ -114,5 +136,3 @@ export const InAppPurchaseForm: React.FC<InAppPurchaseFormProps> = ({
     </div>
   );
 };
-
-export default InAppPurchaseForm;
