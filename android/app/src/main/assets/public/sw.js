@@ -24,11 +24,10 @@ if (!self.define) {
     n[o] = Promise.all(l.map((s) => t[s] || a(s))).then((s) => (i(...s), r));
   };
 }
-define(['./workbox-b23c3c24'], function (s) {
+define(['./workbox-464e6d59'], function (s) {
   'use strict';
-  self.addEventListener('message', (s) => {
-    s.data && 'SKIP_WAITING' === s.data.type && self.skipWaiting();
-  }),
+  self.skipWaiting(),
+    s.clientsClaim(),
     s.precacheAndRoute(
       [
         { url: 'assets/android/mipmap-hdpi/ic_launcher.png', revision: null },
@@ -118,15 +117,16 @@ define(['./workbox-b23c3c24'], function (s) {
         { url: 'assets/shuttleai.png', revision: null },
         { url: 'assets/together.png', revision: null },
         { url: 'assets/web-browser.svg', revision: null },
-        { url: 'assets/index-BDPlQnHB.js', revision: null },
-        { url: 'assets/index-BrxdLvy9.css', revision: null },
+        { url: 'assets/xai.svg', revision: null },
+        { url: 'assets/index-Dzph6gBT.css', revision: null },
+        { url: 'assets/index-IRbgZc4C.js', revision: null },
         { url: 'assets/Inter-Bold-CytjP_7U.woff2', revision: null },
         { url: 'assets/Inter-BoldItalic-B0T-BnK6.woff2', revision: null },
         { url: 'assets/Inter-Italic-B_ozvy2G.woff2', revision: null },
         { url: 'assets/Inter-Regular-B0QUfDW0.woff2', revision: null },
         { url: 'assets/Inter-SemiBold-_JLwM7Yv.woff2', revision: null },
         { url: 'assets/Inter-SemiBoldItalic-C4gNvuGw.woff2', revision: null },
-        { url: 'assets/markdown_highlight-Bjz5jMys.js', revision: null },
+        { url: 'assets/markdown_highlight-DSS-0JwK.js', revision: null },
         { url: 'assets/markdown_large-4eZo_Fsz.js', revision: null },
         { url: 'assets/roboto-mono-latin-400-italic-B6BBQVPU.woff2', revision: null },
         { url: 'assets/roboto-mono-latin-400-normal-C_5wUCW5.woff2', revision: null },
@@ -149,7 +149,7 @@ define(['./workbox-b23c3c24'], function (s) {
           url: 'fonts/roboto-mono-latin-700-normal.woff2',
           revision: '5900c2f9140f24ce86f85cb6a6bbffc8',
         },
-        { url: 'index.html', revision: 'a1e207b9e72ecc50a625db314fd8b3e9' },
+        { url: 'index.html', revision: 'e08c106826660c6ebae9956112386973' },
         { url: 'registerSW.js', revision: '1872c500de691dce40960bb85481de07' },
         { url: 'assets/favicon-novlisky-32x32.png', revision: 'd781742e2c60ac323b77f1829a109424' },
         { url: 'assets/favicon-novlisky-16x16.png', revision: 'aed503a89490f0ad292521f5297f0d81' },

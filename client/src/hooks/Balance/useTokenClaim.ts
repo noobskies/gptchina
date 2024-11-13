@@ -78,13 +78,13 @@ export const useTokenClaim = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        if (response.status === 401) {
-          showToast({
-            status: 'error',
-            message: 'Session expired. Please login again.',
-          });
-          return;
-        }
+        // if (response.status === 401) {
+        //   showToast({
+        //     status: 'error',
+        //     message: 'Session expired. Please login again.',
+        //   });
+        //   return;
+        // }
 
         if (response.status === 400 && data.nextClaimTime) {
           setNextClaimTime(new Date(data.nextClaimTime));
