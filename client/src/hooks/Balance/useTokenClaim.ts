@@ -47,10 +47,10 @@ export const useTokenClaim = () => {
       }
     } catch (error) {
       console.error('Error checking claim status:', error);
-      showToast({
-        status: 'error',
-        message: 'Error checking claim status',
-      });
+      // showToast({
+      //   status: 'error',
+      //   message: 'Error checking claim status',
+      // });
     } finally {
       setIsCheckingStatus(false);
     }
@@ -112,11 +112,11 @@ export const useTokenClaim = () => {
       }
     } catch (error) {
       console.error('Error claiming tokens:', error);
-      showToast({
-        status: 'error',
-        message:
-          error instanceof Error ? error.message : 'Failed to claim tokens. Please try again.',
-      });
+      // showToast({
+      //   status: 'error',
+      //   message:
+      //     error instanceof Error ? error.message : 'Failed to claim tokens. Please try again.',
+      // });
     } finally {
       setIsLoading(false);
     }
