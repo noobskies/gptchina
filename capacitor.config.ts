@@ -34,9 +34,9 @@ const config: CapacitorConfig = {
     backgroundColor: '#eeeeee',
   },
   server: {
-    androidScheme: 'http',
-    cleartext: true,
-    url: 'http://192.168.0.167:3090',
+    androidScheme: 'https',
+    // cleartext: true,
+    url: 'https://novlisky.io',
   },
 };
 
