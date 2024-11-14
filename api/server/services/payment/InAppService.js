@@ -1,5 +1,6 @@
 // services/payment/InAppService.js
 const User = require('~/models/User');
+const { Transaction } = require('~/models/Transaction');
 const { logger } = require('~/config');
 
 const PACKAGE_TOKEN_MAP = {
@@ -29,58 +30,95 @@ class InAppService {
   }
 
   static async confirmPurchase({ packageId, productIdentifier, transactionId, user }) {
-    logger.info('Confirming purchase', {
-      packageId,
-      productIdentifier,
-      transactionId,
-      userId: user._id,
-    });
+    try {
+      logger.info('Confirming purchase', {
+        packageId,
+        productIdentifier,
+        transactionId,
+        userId: user._id,
+      });
 
-    const tokenAmount = PACKAGE_TOKEN_MAP[packageId];
-    if (!tokenAmount) {
-      throw new Error(`Invalid package ID: ${packageId}`);
+      const tokenAmount = PACKAGE_TOKEN_MAP[packageId];
+      if (!tokenAmount) {
+        throw new Error(`Invalid package ID: ${packageId}`);
+      }
+
+      // Check for existing transaction first
+      const existingTransaction = await Transaction.findOne({
+        user: user._id,
+        tokenType: 'credits',
+        context: 'purchase',
+        paymentId: transactionId,
+      });
+
+      if (existingTransaction) {
+        logger.info('Payment already processed', { id: transactionId });
+        return user;
+      }
+
+      // Create transaction record first
+      const transaction = await Transaction.create({
+        user: user._id,
+        tokenType: 'credits',
+        context: 'purchase',
+        rawAmount: tokenAmount,
+        paymentId: transactionId,
+        priceId: packageId,
+      });
+
+      logger.info('Transaction created', {
+        transactionId: transaction._id,
+        userId: user._id,
+        tokenAmount,
+      });
+
+      // Add tokens to user's balance
+      user.tokenBalance = (user.tokenBalance || 0) + tokenAmount;
+
+      // Record the purchase history
+      const purchaseRecord = {
+        packageId,
+        productIdentifier,
+        transactionId,
+        tokenAmount,
+        timestamp: new Date(),
+        platform: 'google_play',
+      };
+
+      if (!user.purchases) {
+        user.purchases = [];
+      }
+      user.purchases.push(purchaseRecord);
+
+      if (!user.transactions) {
+        user.transactions = [];
+      }
+      user.transactions.push({
+        ...purchaseRecord,
+        type: 'purchase',
+        source: 'google_play',
+        amount: tokenAmount,
+      });
+
+      logger.info('Updating user balance', {
+        userId: user._id,
+        oldBalance: user.tokenBalance - tokenAmount,
+        newBalance: user.tokenBalance,
+        tokenAmount,
+      });
+
+      await user.save();
+
+      return user;
+    } catch (error) {
+      logger.error('Failed to process purchase', {
+        error: error.message,
+        packageId,
+        transactionId,
+        userId: user._id,
+      });
+      throw error;
     }
-
-    // Add tokens to user's balance
-    user.tokenBalance = (user.tokenBalance || 0) + tokenAmount;
-
-    // Record the transaction
-    const transaction = {
-      packageId,
-      productIdentifier,
-      transactionId,
-      tokenAmount,
-      timestamp: new Date(),
-      platform: 'google_play',
-    };
-
-    // Add to purchases history if you have that field
-    if (!user.purchases) {
-      user.purchases = [];
-    }
-    user.purchases.push(transaction);
-
-    // Add to transactions if you have that field
-    if (!user.transactions) {
-      user.transactions = [];
-    }
-    user.transactions.push({
-      ...transaction,
-      type: 'purchase',
-      source: 'google_play',
-      amount: tokenAmount,
-    });
-
-    console.log('Updating user balance', {
-      userId: user._id,
-      oldBalance: user.tokenBalance - tokenAmount,
-      newBalance: user.tokenBalance,
-      tokenAmount,
-    });
-
-    await user.save();
-
-    return user;
   }
 
   // Helper method to validate package
