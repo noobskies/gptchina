@@ -1,56 +1,94 @@
-import React, { createContext, useContext, ReactNode } from 'react';
-import { useInAppPurchase } from './hooks/useInAppPurchase';
+// capacitor/InAppPurchaseProvider.tsx
+import React, { createContext, useEffect, useState } from 'react';
+import { Purchases, PurchasesConfiguration } from '@revenuecat/purchases-capacitor';
+import { useAuthContext } from '~/hooks';
+import { Spinner } from '~/components/svg';
 
-interface InAppPurchaseContextType {
-  loading: boolean;
+interface InAppPurchaseContextValue {
+  isInitialized: boolean;
   error: string | null;
-  purchasing: boolean;
-  purchaseProduct: (productId: string, onSuccess?: () => void) => Promise<void>;
-  restorePurchases: () => Promise<void>;
 }
 
-const InAppPurchaseContext = createContext<InAppPurchaseContextType | null>(null);
-
-export const useInAppPurchaseContext = () => {
-  const context = useContext(InAppPurchaseContext);
-  if (!context) {
-    throw new Error('useInAppPurchaseContext must be used within InAppPurchaseProvider');
-  }
-  return context;
-};
+export const InAppPurchaseContext = createContext<InAppPurchaseContextValue | undefined>(undefined);
 
 interface InAppPurchaseProviderProps {
-  children: ReactNode;
-  onSuccess?: (paymentIntentId?: string) => void;
-  onError?: (error: string) => void;
+  children: React.ReactNode;
+  onError?: (message: string) => void;
 }
 
-export const InAppPurchaseProvider: React.FC<InAppPurchaseProviderProps> = ({
-  children,
-  onSuccess,
-  onError,
-}) => {
-  const inAppPurchase = useInAppPurchase();
+export function InAppPurchaseProvider({ children, onError }: InAppPurchaseProviderProps) {
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { user, isAuthenticated } = useAuthContext();
 
-  const handlePurchase = async (productId: string, successCallback?: () => void) => {
-    try {
-      await inAppPurchase.purchaseProduct(productId);
-      onSuccess?.(); // Global success handler
-      successCallback?.(); // Individual success handler
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Purchase failed';
-      onError?.(errorMessage);
-      throw err; // Re-throw to be handled by the form
+  useEffect(() => {
+    let mounted = true;
+
+    const initializePurchases = async () => {
+      console.log('Initializing RevenueCat...', {
+        user,
+        isAuthenticated,
+      });
+
+      try {
+        const configuration: PurchasesConfiguration = {
+          apiKey: process.env.NEXT_PUBLIC_REVENUECAT_API_KEY || 'goog_PRNqHNeHMCYERXtfbPLhprIEoKd',
+          observerMode: false,
+        };
+
+        await Purchases.configure(configuration);
+        console.log('RevenueCat configured');
+
+        if (user?.id) {
+          await Purchases.logIn({ appUserID: user.id });
+          console.log('User logged in to RevenueCat');
+        }
+
+        if (mounted) {
+          setIsInitialized(true);
+        }
+      } catch (err) {
+        console.error('Failed to initialize RevenueCat:', err);
+        if (mounted) {
+          const errorMessage =
+            err instanceof Error ? err.message : 'Failed to initialize payment system';
+          setError(errorMessage);
+          if (onError) onError(errorMessage);
+        }
+      }
+    };
+
+    if (isAuthenticated && user?.id) {
+      initializePurchases();
+    } else {
+      setError('Authentication required to process payment');
     }
-  };
 
-  const value = {
-    loading: inAppPurchase.loading,
-    error: inAppPurchase.error,
-    purchasing: inAppPurchase.purchasing,
-    purchaseProduct: handlePurchase,
-    restorePurchases: inAppPurchase.restorePurchases,
-  };
+    return () => {
+      mounted = false;
+    };
+  }, [user?.id, isAuthenticated, onError]);
 
-  return <InAppPurchaseContext.Provider value={value}>{children}</InAppPurchaseContext.Provider>;
-};
+  if (!isAuthenticated || !user?.id) {
+    return <div className="text-red-500">Please log in to make a purchase</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
+
+  if (!isInitialized) {
+    return (
+      <div className="flex flex-col items-center p-6">
+        <Spinner className="mb-4 h-8 w-8 text-blue-600 dark:text-blue-400" />
+        <p className="text-sm text-gray-600 dark:text-gray-400">Initializing payment system...</p>
+      </div>
+    );
+  }
+
+  return (
+    <InAppPurchaseContext.Provider value={{ isInitialized, error }}>
+      {children}
+    </InAppPurchaseContext.Provider>
+  );
+}

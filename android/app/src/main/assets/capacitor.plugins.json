@@ -12,6 +12,10 @@
     "classpath": "com.capacitorjs.plugins.statusbar.StatusBarPlugin"
   },
   {
+    "pkg": "@revenuecat/purchases-capacitor",
+    "classpath": "com.revenuecat.purchases.capacitor.PurchasesPlugin"
+  },
+  {
     "pkg": "capacitor-plugin-safe-area",
     "classpath": "com.capacitor.safearea.SafeAreaPlugin"
   }

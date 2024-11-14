@@ -1,67 +1,89 @@
+// capacitor/InAppPurchaseForm.tsx
 import React from 'react';
-import { useLocalize } from '~/hooks';
-import { useInAppPurchaseContext } from './InAppPurchaseProvider';
 import { ArrowLeft, Lock } from 'lucide-react';
 import { Spinner } from '~/components/svg';
+import { useLocalize } from '~/hooks';
+import { useInAppPurchase } from './hooks/useInAppPurchase';
+import { Capacitor } from '@capacitor/core';
 
 interface InAppPurchaseFormProps {
   amount: number;
   tokens: number;
-  priceId: string; // This is coming as Stripe priceId
-  onSuccess: () => void;
-  onError: (error: string) => void;
+  priceId: string;
+  onSuccess: (paymentIntentId?: string) => void;
+  onError: (message: string) => void;
   onBack: () => void;
 }
 
-export const InAppPurchaseForm: React.FC<InAppPurchaseFormProps> = ({
+export function InAppPurchaseForm({
   amount,
   tokens,
-  priceId, // We'll convert this to the correct format
+  priceId,
   onSuccess,
   onError,
   onBack,
-}) => {
+}: InAppPurchaseFormProps) {
   const localize = useLocalize();
+  const [isMounted, setIsMounted] = React.useState(false);
+
   const {
-    loading,
-    error: purchaseError,
-    purchasing,
-    purchaseProduct,
-    restorePurchases,
-  } = useInAppPurchaseContext();
+    handlePayment,
+    isProcessing,
+    error: paymentError,
+    isReady,
+  } = useInAppPurchase({
+    amount,
+    priceId,
+    onSuccess,
+    onError,
+  });
 
-  // Convert tokens amount to the correct product ID format
-  const getGooglePlayProductId = (tokens: number) => {
-    if (tokens === 100000) return 'tokens_100k';
-    if (tokens === 500000) return 'tokens_500k';
-    if (tokens === 1000000) return 'tokens_1m';
-    if (tokens === 10000000) return 'tokens_10m';
+  const formatTokens = (tokens: number) =>
+    tokens >= 1_000_000 ? `${tokens / 1_000_000}M` : `${(tokens / 1000).toFixed(1)}K`;
+
+  React.useEffect(() => {
+    setIsMounted(true);
+
+    console.log('InAppPurchaseForm mounted', {
+      platform: Capacitor.getPlatform(),
+      priceId,
+      amount,
+      tokens,
+      isReady,
+    });
+
+    return () => {
+      console.log('InAppPurchaseForm unmounting');
+      setIsMounted(false);
+    };
+  }, [priceId, amount, tokens, isReady]);
+
+  if (!isMounted) {
+    console.log('Component not mounted yet');
     return null;
-  };
+  }
 
-  const handlePurchase = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handlePaymentClick = async () => {
     try {
-      const googlePlayProductId = getGooglePlayProductId(tokens);
-      if (!googlePlayProductId) {
-        throw new Error('Invalid product');
-      }
-      await purchaseProduct(googlePlayProductId);
-      onSuccess();
+      console.log('Payment button clicked', {
+        isProcessing,
+        isReady,
+        priceId,
+        amount,
+      });
+      await handlePayment();
     } catch (err) {
-      onError(err instanceof Error ? err.message : 'Purchase failed');
+      console.error('Payment click error:', err);
     }
   };
 
-  const formatTokens = (value: number) =>
-    value >= 1_000_000 ? `${value / 1_000_000}M` : `${(value / 1000).toFixed(1)}K`;
-
-  if (loading) {
+  // Render loading state if payment system isn't ready
+  if (!isReady) {
     return (
-      <div className="flex flex-col items-center p-6">
-        <Spinner className="mb-4 h-8 w-8 text-blue-600 dark:text-blue-400" />
+      <div className="flex flex-col items-center justify-center space-y-4 p-8">
+        <Spinner className="h-8 w-8 text-blue-600 dark:text-blue-400" />
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          {localize('com_ui_payment_loading')}
+          {localize('com_ui_payment_initializing')}
         </p>
       </div>
     );
@@ -69,10 +91,12 @@ export const InAppPurchaseForm: React.FC<InAppPurchaseFormProps> = ({
 
   return (
     <div className="flex flex-col">
+      {/* Header with Back Button and Security Notice */}
       <div className="mb-6 flex items-center justify-between px-4">
         <button
           onClick={onBack}
-          className="flex items-center text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
+          className="flex items-center text-sm text-gray-600 hover:text-gray-900 
+            dark:text-gray-400 dark:hover:text-gray-200"
         >
           <ArrowLeft className="mr-1 h-4 w-4" />
           {localize('com_ui_back')}
@@ -83,38 +107,65 @@ export const InAppPurchaseForm: React.FC<InAppPurchaseFormProps> = ({
         </div>
       </div>
 
-      <form onSubmit={handlePurchase} className="space-y-6 px-4">
+      <div className="space-y-6 px-4">
+        {/* Purchase Details Card */}
         <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Cost</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {localize('com_ui_payment_cost')}
+              </span>
               <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                ${(amount / 100).toFixed(2)}
+                ${(amount / 100).toFixed(2)} USD
               </span>
             </div>
-            <div className="flex items-center justify-between border-t border-gray-200 pt-2 dark:border-gray-700">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {localize('com_ui_payment_amount')}
-              </span>
-              <span className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                {formatTokens(tokens)} Tokens
-              </span>
+            <div className="border-t border-gray-200 pt-2 dark:border-gray-700">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  {localize('com_ui_payment_tokens')}
+                </span>
+                <span className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                  {formatTokens(tokens)}
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
-        {purchaseError && (
-          <div className="rounded-md bg-red-50 p-4 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400">
-            {purchaseError}
+        {/* Error Message */}
+        {paymentError && (
+          <div
+            className="rounded-md bg-red-50 p-4 text-sm text-red-600 
+            dark:bg-red-900/30 dark:text-red-400"
+          >
+            {paymentError}
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={purchasing}
-          className="w-full rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-800"
+        {/* Purchase Notice */}
+        <div
+          className="rounded-md bg-blue-50 p-4 text-sm text-blue-600 
+          dark:bg-blue-900/30 dark:text-blue-400"
         >
-          {purchasing ? (
+          {localize('com_ui_payment_google_play_notice')}
+        </div>
+
+        {/* Purchase Button */}
+        <button
+          onClick={handlePaymentClick}
+          disabled={isProcessing || !isReady}
+          className="w-full rounded-lg bg-blue-600 px-4 py-3 text-white 
+            transition-colors hover:bg-blue-700 focus:outline-none 
+            focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
+            disabled:cursor-not-allowed disabled:bg-blue-300 
+            dark:disabled:bg-blue-800"
+        >
+          {!isReady ? (
+            <span className="flex items-center justify-center">
+              <Spinner className="mr-2 h-4 w-4" />
+              {localize('com_ui_loading')}
+            </span>
+          ) : isProcessing ? (
             <span className="flex items-center justify-center">
               <Spinner className="mr-2 h-4 w-4" />
               {localize('com_ui_payment_processing')}
@@ -124,15 +175,39 @@ export const InAppPurchaseForm: React.FC<InAppPurchaseFormProps> = ({
           )}
         </button>
 
-        <button
-          type="button"
-          onClick={restorePurchases}
-          disabled={purchasing}
-          className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+        {/* Security Notice Footer */}
+        <div className="mt-6 text-center">
+          <div
+            className="flex items-center justify-center space-x-2 
+            text-sm text-gray-500 dark:text-gray-400"
+          >
+            <Lock className="h-4 w-4" />
+            <span>{localize('com_ui_payment_secure_notice')}</span>
+          </div>
+        </div>
+
+        {/* Support Links */}
+        <div
+          className="mt-4 flex justify-center space-x-4 text-sm 
+          text-gray-500 dark:text-gray-400"
         >
-          {localize('com_ui_payment_restore_purchases')}
-        </button>
-      </form>
+          <button
+            onClick={() => window.open('https://novlisky.io/terms', '_blank')}
+            className="hover:text-gray-700 dark:hover:text-gray-300"
+          >
+            {localize('com_ui_terms_of_service')}
+          </button>
+          <span>•</span>
+          <button
+            onClick={() => window.open('https://novlisky.io/support', '_blank')}
+            className="hover:text-gray-700 dark:hover:text-gray-300"
+          >
+            {localize('com_ui_support')}
+          </button>
+        </div>
+      </div>
     </div>
   );
-};
+}
+
+export default InAppPurchaseForm;
