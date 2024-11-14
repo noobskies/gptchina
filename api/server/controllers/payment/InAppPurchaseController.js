@@ -1,50 +1,89 @@
-const InAppPurchaseService = require('../../services/payment/InAppPurchaseService');
+// controllers/payment/InAppPurchaseController.js
+const InAppService = require('../../services/payment/InAppService');
 const User = require('~/models/User');
 const { logger } = require('~/config');
 
 class InAppPurchaseController {
   static async createPurchase(req, res) {
     try {
-      const { amount, priceId } = req.body;
-      const userId = req.user._id;
+      console.log('Received in-app purchase request:', req.body);
+      const { priceId, packageId } = req.body;
 
-      if (!amount || !priceId) {
-        return res.status(400).json({ error: 'Amount and priceId are required' });
+      const user = await User.findById(req.user?._id);
+
+      if (!user) {
+        return res.status(401).json({ error: 'User not found' });
       }
 
-      const transaction = await InAppPurchaseService.createPurchase({
-        amount,
-        userId,
+      if (!priceId || !packageId) {
+        return res.status(400).json({ error: 'Price ID and Package ID are required' });
+      }
+
+      logger.info('Creating in-app purchase', {
         priceId,
+        packageId,
+        userId: user._id,
+        email: user.email,
       });
 
-      res.json({ success: true, transaction });
+      // Store pending purchase if needed
+      const pendingPurchase = await InAppService.createPurchase({
+        priceId,
+        packageId,
+        userId: user._id.toString(),
+        email: user.email,
+      });
+
+      res.json({
+        success: true,
+        purchaseId: pendingPurchase.id,
+      });
     } catch (error) {
-      console.log('Create purchase failed:', error);
-      res.status(400).json({ error: error.message });
+      logger.error('Purchase creation error:', error);
+      res.status(500).json({
+        error: 'Failed to create purchase',
+        details: error.message,
+      });
     }
   }
 
   static async confirmPurchase(req, res) {
     try {
-      const { productId, transactionId, receipt } = req.body;
-      const userId = req.user._id;
+      const { priceId, packageId, productIdentifier, transactionId } = req.body;
 
-      console.log('Confirming in-app purchase', { userId, productId, transactionId });
+      if (!packageId || !productIdentifier || !transactionId) {
+        return res.status(400).json({
+          error: 'Package ID, Product Identifier, and Transaction ID are required',
+        });
+      }
 
-      const updatedUser = await InAppPurchaseService.confirmPurchase({
-        userId,
+      const user = await User.findById(req.user?._id);
+
+      if (!user) {
+        return res.status(401).json({ error: 'User not found' });
+      }
+
+      const updatedUser = await InAppService.confirmPurchase({
+        packageId,
+        productIdentifier,
         transactionId,
-        productId,
+        user,
       });
 
       res.json({
         success: true,
-        balance: updatedUser.credits,
+        balance: updatedUser.tokenBalance,
       });
     } catch (error) {
-      console.log('Confirm purchase failed:', error);
-      res.status(400).json({ error: error.message });
+      logger.error('Purchase confirmation error:', {
+        error: error.message,
+        userId: req.user?._id,
+      });
+
+      res.status(500).json({
+        error: 'Failed to confirm purchase',
+        details: error.message,
+      });
     }
   }
 }

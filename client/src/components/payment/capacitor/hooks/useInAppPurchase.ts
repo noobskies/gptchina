@@ -22,7 +22,7 @@ interface UseInAppPurchaseProps {
 export const useInAppPurchase = ({ priceId, onSuccess, onError }: UseInAppPurchaseProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAuthContext();
+  const { user, token } = useAuthContext();
   const context = useContext(InAppPurchaseContext);
 
   if (!context) {
@@ -59,6 +59,62 @@ export const useInAppPurchase = ({ priceId, onSuccess, onError }: UseInAppPurcha
     return pkg;
   };
 
+  const extractTransactionId = (purchaseResult: any): string => {
+    console.log('Extracting transaction ID from:', purchaseResult?.transaction);
+
+    // Get the transaction ID specifically from the transaction object
+    const transactionId = purchaseResult?.transaction?.transactionIdentifier;
+
+    if (!transactionId) {
+      console.error('Purchase result missing transaction ID:', purchaseResult);
+      throw new Error('Purchase completed but transaction ID is missing');
+    }
+
+    return transactionId;
+  };
+
+  const confirmPurchaseWithBackend = async (
+    packageId: string,
+    productIdentifier: string,
+    transactionId: string,
+  ) => {
+    try {
+      console.log('Confirming purchase with backend:', {
+        priceId,
+        packageId,
+        productIdentifier,
+        transactionId,
+      });
+
+      const response = await fetch('/api/payment/inapp/confirm', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          priceId,
+          packageId,
+          productIdentifier,
+          transactionId,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Backend error response:', errorData);
+        throw new Error(errorData.error || 'Failed to confirm purchase with backend');
+      }
+
+      const data = await response.json();
+      console.log('Backend confirmation successful:', data);
+      return data;
+    } catch (err) {
+      console.error('Backend confirmation error:', err);
+      throw err;
+    }
+  };
+
   const handlePayment = async (e?: React.FormEvent) => {
     if (e) {
       e.preventDefault();
@@ -76,6 +132,8 @@ export const useInAppPurchase = ({ priceId, onSuccess, onError }: UseInAppPurcha
 
     try {
       const platform = Capacitor.getPlatform();
+      console.log('Current platform:', platform);
+
       if (platform !== 'android') {
         throw new Error('In-app purchases are only available on Android');
       }
@@ -93,15 +151,13 @@ export const useInAppPurchase = ({ priceId, onSuccess, onError }: UseInAppPurcha
 
       console.log('Purchase result:', purchaseResult);
 
-      const { customerInfo, productIdentifier } = purchaseResult;
+      const { customerInfo, productIdentifier, transaction } = purchaseResult;
 
-      console.log('Verifying purchase:', {
-        customerInfo,
-        productIdentifier,
-        packageIdentifier: packageToPurchase.identifier,
-      });
+      // Extract transaction ID from the specific location
+      const transactionId = extractTransactionId(purchaseResult);
+      console.log('Extracted transaction ID:', transactionId);
 
-      // Check entitlements
+      // Check entitlements and purchases
       const entitlements = customerInfo.entitlements.active;
       const allPurchases = customerInfo.allPurchasedProductIdentifiers;
 
@@ -109,14 +165,27 @@ export const useInAppPurchase = ({ priceId, onSuccess, onError }: UseInAppPurcha
         entitlements,
         allPurchases,
         targetPackage: packageToPurchase.identifier,
+        transactionId,
+        transaction,
       });
 
-      // Verify the purchase - check both entitlements and direct product purchase
+      // Verify the purchase
       if (
         entitlements[packageToPurchase.identifier] ||
         allPurchases.includes(packageToPurchase.product.identifier)
       ) {
-        console.log('Purchase verified successfully');
+        // Confirm with backend
+        const confirmationResult = await confirmPurchaseWithBackend(
+          packageToPurchase.identifier,
+          productIdentifier,
+          transactionId,
+        );
+
+        if (!confirmationResult.success) {
+          throw new Error('Backend purchase confirmation failed');
+        }
+
+        console.log('Purchase verified and confirmed with backend');
         onSuccess(productIdentifier);
       } else {
         console.log('Purchase verification failed:', customerInfo);
@@ -131,7 +200,6 @@ export const useInAppPurchase = ({ priceId, onSuccess, onError }: UseInAppPurcha
         console.error('Google Play credentials error:', err);
         errorMessage = 'Google Play setup required. Please try again later.';
 
-        // Log additional details for debugging
         console.error('Detailed error:', {
           code: err.code,
           message: err.message,

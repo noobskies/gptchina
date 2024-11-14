@@ -23,7 +23,7 @@ class StripeController {
         return res.status(400).json({ error: 'Price ID is required' });
       }
 
-      logger.info('Creating payment intent', {
+      console.log('Creating payment intent', {
         amount,
         userId: user._id,
         priceId,
