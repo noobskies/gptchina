@@ -1,26 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 import { Capacitor } from '@capacitor/core';
 
 const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => {
-  const [isAuthInitialized, setIsAuthInitialized] = useState(false);
-
-  useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        // Check current auth state
-        const { user } = await FirebaseAuthentication.getCurrentUser();
-        console.log('Initial auth state:', user ? 'Logged in' : 'Not logged in');
-        setIsAuthInitialized(true);
-      } catch (error) {
-        console.error('Auth initialization error:', error);
-        setIsAuthInitialized(true);
-      }
-    };
-
-    initializeAuth();
-  }, []);
-
   if (!enabled) {
     return null;
   }
@@ -30,27 +12,22 @@ const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => 
       try {
         console.log('Starting Google sign-in process...');
 
-        // Ensure we're starting fresh
-        try {
-          await FirebaseAuthentication.signOut();
-        } catch (e) {
-          console.log('No previous session to sign out');
-        }
+        // Clear any existing sessions
+        await FirebaseAuthentication.signOut();
 
-        // Perform Google sign in
-        const signInResult = await FirebaseAuthentication.signInWithGoogle();
-        console.log('Sign in result:', signInResult);
+        // Sign in with proper options structure
+        const result = await FirebaseAuthentication.signInWithGoogle();
 
-        if (!signInResult.user) {
+        console.log('Sign in result:', result);
+
+        if (!result.user) {
           throw new Error('No user data received');
         }
 
         // Get the ID token
-        const { token } = await FirebaseAuthentication.getIdToken();
-
-        if (!token) {
-          throw new Error('Failed to get ID token');
-        }
+        const { token } = await FirebaseAuthentication.getIdToken({
+          forceRefresh: true,
+        });
 
         console.log('Making server request...');
         const res = await fetch(`${serverDomain}/oauth/google`, {
@@ -61,10 +38,10 @@ const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => 
           body: JSON.stringify({
             id_token: token,
             platform: Capacitor.getPlatform(),
-            email: signInResult.user.email,
+            email: result.user.email,
             debug_info: {
-              providerId: signInResult.user.providerId,
-              uid: signInResult.user.uid,
+              platform: Capacitor.getPlatform(),
+              timestamp: new Date().toISOString(),
             },
           }),
           credentials: 'include',
@@ -74,11 +51,6 @@ const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => 
           const data = await res.json();
           throw new Error(data.message || 'Server authentication failed');
         }
-
-        // Add auth state change listener
-        FirebaseAuthentication.addListener('authStateChange', (change) => {
-          console.log('Auth state changed:', change);
-        });
 
         window.location.href = '/c/new';
       } catch (error) {
@@ -90,7 +62,7 @@ const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => 
           raw: error,
         });
 
-        const errorMessage = error.message || 'Authentication failed';
+        const errorMessage = `Auth Error: ${error.message || error.code || 'Unknown error'}`;
         window.location.href = `/login?error=${encodeURIComponent(errorMessage)}`;
       }
     } else {
@@ -105,7 +77,6 @@ const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => 
         className="flex w-full items-center space-x-3 rounded-2xl border border-border-light bg-surface-primary px-5 py-3 text-text-primary transition-colors duration-200 hover:bg-surface-tertiary"
         onClick={handleLogin}
         data-testid={id}
-        disabled={!isAuthInitialized}
       >
         <Icon />
         <p>{label}</p>
