@@ -1,8 +1,16 @@
-import type { CapacitorConfig } from '@capacitor/cli';
-import { loadEnv } from 'vite';
+import { type CapacitorConfig } from '@capacitor/cli';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
 
-// Load environment variables - use process.env.MODE or 'production' as default
-const env = loadEnv(process.env.MODE || 'production', process.cwd(), 'VITE_');
+// Get the current file's directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Load the appropriate .env file based on NODE_ENV
+const envFile = process.env.NODE_ENV === 'development' ? '.env.development' : '.env';
+dotenv.config({ path: path.resolve(__dirname, envFile) });
 
 const config: CapacitorConfig = {
   appId: 'twa.novlisky.io',
@@ -32,9 +40,9 @@ const config: CapacitorConfig = {
     },
     GoogleAuth: {
       scopes: ['profile', 'email'],
-      clientId: env.VITE_GOOGLE_CLIENT_ID,
-      androidClientId: env.VITE_GOOGLE_ANDROID_CLIENT_ID,
-      serverClientId: env.VITE_GOOGLE_SERVER_CLIENT_ID,
+      clientId: process.env.VITE_GOOGLE_CLIENT_ID,
+      androidClientId: process.env.VITE_GOOGLE_ANDROID_CLIENT_ID,
+      serverClientId: process.env.VITE_GOOGLE_SERVER_CLIENT_ID,
     },
   },
   android: {
@@ -44,9 +52,9 @@ const config: CapacitorConfig = {
     backgroundColor: '#eeeeee',
   },
   server: {
-    androidScheme: env.VITE_ANDROID_SCHEME,
-    cleartext: env.VITE_CLEARTEXT === 'true',
-    url: env.VITE_SERVER_URL,
+    androidScheme: process.env.VITE_ANDROID_SCHEME || 'https',
+    cleartext: process.env.VITE_CLEARTEXT === 'true',
+    url: process.env.VITE_SERVER_URL,
   },
 };
 
