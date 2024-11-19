@@ -28,7 +28,9 @@ const config: CapacitorConfig = {
     },
     GoogleAuth: {
       scopes: ['profile', 'email'],
-      serverClientId: '534352184231-idlmqrpub82mt5mq99v6t0fcs0gtgcp6.apps.googleusercontent.com',
+      clientId: '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
+      androidClientId: '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
+      serverClientId: '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
     },
   },
   android: {
@@ -40,7 +42,7 @@ const config: CapacitorConfig = {
   server: {
     androidScheme: 'https',
     // cleartext: true,
-    url: 'https://novlisky.io',
+    url: 'https://noblisky.io',
   },
 };
 

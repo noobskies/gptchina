@@ -28,7 +28,7 @@ const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => 
         }
 
         // Handle the response the same way as web OAuth
-        window.location.href = '/';
+        window.location.href = '/c/new';
       } catch (error) {
         console.error('Authentication Error:', error);
         window.location.href = '/login?error=Authentication failed';

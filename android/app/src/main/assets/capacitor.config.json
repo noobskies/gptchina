@@ -26,7 +26,9 @@
     },
     "GoogleAuth": {
       "scopes": ["profile", "email"],
-      "serverClientId": "534352184231-idlmqrpub82mt5mq99v6t0fcs0gtgcp6.apps.googleusercontent.com"
+      "clientId": "397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com",
+      "androidClientId": "397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com",
+      "serverClientId": "397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com"
     }
   },
   "android": {
@@ -36,8 +38,7 @@
     "backgroundColor": "#eeeeee"
   },
   "server": {
-    "androidScheme": "http",
-    "cleartext": true,
-    "url": "http://192.168.0.167:3090/"
+    "androidScheme": "https",
+    "url": "https://noblisky.io"
   }
 }
