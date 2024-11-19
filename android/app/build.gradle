@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     namespace "twa.novlisky.io"
@@ -14,8 +15,6 @@ android {
             BILLING_KEY: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAo18WpCmGSnM9WEpCTE4CqnedKTa/RoILf6u8Cy6MzWEC+46V2rO9WsyF00XHC6psK3xDBBtAT3y+AaLme9ANoOUXPOAmJCYQGrgxuWk/SndWkzwSz3Nw20NA1wHqPhbWH/HfHur4E+ty/NknLJVI1valYBtTWOCaX0sLkBSnI1JCnf9Gb1U1hfDyq01nBmglp6eWWPoHnW3/iUgODA4l5yLfzwcuh36mFDv+XNyooffADmUEG3buEgma8e9sVBL+u89CqJm5U+Egn5BuEjvl2zfvq987mqECeBbv1tEOAvtsvQ12YNBxqWoYLkNS6r3DBpJKRz4Q88I8rjGG8nlgewIDAQAB"
         ]
         aaptOptions {
-             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
-             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
@@ -28,27 +27,44 @@ android {
 }
 
 repositories {
-    flatDir{
+    flatDir {
         dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
     }
+    google()
+    mavenCentral()
 }
 
 dependencies {
     def billing_version = "7.1.1"
+    
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    
+    // AndroidX dependencies
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
     implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
     implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation "androidx.webkit:webkit:$androidxWebkitVersion"
+    implementation "androidx.activity:activity:$androidxActivityVersion"
+    implementation "androidx.fragment:fragment:$androidxFragmentVersion"
+    
+    // Capacitor
     implementation project(':capacitor-android')
+    implementation project(':capacitor-cordova-android-plugins')
+    
+    // Firebase and Google Auth
+    implementation platform('com.google.firebase:firebase-bom:32.7.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.android.gms:play-services-auth:20.7.0'
+    implementation 'com.google.firebase:firebase-auth'
+    
+    // Billing and RevenueCat
+    implementation "com.android.billingclient:billing:$billing_version"
+    implementation 'com.revenuecat.purchases:purchases:7.0.0'
+    
+    // Testing
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
-    implementation project(':capacitor-cordova-android-plugins')
-    implementation "com.android.billingclient:billing:$billing_version"
-    implementation 'com.revenuecat.purchases:purchases:7.0.0'
-    implementation platform('com.google.firebase:firebase-bom:33.6.0')
-    implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.android.gms:play-services-auth:20.7.0'
 }
 
 apply from: 'capacitor.build.gradle'

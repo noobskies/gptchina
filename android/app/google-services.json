@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "397122273433",
+    "project_id": "globalgpt",
+    "storage_bucket": "globalgpt.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397122273433:android:a2b58e130f4439cafa3808",
+        "android_client_info": {
+          "package_name": "twa.novlisky.io"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "397122273433-nu924lptlrh9kp2d1te1t7pn9cafufo1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "twa.novlisky.io",
+            "certificate_hash": "a0f14ec789c02650ad00aaac1dca15cc7ea8e8ef"
+          }
+        },
+        {
+          "client_id": "397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWhSGdlqLHo8q99R41pZw-9gGZc2n_bqw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

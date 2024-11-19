@@ -1,9 +1,26 @@
-// SocialButton.tsx
-import React from 'react';
-import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+import React, { useEffect, useState } from 'react';
+import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 import { Capacitor } from '@capacitor/core';
 
 const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => {
+  const [isAuthInitialized, setIsAuthInitialized] = useState(false);
+
+  useEffect(() => {
+    const initializeAuth = async () => {
+      try {
+        // Check current auth state
+        const { user } = await FirebaseAuthentication.getCurrentUser();
+        console.log('Initial auth state:', user ? 'Logged in' : 'Not logged in');
+        setIsAuthInitialized(true);
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        setIsAuthInitialized(true);
+      }
+    };
+
+    initializeAuth();
+  }, []);
+
   if (!enabled) {
     return null;
   }
@@ -11,27 +28,28 @@ const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => 
   const handleLogin = async () => {
     if (id === 'google' && Capacitor.isNativePlatform()) {
       try {
-        // Force sign out first to clear any existing state
-        console.log('Clearing previous auth state...');
-        await GoogleAuth.signOut();
-
-        // Check if we're initialized
         console.log('Starting Google sign-in process...');
-        const platform = Capacitor.getPlatform();
-        console.log('Platform:', platform);
 
-        // Re-initialize with minimal config
-        await GoogleAuth.initialize({
-          scopes: ['profile', 'email'],
-          grantOfflineAccess: true,
-        });
+        // Ensure we're starting fresh
+        try {
+          await FirebaseAuthentication.signOut();
+        } catch (e) {
+          console.log('No previous session to sign out');
+        }
 
-        console.log('Attempting sign in...');
-        const response = await GoogleAuth.signIn();
-        console.log('Sign in response:', JSON.stringify(response, null, 2));
+        // Perform Google sign in
+        const signInResult = await FirebaseAuthentication.signInWithGoogle();
+        console.log('Sign in result:', signInResult);
 
-        if (!response?.authentication?.idToken) {
-          throw new Error('No authentication token received');
+        if (!signInResult.user) {
+          throw new Error('No user data received');
+        }
+
+        // Get the ID token
+        const { token } = await FirebaseAuthentication.getIdToken();
+
+        if (!token) {
+          throw new Error('Failed to get ID token');
         }
 
         console.log('Making server request...');
@@ -41,37 +59,41 @@ const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => 
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            id_token: response.authentication.idToken,
-            // Include additional verification data
-            platform: platform,
-            email: response.email,
+            id_token: token,
+            platform: Capacitor.getPlatform(),
+            email: signInResult.user.email,
+            debug_info: {
+              providerId: signInResult.user.providerId,
+              uid: signInResult.user.uid,
+            },
           }),
           credentials: 'include',
         });
 
-        console.log('Server response status:', res.status);
-        const data = await res.json();
-        console.log('Server response:', data);
-
         if (!res.ok) {
+          const data = await res.json();
           throw new Error(data.message || 'Server authentication failed');
         }
+
+        // Add auth state change listener
+        FirebaseAuthentication.addListener('authStateChange', (change) => {
+          console.log('Auth state changed:', change);
+        });
 
         window.location.href = '/c/new';
       } catch (error) {
         console.error('Detailed Auth Error:', {
           name: error.name,
           message: error.message,
+          code: error.code,
           stack: error.stack,
-          error,
+          raw: error,
         });
 
-        // More descriptive error for debugging
-        const errorMessage = 'Auth Error: ' + (error.message || 'Unknown error');
+        const errorMessage = error.message || 'Authentication failed';
         window.location.href = `/login?error=${encodeURIComponent(errorMessage)}`;
       }
     } else {
-      // Regular web OAuth flow
       window.location.href = `${serverDomain}/oauth/${oauthPath}`;
     }
   };
@@ -83,6 +105,7 @@ const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => 
         className="flex w-full items-center space-x-3 rounded-2xl border border-border-light bg-surface-primary px-5 py-3 text-text-primary transition-colors duration-200 hover:bg-surface-tertiary"
         onClick={handleLogin}
         data-testid={id}
+        disabled={!isAuthInitialized}
       >
         <Icon />
         <p>{label}</p>
