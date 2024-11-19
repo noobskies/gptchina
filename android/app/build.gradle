@@ -46,6 +46,8 @@ dependencies {
     implementation project(':capacitor-cordova-android-plugins')
     implementation "com.android.billingclient:billing:$billing_version"
     implementation 'com.revenuecat.purchases:purchases:7.0.0'
+    implementation platform('com.google.firebase:firebase-bom:33.6.0')
+    implementation 'com.google.firebase:firebase-analytics'
 }
 
 apply from: 'capacitor.build.gradle'
