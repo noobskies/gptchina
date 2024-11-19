@@ -47,6 +47,7 @@ function AuthLayout({
   const [init, setInit] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
+  // AuthLayout.tsx (initialize part)
   useEffect(() => {
     const checkPlatform = async () => {
       const platform = Capacitor.getPlatform();
@@ -56,11 +57,22 @@ function AuthLayout({
       // Initialize Google Auth for mobile platforms
       if (isNativePlatform && startupConfig?.googleLoginEnabled) {
         try {
-          await GoogleAuth.initialize({
-            clientId: startupConfig?.googleClientId || process.env.GOOGLE_CLIENT_ID,
+          console.log('Initializing Google Auth...');
+
+          // For mobile platforms, we should NOT set the clientId in initialize
+          // as it will override the platform-specific IDs
+          const initOptions = {
             scopes: ['profile', 'email'],
             grantOfflineAccess: true,
-          });
+          };
+
+          // Only add serverClientId for Android
+          if (platform === 'android') {
+            initOptions['serverClientId'] =
+              '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com';
+          }
+
+          await GoogleAuth.initialize(initOptions);
           console.log('Google Auth initialized successfully');
         } catch (error) {
           console.error('Error initializing Google Auth:', error);
