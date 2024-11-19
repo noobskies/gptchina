@@ -1,5 +1,5 @@
 const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
-const { OAuth2Strategy } = require('passport-oauth2');
+const { OAuth2Client } = require('google-auth-library');
 const socialLogin = require('./socialLogin');
 
 const getProfileDetails = (profile) => ({
@@ -14,13 +14,19 @@ const getProfileDetails = (profile) => ({
 const googleLogin = socialLogin('google', getProfileDetails);
 
 class CustomGoogleStrategy extends GoogleStrategy {
+  constructor(options, verify) {
+    super(options, verify);
+    this.oAuth2Client = new OAuth2Client(options.clientID);
+  }
+
   async authenticate(req, options) {
     if (req.body && req.body.id_token) {
       // Handle mobile token
       try {
-        const ticket = await this._oauth2.verifyIdToken({
+        // Verify the token using Google's OAuth2Client
+        const ticket = await this.oAuth2Client.verifyIdToken({
           idToken: req.body.id_token,
-          audience: this._clientID,
+          audience: this._oauth2._clientId, // Use the same client ID as OAuth
         });
 
         const payload = ticket.getPayload();
@@ -45,6 +51,7 @@ class CustomGoogleStrategy extends GoogleStrategy {
           this.success(user);
         });
       } catch (error) {
+        console.error('Token verification error:', error);
         this.error(error);
       }
     } else {
