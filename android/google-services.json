@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "598738891311",
+    "project_id": "novlisky",
+    "storage_bucket": "novlisky.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:598738891311:android:c3678a82408a9f7e3a0cda",
+        "android_client_info": {
+          "package_name": "twa.novlisky.io"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "598738891311-qf6p42djq9us51b2djpa0rpcrqsqanvv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "twa.novlisky.io",
+            "certificate_hash": "48fd7cb9a5f2e5d4029ecd00c46432c3bbeba70d"
+          }
+        },
+        {
+          "client_id": "598738891311-cbdnd4n8u4drp5r0msdnpscn1d99tirn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnUJBfCspoTS7S33S-JD6xH5WOwnyeQm0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "598738891311-cbdnd4n8u4drp5r0msdnpscn1d99tirn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

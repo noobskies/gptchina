@@ -12,6 +12,7 @@ import { loadSlim } from '@tsparticles/slim';
 import { TypeAnimation } from 'react-type-animation';
 import { getDomainData } from '~/utils/domainUtils';
 import { Capacitor } from '@capacitor/core';
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 
 const ErrorRender = ({ children }: { children: React.ReactNode }) => (
   <div className="mt-16 flex justify-center">
@@ -49,11 +50,26 @@ function AuthLayout({
   useEffect(() => {
     const checkPlatform = async () => {
       const platform = Capacitor.getPlatform();
-      setIsMobile(platform === 'ios' || platform === 'android');
+      const isNativePlatform = platform === 'ios' || platform === 'android';
+      setIsMobile(isNativePlatform);
+
+      // Initialize Google Auth for mobile platforms
+      if (isNativePlatform && startupConfig?.googleLoginEnabled) {
+        try {
+          await GoogleAuth.initialize({
+            clientId: startupConfig?.googleClientId || process.env.GOOGLE_CLIENT_ID,
+            scopes: ['profile', 'email'],
+            grantOfflineAccess: true,
+          });
+          console.log('Google Auth initialized successfully');
+        } catch (error) {
+          console.error('Error initializing Google Auth:', error);
+        }
+      }
     };
-  
+
     checkPlatform();
-  }, []);
+  }, [startupConfig]);
 
   const DisplayError = () => {
     if (startupConfigError !== null && startupConfigError !== undefined) {
@@ -164,7 +180,7 @@ function AuthLayout({
                 </div>
               </BlinkAnimation>
               {children}
-              {!isMobile && (pathname.includes('login') || pathname.includes('register')) && (
+              {(pathname.includes('login') || pathname.includes('register')) && (
                 <SocialLoginRender startupConfig={startupConfig} />
               )}
             </div>
@@ -184,10 +200,7 @@ function AuthLayout({
         <div className="z-10 text-left">
           <div className="z-10 text-left">
             <TypeAnimation
-              sequence={[
-                `${localize('home_welcome_to')} ${logoText}`,
-                1000,
-              ]}
+              sequence={[`${localize('home_welcome_to')} ${logoText}`, 1000]}
               speed={50}
               repeat={Infinity}
               cursor={true}

@@ -1,3 +1,4 @@
+// api/strategies
 const passportLogin = require('./localStrategy');
 const googleLogin = require('./googleStrategy');
 const githubLogin = require('./githubStrategy');

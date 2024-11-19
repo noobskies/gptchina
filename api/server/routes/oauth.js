@@ -1,3 +1,4 @@
+// api/server/routes/oauth.js
 // file deepcode ignore NoRateLimitingForLogin: Rate limiting is handled by the `loginLimiter` middleware
 const express = require('express');
 const passport = require('passport');
@@ -37,6 +38,14 @@ router.get(
     scope: ['openid', 'profile', 'email'],
     session: false,
   }),
+);
+
+router.post(
+  '/google',
+  passport.authenticate('google', {
+    session: false,
+  }),
+  oauthHandler,
 );
 
 router.get(

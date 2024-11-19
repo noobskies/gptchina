@@ -119,12 +119,14 @@
     ]
   },
   "dependencies": {
+    "@angular/fire": "^18.0.1",
     "@capacitor/android": "^6.1.2",
     "@capacitor/app": "^6.0.1",
     "@capacitor/browser": "^6.0.3",
     "@capacitor/core": "^6.1.2",
     "@capacitor/ios": "^6.1.2",
     "@capacitor/status-bar": "^6.0.1",
+    "@codetrix-studio/capacitor-google-auth": "^3.4.0-rc.4",
     "@revenuecat/purchases-capacitor": "^9.0.6",
     "@stripe/react-stripe-js": "^2.8.1",
     "@stripe/stripe-js": "^2.4.0",
@@ -134,6 +136,7 @@
     "body-parser": "^1.20.2",
     "capacitor-plugin-safe-area": "^3.0.3",
     "cordova-plugin-purchase": "^13.11.1",
+    "firebase": "^10.14.1",
     "ga-gtag": "^1.1.7",
     "node-cron": "^3.0.3",
     "numeral": "^2.0.6",
