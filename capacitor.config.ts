@@ -1,4 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
+import { loadEnv } from 'vite';
+
+// Load environment variables - use process.env.MODE or 'production' as default
+const env = loadEnv(process.env.MODE || 'production', process.cwd(), 'VITE_');
 
 const config: CapacitorConfig = {
   appId: 'twa.novlisky.io',
@@ -28,9 +32,9 @@ const config: CapacitorConfig = {
     },
     GoogleAuth: {
       scopes: ['profile', 'email'],
-      clientId: '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
-      androidClientId: '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
-      serverClientId: '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
+      clientId: env.VITE_GOOGLE_CLIENT_ID,
+      androidClientId: env.VITE_GOOGLE_ANDROID_CLIENT_ID,
+      serverClientId: env.VITE_GOOGLE_SERVER_CLIENT_ID,
     },
   },
   android: {
@@ -40,9 +44,9 @@ const config: CapacitorConfig = {
     backgroundColor: '#eeeeee',
   },
   server: {
-    androidScheme: 'https',
-    // cleartext: true,
-    url: 'https://novlisky.io',
+    androidScheme: env.VITE_ANDROID_SCHEME,
+    cleartext: env.VITE_CLEARTEXT === 'true',
+    url: env.VITE_SERVER_URL,
   },
 };
 
