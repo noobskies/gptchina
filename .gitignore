@@ -132,3 +132,4 @@ store_icon.png
 
 bubble/
 client/.env.sentry-build-plugin
+android/google-services.json
