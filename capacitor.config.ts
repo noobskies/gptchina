@@ -42,7 +42,7 @@ const config: CapacitorConfig = {
   server: {
     androidScheme: 'https',
     // cleartext: true,
-    url: 'https://noblisky.io',
+    url: 'https://novlisky.io',
   },
 };
 
