@@ -7,12 +7,12 @@ import { ThemeSelector } from '~/components/ui';
 import { Banner } from '../Banners';
 import Footer from './Footer';
 import Particles, { initParticlesEngine } from '@tsparticles/react';
-import { type Container, type ISourceOptions, MoveDirection, OutMode } from '@tsparticles/engine';
+import { type Container, type ISourceOptions } from '@tsparticles/engine';
 import { loadSlim } from '@tsparticles/slim';
 import { TypeAnimation } from 'react-type-animation';
 import { getDomainData } from '~/utils/domainUtils';
 import { Capacitor } from '@capacitor/core';
-import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 
 const ErrorRender = ({ children }: { children: React.ReactNode }) => (
   <div className="mt-16 flex justify-center">
@@ -47,35 +47,19 @@ function AuthLayout({
   const [init, setInit] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  // AuthLayout.tsx (initialize part)
   useEffect(() => {
     const checkPlatform = async () => {
       const platform = Capacitor.getPlatform();
       const isNativePlatform = platform === 'ios' || platform === 'android';
       setIsMobile(isNativePlatform);
 
-      // Initialize Google Auth for mobile platforms
+      // Initialize Firebase Auth for mobile platforms
       if (isNativePlatform && startupConfig?.googleLoginEnabled) {
         try {
-          console.log('Initializing Google Auth...');
-
-          // For mobile platforms, we should NOT set the clientId in initialize
-          // as it will override the platform-specific IDs
-          const initOptions = {
-            scopes: ['profile', 'email'],
-            grantOfflineAccess: true,
-          };
-
-          // Only add serverClientId for Android
-          if (platform === 'android') {
-            initOptions['serverClientId'] =
-              '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com';
-          }
-
-          await GoogleAuth.initialize(initOptions);
-          console.log('Google Auth initialized successfully');
+          const { user } = await FirebaseAuthentication.getCurrentUser();
+          console.log('Current auth state:', user ? 'Logged in' : 'Not logged in');
         } catch (error) {
-          console.error('Error initializing Google Auth:', error);
+          console.error('Error checking auth state:', error);
         }
       }
     };
