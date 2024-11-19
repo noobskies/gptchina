@@ -28,9 +28,9 @@ const config: CapacitorConfig = {
     },
     GoogleAuth: {
       scopes: ['profile', 'email'],
-      clientId: '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
-      androidClientId: '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
-      serverClientId: '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
+      clientId: '534352184231-uo6bhg848p51fg77u4od8spagn3emi7q.apps.googleusercontent.com',
+      androidClientId: '534352184231-1d8vrd05p6gntmt1d7oc1eqqgao4mrc8.apps.googleusercontent.com',
+      serverClientId: '534352184231-uo6bhg848p51fg77u4od8spagn3emi7q.apps.googleusercontent.com',
     },
   },
   android: {
@@ -41,8 +41,10 @@ const config: CapacitorConfig = {
   },
   server: {
     androidScheme: 'https',
-    // cleartext: true,
     url: 'https://novlisky.io',
+    // androidScheme: 'http',
+    // cleartext: true,
+    // url: 'http://192.168.0.167:3090',
   },
 };
 
