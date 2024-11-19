@@ -26,6 +26,10 @@ const config: CapacitorConfig = {
       style: 'dark',
       overlays: false,
     },
+    GoogleAuth: {
+      scopes: ['profile', 'email'],
+      serverClientId: '534352184231-idlmqrpub82mt5mq99v6t0fcs0gtgcp6.apps.googleusercontent.com',
+    },
   },
   android: {
     backgroundColor: '#eeeeee',
@@ -34,9 +38,9 @@ const config: CapacitorConfig = {
     backgroundColor: '#eeeeee',
   },
   server: {
-    androidScheme: 'http',
-    cleartext: true,
-    url: 'http://192.168.0.167:3090/',
+    androidScheme: 'https',
+    // cleartext: true,
+    url: 'https://novlisky.io',
   },
 };
 
