@@ -142,14 +142,6 @@ export function InAppPurchaseForm({
           </div>
         )}
 
-        {/* Purchase Notice */}
-        <div
-          className="rounded-md bg-blue-50 p-4 text-sm text-blue-600 
-          dark:bg-blue-900/30 dark:text-blue-400"
-        >
-          {localize('com_ui_payment_google_play_notice')}
-        </div>
-
         {/* Purchase Button */}
         <button
           onClick={handlePaymentClick}
@@ -182,28 +174,7 @@ export function InAppPurchaseForm({
             text-sm text-gray-500 dark:text-gray-400"
           >
             <Lock className="h-4 w-4" />
-            <span>{localize('com_ui_payment_secure_notice')}</span>
           </div>
-        </div>
-
-        {/* Support Links */}
-        <div
-          className="mt-4 flex justify-center space-x-4 text-sm 
-          text-gray-500 dark:text-gray-400"
-        >
-          <button
-            onClick={() => window.open('https://novlisky.io/terms', '_blank')}
-            className="hover:text-gray-700 dark:hover:text-gray-300"
-          >
-            {localize('com_ui_terms_of_service')}
-          </button>
-          <span>•</span>
-          <button
-            onClick={() => window.open('https://novlisky.io/support', '_blank')}
-            className="hover:text-gray-700 dark:hover:text-gray-300"
-          >
-            {localize('com_ui_support')}
-          </button>
         </div>
       </div>
     </div>
