@@ -27,12 +27,13 @@ const verifyAndroidToken = async (token) => {
     const payload = ticket.getPayload();
 
     return {
+      emails: [{ value: payload.email, verified: payload.email_verified }],
       id: payload.sub,
-      email: payload.email,
-      avatarUrl: payload.picture,
-      username: payload.given_name,
-      name: `${payload.given_name} ${payload.family_name}`,
-      emailVerified: payload.email_verified,
+      photos: [{ value: payload.picture }],
+      name: {
+        givenName: payload.given_name,
+        familyName: payload.family_name,
+      },
     };
   } catch (error) {
     throw new Error('Invalid token');
@@ -40,13 +41,27 @@ const verifyAndroidToken = async (token) => {
 };
 
 const handleAndroidToken = async (token) => {
-  try {
-    const profile = await verifyAndroidToken(token);
-    const result = await socialLogin('google', () => profile)();
-    return result;
-  } catch (error) {
-    throw error;
-  }
+  return new Promise(async (resolve, reject) => {
+    try {
+      const profile = await verifyAndroidToken(token);
+
+      // Use the same socialLogin function but with Android token data
+      googleLogin(
+        null, // accessToken (not needed for this flow)
+        null, // refreshToken (not needed for this flow)
+        profile, // profile object matching the expected format
+        (err, user) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve({ user, created: !user._id }); // Match the expected response format
+          }
+        },
+      );
+    } catch (error) {
+      reject(error);
+    }
+  });
 };
 
 module.exports = {
