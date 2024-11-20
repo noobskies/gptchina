@@ -1,3 +1,4 @@
+// api/server/services/AuthService.js
 const bcrypt = require('bcryptjs');
 const { webcrypto } = require('node:crypto');
 const { SystemRoles, errorsToString } = require('librechat-data-provider');

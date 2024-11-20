@@ -1,9 +1,9 @@
-// file deepcode ignore NoRateLimitingForLogin: Rate limiting is handled by the `loginLimiter` middleware
 const express = require('express');
 const passport = require('passport');
 const { loginLimiter, checkBan, checkDomainAllowed } = require('~/server/middleware');
 const { setAuthTokens } = require('~/server/services/AuthService');
 const { logger } = require('~/config');
+const { handleAndroidToken } = require('~/strategies/googleStrategy');
 
 const router = express.Router();
 
@@ -27,6 +27,30 @@ const oauthHandler = async (req, res) => {
     logger.error('Error in setting authentication tokens:', err);
   }
 };
+
+// New Android token verification endpoint
+router.post('/google/android', async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ error: 'Token is required' });
+    }
+
+    handleAndroidToken(token, async (error, user, info) => {
+      if (error) {
+        logger.error('Error in Android token verification:', error);
+        return res.status(401).json({ error: 'Invalid token' });
+      }
+
+      req.user = user;
+      await oauthHandler(req, res);
+    });
+  } catch (err) {
+    logger.error('Error in Android authentication:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 /**
  * Google Routes

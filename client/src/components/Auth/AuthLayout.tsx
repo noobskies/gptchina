@@ -51,7 +51,7 @@ function AuthLayout({
       const platform = Capacitor.getPlatform();
       setIsMobile(platform === 'ios' || platform === 'android');
     };
-  
+
     checkPlatform();
   }, []);
 
@@ -164,9 +164,7 @@ function AuthLayout({
                 </div>
               </BlinkAnimation>
               {children}
-              {!isMobile && (pathname.includes('login') || pathname.includes('register')) && (
-                <SocialLoginRender startupConfig={startupConfig} />
-              )}
+              <SocialLoginRender startupConfig={startupConfig} />
             </div>
           </div>
           <Footer startupConfig={startupConfig} />
@@ -184,10 +182,7 @@ function AuthLayout({
         <div className="z-10 text-left">
           <div className="z-10 text-left">
             <TypeAnimation
-              sequence={[
-                `${localize('home_welcome_to')} ${logoText}`,
-                1000,
-              ]}
+              sequence={[`${localize('home_welcome_to')} ${logoText}`, 1000]}
               speed={50}
               repeat={Infinity}
               cursor={true}

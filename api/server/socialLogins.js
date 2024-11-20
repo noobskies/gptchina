@@ -17,9 +17,22 @@ const { logger } = require('~/config');
  * @param {Express.Application} app
  */
 const configureSocialLogins = (app) => {
+  // Google OAuth Configuration
   if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
     passport.use(googleLogin());
+
+    // Serialize user for session
+    passport.serializeUser((user, done) => {
+      done(null, user);
+    });
+
+    // Deserialize user from session
+    passport.deserializeUser((user, done) => {
+      done(null, user);
+    });
   }
+
+  // Other social login configurations remain unchanged
   if (process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET) {
     passport.use(facebookLogin());
   }

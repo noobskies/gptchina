@@ -1,3 +1,4 @@
+// client/src/components/Auth/SocialLoginRender.tsx
 import { GoogleIcon, FacebookIcon, OpenIDIcon, GithubIcon, DiscordIcon } from '~/components';
 
 import SocialButton from './SocialButton';
