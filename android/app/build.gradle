@@ -8,8 +8,8 @@ android {
         applicationId "twa.novlisky.io"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 38
-        versionName "1.0.37"
+        versionCode 39
+        versionName "1.0.38"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [
             BILLING_KEY: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAo18WpCmGSnM9WEpCTE4CqnedKTa/RoILf6u8Cy6MzWEC+46V2rO9WsyF00XHC6psK3xDBBtAT3y+AaLme9ANoOUXPOAmJCYQGrgxuWk/SndWkzwSz3Nw20NA1wHqPhbWH/HfHur4E+ty/NknLJVI1valYBtTWOCaX0sLkBSnI1JCnf9Gb1U1hfDyq01nBmglp6eWWPoHnW3/iUgODA4l5yLfzwcuh36mFDv+XNyooffADmUEG3buEgma8e9sVBL+u89CqJm5U+Egn5BuEjvl2zfvq987mqECeBbv1tEOAvtsvQ12YNBxqWoYLkNS6r3DBpJKRz4Q88I8rjGG8nlgewIDAQAB"

@@ -16,20 +16,39 @@ const googleLogin = socialLogin('google', getProfileDetails);
 class CustomGoogleStrategy extends GoogleStrategy {
   constructor(options, verify) {
     super(options, verify);
-    this.oAuth2Client = new OAuth2Client(options.clientID);
+    this.oAuth2Client = new OAuth2Client({
+      clientId: options.clientID,
+      clientSecret: options.clientSecret,
+    });
   }
 
   async authenticate(req, options) {
     if (req.body && req.body.id_token) {
-      // Handle mobile token
       try {
-        // Verify the token using Google's OAuth2Client
-        const ticket = await this.oAuth2Client.verifyIdToken({
+        console.log('Verifying Firebase ID token...');
+
+        // Log token details (without showing the full token)
+        const tokenParts = req.body.id_token.split('.');
+        console.log('Token header:', JSON.parse(Buffer.from(tokenParts[0], 'base64').toString()));
+
+        // Verify the token
+        const loginTicket = await this.oAuth2Client.verifyIdToken({
           idToken: req.body.id_token,
-          audience: this._oauth2._clientId, // Use the same client ID as OAuth
+          audience: [
+            this._oauth2._clientId, // Web client ID
+            '397122273433-nu924lptlrh9kp2d1te1t7pn9cafufo1.apps.googleusercontent.com', // Android client ID
+            '397122273433-cu4vlplj3de7cd6ecmuftc54s1e92cb3.apps.googleusercontent.com', // Firebase client ID
+          ],
         });
 
-        const payload = ticket.getPayload();
+        const payload = loginTicket.getPayload();
+        console.log('Token payload:', {
+          sub: payload.sub,
+          email: payload.email,
+          name: payload.name,
+          isEmailVerified: payload.email_verified,
+        });
+
         const profile = {
           id: payload.sub,
           displayName: payload.name,
@@ -43,15 +62,23 @@ class CustomGoogleStrategy extends GoogleStrategy {
 
         this._verify(null, null, profile, (err, user) => {
           if (err) {
+            console.error('Verify callback error:', err);
             return this.error(err);
           }
           if (!user) {
+            console.log('No user returned from verify callback');
             return this.fail();
           }
+          console.log('Successfully authenticated user:', user.email);
           this.success(user);
         });
       } catch (error) {
-        console.error('Token verification error:', error);
+        console.error('Detailed token verification error:', {
+          message: error.message,
+          stack: error.stack,
+          code: error.code,
+          details: error.details,
+        });
         this.error(error);
       }
     } else {

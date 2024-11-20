@@ -15,10 +15,14 @@ const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => 
         // Clear any existing sessions
         await FirebaseAuthentication.signOut();
 
-        // Sign in with proper options structure
+        // Sign in with Google
         const result = await FirebaseAuthentication.signInWithGoogle();
-
-        console.log('Sign in result:', result);
+        console.log('Sign in result:', {
+          hasUser: !!result.user,
+          email: result.user?.email,
+          hasCredential: !!result.credential,
+          hasIdToken: !!result.credential?.idToken,
+        });
 
         if (!result.user) {
           throw new Error('No user data received');
@@ -29,7 +33,19 @@ const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => 
           forceRefresh: true,
         });
 
-        console.log('Making server request...');
+        console.log('Token retrieved', {
+          exists: !!token,
+          length: token?.length,
+          parts: token?.split('.').length,
+          header: token ? JSON.parse(atob(token.split('.')[0])) : null,
+          hasValidStructure: token?.split('.').length === 3,
+        });
+
+        if (!token) {
+          throw new Error('Failed to get ID token');
+        }
+
+        console.log('Making server request to:', `${serverDomain}/oauth/google`);
         const res = await fetch(`${serverDomain}/oauth/google`, {
           method: 'POST',
           headers: {
@@ -41,17 +57,36 @@ const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => 
             email: result.user.email,
             debug_info: {
               platform: Capacitor.getPlatform(),
-              timestamp: new Date().toISOString(),
+              firebaseUser: {
+                uid: result.user.uid,
+                emailVerified: result.user.emailVerified,
+                providerId: result.credential?.providerId,
+              },
+              tokenInfo: {
+                length: token.length,
+                structure: token.split('.').length === 3 ? 'valid' : 'invalid',
+                header: JSON.parse(atob(token.split('.')[0])),
+              },
             },
           }),
           credentials: 'include',
         });
 
-        if (!res.ok) {
+        console.log('Server response status:', res.status);
+        try {
           const data = await res.json();
-          throw new Error(data.message || 'Server authentication failed');
+          console.log('Server response:', data);
+        } catch (e) {
+          console.log('Could not parse server response as JSON');
         }
 
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(errorText || 'Server authentication failed');
+        }
+
+        // Add a small delay before redirect
+        await new Promise((resolve) => setTimeout(resolve, 500));
         window.location.href = '/c/new';
       } catch (error) {
         console.error('Detailed Auth Error:', {
@@ -60,6 +95,7 @@ const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => 
           code: error.code,
           stack: error.stack,
           raw: error,
+          timestamp: new Date().toISOString(),
         });
 
         const errorMessage = `Auth Error: ${error.message || error.code || 'Unknown error'}`;
