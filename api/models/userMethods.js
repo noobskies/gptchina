@@ -1,5 +1,7 @@
 const bcrypt = require('bcryptjs');
 const signPayload = require('~/server/services/signPayload');
+const { isEnabled } = require('~/server/utils/handleText');
+const Balance = require('./Balance');
 const User = require('./User');
 const { Transaction } = require('./Transaction');
 
@@ -72,13 +74,14 @@ const createUser = async (data, disableTTL = true, returnUser = false) => {
   }
 
   const user = await User.create(userData);
-  if (process.env.CHECK_BALANCE && process.env.REGISTRATION_BALANCE) {
-    await Transaction.create({
-      user: user._id,
-      tokenType: 'credits',
-      context: 'admin',
-      rawAmount: +process.env.REGISTRATION_BALANCE,
-    });
+
+  if (isEnabled(process.env.CHECK_BALANCE) && process.env.START_BALANCE) {
+    let incrementValue = parseInt(process.env.START_BALANCE);
+    await Balance.findOneAndUpdate(
+      { user: user._id },
+      { $inc: { tokenCredits: incrementValue } },
+      { upsert: true, new: true },
+    ).lean();
   }
 
   if (returnUser) {

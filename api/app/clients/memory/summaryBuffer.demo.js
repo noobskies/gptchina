@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { ChatOpenAI } = require('langchain/chat_models/openai');
+const { ChatOpenAI } = require('@langchain/openai');
 const { getBufferString, ConversationSummaryBufferMemory } = require('langchain/memory');
 
 const chatPromptMemory = new ConversationSummaryBufferMemory({
@@ -9,7 +9,7 @@ const chatPromptMemory = new ConversationSummaryBufferMemory({
 });
 
 (async () => {
-  await chatPromptMemory.saveContext({ input: 'hi my name\'s Danny' }, { output: 'whats up' });
+  await chatPromptMemory.saveContext({ input: "hi my name's Danny" }, { output: 'whats up' });
   await chatPromptMemory.saveContext({ input: 'not much you' }, { output: 'not much' });
   await chatPromptMemory.saveContext(
     { input: 'are you excited for the olympics?' },

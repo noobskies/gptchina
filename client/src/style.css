@@ -2405,6 +2405,13 @@ button.scroll-convo {
   translate: 0;
 }
 
+/** Note: ensure KaTeX can spread across visible space */
+.message-content pre:has(> span.katex) {
+  overflow: visible !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
 @media (max-width: 768px) {
   #sentry-feedback {
     --page-margin: 16px 5px 85px 16px !important;
