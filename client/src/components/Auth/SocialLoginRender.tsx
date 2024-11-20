@@ -1,11 +1,8 @@
-// client/src/components/Auth/SocialLoginRender.tsx
 import { GoogleIcon, FacebookIcon, OpenIDIcon, GithubIcon, DiscordIcon } from '~/components';
-
 import SocialButton from './SocialButton';
-
 import { useLocalize } from '~/hooks';
-
 import { TStartupConfig } from 'librechat-data-provider';
+import { Capacitor } from '@capacitor/core';
 
 function SocialLoginRender({
   startupConfig,
@@ -13,6 +10,7 @@ function SocialLoginRender({
   startupConfig: TStartupConfig | null | undefined;
 }) {
   const localize = useLocalize();
+  const isNative = Capacitor.isNativePlatform();
 
   if (!startupConfig) {
     return null;
@@ -61,6 +59,7 @@ function SocialLoginRender({
         Icon={GoogleIcon}
         label={localize('com_auth_google_login')}
         id="google"
+        useFirebase={isNative} // Add this flag to indicate Firebase auth should be used
       />
     ),
     openid: startupConfig?.openidLoginEnabled && (

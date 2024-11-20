@@ -2,7 +2,7 @@ import React from 'react';
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 import { Capacitor } from '@capacitor/core';
 
-const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => {
+const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label, useFirebase }) => {
   if (!enabled) {
     return null;
   }
@@ -24,25 +24,8 @@ const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => 
           hasIdToken: !!result.credential?.idToken,
         });
 
-        if (!result.user) {
-          throw new Error('No user data received');
-        }
-
-        // Get the ID token
-        const { token } = await FirebaseAuthentication.getIdToken({
-          forceRefresh: true,
-        });
-
-        console.log('Token retrieved', {
-          exists: !!token,
-          length: token?.length,
-          parts: token?.split('.').length,
-          header: token ? JSON.parse(atob(token.split('.')[0])) : null,
-          hasValidStructure: token?.split('.').length === 3,
-        });
-
-        if (!token) {
-          throw new Error('Failed to get ID token');
+        if (!result.credential?.idToken) {
+          throw new Error('No credential received');
         }
 
         console.log('Making server request to:', `${serverDomain}/oauth/google`);
@@ -52,40 +35,36 @@ const SocialButton = ({ id, enabled, serverDomain, oauthPath, Icon, label }) => 
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            id_token: token,
+            id_token: result.credential.idToken, // Changed from credential to id_token
             platform: Capacitor.getPlatform(),
-            email: result.user.email,
             debug_info: {
               platform: Capacitor.getPlatform(),
-              firebaseUser: {
-                uid: result.user.uid,
-                emailVerified: result.user.emailVerified,
-                providerId: result.credential?.providerId,
-              },
-              tokenInfo: {
-                length: token.length,
-                structure: token.split('.').length === 3 ? 'valid' : 'invalid',
-                header: JSON.parse(atob(token.split('.')[0])),
-              },
+              authProvider: 'firebase',
+              hasUser: !!result.user,
+              email: result.user?.email,
+              tokenParts: result.credential.idToken.split('.').length,
             },
           }),
           credentials: 'include',
         });
 
         console.log('Server response status:', res.status);
-        try {
-          const data = await res.json();
-          console.log('Server response:', data);
-        } catch (e) {
-          console.log('Could not parse server response as JSON');
-        }
 
         if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(errorText || 'Server authentication failed');
+          let errorMessage = 'Server authentication failed';
+          try {
+            const errorData = await res.json();
+            errorMessage = errorData.message || errorMessage;
+          } catch (e) {
+            console.log('Could not parse error response as JSON');
+          }
+          throw new Error(errorMessage);
         }
 
-        // Add a small delay before redirect
+        const data = await res.json();
+        console.log('Server response:', data);
+
+        // Add small delay before redirect
         await new Promise((resolve) => setTimeout(resolve, 500));
         window.location.href = '/c/new';
       } catch (error) {

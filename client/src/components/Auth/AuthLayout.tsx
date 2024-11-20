@@ -12,7 +12,6 @@ import { loadSlim } from '@tsparticles/slim';
 import { TypeAnimation } from 'react-type-animation';
 import { getDomainData } from '~/utils/domainUtils';
 import { Capacitor } from '@capacitor/core';
-import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 
 const ErrorRender = ({ children }: { children: React.ReactNode }) => (
   <div className="mt-16 flex justify-center">
@@ -45,27 +44,6 @@ function AuthLayout({
   const localize = useLocalize();
   const { logoText, logoFilename, logoPath } = getDomainData();
   const [init, setInit] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkPlatform = async () => {
-      const platform = Capacitor.getPlatform();
-      const isNativePlatform = platform === 'ios' || platform === 'android';
-      setIsMobile(isNativePlatform);
-
-      // Initialize Firebase Auth for mobile platforms
-      if (isNativePlatform && startupConfig?.googleLoginEnabled) {
-        try {
-          const { user } = await FirebaseAuthentication.getCurrentUser();
-          console.log('Current auth state:', user ? 'Logged in' : 'Not logged in');
-        } catch (error) {
-          console.error('Error checking auth state:', error);
-        }
-      }
-    };
-
-    checkPlatform();
-  }, [startupConfig]);
 
   const DisplayError = () => {
     if (startupConfigError !== null && startupConfigError !== undefined) {
