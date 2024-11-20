@@ -37,15 +37,14 @@ router.post('/google/android', async (req, res) => {
       return res.status(400).json({ error: 'Token is required' });
     }
 
-    handleAndroidToken(token, async (error, user, info) => {
-      if (error) {
-        logger.error('Error in Android token verification:', error);
-        return res.status(401).json({ error: 'Invalid token' });
-      }
-
+    try {
+      const { user, created } = await handleAndroidToken(token);
       req.user = user;
       await oauthHandler(req, res);
-    });
+    } catch (error) {
+      logger.error('Error in Android token verification:', error);
+      return res.status(401).json({ error: 'Invalid token' });
+    }
   } catch (err) {
     logger.error('Error in Android authentication:', err);
     res.status(500).json({ error: 'Server error' });

@@ -1,4 +1,3 @@
-// api/strategies/googleStrategy.js
 const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
 const { OAuth2Client } = require('google-auth-library');
 const socialLogin = require('./socialLogin');
@@ -40,13 +39,13 @@ const verifyAndroidToken = async (token) => {
   }
 };
 
-const handleAndroidToken = async (token, done) => {
+const handleAndroidToken = async (token) => {
   try {
     const profile = await verifyAndroidToken(token);
-    const { user, created } = await socialLogin('google', () => profile)();
-    done(null, user, { created });
+    const result = await socialLogin('google', () => profile)();
+    return result;
   } catch (error) {
-    done(error);
+    throw error;
   }
 };
 
