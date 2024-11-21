@@ -31,6 +31,9 @@ const config: CapacitorConfig = {
       serverClientId: '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
       forceCodeForRefreshToken: true,
     },
+    PushNotifications: {
+      presentationOptions: ['badge', 'sound', 'alert'],
+    },
   },
   android: {
     backgroundColor: '#eeeeee',
@@ -39,11 +42,11 @@ const config: CapacitorConfig = {
     backgroundColor: '#eeeeee',
   },
   server: {
-    androidScheme: 'https',
-    url: 'https://novlisky.io',
-    // androidScheme: 'http',
-    // cleartext: true,
-    // url: 'http://192.168.0.167:3090',
+    // androidScheme: 'https',
+    // url: 'https://novlisky.io',
+    androidScheme: 'http',
+    cleartext: true,
+    url: 'http://192.168.0.167:3090',
   },
 };
 

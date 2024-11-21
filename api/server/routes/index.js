@@ -15,6 +15,7 @@ const models = require('./models');
 const convos = require('./convos');
 const config = require('./config');
 const payment = require('./payment');
+const device = require('./device');
 const files = require('./files');
 const share = require('./share');
 const agents = require('./agents');
@@ -40,6 +41,7 @@ module.exports = {
   files,
   share,
   agents,
+  device,
   bedrock,
   convos,
   search,

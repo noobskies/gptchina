@@ -25,6 +25,7 @@ const noIndex = require('./middleware/noIndex');
 const routes = require('./routes');
 
 require('./cron');
+require('./cron/tokenNotifications');
 
 const { PORT, HOST, ALLOW_SOCIAL_LOGIN, DISABLE_COMPRESSION } = process.env ?? {};
 
@@ -149,6 +150,7 @@ const startServer = async () => {
   app.use('/api/agents', routes.agents);
   app.use('/api/banner', routes.banner);
   app.use('/api/bedrock', routes.bedrock);
+  app.use('/api/device', routes.device);
 
   app.use('/api/tags', routes.tags);
 
