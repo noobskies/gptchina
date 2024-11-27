@@ -154,8 +154,8 @@ export const useInAppPurchase = ({ priceId, onSuccess, onError }: UseInAppPurcha
       const platform = Capacitor.getPlatform();
       console.log('Current platform:', platform);
 
-      if (platform !== 'android') {
-        throw new Error('In-app purchases are only available on Android');
+      if (platform !== 'ios' && platform !== 'android') {
+        throw new Error('In-app purchases are only available on iOS and Android');
       }
 
       console.log('Finding package for purchase...');
