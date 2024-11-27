@@ -113,11 +113,7 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
       case PaymentMethod.WeChatPay:
       case PaymentMethod.AliPay:
       case PaymentMethod.Bitcoin:
-        return (
-          <OpenNodePaymentProvider onSuccess={handlePaymentComplete} onError={handlePaymentError}>
-            <OpenNodePaymentForm {...commonProps} />
-          </OpenNodePaymentProvider>
-        );
+        return <OpenNodePaymentForm {...commonProps} />;
       // return (
       //   <StripePaymentProvider
       //     amount={selectedPackage.amount}

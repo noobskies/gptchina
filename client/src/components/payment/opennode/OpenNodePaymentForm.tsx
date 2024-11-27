@@ -59,6 +59,9 @@ export const OpenNodePaymentForm: React.FC<OpenNodePaymentFormProps> = ({
     );
   }
 
+  const bitcoinAddress = charge?.chain_invoice?.address || charge?.address?.address || '';
+  const lightningInvoice = charge?.lightning_invoice?.payreq || '';
+
   return (
     <div className="flex flex-col">
       <div className="mb-6 flex items-center justify-between px-4">
@@ -76,7 +79,6 @@ export const OpenNodePaymentForm: React.FC<OpenNodePaymentFormProps> = ({
       </div>
 
       <div className="space-y-6 px-4">
-        {/* Amount and Tokens Display */}
         <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
@@ -97,29 +99,60 @@ export const OpenNodePaymentForm: React.FC<OpenNodePaymentFormProps> = ({
         </div>
 
         {charge && (
-          <div className="flex flex-col items-center space-y-4">
-            <div className="rounded-lg bg-white p-4 dark:bg-gray-700">
-              <QRCodeSVG value={charge.chain_invoice} size={256} />
-            </div>
-
-            <div className="text-center">
-              <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">
-                {localize('com_ui_payment_bitcoin_scan')}
-              </p>
-              <div className="group relative">
-                <code className="block w-full break-all rounded bg-gray-100 p-2 text-xs dark:bg-gray-800">
-                  {charge.chain_invoice}
-                </code>
-                <button
-                  onClick={() => navigator.clipboard.writeText(charge.chain_invoice)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md bg-gray-200 px-2 py-1 text-xs 
-                           text-gray-700 opacity-0 transition-opacity hover:bg-gray-300 group-hover:opacity-100 
-                           dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                >
-                  Copy
-                </button>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {bitcoinAddress && (
+              <div className="flex flex-col items-center space-y-4">
+                <h3 className="text-lg font-semibold">Bitcoin Address</h3>
+                <div className="rounded-lg bg-white p-4 dark:bg-gray-700">
+                  <QRCodeSVG value={bitcoinAddress} size={200} />
+                </div>
+                <div className="w-full text-center">
+                  <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">
+                    Send Bitcoin to this address
+                  </p>
+                  <div className="group relative">
+                    <code className="block w-full break-all rounded bg-gray-100 p-2 text-xs dark:bg-gray-800">
+                      {bitcoinAddress}
+                    </code>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(bitcoinAddress)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md bg-gray-200 px-2 py-1 text-xs 
+                               text-gray-700 opacity-0 transition-opacity hover:bg-gray-300 group-hover:opacity-100 
+                               dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
+
+            {lightningInvoice && (
+              <div className="flex flex-col items-center space-y-4">
+                <h3 className="text-lg font-semibold">Lightning Payment</h3>
+                <div className="rounded-lg bg-white p-4 dark:bg-gray-700">
+                  <QRCodeSVG value={lightningInvoice} size={200} />
+                </div>
+                <div className="w-full text-center">
+                  <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">
+                    Or pay with Lightning
+                  </p>
+                  <div className="group relative">
+                    <code className="block w-full break-all rounded bg-gray-100 p-2 text-xs dark:bg-gray-800">
+                      {lightningInvoice}
+                    </code>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(lightningInvoice)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md bg-gray-200 px-2 py-1 text-xs 
+                               text-gray-700 opacity-0 transition-opacity hover:bg-gray-300 group-hover:opacity-100 
+                               dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -128,13 +161,6 @@ export const OpenNodePaymentForm: React.FC<OpenNodePaymentFormProps> = ({
             {paymentError}
           </div>
         )}
-      </div>
-
-      <div className="mt-6 px-4 text-center">
-        <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-          <Lock className="h-4 w-4" />
-          <span>{localize('com_ui_payment_secure_notice')}</span>
-        </div>
       </div>
     </div>
   );
