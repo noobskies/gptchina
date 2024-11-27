@@ -91,12 +91,13 @@ class OpenNodeService {
   }
 
   async handleSuccessfulPayment(charge) {
-    const { userId, priceId, tokens } = charge.metadata;
+    const { userId, priceId } = charge.metadata;
 
     try {
       const user = await User.findById(userId);
       if (!user) throw new Error('User not found');
 
+      // Check for existing transaction
       const existingTransaction = await Transaction.findOne({
         user: userId,
         tokenType: 'credits',
@@ -109,19 +110,25 @@ class OpenNodeService {
         return;
       }
 
+      const tokenAmount = PRICE_TOKEN_MAPPING[priceId];
+
+      // Create transaction record
       const transaction = await Transaction.create({
         user: userId,
         tokenType: 'credits',
         context: 'purchase',
-        rawAmount: tokens,
+        rawAmount: tokenAmount,
         paymentId: charge.id,
         priceId,
       });
 
+      // Update user's balance
+      await user.updateOne({ $inc: { tokenBalance: tokenAmount } });
+
       logger.info('Bitcoin payment processed', {
         chargeId: charge.id,
         userId,
-        tokens,
+        tokenAmount,
         transactionId: transaction._id,
       });
 
