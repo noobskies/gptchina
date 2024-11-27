@@ -45,7 +45,7 @@ class OpenNodeController {
         fiat_value: charge.fiat_value,
       });
     } catch (error) {
-      logger.error('Charge creation error:', error);
+      console.log('Charge creation error:', error);
       res.status(500).json({
         error: 'Failed to create charge',
         details: error.message,
