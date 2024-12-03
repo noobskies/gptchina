@@ -231,7 +231,7 @@ class OpenNodeService {
   validateWebhook(payload, signature) {
     try {
       if (!payload?.id || !signature) {
-        logger.warn('Missing required webhook fields', {
+        console.log('Missing required webhook fields', {
           hasId: !!payload?.id,
           hasSignature: !!signature,
         });
