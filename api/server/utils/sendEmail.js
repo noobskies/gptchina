@@ -76,12 +76,16 @@ const sendEmail = async ({ email, subject, payload, template, throwError = true 
         to: `"${payload.name}" <${email}>`,
         envelope: {
           // Envelope from should contain addr-spec
-          // Mistake in the Nodemailer documentation?
           from: process.env.EMAIL_FROM,
           to: email,
         },
         subject: subject,
         html: compiledTemplate(payload),
+        // Add headers to disable tracking
+        headers: {
+          trackopens: 'false',
+          trackclicks: 'false',
+        },
       };
     };
 
