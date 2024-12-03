@@ -86,7 +86,7 @@ const startServer = async () => {
     async (req, res) => {
       const signature = req.headers['x-opennode-signature'];
 
-      logger.info('OpenNode Webhook received:', {
+      console.log('OpenNode Webhook received:', {
         headers: req.headers,
         body: req.body,
         signature: signature?.slice(0, 20) + '...',
@@ -101,10 +101,10 @@ const startServer = async () => {
         }
 
         await OpenNodeService.handleWebhook(req.body, signature);
-        logger.info('OpenNode Webhook processed successfully');
+        console.log('OpenNode Webhook processed successfully');
         res.json({ received: true });
       } catch (err) {
-        logger.error('OpenNode Webhook error:', {
+        console.log('OpenNode Webhook error:', {
           error: err.message,
           stack: err.stack,
           body: req.body,

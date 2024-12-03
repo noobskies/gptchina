@@ -1,7 +1,5 @@
-// controllers/payment/OpenNodeController.js
 const OpenNodeService = require('../../services/payment/OpenNodeService');
 const User = require('~/models/User');
-const { logger } = require('~/config');
 
 class OpenNodeController {
   static async createCharge(req, res) {
@@ -43,37 +41,18 @@ class OpenNodeController {
         address: charge.chain_invoice,
         amount: charge.amount,
         fiat_value: charge.fiat_value,
+        status: charge.status,
       });
     } catch (error) {
-      console.log('Charge creation error:', error);
+      console.log('Charge creation error:', {
+        error: error.message,
+        stack: error.stack,
+        userId: req.user?._id,
+      });
       res.status(500).json({
         error: 'Failed to create charge',
         details: error.message,
       });
-    }
-  }
-
-  static async handleWebhook(req, res) {
-    const signature = req.headers['x-opennode-signature'];
-    if (!signature) {
-      throw new Error('No OpenNode signature found in headers');
-    }
-
-    logger.info('Processing webhook', {
-      signatureExists: !!signature,
-      bodyLength: JSON.stringify(req.body).length,
-    });
-
-    try {
-      await OpenNodeService.handleWebhook(req.body, signature);
-      logger.info('Webhook processed', {
-        id: req.body.id,
-        status: req.body.status,
-      });
-      res.sendStatus(200);
-    } catch (error) {
-      logger.error('Webhook processing error:', error);
-      res.status(400).json({ error: error.message });
     }
   }
 
@@ -90,11 +69,28 @@ class OpenNodeController {
       }
 
       const charge = await OpenNodeService.getCharge(chargeId);
-      res.json(charge);
+
+      // Only return charge if it belongs to the requesting user
+      if (charge.metadata?.userId !== user._id.toString()) {
+        return res.status(403).json({ error: 'Unauthorized access to charge' });
+      }
+
+      res.json({
+        id: charge.id,
+        status: charge.status,
+        amount: charge.amount,
+        fiat_value: charge.fiat_value,
+        lightning_invoice: charge.lightning_invoice,
+        chain_invoice: charge.chain_invoice,
+        created_at: charge.created_at,
+        metadata: charge.metadata,
+        transactions: charge.transactions,
+      });
     } catch (error) {
-      logger.error('Charge fetch error:', {
+      console.log('Charge fetch error:', {
         error: error.message,
         userId: req.user?._id,
+        chargeId: req.params.chargeId,
       });
       res.status(500).json({
         error: 'Failed to fetch charge',
@@ -103,17 +99,58 @@ class OpenNodeController {
     }
   }
 
-  static validateWebhookPayload(payload) {
-    console.log('Validating webhook payload:', payload);
-    if (!payload?.id) {
-      throw new Error('Invalid webhook payload: missing charge id');
-    }
+  static async handleWebhook(req, res) {
+    try {
+      const payload = req.body;
+      console.log('Received OpenNode webhook:', {
+        id: payload.id,
+        status: payload.status,
+        order_id: payload.order_id,
+      });
 
-    if (!payload?.status) {
-      throw new Error('Invalid webhook payload: missing status');
-    }
+      if (!payload.id) {
+        throw new Error('Missing charge ID in webhook');
+      }
 
-    return true;
+      await OpenNodeService.handleWebhook(payload);
+
+      console.log('Webhook processed successfully:', {
+        id: payload.id,
+        status: payload.status,
+      });
+
+      res.sendStatus(200);
+    } catch (error) {
+      console.log('Webhook processing error:', {
+        error: error.message,
+        stack: error.stack,
+        payload: req.body,
+      });
+      // Always return 200 to OpenNode even if we had an error
+      // This prevents them from retrying webhooks that we can't process
+      res.sendStatus(200);
+    }
+  }
+
+  static async listTransactions(req, res) {
+    try {
+      const user = await User.findById(req.user?._id);
+      if (!user) {
+        return res.status(401).json({ error: 'User not found' });
+      }
+
+      const transactions = await OpenNodeService.listTransactions(user._id);
+      res.json(transactions);
+    } catch (error) {
+      console.log('Transaction list error:', {
+        error: error.message,
+        userId: req.user?._id,
+      });
+      res.status(500).json({
+        error: 'Failed to list transactions',
+        details: error.message,
+      });
+    }
   }
 }
 

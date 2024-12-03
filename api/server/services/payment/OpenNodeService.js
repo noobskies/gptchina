@@ -1,7 +1,6 @@
 const opennode = require('opennode');
 const User = require('~/models/User');
 const { Transaction } = require('~/models/Transaction');
-const { logger } = require('~/config');
 
 const PRICE_TOKEN_MAPPING = {
   price_1P6dqBHKD0byXXClWuA2RGY2: 100000,
