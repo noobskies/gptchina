@@ -1,6 +1,8 @@
 const opennode = require('opennode');
+const crypto = require('crypto');
 const User = require('~/models/User');
 const { Transaction } = require('~/models/Transaction');
+const { logger } = require('~/config');
 
 const PRICE_TOKEN_MAPPING = {
   price_1P6dqBHKD0byXXClWuA2RGY2: 100000,
@@ -19,26 +21,26 @@ class OpenNodeService {
       throw new Error('OPENNODE_API_KEY is required');
     }
 
-    console.log('Initializing OpenNode with environment:', process.env.NODE_ENV);
+    logger.info('Initializing OpenNode with environment:', process.env.NODE_ENV);
 
     try {
       opennode.setCredentials(
         process.env.OPENNODE_API_KEY,
         process.env.NODE_ENV === 'production' ? 'live' : 'dev',
       );
-      console.log('OpenNode credentials set successfully', {
+      logger.info('OpenNode credentials set successfully', {
         environment: process.env.NODE_ENV,
         apiKeyPrefix: process.env.OPENNODE_API_KEY.substring(0, 4) + '...',
       });
     } catch (error) {
-      console.log('Failed to set OpenNode credentials:', error);
+      logger.error('Failed to set OpenNode credentials:', error);
       throw error;
     }
   }
 
   async createCharge({ amount, userId, priceId, email }) {
     try {
-      console.log('Starting OpenNode charge creation with params:', {
+      logger.info('Starting OpenNode charge creation with params:', {
         amount,
         userId,
         priceId,
@@ -63,16 +65,16 @@ class OpenNodeService {
         },
       };
 
-      console.log('Attempting OpenNode API call with payload:', payload);
+      logger.info('Attempting OpenNode API call with payload:', payload);
 
       const charge = await opennode.createCharge(payload);
-      console.log('OpenNode charge created successfully:', {
+      logger.info('OpenNode charge created successfully:', {
         id: charge.id,
         status: charge.status,
         amount: charge.amount,
         hasLightningInvoice: !!charge.lightning_invoice,
         hasChainInvoice: !!charge.chain_invoice,
-        completeCharge: charge, // Log the complete charge object for debugging
+        completeCharge: charge,
       });
 
       return {
@@ -86,7 +88,7 @@ class OpenNodeService {
         address: charge.chain_invoice,
       };
     } catch (error) {
-      console.log('OpenNode charge creation failed:', {
+      logger.error('OpenNode charge creation failed:', {
         error: error.message,
         status: error.status,
         response: error.response?.data,
@@ -98,65 +100,109 @@ class OpenNodeService {
 
   async handlePaymentNotification(charge) {
     try {
-      console.log('Processing payment notification:', {
+      logger.info('Processing payment notification:', {
         chargeId: charge.id,
         status: charge.status,
         metadata: charge.metadata,
+        transactions: charge.transactions,
       });
 
-      if (charge.status !== 'paid') {
-        console.log('Charge not paid yet', { id: charge.id, status: charge.status });
-        return;
+      switch (charge.status) {
+        case 'processing':
+          logger.info('Payment is processing (in mempool)', {
+            id: charge.id,
+            transactions: charge.transactions,
+          });
+          return;
+
+        case 'underpaid':
+          logger.warn('Payment was underpaid', {
+            id: charge.id,
+            missing: charge.missing_amt,
+            transactions: charge.transactions,
+          });
+          return;
+
+        case 'expired':
+          logger.info('Charge expired', { id: charge.id });
+          return;
+
+        case 'refunded':
+          logger.info('Payment was refunded', {
+            id: charge.id,
+            transactions: charge.transactions,
+          });
+          return;
+
+        case 'paid':
+          const { userId, priceId, tokens } = charge.metadata;
+          if (!userId || !priceId || !tokens) {
+            throw new Error('Missing metadata in charge');
+          }
+
+          // Find user first
+          const user = await User.findById(userId);
+          if (!user) {
+            logger.error('User not found for payment:', {
+              userId,
+              chargeId: charge.id,
+            });
+            throw new Error('User not found');
+          }
+
+          // Check for existing transaction
+          const existingTransaction = await Transaction.findOne({
+            user: userId,
+            tokenType: 'credits',
+            context: 'purchase',
+            paymentId: charge.id,
+          });
+
+          if (existingTransaction) {
+            logger.info('Payment already processed', { id: charge.id });
+            return user;
+          }
+
+          // Create transaction first
+          const transaction = await Transaction.create({
+            user: userId,
+            tokenType: 'credits',
+            context: 'purchase',
+            rawAmount: tokens,
+            paymentId: charge.id,
+            priceId,
+          });
+
+          // Update user balance and return updated user
+          const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { $inc: { tokenBalance: tokens } },
+            { new: true },
+          );
+
+          logger.info('Bitcoin payment processed successfully', {
+            chargeId: charge.id,
+            userId,
+            tokens,
+            transactionId: transaction._id,
+            newBalance: updatedUser.tokenBalance,
+          });
+
+          return updatedUser;
+
+        default:
+          logger.warn('Unhandled payment status', {
+            id: charge.id,
+            status: charge.status,
+          });
+          return null;
       }
-
-      const { userId, priceId, tokens } = charge.metadata;
-      if (!userId || !priceId || !tokens) {
-        throw new Error('Missing metadata in charge');
-      }
-
-      const user = await User.findById(userId);
-      if (!user) {
-        throw new Error('User not found');
-      }
-
-      const existingTransaction = await Transaction.findOne({
-        user: userId,
-        tokenType: 'credits',
-        context: 'purchase',
-        paymentId: charge.id,
-      });
-
-      if (existingTransaction) {
-        console.log('Payment already processed', { id: charge.id });
-        return;
-      }
-
-      const transaction = await Transaction.create({
-        user: userId,
-        tokenType: 'credits',
-        context: 'purchase',
-        rawAmount: tokens,
-        paymentId: charge.id,
-        priceId,
-      });
-
-      await User.findByIdAndUpdate(userId, {
-        $inc: { tokenBalance: tokens },
-      });
-
-      console.log('Bitcoin payment processed successfully', {
-        chargeId: charge.id,
-        userId,
-        tokens,
-        transactionId: transaction._id,
-      });
-
-      return transaction;
     } catch (error) {
-      console.log('Payment notification processing failed:', {
+      logger.error('Payment notification processing failed:', {
         error: error.message,
         chargeId: charge?.id,
         stack: error.stack,
+        metadata: charge?.metadata,
       });
       throw error;
     }
@@ -164,16 +210,17 @@ class OpenNodeService {
 
   async getCharge(chargeId) {
     try {
-      console.log('Fetching charge info:', { chargeId });
+      logger.info('Fetching charge info:', { chargeId });
       const charge = await opennode.chargeInfo(chargeId);
-      console.log('Charge info retrieved:', {
+      logger.info('Charge info retrieved:', {
         id: charge.id,
         status: charge.status,
         amount: charge.amount,
+        transactions: charge.transactions,
       });
       return charge;
     } catch (error) {
-      console.log('Failed to fetch charge:', {
+      logger.error('Failed to fetch charge:', {
         error: error.message,
         chargeId,
         stack: error.stack,
@@ -182,27 +229,55 @@ class OpenNodeService {
     }
   }
 
-  async handleWebhook(payload, signature) {
+  validateWebhook(payload) {
     try {
-      console.log('Processing webhook:', {
-        id: payload.id,
-        status: payload.status,
-        hasSignature: !!signature,
+      if (!payload?.id || !payload?.hashed_order) {
+        logger.warn('Missing required webhook fields', {
+          hasId: !!payload?.id,
+          hasHashedOrder: !!payload?.hashed_order,
+        });
+        return false;
+      }
+
+      const received = payload.hashed_order;
+      const calculated = crypto
+        .createHmac('sha256', process.env.OPENNODE_API_KEY)
+        .update(payload.id)
+        .digest('hex');
+
+      const isValid = received === calculated;
+      logger.info('Webhook validation result:', {
+        isValid,
+        chargeId: payload.id,
       });
 
-      const isValid = await opennode.signatureIsValid(payload);
-      if (!isValid) {
-        console.log('Invalid webhook signature', {
-          receivedSignature: signature,
-          payload: payload,
-        });
+      return isValid;
+    } catch (error) {
+      logger.error('Webhook validation failed', { error });
+      return false;
+    }
+  }
+
+  async handleWebhook(payload) {
+    try {
+      logger.info('Processing webhook:', {
+        id: payload.id,
+        status: payload.status,
+        hashedOrder: payload.hashed_order,
+      });
+
+      if (!this.validateWebhook(payload)) {
         throw new Error('Invalid webhook signature');
       }
 
-      await this.handlePaymentNotification(payload);
+      const updatedUser = await this.handlePaymentNotification(payload);
+      logger.info('Webhook processing completed', {
+        userId: updatedUser?.id,
+        newBalance: updatedUser?.tokenBalance,
+      });
       return true;
     } catch (error) {
-      console.log('Webhook processing failed:', {
+      logger.error('Webhook processing failed:', {
         error: error.message,
         stack: error.stack,
         payload: payload,
@@ -213,21 +288,21 @@ class OpenNodeService {
 
   async listTransactions(userId) {
     try {
-      console.log('Listing transactions for user:', { userId });
+      logger.info('Listing transactions for user:', { userId });
       const transactions = await Transaction.find({
         user: userId,
         tokenType: 'credits',
         context: 'purchase',
       }).sort({ createdAt: -1 });
 
-      console.log('Transactions retrieved:', {
+      logger.info('Transactions retrieved:', {
         userId,
         count: transactions.length,
       });
 
       return transactions;
     } catch (error) {
-      console.log('Failed to list transactions:', {
+      logger.error('Failed to list transactions:', {
         error: error.message,
         userId,
         stack: error.stack,
