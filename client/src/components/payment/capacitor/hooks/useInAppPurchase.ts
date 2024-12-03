@@ -87,11 +87,14 @@ export const useInAppPurchase = ({ priceId, onSuccess, onError }: UseInAppPurcha
   ) => {
     try {
       const userData = getUserData();
+      const platform = Capacitor.getPlatform();
+
       console.log('Confirming purchase with backend:', {
         userData,
         packageId,
         productIdentifier,
         transactionId,
+        platform,
         currentBalance: userData.tokenBalance,
       });
 
@@ -111,6 +114,7 @@ export const useInAppPurchase = ({ priceId, onSuccess, onError }: UseInAppPurcha
           productIdentifier,
           transactionId,
           userId: userData.userId,
+          platform: platform === 'ios' ? 'ios' : 'google_play',
         }),
       });
 
@@ -124,6 +128,7 @@ export const useInAppPurchase = ({ priceId, onSuccess, onError }: UseInAppPurcha
       console.log('Backend confirmation successful:', {
         response: data,
         previousBalance: userData.tokenBalance,
+        platform,
       });
       return data;
     } catch (err) {

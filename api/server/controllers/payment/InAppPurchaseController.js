@@ -1,4 +1,3 @@
-// controllers/payment/InAppPurchaseController.js
 const InAppService = require('../../services/payment/InAppService');
 const User = require('~/models/User');
 const { logger } = require('~/config');
@@ -49,7 +48,7 @@ class InAppPurchaseController {
 
   static async confirmPurchase(req, res) {
     try {
-      const { priceId, packageId, productIdentifier, transactionId } = req.body;
+      const { priceId, packageId, productIdentifier, transactionId, platform } = req.body;
 
       if (!packageId || !productIdentifier || !transactionId) {
         return res.status(400).json({
@@ -68,6 +67,7 @@ class InAppPurchaseController {
         productIdentifier,
         transactionId,
         user,
+        platform: platform || 'google_play', // Default to google_play for backward compatibility
       });
 
       res.json({

@@ -1,8 +1,8 @@
-// capacitor/InAppPurchaseProvider.tsx
 import React, { createContext, useEffect, useState } from 'react';
 import { Purchases, PurchasesConfiguration } from '@revenuecat/purchases-capacitor';
 import { useAuthContext } from '~/hooks';
 import { Spinner } from '~/components/svg';
+import { Capacitor } from '@capacitor/core';
 
 interface InAppPurchaseContextValue {
   isInitialized: boolean;
@@ -28,16 +28,23 @@ export function InAppPurchaseProvider({ children, onError }: InAppPurchaseProvid
       console.log('Initializing RevenueCat...', {
         user,
         isAuthenticated,
+        platform: Capacitor.getPlatform(),
       });
 
       try {
+        const platform = Capacitor.getPlatform();
+        const apiKey =
+          platform === 'ios'
+            ? 'appl_vuZAeLssHCVGtsEstmTrYnWKEey'
+            : 'goog_PRNqHNeHMCYERXtfbPLhprIEoKd';
+
         const configuration: PurchasesConfiguration = {
-          apiKey: process.env.NEXT_PUBLIC_REVENUECAT_API_KEY || 'goog_PRNqHNeHMCYERXtfbPLhprIEoKd',
+          apiKey,
           observerMode: false,
         };
 
         await Purchases.configure(configuration);
-        console.log('RevenueCat configured');
+        console.log('RevenueCat configured with platform:', platform);
 
         if (user?.id) {
           await Purchases.logIn({ appUserID: user.id });

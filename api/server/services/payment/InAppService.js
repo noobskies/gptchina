@@ -1,4 +1,3 @@
-// services/payment/InAppService.js
 const User = require('~/models/User');
 const { Transaction } = require('~/models/Transaction');
 const { logger } = require('~/config');
@@ -29,13 +28,20 @@ class InAppService {
     };
   }
 
-  static async confirmPurchase({ packageId, productIdentifier, transactionId, user }) {
+  static async confirmPurchase({
+    packageId,
+    productIdentifier,
+    transactionId,
+    user,
+    platform = 'google_play',
+  }) {
     try {
       logger.info('Confirming purchase', {
         packageId,
         productIdentifier,
         transactionId,
         userId: user._id,
+        platform,
       });
 
       const tokenAmount = PACKAGE_TOKEN_MAP[packageId];
@@ -82,7 +88,7 @@ class InAppService {
         transactionId,
         tokenAmount,
         timestamp: new Date(),
-        platform: 'google_play',
+        platform: platform === 'ios' ? 'app_store' : 'google_play',
       };
 
       if (!user.purchases) {
@@ -96,7 +102,7 @@ class InAppService {
       user.transactions.push({
         ...purchaseRecord,
         type: 'purchase',
-        source: 'google_play',
+        source: platform === 'ios' ? 'app_store' : 'google_play',
         amount: tokenAmount,
       });
 
