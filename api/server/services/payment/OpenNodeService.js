@@ -2,7 +2,6 @@ const opennode = require('opennode');
 const crypto = require('crypto');
 const User = require('~/models/User');
 const { Transaction } = require('~/models/Transaction');
-const { logger } = require('~/config');
 
 const PRICE_TOKEN_MAPPING = {
   price_1P6dqBHKD0byXXClWuA2RGY2: 100000,
@@ -21,26 +20,26 @@ class OpenNodeService {
       throw new Error('OPENNODE_API_KEY is required');
     }
 
-    logger.info('Initializing OpenNode with environment:', process.env.NODE_ENV);
+    console.log('Initializing OpenNode with environment:', process.env.NODE_ENV);
 
     try {
       opennode.setCredentials(
         process.env.OPENNODE_API_KEY,
         process.env.NODE_ENV === 'production' ? 'live' : 'dev',
       );
-      logger.info('OpenNode credentials set successfully', {
+      console.log('OpenNode credentials set successfully', {
         environment: process.env.NODE_ENV,
         apiKeyPrefix: process.env.OPENNODE_API_KEY.substring(0, 4) + '...',
       });
     } catch (error) {
-      logger.error('Failed to set OpenNode credentials:', error);
+      console.log('Failed to set OpenNode credentials:', error);
       throw error;
     }
   }
 
   async createCharge({ amount, userId, priceId, email }) {
     try {
-      logger.info('Starting OpenNode charge creation with params:', {
+      console.log('Starting OpenNode charge creation with params:', {
         amount,
         userId,
         priceId,
@@ -65,10 +64,10 @@ class OpenNodeService {
         },
       };
 
-      logger.info('Attempting OpenNode API call with payload:', payload);
+      console.log('Attempting OpenNode API call with payload:', payload);
 
       const charge = await opennode.createCharge(payload);
-      logger.info('OpenNode charge created successfully:', {
+      console.log('OpenNode charge created successfully:', {
         id: charge.id,
         status: charge.status,
         amount: charge.amount,
@@ -88,7 +87,7 @@ class OpenNodeService {
         address: charge.chain_invoice,
       };
     } catch (error) {
-      logger.error('OpenNode charge creation failed:', {
+      console.log('OpenNode charge creation failed:', {
         error: error.message,
         status: error.status,
         response: error.response?.data,
@@ -100,7 +99,7 @@ class OpenNodeService {
 
   async handlePaymentNotification(charge) {
     try {
-      logger.info('Processing payment notification:', {
+      console.log('Processing payment notification:', {
         chargeId: charge.id,
         status: charge.status,
         metadata: charge.metadata,
@@ -109,14 +108,14 @@ class OpenNodeService {
 
       switch (charge.status) {
         case 'processing':
-          logger.info('Payment is processing (in mempool)', {
+          console.log('Payment is processing (in mempool)', {
             id: charge.id,
             transactions: charge.transactions,
           });
           return;
 
         case 'underpaid':
-          logger.warn('Payment was underpaid', {
+          console.log('Payment was underpaid', {
             id: charge.id,
             missing: charge.missing_amt,
             transactions: charge.transactions,
@@ -124,11 +123,11 @@ class OpenNodeService {
           return;
 
         case 'expired':
-          logger.info('Charge expired', { id: charge.id });
+          console.log('Charge expired', { id: charge.id });
           return;
 
         case 'refunded':
-          logger.info('Payment was refunded', {
+          console.log('Payment was refunded', {
             id: charge.id,
             transactions: charge.transactions,
           });
@@ -143,7 +142,7 @@ class OpenNodeService {
           // Find user first
           const user = await User.findById(userId);
           if (!user) {
-            logger.error('User not found for payment:', {
+            console.log('User not found for payment:', {
               userId,
               chargeId: charge.id,
             });
@@ -159,7 +158,7 @@ class OpenNodeService {
           });
 
           if (existingTransaction) {
-            logger.info('Payment already processed', { id: charge.id });
+            console.log('Payment already processed', { id: charge.id });
             return user;
           }
 
@@ -180,7 +179,7 @@ class OpenNodeService {
             { new: true },
           );
 
-          logger.info('Bitcoin payment processed successfully', {
+          console.log('Bitcoin payment processed successfully', {
             chargeId: charge.id,
             userId,
             tokens,
@@ -191,14 +190,14 @@ class OpenNodeService {
           return updatedUser;
 
         default:
-          logger.warn('Unhandled payment status', {
+          console.log('Unhandled payment status', {
             id: charge.id,
             status: charge.status,
           });
           return null;
       }
     } catch (error) {
-      logger.error('Payment notification processing failed:', {
+      console.log('Payment notification processing failed:', {
         error: error.message,
         chargeId: charge?.id,
         stack: error.stack,
@@ -210,9 +209,9 @@ class OpenNodeService {
 
   async getCharge(chargeId) {
     try {
-      logger.info('Fetching charge info:', { chargeId });
+      console.log('Fetching charge info:', { chargeId });
       const charge = await opennode.chargeInfo(chargeId);
-      logger.info('Charge info retrieved:', {
+      console.log('Charge info retrieved:', {
         id: charge.id,
         status: charge.status,
         amount: charge.amount,
@@ -220,7 +219,7 @@ class OpenNodeService {
       });
       return charge;
     } catch (error) {
-      logger.error('Failed to fetch charge:', {
+      console.log('Failed to fetch charge:', {
         error: error.message,
         chargeId,
         stack: error.stack,
@@ -232,7 +231,7 @@ class OpenNodeService {
   validateWebhook(payload) {
     try {
       if (!payload?.id || !payload?.hashed_order) {
-        logger.warn('Missing required webhook fields', {
+        console.log('Missing required webhook fields', {
           hasId: !!payload?.id,
           hasHashedOrder: !!payload?.hashed_order,
         });
@@ -246,21 +245,21 @@ class OpenNodeService {
         .digest('hex');
 
       const isValid = received === calculated;
-      logger.info('Webhook validation result:', {
+      console.log('Webhook validation result:', {
         isValid,
         chargeId: payload.id,
       });
 
       return isValid;
     } catch (error) {
-      logger.error('Webhook validation failed', { error });
+      console.log('Webhook validation failed', { error });
       return false;
     }
   }
 
   async handleWebhook(payload) {
     try {
-      logger.info('Processing webhook:', {
+      console.log('Processing webhook:', {
         id: payload.id,
         status: payload.status,
         hashedOrder: payload.hashed_order,
@@ -271,13 +270,13 @@ class OpenNodeService {
       }
 
       const updatedUser = await this.handlePaymentNotification(payload);
-      logger.info('Webhook processing completed', {
+      console.log('Webhook processing completed', {
         userId: updatedUser?.id,
         newBalance: updatedUser?.tokenBalance,
       });
       return true;
     } catch (error) {
-      logger.error('Webhook processing failed:', {
+      console.log('Webhook processing failed:', {
         error: error.message,
         stack: error.stack,
         payload: payload,
@@ -288,21 +287,21 @@ class OpenNodeService {
 
   async listTransactions(userId) {
     try {
-      logger.info('Listing transactions for user:', { userId });
+      console.log('Listing transactions for user:', { userId });
       const transactions = await Transaction.find({
         user: userId,
         tokenType: 'credits',
         context: 'purchase',
       }).sort({ createdAt: -1 });
 
-      logger.info('Transactions retrieved:', {
+      console.log('Transactions retrieved:', {
         userId,
         count: transactions.length,
       });
 
       return transactions;
     } catch (error) {
-      logger.error('Failed to list transactions:', {
+      console.log('Failed to list transactions:', {
         error: error.message,
         userId,
         stack: error.stack,
