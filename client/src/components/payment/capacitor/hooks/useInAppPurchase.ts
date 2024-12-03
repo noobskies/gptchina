@@ -45,86 +45,52 @@ export const useInAppPurchase = ({ priceId, onSuccess, onError }: UseInAppPurcha
     alert(`Starting package search for platform: ${platform}`);
 
     try {
-      // Step 1: Get Offerings
-      alert('About to call Purchases.getOfferings()');
-      let result;
-      try {
-        result = await Purchases.getOfferings();
-      } catch (offeringsError) {
-        alert(`Failed to get offerings:
+      const result = await Purchases.getOfferings();
+
+      alert(`RevenueCat Response:
 Platform: ${platform}
-Error Message: ${offeringsError.message || 'No message'}
-Error Code: ${offeringsError.code || 'No code'}
-Details: ${JSON.stringify(offeringsError)}`);
-        throw offeringsError;
-      }
+Has Current Offering: ${!!result.current}
+Available Packages: ${result?.current?.availablePackages?.length || 0}
+All Offerings: ${Object.keys(result.all || {}).join(', ')}`);
 
-      // Step 2: Validate Result
-      if (!result) {
-        alert('Result is null or undefined');
-        throw new Error('Offerings result is null');
-      }
-
-      alert(`Raw offerings result:
-Has Current: ${!!result.current}
-All Offerings: ${Object.keys(result.all || {}).join(', ')}
-Available Packages: ${result.current?.availablePackages?.length || 0}`);
-
-      // Step 3: Check Current Offering
       if (!result?.current) {
-        alert('No current offering found');
+        alert('Error: No current offering found');
         throw new Error('No available offerings found');
       }
 
-      // Step 4: Check Available Packages
       if (!result.current.availablePackages?.length) {
-        alert(`No packages in current offering:
-Offering ID: ${result.current.identifier || 'unknown'}`);
+        alert('Error: No available packages in current offering');
         throw new Error('No available packages found');
       }
 
-      // Step 5: Get Package ID
       const packageId = PRICE_TO_PACKAGE_MAP[priceId];
       if (!packageId) {
-        alert(`No package mapping for price ID: ${priceId}
-Available mappings: ${Object.keys(PRICE_TO_PACKAGE_MAP).join(', ')}`);
+        alert(`Error: No package mapping found for price ID: ${priceId}`);
         throw new Error(`No package mapping found for price ID: ${priceId}`);
       }
 
-      // Step 6: Find Package
-      alert(`Searching for package:
-Package ID: ${packageId}
+      alert(`Looking for package: ${packageId}
 Available packages: ${result.current.availablePackages.map((p) => p.identifier).join(', ')}`);
 
       const pkg = result.current.availablePackages.find((p) => p.identifier === packageId);
 
       if (!pkg) {
-        alert(`Package not found:
-Searched for: ${packageId}
-Available: ${result.current.availablePackages.map((p) => p.identifier).join(', ')}`);
+        alert(`Error: Package ${packageId} not found in available packages`);
         throw new Error(`Package ${packageId} not found in available packages`);
       }
 
-      // Step 7: Success
       alert(`Found package:
 Identifier: ${pkg.identifier}
 Product ID: ${pkg.product.identifier}
-Title: ${pkg.product.title || 'No title'}
-Price: ${pkg.product.priceString || 'No price'}
-Platform: ${platform}`);
+Title: ${pkg.product.title}
+Price: ${pkg.product.priceString}`);
 
       return pkg;
     } catch (error) {
-      alert(`Final error in findPackageInOfferings:
-Platform: ${platform}
-Error Type: ${typeof error}
-Message: ${error.message || 'No message'}
-Code: ${error?.code || 'No code'}
-Details: ${JSON.stringify(error)}`);
+      alert(`Error in findPackageInOfferings: ${error.message}`);
       throw error;
     }
   };
-
   const extractTransactionId = (purchaseResult: any): string => {
     console.log('Extracting transaction ID from:', purchaseResult?.transaction);
 
