@@ -82,24 +82,42 @@ const startServer = async () => {
   );
   app.post(
     '/api/payment/opennode/webhook',
-    express.raw({ type: ['application/json', 'application/x-www-form-urlencoded'] }),
+    express.raw({ type: '*/*' }), // Accept all content types
     async (req, res) => {
       try {
-        const payload = JSON.parse(req.body.toString('utf8'));
+        console.log('Raw webhook request received:', {
+          headers: req.headers,
+          body: req.body.toString(),
+          method: req.method,
+          url: req.url,
+          contentType: req.headers['content-type'],
+        });
+
+        let payload;
+        try {
+          // Try to parse JSON
+          payload = JSON.parse(req.body.toString());
+        } catch (e) {
+          // If JSON parsing fails, try to parse as URL encoded form data
+          payload = new URLSearchParams(req.body.toString());
+          payload = Object.fromEntries(payload);
+        }
+
         const signature = req.headers['x-opennode-signature'];
 
-        console.log('OpenNode Webhook received raw:', {
+        console.log('OpenNode Webhook received:', {
+          payload,
           signature,
-          apiKey: process.env.OPENNODE_API_KEY?.substring(0, 4) + '...', // Log part of API key for debugging
-          chargeId: payload.id,
         });
 
         await OpenNodeService.handleWebhook(payload, signature);
         res.json({ received: true });
       } catch (err) {
-        console.log('OpenNode Webhook error:', {
+        console.log('OpenNode Webhook processing error:', {
           error: err.message,
           stack: err.stack,
+          rawBody: req.body.toString(),
+          headers: req.headers,
         });
         res.sendStatus(200);
       }
