@@ -230,38 +230,36 @@ class OpenNodeService {
 
   validateWebhook(payload, signature) {
     try {
-      if (!payload?.id) {
-        console.log('Missing charge ID', { payload });
+      if (!payload?.id || !signature) {
+        logger.warn('Missing required webhook fields', {
+          hasId: !!payload?.id,
+          hasSignature: !!signature,
+        });
         return false;
       }
 
+      // Calculate signature using charge ID
       const calculated = crypto
         .createHmac('sha256', process.env.OPENNODE_API_KEY)
         .update(payload.id)
         .digest('hex');
 
-      // Log validation details
-      console.log('Webhook signature validation:', {
-        calculatedSignature: calculated,
-        receivedSignature: signature,
-        receivedHashedOrder: payload.hashed_order,
-        matches: {
-          signature: calculated === signature,
-          hashedOrder: calculated === payload.hashed_order,
-        },
-      });
+      // Compare with received signature
+      const isValid = signature === calculated;
 
-      // Check if either the signature header or hashed_order matches
-      const isValid = calculated === signature || calculated === payload.hashed_order;
-
-      console.log('Webhook validation result:', {
+      console.log('Webhook validation:', {
+        calculated: calculated?.substring(0, 10) + '...',
+        received: signature?.substring(0, 10) + '...',
         isValid,
         chargeId: payload.id,
       });
 
       return isValid;
     } catch (error) {
-      console.log('Webhook validation failed', { error });
+      console.log('Webhook validation failed:', {
+        error,
+        chargeId: payload?.id,
+      });
       return false;
     }
   }
