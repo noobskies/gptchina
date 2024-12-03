@@ -88,7 +88,7 @@ const startServer = async () => {
         const payload = JSON.parse(req.body.toString('utf8'));
         const signature = req.headers['x-opennode-signature'];
 
-        logger.info('OpenNode Webhook received:', {
+        console.log('OpenNode Webhook received:', {
           payload,
           signature: signature?.slice(0, 20) + '...',
         });
