@@ -7,6 +7,7 @@ const logger = require('~/config/winston');
 
 /**
  * Sends an email using the specified template, subject, and payload.
+ * Tracking is disabled for ElasticEmail.
  *
  * @async
  * @function sendEmail
@@ -17,44 +18,30 @@ const logger = require('~/config/winston');
  * @param {string} params.template - The filename of the email template.
  * @param {boolean} [throwError=true] - Whether to throw an error if the email sending process fails.
  * @returns {Promise<Object>} - A promise that resolves to the info object of the sent email or the error if sending the email fails.
- *
- * @example
- * const emailData = {
- *   email: 'recipient@example.com',
- *   subject: 'Welcome!',
- *   payload: { name: 'Recipient' },
- *   template: 'welcome.html'
- * };
- *
- * sendEmail(emailData)
- *   .then(info => console.log('Email sent:', info))
- *   .catch(error => console.error('Error sending email:', error));
- *
- * @throws Will throw an error if the email sending process fails and throwError is `true`.
  */
 const sendEmail = async ({ email, subject, payload, template, throwError = true }) => {
   try {
     const transporterOptions = {
-      // Use STARTTLS by default instead of obligatory TLS
       secure: process.env.EMAIL_ENCRYPTION === 'tls',
-      // If explicit STARTTLS is set, require it when connecting
       requireTls: process.env.EMAIL_ENCRYPTION === 'starttls',
       tls: {
-        // Whether to accept unsigned certificates
         rejectUnauthorized: !isEnabled(process.env.EMAIL_ALLOW_SELFSIGNED),
       },
       auth: {
         user: process.env.EMAIL_USERNAME,
         pass: process.env.EMAIL_PASSWORD,
       },
+      // Add custom headers to disable tracking
+      headers: {
+        'x-elastic-track-opens': 'false',
+        'x-elastic-track-clicks': 'false',
+      },
     };
 
     if (process.env.EMAIL_ENCRYPTION_HOSTNAME) {
-      // Check the certificate against this name explicitly
       transporterOptions.tls.servername = process.env.EMAIL_ENCRYPTION_HOSTNAME;
     }
 
-    // Mailer service definition has precedence
     if (process.env.EMAIL_SERVICE) {
       transporterOptions.service = process.env.EMAIL_SERVICE;
     } else {
@@ -68,20 +55,18 @@ const sendEmail = async ({ email, subject, payload, template, throwError = true 
     const compiledTemplate = handlebars.compile(source);
     const options = () => {
       return {
-        // Header address should contain name-addr
         from:
           `"${
             process.env.VITE_APP_AUTHOR || process.env.APP_TITLE || process.env.EMAIL_FROM_NAME
           }"` + `<${process.env.EMAIL_FROM}>`,
         to: `"${payload.name}" <${email}>`,
         envelope: {
-          // Envelope from should contain addr-spec
           from: process.env.EMAIL_FROM,
           to: email,
         },
         subject: subject,
         html: compiledTemplate(payload),
-        // Add headers to disable tracking
+        // Add headers to the email options as well
         headers: {
           trackopens: 'false',
           trackclicks: 'false',
@@ -89,7 +74,6 @@ const sendEmail = async ({ email, subject, payload, template, throwError = true 
       };
     };
 
-    // Send email
     return await transporter.sendMail(options());
   } catch (error) {
     if (throwError) {
