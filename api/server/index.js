@@ -85,11 +85,13 @@ const startServer = async () => {
     express.raw({ type: ['application/json', 'application/x-www-form-urlencoded'] }),
     async (req, res) => {
       try {
+        // Parse the buffer into JSON
         const payload = JSON.parse(req.body.toString('utf8'));
-        const signature = req.headers['x-opennode-signature'];
+        const signature = req.headers['x-opennode-signature'] || payload.hashed_order;
 
         console.log('OpenNode Webhook received:', {
           payload,
+          headers: req.headers,
           signature: signature?.slice(0, 20) + '...',
         });
 
@@ -97,12 +99,13 @@ const startServer = async () => {
         await OpenNodeService.handleWebhook(payload, signature);
         res.json({ received: true });
       } catch (err) {
-        logger.error('OpenNode Webhook error:', {
+        console.log('OpenNode Webhook error:', {
           error: err.message,
           stack: err.stack,
           rawBody: req.body.toString('utf8'),
-          signature: req.headers['x-opennode-signature'],
+          headers: req.headers,
         });
+        // Always return 200 to OpenNode
         res.sendStatus(200);
       }
     },
