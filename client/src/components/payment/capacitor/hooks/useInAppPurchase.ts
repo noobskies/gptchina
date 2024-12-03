@@ -1,4 +1,3 @@
-// capacitor/hooks/useInAppPurchase.ts
 import { useState, useContext, useCallback } from 'react';
 import { useAuthContext } from '~/hooks';
 import { Purchases } from '@revenuecat/purchases-capacitor';
@@ -71,70 +70,24 @@ export const useInAppPurchase = ({ priceId, onSuccess, onError }: UseInAppPurcha
   const extractTransactionId = (purchaseResult: any): string => {
     console.log('Extracting transaction ID from:', purchaseResult?.transaction);
 
-    const transactionId = purchaseResult?.transaction?.transactionIdentifier;
+    // Handle both iOS and Android transaction IDs
+    const platform = Capacitor.getPlatform();
+    let transactionId;
+
+    if (platform === 'ios') {
+      transactionId =
+        purchaseResult?.transaction?.transactionIdentifier || purchaseResult?.transaction?.id;
+    } else {
+      transactionId =
+        purchaseResult?.transaction?.transactionIdentifier || purchaseResult?.purchaseToken;
+    }
+
     if (!transactionId) {
       console.error('Purchase result missing transaction ID:', purchaseResult);
       throw new Error('Purchase completed but transaction ID is missing');
     }
 
     return transactionId;
-  };
-
-  const confirmPurchaseWithBackend = async (
-    packageId: string,
-    productIdentifier: string,
-    transactionId: string,
-  ) => {
-    try {
-      const userData = getUserData();
-      const platform = Capacitor.getPlatform();
-
-      console.log('Confirming purchase with backend:', {
-        userData,
-        packageId,
-        productIdentifier,
-        transactionId,
-        platform,
-        currentBalance: userData.tokenBalance,
-      });
-
-      if (!token) {
-        throw new Error('No auth token available');
-      }
-
-      const response = await fetch('/api/payment/inapp/confirm', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          priceId,
-          packageId,
-          productIdentifier,
-          transactionId,
-          userId: userData.userId,
-          platform: platform === 'ios' ? 'ios' : 'google_play',
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Backend error response:', errorData);
-        throw new Error(errorData.error || 'Failed to confirm purchase with backend');
-      }
-
-      const data = await response.json();
-      console.log('Backend confirmation successful:', {
-        response: data,
-        previousBalance: userData.tokenBalance,
-        platform,
-      });
-      return data;
-    } catch (err) {
-      console.error('Backend confirmation error:', err);
-      throw err;
-    }
   };
 
   const handlePayment = async (e?: React.FormEvent) => {
@@ -159,10 +112,7 @@ export const useInAppPurchase = ({ priceId, onSuccess, onError }: UseInAppPurcha
       const platform = Capacitor.getPlatform();
       console.log('Current platform:', platform);
 
-      if (platform !== 'android') {
-        throw new Error('In-app purchases are only available on Android');
-      }
-
+      // Find and purchase package
       console.log('Finding package for purchase...');
       const packageToPurchase = await findPackageInOfferings();
 
@@ -174,7 +124,7 @@ export const useInAppPurchase = ({ priceId, onSuccess, onError }: UseInAppPurcha
 
       console.log('Purchase result:', purchaseResult);
 
-      const { customerInfo, productIdentifier, transaction } = purchaseResult;
+      const { customerInfo, productIdentifier } = purchaseResult;
       const transactionId = extractTransactionId(purchaseResult);
 
       console.log('Purchase verification details:', {
@@ -182,7 +132,7 @@ export const useInAppPurchase = ({ priceId, onSuccess, onError }: UseInAppPurcha
         transactionId,
         packageId: packageToPurchase.identifier,
         entitlements: customerInfo.entitlements,
-        transaction,
+        platform,
       });
 
       if (
@@ -214,9 +164,13 @@ export const useInAppPurchase = ({ priceId, onSuccess, onError }: UseInAppPurcha
       let errorMessage = 'Purchase failed';
 
       if (err.code === '11' || err.code === 11) {
-        console.error('Google Play credentials error:', err);
-        errorMessage = 'Google Play setup required. Please try again later.';
+        const platform = Capacitor.getPlatform();
+        errorMessage =
+          platform === 'ios'
+            ? 'App Store setup required. Please try again later.'
+            : 'Google Play setup required. Please try again later.';
 
+        console.error(`${platform} credentials error:`, err);
         console.error('Detailed error:', {
           code: err.code,
           message: err.message,
