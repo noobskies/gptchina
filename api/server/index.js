@@ -82,34 +82,28 @@ const startServer = async () => {
   );
   app.post(
     '/api/payment/opennode/webhook',
-    express.raw({ type: 'application/json' }),
+    express.raw({ type: ['application/json', 'application/x-www-form-urlencoded'] }),
     async (req, res) => {
-      const signature = req.headers['x-opennode-signature'];
-
-      console.log('OpenNode Webhook received:', {
-        headers: req.headers,
-        body: req.body,
-        signature: signature?.slice(0, 20) + '...',
-        method: req.method,
-        path: req.path,
-        contentType: req.headers['content-type'],
-      });
-
       try {
-        if (!signature) {
-          throw new Error('Missing OpenNode signature');
-        }
+        // Parse the buffer into JSON
+        const payload = JSON.parse(req.body.toString('utf8'));
+        const signature = req.headers['x-opennode-signature'];
 
-        await OpenNodeService.handleWebhook(req.body, signature);
-        console.log('OpenNode Webhook processed successfully');
+        console.log('OpenNode Webhook received:', {
+          payload,
+          signature: signature?.slice(0, 20) + '...',
+        });
+
+        // Now payload should be a proper object
+        await OpenNodeService.handleWebhook(payload);
         res.json({ received: true });
       } catch (err) {
         console.log('OpenNode Webhook error:', {
           error: err.message,
           stack: err.stack,
-          body: req.body,
+          rawBody: req.body.toString('utf8'),
         });
-        res.status(400).json({ error: err.message });
+        res.sendStatus(200);
       }
     },
   );
