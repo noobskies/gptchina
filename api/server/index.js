@@ -18,6 +18,7 @@ const validateImageRequest = require('./middleware/validateImageRequest');
 const errorController = require('./controllers/ErrorController');
 const StripeController = require('./controllers/payment/StripeController');
 const StripeService = require('./services/payment/StripeService');
+const OpenNodeService = require('./services/payment/OpenNodeService');
 const configureSocialLogins = require('./socialLogins');
 const AppService = require('./services/AppService');
 const staticCache = require('./utils/staticCache');
@@ -75,6 +76,39 @@ const startServer = async () => {
         res.json({ received: true });
       } catch (err) {
         console.error('Webhook error:', err);
+        res.status(400).json({ error: err.message });
+      }
+    },
+  );
+  app.post(
+    '/api/payment/opennode/webhook',
+    express.raw({ type: 'application/json' }),
+    async (req, res) => {
+      const signature = req.headers['x-opennode-signature'];
+
+      logger.info('OpenNode Webhook received:', {
+        headers: req.headers,
+        body: req.body,
+        signature: signature?.slice(0, 20) + '...',
+        method: req.method,
+        path: req.path,
+        contentType: req.headers['content-type'],
+      });
+
+      try {
+        if (!signature) {
+          throw new Error('Missing OpenNode signature');
+        }
+
+        await OpenNodeService.handleWebhook(req.body, signature);
+        logger.info('OpenNode Webhook processed successfully');
+        res.json({ received: true });
+      } catch (err) {
+        logger.error('OpenNode Webhook error:', {
+          error: err.message,
+          stack: err.stack,
+          body: req.body,
+        });
         res.status(400).json({ error: err.message });
       }
     },

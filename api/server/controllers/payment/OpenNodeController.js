@@ -104,6 +104,7 @@ class OpenNodeController {
   }
 
   static validateWebhookPayload(payload) {
+    console.log('Validating webhook payload:', payload);
     if (!payload?.id) {
       throw new Error('Invalid webhook payload: missing charge id');
     }

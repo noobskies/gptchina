@@ -1,5 +1,4 @@
-const axios = require('axios');
-const crypto = require('crypto');
+const opennode = require('opennode');
 const User = require('~/models/User');
 const { Transaction } = require('~/models/Transaction');
 const { logger } = require('~/config');
@@ -17,22 +16,37 @@ const PRICE_TOKEN_MAPPING = {
 
 class OpenNodeService {
   constructor() {
-    this.baseUrl =
-      process.env.NODE_ENV === 'production'
-        ? 'https://api.opennode.com/v1'
-        : 'https://dev-api.opennode.com/v1';
+    if (!process.env.OPENNODE_API_KEY) {
+      throw new Error('OPENNODE_API_KEY is required');
+    }
 
-    this.client = axios.create({
-      baseURL: this.baseUrl,
-      headers: {
-        Authorization: process.env.OPENNODE_API_KEY,
-        'Content-Type': 'application/json',
-      },
-    });
+    console.log('Initializing OpenNode with environment:', process.env.NODE_ENV);
+
+    try {
+      opennode.setCredentials(
+        process.env.OPENNODE_API_KEY,
+        process.env.NODE_ENV === 'production' ? 'live' : 'dev',
+      );
+      console.log('OpenNode credentials set successfully', {
+        environment: process.env.NODE_ENV,
+        apiKeyPrefix: process.env.OPENNODE_API_KEY.substring(0, 4) + '...',
+      });
+    } catch (error) {
+      console.log('Failed to set OpenNode credentials:', error);
+      throw error;
+    }
   }
 
   async createCharge({ amount, userId, priceId, email }) {
     try {
+      console.log('Starting OpenNode charge creation with params:', {
+        amount,
+        userId,
+        priceId,
+        email,
+        apiKeyExists: !!process.env.OPENNODE_API_KEY,
+      });
+
       const payload = {
         amount: amount / 100,
         currency: 'USD',
@@ -50,10 +64,18 @@ class OpenNodeService {
         },
       };
 
-      console.log('Creating OpenNode charge', payload);
-      const response = await this.client.post('/charges', payload);
+      console.log('Attempting OpenNode API call with payload:', payload);
 
-      const charge = response.data.data;
+      const charge = await opennode.createCharge(payload);
+      console.log('OpenNode charge created successfully:', {
+        id: charge.id,
+        status: charge.status,
+        amount: charge.amount,
+        hasLightningInvoice: !!charge.lightning_invoice,
+        hasChainInvoice: !!charge.chain_invoice,
+        completeCharge: charge, // Log the complete charge object for debugging
+      });
+
       return {
         id: charge.id,
         chargeId: charge.id,
@@ -63,11 +85,13 @@ class OpenNodeService {
         lightning_invoice: charge.lightning_invoice,
         chain_invoice: charge.chain_invoice,
         address: charge.chain_invoice,
-        hosted_checkout_url: charge.hosted_checkout_url,
       };
     } catch (error) {
-      console.log('Failed to create OpenNode charge', {
-        error: error.response?.data || error.message,
+      console.log('OpenNode charge creation failed:', {
+        error: error.message,
+        status: error.status,
+        response: error.response?.data,
+        stack: error.stack,
       });
       throw error;
     }
@@ -75,6 +99,12 @@ class OpenNodeService {
 
   async handlePaymentNotification(charge) {
     try {
+      console.log('Processing payment notification:', {
+        chargeId: charge.id,
+        status: charge.status,
+        metadata: charge.metadata,
+      });
+
       if (charge.status !== 'paid') {
         console.log('Charge not paid yet', { id: charge.id, status: charge.status });
         return;
@@ -115,7 +145,7 @@ class OpenNodeService {
         $inc: { tokenBalance: tokens },
       });
 
-      console.log('Bitcoin payment processed', {
+      console.log('Bitcoin payment processed successfully', {
         chargeId: charge.id,
         userId,
         tokens,
@@ -124,9 +154,10 @@ class OpenNodeService {
 
       return transaction;
     } catch (error) {
-      console.log('Failed to process payment notification', {
+      console.log('Payment notification processing failed:', {
         error: error.message,
-        chargeId: charge.id,
+        chargeId: charge?.id,
+        stack: error.stack,
       });
       throw error;
     }
@@ -134,58 +165,74 @@ class OpenNodeService {
 
   async getCharge(chargeId) {
     try {
-      const response = await this.client.get(`/charge/${chargeId}`);
-      return response.data.data;
+      console.log('Fetching charge info:', { chargeId });
+      const charge = await opennode.chargeInfo(chargeId);
+      console.log('Charge info retrieved:', {
+        id: charge.id,
+        status: charge.status,
+        amount: charge.amount,
+      });
+      return charge;
     } catch (error) {
-      console.log('Failed to fetch charge', { error, chargeId });
+      console.log('Failed to fetch charge:', {
+        error: error.message,
+        chargeId,
+        stack: error.stack,
+      });
       throw error;
-    }
-  }
-
-  validateWebhook(payload, signature) {
-    try {
-      if (!payload?.id || !signature) return false;
-
-      const calculated = crypto
-        .createHmac('sha256', process.env.OPENNODE_API_KEY)
-        .update(payload.id)
-        .digest('hex');
-
-      return calculated === signature;
-    } catch (error) {
-      console.log('Webhook validation failed', { error });
-      return false;
     }
   }
 
   async handleWebhook(payload, signature) {
     try {
-      console.log('Processing webhook', {
+      console.log('Processing webhook:', {
         id: payload.id,
         status: payload.status,
+        hasSignature: !!signature,
       });
 
-      if (!this.validateWebhook(payload, signature)) {
+      const isValid = await opennode.signatureIsValid(payload);
+      if (!isValid) {
+        console.log('Invalid webhook signature', {
+          receivedSignature: signature,
+          payload: payload,
+        });
         throw new Error('Invalid webhook signature');
       }
 
       await this.handlePaymentNotification(payload);
       return true;
     } catch (error) {
-      console.log('Webhook processing error', error);
+      console.log('Webhook processing failed:', {
+        error: error.message,
+        stack: error.stack,
+        payload: payload,
+      });
       throw error;
     }
   }
 
   async listTransactions(userId) {
     try {
-      return await Transaction.find({
+      console.log('Listing transactions for user:', { userId });
+      const transactions = await Transaction.find({
         user: userId,
         tokenType: 'credits',
         context: 'purchase',
       }).sort({ createdAt: -1 });
+
+      console.log('Transactions retrieved:', {
+        userId,
+        count: transactions.length,
+      });
+
+      return transactions;
     } catch (error) {
-      console.log('Failed to list transactions', { error, userId });
+      console.log('Failed to list transactions:', {
+        error: error.message,
+        userId,
+        stack: error.stack,
+      });
       throw error;
     }
   }
