@@ -41,30 +41,75 @@ export const useInAppPurchase = ({ priceId, onSuccess, onError }: UseInAppPurcha
   }, [user, isAuthenticated]);
 
   const findPackageInOfferings = async () => {
-    const result = await Purchases.getOfferings();
-    console.log('Raw RevenueCat response:', result);
+    const platform = Capacitor.getPlatform();
+    console.log('Finding packages for platform:', platform);
 
-    if (!result?.current?.availablePackages) {
-      throw new Error('No available packages found');
+    try {
+      const result = await Purchases.getOfferings();
+      console.log('Debug Offerings:', {
+        platform,
+        current: result.current,
+        all: result.all,
+        packages: result?.current?.availablePackages,
+        raw: result, // Log the complete response
+      });
+
+      if (!result?.current) {
+        console.error('No current offering found:', result);
+        throw new Error('No available offerings found');
+      }
+
+      if (!result.current.availablePackages?.length) {
+        console.error('No available packages in current offering:', result.current);
+        throw new Error('No available packages found');
+      }
+
+      const packageId = PRICE_TO_PACKAGE_MAP[priceId];
+      if (!packageId) {
+        console.error('No package mapping found:', {
+          priceId,
+          availableMappings: PRICE_TO_PACKAGE_MAP,
+        });
+        throw new Error(`No package mapping found for price ID: ${priceId}`);
+      }
+
+      console.log('Looking for package:', {
+        packageId,
+        availablePackages: result.current.availablePackages.map((p) => ({
+          identifier: p.identifier,
+          productIdentifier: p.product.identifier,
+          offeringIdentifier: p.offeringIdentifier,
+        })),
+      });
+
+      const pkg = result.current.availablePackages.find((p) => p.identifier === packageId);
+
+      if (!pkg) {
+        console.error('Package not found in available packages:', {
+          searchedId: packageId,
+          availableIds: result.current.availablePackages.map((p) => p.identifier),
+        });
+        throw new Error(`Package ${packageId} not found in available packages`);
+      }
+
+      console.log('Found package details:', {
+        identifier: pkg.identifier,
+        product: {
+          identifier: pkg.product.identifier,
+          description: pkg.product.description,
+          title: pkg.product.title,
+          price: pkg.product.price,
+          priceString: pkg.product.priceString,
+        },
+        offeringIdentifier: pkg.offeringIdentifier,
+        platform,
+      });
+
+      return pkg;
+    } catch (error) {
+      console.error('Error in findPackageInOfferings:', error);
+      throw error;
     }
-
-    const packageId = PRICE_TO_PACKAGE_MAP[priceId];
-    if (!packageId) {
-      throw new Error(`No package mapping found for price ID: ${priceId}`);
-    }
-
-    console.log('Looking for package:', {
-      packageId,
-      availablePackages: result.current.availablePackages,
-    });
-
-    const pkg = result.current.availablePackages.find((p) => p.identifier === packageId);
-    if (!pkg) {
-      throw new Error(`Package ${packageId} not found in available packages`);
-    }
-
-    console.log('Found package:', pkg);
-    return pkg;
   };
 
   const extractTransactionId = (purchaseResult: any): string => {
