@@ -22,19 +22,18 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   const handleGoogleLogin = useCallback(async () => {
     if (id === 'google' && Capacitor.isNativePlatform()) {
       try {
-        // Initialize Google Auth for Android
-        await GoogleAuth.initialize({
-          clientId: '397122273433-cu4vlplj3de7cd6ecmuftc54s1e92cb3.apps.googleusercontent.com',
-          scopes: ['profile', 'email'],
-        });
+        // Initialize without parameters to avoid iOS crash
+        await GoogleAuth.initialize();
 
         // Sign in and get user
         const user = await GoogleAuth.signIn();
+        console.log('Google Sign In Success:', user);
 
         // Get the ID token
         const { idToken } = await GoogleAuth.refresh();
+        console.log('Token refresh successful');
 
-        // Send token to your backend
+        // Send token to your backend - keeping the same endpoint
         const response = await fetch(`${serverDomain}/oauth/google/android`, {
           method: 'POST',
           headers: {
@@ -52,6 +51,13 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         window.location.href = '/';
       } catch (error) {
         console.error('Google Sign In Error:', error);
+        if (error instanceof Error) {
+          console.error('Error details:', {
+            message: error.message,
+            stack: error.stack,
+            name: error.name,
+          });
+        }
       }
     } else {
       // Regular web OAuth flow
