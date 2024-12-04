@@ -29,7 +29,7 @@ const App = () => {
   useEffect(() => {
     const setupStatusBar = async () => {
       try {
-        await StatusBar.setOverlaysWebView({ overlay: true });
+        await StatusBar.setOverlaysWebView({ overlay: false });
         await StatusBar.setBackgroundColor({ color: '#eeeeee' });
       } catch (error) {
         console.error('Status bar setup failed:', error);
