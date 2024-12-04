@@ -24,8 +24,6 @@ import NavToggle from './NavToggle';
 import NewChat from './NewChat';
 import { cn } from '~/utils';
 import store from '~/store';
-import { Capacitor } from '@capacitor/core';
-import { StatusBar } from '@capacitor/status-bar';
 
 const Nav = ({
   navVisible,
@@ -43,8 +41,6 @@ const Nav = ({
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
   const [newUser, setNewUser] = useLocalStorage('newUser', true);
   const [isToggleHovering, setIsToggleHovering] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
-  const [statusBarHeight, setStatusBarHeight] = useState(0);
 
   const hasAccessToBookmarks = useHasAccess({
     permissionType: PermissionTypes.BOOKMARKS,
@@ -71,24 +67,6 @@ const Nav = ({
     }
   }, [isSmallScreen]);
 
-  useEffect(() => {
-    const checkPlatform = async () => {
-      const isIOS = Capacitor.getPlatform() === 'ios';
-      setIsIOS(isIOS);
-
-      if (isIOS) {
-        try {
-          const { height } = await StatusBar.getInfo();
-          setStatusBarHeight(height);
-        } catch (error) {
-          console.error('Error getting status bar info:', error);
-        }
-      }
-    };
-
-    checkPlatform();
-  }, []);
-
   const { newConversation } = useConversation();
   const [showLoading, setShowLoading] = useState(false);
   const isSearchEnabled = useRecoilValue(store.isSearchEnabled);
@@ -105,11 +83,11 @@ const Nav = ({
       },
       { enabled: isAuthenticated },
     );
-
   useEffect(() => {
+    // When a tag is selected, refetch the list of conversations related to that tag
     refetch();
-  }, [tags, refetch]);
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tags]);
   const { containerRef, moveToTop } = useNavScrolling<ConversationListResponse>({
     setShowLoading,
     hasNextPage: searchQuery ? searchQueryRes?.hasNextPage : hasNextPage,
@@ -121,8 +99,9 @@ const Nav = ({
 
   const conversations = useMemo(
     () =>
-      (searchQuery ? searchQueryRes.data : data)?.pages.flatMap((page) => page.conversations) || [],
-    [data, searchQuery, searchQueryRes.data],
+      (searchQuery ? searchQueryRes?.data : data)?.pages.flatMap((page) => page.conversations) ||
+      [],
+    [data, searchQuery, searchQueryRes?.data],
   );
 
   const clearSearch = () => {
@@ -148,15 +127,6 @@ const Nav = ({
       toggleNavVisible();
     }
   };
-
-  const renderSearchAndBookmarks = () => (
-    <>
-      {isSearchEnabled && <SearchBar clearSearch={clearSearch} isSmallScreen={isSmallScreen} />}
-      {hasAccessToBookmarks && (
-        <BookmarkNav tags={tags} setTags={setTags} isSmallScreen={isSmallScreen} />
-      )}
-    </>
-  );
 
   return (
     <>
@@ -188,9 +158,6 @@ const Nav = ({
                   id="chat-history-nav"
                   aria-label={localize('com_ui_chat_history')}
                   className="flex h-full w-full flex-col px-3 pb-3.5"
-                  style={{
-                    paddingTop: 'env(safe-area-inset-top)',
-                  }}
                 >
                   <div
                     className={cn(
@@ -201,15 +168,25 @@ const Nav = ({
                     onMouseLeave={handleMouseLeave}
                     ref={containerRef}
                   >
-                    {isSmallScreen ? (
-                      <div className="pt-3.5">{renderSearchAndBookmarks()}</div>
-                    ) : (
-                      <NewChat
-                        toggleNav={itemToggleNav}
-                        isSmallScreen={isSmallScreen}
-                        subHeaders={renderSearchAndBookmarks()}
-                      />
-                    )}
+                    <NewChat
+                      toggleNav={itemToggleNav}
+                      isSmallScreen={isSmallScreen}
+                      subHeaders={
+                        <>
+                          {isSearchEnabled === true && (
+                            <SearchBar clearSearch={clearSearch} isSmallScreen={isSmallScreen} />
+                          )}
+                          {hasAccessToBookmarks === true && (
+                            <BookmarkNav
+                              tags={tags}
+                              setTags={setTags}
+                              isSmallScreen={isSmallScreen}
+                            />
+                          )}
+                        </>
+                      }
+                    />
+
                     <Conversations
                       conversations={conversations}
                       moveToTop={moveToTop}

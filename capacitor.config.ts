@@ -7,6 +7,11 @@ const config: CapacitorConfig = {
   bundledWebRuntime: false,
   plugins: {
     App: {},
+    StatusBar: {
+      style: 'dark',
+      backgroundColor: '#eeeeee',
+      overlays: true,
+    },
     SplashScreen: {
       launchShowDuration: 3000,
       launchAutoHide: true,
@@ -22,10 +27,6 @@ const config: CapacitorConfig = {
       layoutName: 'launch_screen',
       useDialog: true,
     },
-    StatusBar: {
-      style: 'dark',
-      overlays: false,
-    },
     GoogleAuth: {
       scopes: ['profile', 'email'],
       serverClientId: '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
@@ -39,11 +40,11 @@ const config: CapacitorConfig = {
     backgroundColor: '#eeeeee',
   },
   server: {
-    androidScheme: 'https',
-    url: 'https://novlisky.io',
-    // androidScheme: 'http',
-    // cleartext: true,
-    // url: 'http://192.168.0.167:3090',
+    // androidScheme: 'https',
+    // url: 'https://novlisky.io',
+    androidScheme: 'http',
+    cleartext: true,
+    url: 'http://192.168.0.167:3090',
   },
 };
 

@@ -1,33 +1,43 @@
-import React from 'react';
-import { RouterProvider } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import { DndProvider } from 'react-dnd';
+import { RouterProvider } from 'react-router-dom';
 import * as RadixToast from '@radix-ui/react-toast';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { QueryClient, QueryClientProvider, QueryCache } from '@tanstack/react-query';
+import { StatusBar } from '@capacitor/status-bar';
+import { useEffect } from 'react';
 import { ScreenshotProvider, ThemeProvider, useApiErrorBoundary } from './hooks';
 import { ToastProvider } from './Providers';
 import Toast from './components/ui/Toast';
 import { LiveAnnouncer } from '~/a11y';
 import { router } from './routes';
-import * as Sentry from "@sentry/react";
+import * as Sentry from '@sentry/react';
 
-// Initialize Sentry
 Sentry.init({
-  dsn: "https://6e77bfde3b3ba578b2830947be88080f@o4507099226177536.ingest.us.sentry.io/4508207501672448",
-  integrations: [
-    Sentry.browserTracingIntegration(),
-    Sentry.replayIntegration(),
-  ],
+  dsn: 'https://6e77bfde3b3ba578b2830947be88080f@o4507099226177536.ingest.us.sentry.io/4508207501672448',
+  integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],
   tracesSampleRate: 1.0,
-  tracePropagationTargets: ["https://novlisky.io"],
+  tracePropagationTargets: ['https://novlisky.io'],
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
 });
 
 const App = () => {
   const { setError } = useApiErrorBoundary();
+
+  useEffect(() => {
+    const setupStatusBar = async () => {
+      try {
+        await StatusBar.setOverlaysWebView({ overlay: true });
+        await StatusBar.setBackgroundColor({ color: '#eeeeee' });
+      } catch (error) {
+        console.error('Status bar setup failed:', error);
+      }
+    };
+
+    setupStatusBar();
+  }, []);
 
   const queryClient = new QueryClient({
     queryCache: new QueryCache({
@@ -48,7 +58,7 @@ const App = () => {
               <RadixToast.Provider>
                 <ToastProvider>
                   <DndProvider backend={HTML5Backend}>
-                    <div className="min-h-screen flex flex-col">
+                    <div className="safe-area-top">
                       <RouterProvider router={router} />
                       <ReactQueryDevtools initialIsOpen={false} position="top-right" />
                       <Toast />
