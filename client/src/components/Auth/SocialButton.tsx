@@ -29,8 +29,8 @@ const SocialButton: React.FC<SocialButtonProps> = ({
             clientId: '397122273433-cu4vlplj3de7cd6ecmuftc54s1e92cb3.apps.googleusercontent.com',
             scopes: ['profile', 'email'],
           });
-        } else {
-          // iOS-specific initialization
+        } else if (Capacitor.getPlatform() === 'ios') {
+          // iOS-specific initialization with reversed client ID
           await GoogleAuth.initialize({
             clientId: '397122273433-qecugthkbekessf6784dntdkgh9u8vlu.apps.googleusercontent.com',
             scopes: ['profile', 'email'],
@@ -46,7 +46,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         console.log('Token refresh successful');
 
         // Send token to your backend
-        const response = await fetch(`${serverDomain}/oauth/google/android`, {
+        const response = await fetch(`${serverDomain}/oauth/google/mobile`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
