@@ -42,59 +42,43 @@ export const useInAppPurchase = ({ priceId, onSuccess, onError }: UseInAppPurcha
 
   const findPackageInOfferings = async () => {
     const platform = Capacitor.getPlatform();
-    alert(`Starting package search for platform: ${platform}`);
+    console.log('Finding packages for platform:', platform);
 
+    let result;
     try {
-      const result = await Purchases.getOfferings();
+      result = await Purchases.getOfferings();
+      console.log('Raw RevenueCat response:', result);
 
-      alert(`RevenueCat Response:
-Platform: ${platform}
-Has Current Offering: ${!!result.current}
-Available Packages: ${result?.current?.availablePackages?.length || 0}
-All Offerings: ${Object.keys(result.all || {}).join(', ')}`);
-
-      if (!result?.current) {
-        alert('Error: No current offering found');
-        throw new Error('No available offerings found');
-      }
-
-      if (!result.current.availablePackages?.length) {
-        alert('Error: No available packages in current offering');
+      if (!result?.current?.availablePackages) {
         throw new Error('No available packages found');
       }
 
       const packageId = PRICE_TO_PACKAGE_MAP[priceId];
       if (!packageId) {
-        alert(`Error: No package mapping found for price ID: ${priceId}`);
         throw new Error(`No package mapping found for price ID: ${priceId}`);
       }
 
-      alert(`Looking for package: ${packageId}
-Available packages: ${result.current.availablePackages.map((p) => p.identifier).join(', ')}`);
+      console.log('Looking for package:', {
+        packageId,
+        availablePackages: result.current.availablePackages,
+      });
 
       const pkg = result.current.availablePackages.find((p) => p.identifier === packageId);
-
       if (!pkg) {
-        alert(`Error: Package ${packageId} not found in available packages`);
         throw new Error(`Package ${packageId} not found in available packages`);
       }
 
-      alert(`Found package:
-Identifier: ${pkg.identifier}
-Product ID: ${pkg.product.identifier}
-Title: ${pkg.product.title}
-Price: ${pkg.product.priceString}`);
-
+      console.log('Found package:', pkg);
       return pkg;
     } catch (error) {
-      alert(`Error in findPackageInOfferings: ${error.message}`);
+      console.error('Error in findPackageInOfferings:', error);
       throw error;
     }
   };
+
   const extractTransactionId = (purchaseResult: any): string => {
     console.log('Extracting transaction ID from:', purchaseResult?.transaction);
 
-    // Handle both iOS and Android transaction IDs
     const platform = Capacitor.getPlatform();
     let transactionId;
 
@@ -112,6 +96,63 @@ Price: ${pkg.product.priceString}`);
     }
 
     return transactionId;
+  };
+
+  const confirmPurchaseWithBackend = async (
+    packageId: string,
+    productIdentifier: string,
+    transactionId: string,
+  ) => {
+    try {
+      const userData = getUserData();
+      const platform = Capacitor.getPlatform();
+
+      console.log('Confirming purchase with backend:', {
+        userData,
+        packageId,
+        productIdentifier,
+        transactionId,
+        platform,
+        currentBalance: userData.tokenBalance,
+      });
+
+      if (!token) {
+        throw new Error('No auth token available');
+      }
+
+      const response = await fetch('/api/payment/inapp/confirm', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          priceId,
+          packageId,
+          productIdentifier,
+          transactionId,
+          userId: userData.userId,
+          platform: platform === 'ios' ? 'ios' : 'google_play',
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Backend error response:', errorData);
+        throw new Error(errorData.error || 'Failed to confirm purchase with backend');
+      }
+
+      const data = await response.json();
+      console.log('Backend confirmation successful:', {
+        response: data,
+        previousBalance: userData.tokenBalance,
+        platform,
+      });
+      return data;
+    } catch (err) {
+      console.error('Backend confirmation error:', err);
+      throw err;
+    }
   };
 
   const handlePayment = async (e?: React.FormEvent) => {
@@ -136,10 +177,7 @@ Price: ${pkg.product.priceString}`);
       const platform = Capacitor.getPlatform();
       console.log('Current platform:', platform);
 
-      // Find and purchase package
-      console.log('Finding package for purchase...');
       const packageToPurchase = await findPackageInOfferings();
-
       console.log('Initiating purchase with package:', packageToPurchase);
 
       const purchaseResult = await Purchases.purchasePackage({
@@ -150,14 +188,6 @@ Price: ${pkg.product.priceString}`);
 
       const { customerInfo, productIdentifier } = purchaseResult;
       const transactionId = extractTransactionId(purchaseResult);
-
-      console.log('Purchase verification details:', {
-        user: userData,
-        transactionId,
-        packageId: packageToPurchase.identifier,
-        entitlements: customerInfo.entitlements,
-        platform,
-      });
 
       if (
         customerInfo.entitlements.active[packageToPurchase.identifier] ||
@@ -173,10 +203,7 @@ Price: ${pkg.product.priceString}`);
           throw new Error('Backend purchase confirmation failed');
         }
 
-        console.log(
-          'Purchase verified and confirmed with backend. New balance:',
-          confirmationResult.balance,
-        );
+        console.log('Purchase confirmed with backend:', confirmationResult);
         onSuccess(productIdentifier);
       } else {
         console.log('Purchase verification failed:', customerInfo);
@@ -193,14 +220,6 @@ Price: ${pkg.product.priceString}`);
           platform === 'ios'
             ? 'App Store setup required. Please try again later.'
             : 'Google Play setup required. Please try again later.';
-
-        console.error(`${platform} credentials error:`, err);
-        console.error('Detailed error:', {
-          code: err.code,
-          message: err.message,
-          data: err.data,
-          underlyingError: err.data?.underlyingErrorMessage,
-        });
       } else if (err instanceof Error) {
         errorMessage = err.message;
       } else if (err.code === Purchases.ErrorCode.PURCHASE_CANCELLED_ERROR) {
