@@ -22,8 +22,17 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   const handleGoogleLogin = useCallback(async () => {
     if (id === 'google' && Capacitor.isNativePlatform()) {
       try {
-        // Initialize without parameters to avoid iOS crash
-        await GoogleAuth.initialize();
+        // Handle different platforms
+        if (Capacitor.getPlatform() === 'android') {
+          // Android-specific initialization
+          await GoogleAuth.initialize({
+            clientId: '397122273433-cu4vlplj3de7cd6ecmuftc54s1e92cb3.apps.googleusercontent.com',
+            scopes: ['profile', 'email'],
+          });
+        } else {
+          // iOS - initialize without parameters
+          await GoogleAuth.initialize();
+        }
 
         // Sign in and get user
         const user = await GoogleAuth.signIn();
@@ -33,7 +42,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         const { idToken } = await GoogleAuth.refresh();
         console.log('Token refresh successful');
 
-        // Send token to your backend - keeping the same endpoint
+        // Send token to your backend
         const response = await fetch(`${serverDomain}/oauth/google/android`, {
           method: 'POST',
           headers: {
