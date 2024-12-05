@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { SocialLogin } from '@capgo/capacitor-social-login';
 
@@ -19,25 +19,45 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   Icon,
   label,
 }) => {
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    const initializeGoogleAuth = async () => {
+      if (!isInitialized && Capacitor.isNativePlatform()) {
+        try {
+          if (Capacitor.getPlatform() === 'android') {
+            await SocialLogin.initialize({
+              google: {
+                webClientId:
+                  '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
+              },
+            });
+          } else if (Capacitor.getPlatform() === 'ios') {
+            await SocialLogin.initialize({
+              google: {
+                iOSClientId:
+                  '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
+              },
+            });
+          }
+          setIsInitialized(true);
+          console.log('Google Auth initialized successfully');
+        } catch (error) {
+          console.error('Failed to initialize Google Auth:', error);
+        }
+      }
+    };
+
+    initializeGoogleAuth();
+  }, [isInitialized]);
+
   const handleNativeGoogleLogin = useCallback(async () => {
     try {
       console.log('Starting Google Sign In...');
 
-      // Initialize based on platform
-      if (Capacitor.getPlatform() === 'android') {
-        console.log('Initializing Android Google Auth...');
-        await SocialLogin.initialize({
-          google: {
-            webClientId: '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
-          },
-        });
-      } else if (Capacitor.getPlatform() === 'ios') {
-        console.log('Initializing iOS Google Auth...');
-        await SocialLogin.initialize({
-          google: {
-            iOSClientId: '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
-          },
-        });
+      if (!isInitialized) {
+        console.log('Google Auth not initialized');
+        return;
       }
 
       console.log('Attempting login...');
@@ -77,13 +97,12 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         });
       }
     }
-  }, [serverDomain]);
+  }, [serverDomain, isInitialized]);
 
   if (!enabled) {
     return null;
   }
 
-  // For Google on native platforms, use the native sign-in
   if (id === 'google' && Capacitor.isNativePlatform()) {
     return (
       <div className="mt-2 flex gap-x-2">
