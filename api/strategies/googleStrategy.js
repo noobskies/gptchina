@@ -13,15 +13,17 @@ const getProfileDetails = (profile) => ({
 
 const googleLogin = socialLogin('google', getProfileDetails);
 
-// Verify Android token
-const verifyAndroidToken = async (token) => {
+// Verify mobile token (iOS or Android)
+const verifyMobileToken = async (token) => {
   try {
     const client = new OAuth2Client();
     const ticket = await client.verifyIdToken({
       idToken: token,
       audience: [
-        process.env.GOOGLE_CLIENT_ID,
-        '397122273433-cu4vlplj3de7cd6ecmuftc54s1e92cb3.apps.googleusercontent.com', // Android client ID
+        process.env.GOOGLE_CLIENT_ID, // Web client ID
+        '397122273433-cu4vlplj3de7cd6ecmuftc54s1e92cb3.apps.googleusercontent.com', // Web client ID
+        '397122273433-ke16soip38cest3aoochcgbg0grhd73n.apps.googleusercontent.com', // Android client ID
+        '397122273433-qecugthkbekessf6784dntdkgh9u8vlu.apps.googleusercontent.com', // iOS client ID
       ],
     });
     const payload = ticket.getPayload();
@@ -36,16 +38,17 @@ const verifyAndroidToken = async (token) => {
       },
     };
   } catch (error) {
+    console.error('Token verification error:', error);
     throw new Error('Invalid token');
   }
 };
 
-const handleAndroidToken = async (token) => {
+const handleMobileToken = async (token) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const profile = await verifyAndroidToken(token);
+      const profile = await verifyMobileToken(token);
 
-      // Use the same socialLogin function but with Android token data
+      // Use the same socialLogin function but with mobile token data
       googleLogin(
         null, // accessToken (not needed for this flow)
         null, // refreshToken (not needed for this flow)
@@ -75,5 +78,5 @@ module.exports = {
       },
       googleLogin,
     ),
-  handleAndroidToken,
+  handleMobileToken, // Export the new unified handler
 };

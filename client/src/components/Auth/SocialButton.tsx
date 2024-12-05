@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { Capacitor } from '@capacitor/core';
-import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+import { SocialLogin } from '@capgo/capacitor-social-login';
 
 type SocialButtonProps = {
   id: string;
@@ -19,97 +19,89 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   Icon,
   label,
 }) => {
-  const handleGoogleLogin = useCallback(async () => {
-    if (id === 'google' && Capacitor.isNativePlatform()) {
-      try {
-        // Handle different platforms
-        if (Capacitor.getPlatform() === 'android') {
-          // Android-specific initialization with the client ID from google_services.json
-          await GoogleAuth.initialize({
-            clientId: '397122273433-ke16soip38cest3aoochcgbg0grhd73n.apps.googleusercontent.com',
-            scopes: ['profile', 'email'],
-          });
-        } else if (Capacitor.getPlatform() === 'ios') {
-          // iOS-specific initialization
-          await GoogleAuth.initialize({
-            clientId: '397122273433-qecugthkbekessf6784dntdkgh9u8vlu.apps.googleusercontent.com',
-            scopes: ['profile', 'email'],
-          });
-        }
-
-        // Sign in and get user
-        const user = await GoogleAuth.signIn();
-        console.log('Google Sign In Success:', user);
-
-        // Get the ID token
-        const { idToken } = await GoogleAuth.refresh();
-        console.log('Token refresh successful');
-
-        // Send token to your backend
-        const response = await fetch(`${serverDomain}/oauth/google/mobile`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+  const handleNativeGoogleLogin = useCallback(async () => {
+    try {
+      // Initialize based on platform
+      if (Capacitor.getPlatform() === 'android') {
+        await SocialLogin.initialize({
+          google: {
+            webClientId: '397122273433-ke16soip38cest3aoochcgbg0grhd73n.apps.googleusercontent.com',
           },
-          body: JSON.stringify({ token: idToken }),
-          credentials: 'include',
         });
-
-        if (!response.ok) {
-          throw new Error('Authentication failed');
-        }
-
-        // Redirect or handle success
-        window.location.href = '/';
-      } catch (error) {
-        console.error('Google Sign In Error:', error);
-        if (error instanceof Error) {
-          console.error('Error details:', {
-            message: error.message,
-            stack: error.stack,
-            name: error.name,
-          });
-        }
+      } else if (Capacitor.getPlatform() === 'ios') {
+        await SocialLogin.initialize({
+          google: {
+            iOSClientId: '397122273433-qecugthkbekessf6784dntdkgh9u8vlu.apps.googleusercontent.com',
+            iOSServerClientId:
+              '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
+          },
+        });
       }
-    } else {
-      // Regular web OAuth flow
-      window.location.href = `${serverDomain}/oauth/${oauthPath}`;
+
+      const { result } = await SocialLogin.login({
+        provider: 'google' as const,
+        options: {
+          scopes: ['email', 'profile'],
+          grantOfflineAccess: true,
+        },
+      });
+
+      console.log('Google Sign In Success:', result);
+
+      const response = await fetch(`${serverDomain}/oauth/google/mobile`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          token: result.idToken,
+          profile: result.profile,
+        }),
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error('Authentication failed');
+      }
+
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Google Sign In Error:', error);
     }
-  }, [id, serverDomain, oauthPath]);
+  }, [serverDomain]);
 
   if (!enabled) {
     return null;
   }
 
-  // For non-Google buttons or web platform, use anchor tag
-  if (id !== 'google' || !Capacitor.isNativePlatform()) {
+  // For Google on native platforms, use the native sign-in
+  if (id === 'google' && Capacitor.isNativePlatform()) {
     return (
       <div className="mt-2 flex gap-x-2">
-        <a
+        <button
           aria-label={label}
           className="flex w-full items-center space-x-3 rounded-2xl border border-border-light bg-surface-primary px-5 py-3 text-text-primary transition-colors duration-200 hover:bg-surface-tertiary"
-          href={`${serverDomain}/oauth/${oauthPath}`}
+          onClick={handleNativeGoogleLogin}
           data-testid={id}
         >
           <Icon />
           <p>{label}</p>
-        </a>
+        </button>
       </div>
     );
   }
 
-  // For Google button on mobile platform, use button
   return (
     <div className="mt-2 flex gap-x-2">
-      <button
+      <a
         aria-label={label}
         className="flex w-full items-center space-x-3 rounded-2xl border border-border-light bg-surface-primary px-5 py-3 text-text-primary transition-colors duration-200 hover:bg-surface-tertiary"
-        onClick={handleGoogleLogin}
+        href={`${serverDomain}/oauth/${oauthPath}`}
         data-testid={id}
       >
         <Icon />
         <p>{label}</p>
-      </button>
+      </a>
     </div>
   );
 };

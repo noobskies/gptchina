@@ -28,8 +28,7 @@ const oauthHandler = async (req, res) => {
   }
 };
 
-// New Android token verification endpoint
-router.post('/google/android', async (req, res) => {
+router.post('/google/mobile', async (req, res) => {
   try {
     const { token } = req.body;
 
@@ -38,15 +37,15 @@ router.post('/google/android', async (req, res) => {
     }
 
     try {
-      const { user, created } = await handleAndroidToken(token);
+      const { user, created } = await handleMobileToken(token);
       req.user = user;
       await oauthHandler(req, res);
     } catch (error) {
-      logger.error('Error in Android token verification:', error);
+      logger.error('Error in mobile token verification:', error);
       return res.status(401).json({ error: 'Invalid token' });
     }
   } catch (err) {
-    logger.error('Error in Android authentication:', err);
+    logger.error('Error in mobile authentication:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
