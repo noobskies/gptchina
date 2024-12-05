@@ -21,32 +21,34 @@ const SocialButton: React.FC<SocialButtonProps> = ({
 }) => {
   const handleNativeGoogleLogin = useCallback(async () => {
     try {
+      console.log('Starting Google Sign In...');
+
       // Initialize based on platform
       if (Capacitor.getPlatform() === 'android') {
+        console.log('Initializing Android Google Auth...');
         await SocialLogin.initialize({
           google: {
-            webClientId: '397122273433-ke16soip38cest3aoochcgbg0grhd73n.apps.googleusercontent.com',
+            webClientId: '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
           },
         });
       } else if (Capacitor.getPlatform() === 'ios') {
+        console.log('Initializing iOS Google Auth...');
         await SocialLogin.initialize({
           google: {
-            iOSClientId: '397122273433-qecugthkbekessf6784dntdkgh9u8vlu.apps.googleusercontent.com',
-            iOSServerClientId:
-              '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
+            iOSClientId: '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
           },
         });
       }
 
+      console.log('Attempting login...');
       const { result } = await SocialLogin.login({
         provider: 'google' as const,
         options: {
           scopes: ['email', 'profile'],
-          grantOfflineAccess: true,
         },
       });
 
-      console.log('Google Sign In Success:', result);
+      console.log('Login successful, result:', result);
 
       const response = await fetch(`${serverDomain}/oauth/google/mobile`, {
         method: 'POST',
@@ -67,6 +69,13 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       window.location.href = '/';
     } catch (error) {
       console.error('Google Sign In Error:', error);
+      if (error instanceof Error) {
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack,
+          name: error.name,
+        });
+      }
     }
   }, [serverDomain]);
 
