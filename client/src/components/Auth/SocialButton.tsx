@@ -22,8 +22,20 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   const handleGoogleLogin = useCallback(async () => {
     if (id === 'google' && Capacitor.isNativePlatform()) {
       try {
-        // Initialize without parameters - let capacitor.config.ts handle it
-        await GoogleAuth.initialize();
+        // Handle different platforms
+        if (Capacitor.getPlatform() === 'android') {
+          // Android-specific initialization with the client ID from google_services.json
+          await GoogleAuth.initialize({
+            clientId: '397122273433-ke16soip38cest3aoochcgbg0grhd73n.apps.googleusercontent.com',
+            scopes: ['profile', 'email'],
+          });
+        } else if (Capacitor.getPlatform() === 'ios') {
+          // iOS-specific initialization
+          await GoogleAuth.initialize({
+            clientId: '397122273433-qecugthkbekessf6784dntdkgh9u8vlu.apps.googleusercontent.com',
+            scopes: ['profile', 'email'],
+          });
+        }
 
         // Sign in and get user
         const user = await GoogleAuth.signIn();
