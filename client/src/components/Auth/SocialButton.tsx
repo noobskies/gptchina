@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
-import { SocialLogin } from '@capgo/capacitor-social-login';
+import { SocialLogin, InitializeOptions } from '@capgo/capacitor-social-login';
 
 type SocialButtonProps = {
   id: string;
@@ -27,7 +27,8 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       if (!isInitialized && isNative) {
         try {
           const platform = Capacitor.getPlatform();
-          const config = {
+
+          let config: InitializeOptions = {
             google:
               platform === 'android'
                 ? {
@@ -39,14 +40,12 @@ const SocialButton: React.FC<SocialButtonProps> = ({
                     iOSClientId:
                       '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
                   }
-                : null,
+                : {},
           };
 
-          if (config.google) {
-            await SocialLogin.initialize(config);
-            setIsInitialized(true);
-            console.log('Google Auth initialized successfully for', platform);
-          }
+          await SocialLogin.initialize(config);
+          setIsInitialized(true);
+          console.log('Google Auth initialized successfully for', platform);
         } catch (error) {
           console.error('Failed to initialize Google Auth:', error);
         }
@@ -96,7 +95,6 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       window.location.href = '/';
     } catch (error) {
       console.error('Native Google Sign In Error:', error);
-      // You might want to show this error to the user through your UI
       if (error instanceof Error) {
         console.error('Error details:', {
           message: error.message,

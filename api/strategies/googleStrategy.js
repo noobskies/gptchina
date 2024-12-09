@@ -21,8 +21,11 @@ const verifyMobileToken = async (token) => {
       idToken: token,
       audience: [
         process.env.GOOGLE_CLIENT_ID,
-        '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com', // Android
-        '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com', // iOS
+        // Android client IDs
+        '397122273433-d4tjq5l65rr8552b1t2km42lpd6nolin.apps.googleusercontent.com',
+        '397122273433-vh06gkk90ai18bj90nmfapm80udnrpso.apps.googleusercontent.com',
+        // iOS client ID
+        '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
       ],
     });
 
