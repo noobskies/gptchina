@@ -20,13 +20,19 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   label,
 }) => {
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
   const isNative = Capacitor.isNativePlatform();
 
   useEffect(() => {
     const initializeGoogleAuth = async () => {
-      if (!isInitialized && isNative) {
+      if (!isInitialized && !isInitializing && isNative) {
         try {
+          setIsInitializing(true);
           const platform = Capacitor.getPlatform();
+
+          if (platform === 'ios') {
+            alert('Starting iOS initialization');
+          }
 
           const config: InitializeOptions = {
             google:
@@ -45,43 +51,48 @@ const SocialButton: React.FC<SocialButtonProps> = ({
                 : {},
           };
 
+          if (platform === 'ios') {
+            alert('Using config: ' + JSON.stringify(config));
+          }
+
           await SocialLogin.initialize(config);
           setIsInitialized(true);
           if (platform === 'ios') {
             alert('iOS Google Auth initialized successfully');
-          } else {
-            console.log('Google Auth initialized successfully for', platform);
           }
         } catch (error) {
           if (Capacitor.getPlatform() === 'ios') {
             alert('iOS init error: ' + JSON.stringify(error));
           }
           console.error('Failed to initialize Google Auth:', error);
+        } finally {
+          setIsInitializing(false);
         }
       }
     };
 
-    if (isNative) {
-      initializeGoogleAuth();
-    }
-  }, [isInitialized]);
+    initializeGoogleAuth();
+  }, []);
 
   const handleNativeGoogleLogin = useCallback(async () => {
-    try {
-      const platform = Capacitor.getPlatform();
-      if (platform === 'ios') {
-        alert('Starting iOS Google Sign In');
-      }
+    const platform = Capacitor.getPlatform();
 
+    if (!isInitialized) {
+      if (platform === 'ios') {
+        alert('Google Auth not initialized yet. Trying to initialize...');
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait a bit
       if (!isInitialized) {
         if (platform === 'ios') {
-          alert('Google Auth not initialized yet');
+          alert('Still not initialized after waiting. Please try again.');
         }
         return;
       }
+    }
 
+    try {
       if (platform === 'ios') {
-        alert('Attempting login...');
+        alert('Starting iOS Google Sign In...');
       }
 
       const { result } = await SocialLogin.login({
@@ -96,9 +107,8 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         alert('Login result: ' + JSON.stringify(result));
       }
 
-      // Make sure we have the required data
       if (!result?.idToken) {
-        throw new Error('No ID token received from Google Sign In');
+        throw new Error('No ID token received');
       }
 
       if (platform === 'ios') {
@@ -124,17 +134,10 @@ const SocialButton: React.FC<SocialButtonProps> = ({
 
       window.location.href = '/';
     } catch (error) {
-      if (Capacitor.getPlatform() === 'ios') {
+      if (platform === 'ios') {
         alert('iOS Sign In Error: ' + JSON.stringify(error));
       }
       console.error('Native Google Sign In Error:', error);
-      if (error instanceof Error) {
-        console.error('Error details:', {
-          message: error.message,
-          stack: error.stack,
-          name: error.name,
-        });
-      }
     }
   }, [serverDomain, isInitialized]);
 
