@@ -24,56 +24,87 @@ const SocialButton: React.FC<SocialButtonProps> = ({
 
   useEffect(() => {
     const initializeGoogleAuth = async () => {
-      if (!isInitialized && isNative && Capacitor.getPlatform() === 'ios') {
+      if (!isInitialized && isNative) {
         try {
-          alert('Starting iOS initialization');
+          const platform = Capacitor.getPlatform();
 
           const config: InitializeOptions = {
-            google: {
-              iOSClientId:
-                '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
-            },
+            google:
+              platform === 'android'
+                ? {
+                    webClientId:
+                      '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
+                  }
+                : platform === 'ios'
+                ? {
+                    iOSClientId:
+                      '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
+                    iOSServerClientId:
+                      '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
+                  }
+                : {},
           };
 
-          alert('Config ready: ' + JSON.stringify(config));
           await SocialLogin.initialize(config);
           setIsInitialized(true);
-          alert('iOS Google Auth initialized successfully');
+          if (platform === 'ios') {
+            alert('iOS Google Auth initialized successfully');
+          } else {
+            console.log('Google Auth initialized successfully for', platform);
+          }
         } catch (error) {
-          alert('iOS init error: ' + JSON.stringify(error));
+          if (Capacitor.getPlatform() === 'ios') {
+            alert('iOS init error: ' + JSON.stringify(error));
+          }
+          console.error('Failed to initialize Google Auth:', error);
         }
       }
     };
 
-    if (isNative && Capacitor.getPlatform() === 'ios') {
+    if (isNative) {
       initializeGoogleAuth();
     }
   }, [isInitialized]);
 
   const handleNativeGoogleLogin = useCallback(async () => {
     try {
-      alert('Starting iOS Google Sign In');
+      const platform = Capacitor.getPlatform();
+      if (platform === 'ios') {
+        alert('Starting iOS Google Sign In');
+      }
 
       if (!isInitialized) {
-        alert('Google Auth not initialized yet');
+        if (platform === 'ios') {
+          alert('Google Auth not initialized yet');
+        }
         return;
       }
 
-      alert('Attempting login...');
+      if (platform === 'ios') {
+        alert('Attempting login...');
+      }
+
       const { result } = await SocialLogin.login({
         provider: 'google',
         options: {
           scopes: ['email', 'profile'],
+          ...(platform === 'ios' && { grantOfflineAccess: true }),
         },
       });
 
-      alert('Login result: ' + JSON.stringify(result));
-
-      if (!result?.idToken) {
-        throw new Error('No ID token received');
+      if (platform === 'ios') {
+        alert('Login result: ' + JSON.stringify(result));
       }
 
-      alert('Making server request');
+      // Make sure we have the required data
+      if (!result?.idToken) {
+        throw new Error('No ID token received from Google Sign In');
+      }
+
+      if (platform === 'ios') {
+        alert('Making server request');
+      }
+
       const response = await fetch(`${serverDomain}/oauth/google/mobile`, {
         method: 'POST',
         headers: {
@@ -93,7 +124,17 @@ const SocialButton: React.FC<SocialButtonProps> = ({
 
       window.location.href = '/';
     } catch (error) {
-      alert('iOS Sign In Error: ' + JSON.stringify(error));
+      if (Capacitor.getPlatform() === 'ios') {
+        alert('iOS Sign In Error: ' + JSON.stringify(error));
+      }
+      console.error('Native Google Sign In Error:', error);
+      if (error instanceof Error) {
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack,
+          name: error.name,
+        });
+      }
     }
   }, [serverDomain, isInitialized]);
 
