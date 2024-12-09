@@ -23,58 +23,45 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   const isNative = Capacitor.isNativePlatform();
 
   useEffect(() => {
-    alert('Component mounted');
-
     const initializeGoogleAuth = async () => {
-      if (isNative) {
+      if (!isInitialized && isNative) {
         try {
           const platform = Capacitor.getPlatform();
-          alert(`Platform detected: ${platform}`);
+          alert(`Initializing on ${platform}`);
 
-          if (platform === 'ios') {
-            const config: InitializeOptions = {
-              google: {
-                iOSClientId:
-                  '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
-              },
-            };
+          const config: InitializeOptions = {
+            google:
+              platform === 'android'
+                ? {
+                    webClientId:
+                      '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
+                  }
+                : {
+                    iOSClientId:
+                      '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
+                  },
+          };
 
-            alert('About to initialize with config: ' + JSON.stringify(config));
-
-            try {
-              await SocialLogin.initialize(config);
-              alert('Initialization successful');
-              setIsInitialized(true);
-            } catch (initError) {
-              alert('Init specific error: ' + JSON.stringify(initError));
-            }
-          } else if (platform === 'android') {
-            const config: InitializeOptions = {
-              google: {
-                webClientId:
-                  '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
-              },
-            };
-            await SocialLogin.initialize(config);
-            setIsInitialized(true);
-          }
+          alert('Config: ' + JSON.stringify(config));
+          await SocialLogin.initialize(config);
+          setIsInitialized(true);
+          alert('Initialized successfully');
         } catch (error) {
-          alert('Outer error: ' + JSON.stringify(error));
+          alert('Init error: ' + JSON.stringify(error));
           console.error('Failed to initialize Google Auth:', error);
         }
       }
     };
 
     initializeGoogleAuth();
-  }, [isNative]);
+  }, [isInitialized]);
 
   const handleNativeGoogleLogin = useCallback(async () => {
     try {
-      const platform = Capacitor.getPlatform();
-      alert(`Login attempt - Platform: ${platform}, Initialized: ${isInitialized}`);
+      alert('Starting login');
 
       if (!isInitialized) {
-        alert('Not initialized yet');
+        alert('Not initialized');
         return;
       }
 
@@ -110,7 +97,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
 
       window.location.href = '/';
     } catch (error) {
-      alert('Login error: ' + JSON.stringify(error));
+      alert('Error: ' + JSON.stringify(error));
       console.error('Native Google Sign In Error:', error);
     }
   }, [serverDomain, isInitialized]);
@@ -119,6 +106,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
     return null;
   }
 
+  // For Google on native platforms
   if (id === 'google' && isNative) {
     return (
       <div className="mt-2 flex gap-x-2">
@@ -135,6 +123,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
     );
   }
 
+  // Default web version remains unchanged
   return (
     <div className="mt-2 flex gap-x-2">
       <a
