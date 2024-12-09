@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useContext } from 'react';
 import { useLocalize } from '~/hooks';
+import { ThemeContext } from '~/hooks';
 import { BlinkAnimation } from './BlinkAnimation';
 import { TStartupConfig } from 'librechat-data-provider';
 import SocialLoginRender from './SocialLoginRender';
@@ -42,7 +43,8 @@ function AuthLayout({
   error: string | null;
 }) {
   const localize = useLocalize();
-  const { logoText, logoFilename, logoPath } = getDomainData();
+  const { theme } = useContext(ThemeContext);
+  const { logoText, logoLightPath, logoDarkPath } = getDomainData();
   const [init, setInit] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -160,7 +162,11 @@ function AuthLayout({
             <div className="w-authPageWidth overflow-hidden bg-white px-6 py-4 dark:bg-gray-900 sm:max-w-md sm:rounded-lg">
               <BlinkAnimation active={isFetching}>
                 <div className="mt-12 h-24 w-full bg-cover">
-                  <img src={logoPath} className="h-full w-full object-contain" alt={logoText} />
+                  <img
+                    src={theme === 'dark' ? logoDarkPath : logoLightPath}
+                    className="h-full w-full object-contain"
+                    alt={logoText}
+                  />
                 </div>
               </BlinkAnimation>
               {children}
