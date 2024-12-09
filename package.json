@@ -126,7 +126,6 @@
     "@capacitor/ios": "^6.1.2",
     "@capacitor/status-bar": "^6.0.2",
     "@capgo/capacitor-social-login": "^0.0.76",
-    "@codetrix-studio/capacitor-google-auth": "^3.4.0-rc.4",
     "@revenuecat/purchases-capacitor": "^9.0.6",
     "@stripe/react-stripe-js": "^2.8.1",
     "@stripe/stripe-js": "^2.4.0",
