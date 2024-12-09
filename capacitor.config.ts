@@ -27,8 +27,11 @@ const config: CapacitorConfig = {
       layoutName: 'launch_screen',
       useDialog: true,
     },
-    google: {
-      webClientId: '397122273433-ke16soip38cest3aoochcgbg0grhd73n.apps.googleusercontent.com',
+    CapacitorSocialLogin: {
+      google: {
+        webClientId: '397122273433-ke16soip38cest3aoochcgbg0grhd73n.apps.googleusercontent.com',
+        iosClientId: '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
+      },
     },
   },
   android: {
