@@ -20,99 +20,75 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   label,
 }) => {
   const [isInitialized, setIsInitialized] = useState(false);
-  const [isInitializing, setIsInitializing] = useState(false);
   const isNative = Capacitor.isNativePlatform();
 
   useEffect(() => {
+    alert('Component mounted');
+
     const initializeGoogleAuth = async () => {
-      if (!isInitialized && !isInitializing && isNative) {
+      if (isNative) {
         try {
-          setIsInitializing(true);
           const platform = Capacitor.getPlatform();
+          alert(`Platform detected: ${platform}`);
 
           if (platform === 'ios') {
-            alert('Starting iOS initialization');
-          }
+            const config: InitializeOptions = {
+              google: {
+                iOSClientId:
+                  '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
+              },
+            };
 
-          const config: InitializeOptions = {
-            google:
-              platform === 'android'
-                ? {
-                    webClientId:
-                      '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
-                  }
-                : platform === 'ios'
-                ? {
-                    iOSClientId:
-                      '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
-                    iOSServerClientId:
-                      '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
-                  }
-                : {},
-          };
+            alert('About to initialize with config: ' + JSON.stringify(config));
 
-          if (platform === 'ios') {
-            alert('Using config: ' + JSON.stringify(config));
-          }
-
-          await SocialLogin.initialize(config);
-          setIsInitialized(true);
-          if (platform === 'ios') {
-            alert('iOS Google Auth initialized successfully');
+            try {
+              await SocialLogin.initialize(config);
+              alert('Initialization successful');
+              setIsInitialized(true);
+            } catch (initError) {
+              alert('Init specific error: ' + JSON.stringify(initError));
+            }
+          } else if (platform === 'android') {
+            const config: InitializeOptions = {
+              google: {
+                webClientId:
+                  '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
+              },
+            };
+            await SocialLogin.initialize(config);
+            setIsInitialized(true);
           }
         } catch (error) {
-          if (Capacitor.getPlatform() === 'ios') {
-            alert('iOS init error: ' + JSON.stringify(error));
-          }
+          alert('Outer error: ' + JSON.stringify(error));
           console.error('Failed to initialize Google Auth:', error);
-        } finally {
-          setIsInitializing(false);
         }
       }
     };
 
     initializeGoogleAuth();
-  }, []);
+  }, [isNative]);
 
   const handleNativeGoogleLogin = useCallback(async () => {
-    const platform = Capacitor.getPlatform();
-
-    if (!isInitialized) {
-      if (platform === 'ios') {
-        alert('Google Auth not initialized yet. Trying to initialize...');
-      }
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait a bit
-      if (!isInitialized) {
-        if (platform === 'ios') {
-          alert('Still not initialized after waiting. Please try again.');
-        }
-        return;
-      }
-    }
-
     try {
-      if (platform === 'ios') {
-        alert('Starting iOS Google Sign In...');
+      const platform = Capacitor.getPlatform();
+      alert(`Login attempt - Platform: ${platform}, Initialized: ${isInitialized}`);
+
+      if (!isInitialized) {
+        alert('Not initialized yet');
+        return;
       }
 
       const { result } = await SocialLogin.login({
         provider: 'google',
         options: {
           scopes: ['email', 'profile'],
-          ...(platform === 'ios' && { grantOfflineAccess: true }),
         },
       });
 
-      if (platform === 'ios') {
-        alert('Login result: ' + JSON.stringify(result));
-      }
+      alert('Login result: ' + JSON.stringify(result));
 
       if (!result?.idToken) {
         throw new Error('No ID token received');
-      }
-
-      if (platform === 'ios') {
-        alert('Making server request');
       }
 
       const response = await fetch(`${serverDomain}/oauth/google/mobile`, {
@@ -134,9 +110,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
 
       window.location.href = '/';
     } catch (error) {
-      if (platform === 'ios') {
-        alert('iOS Sign In Error: ' + JSON.stringify(error));
-      }
+      alert('Login error: ' + JSON.stringify(error));
       console.error('Native Google Sign In Error:', error);
     }
   }, [serverDomain, isInitialized]);
@@ -145,7 +119,6 @@ const SocialButton: React.FC<SocialButtonProps> = ({
     return null;
   }
 
-  // For Google on native platforms
   if (id === 'google' && isNative) {
     return (
       <div className="mt-2 flex gap-x-2">
@@ -162,7 +135,6 @@ const SocialButton: React.FC<SocialButtonProps> = ({
     );
   }
 
-  // Default web version remains unchanged
   return (
     <div className="mt-2 flex gap-x-2">
       <a
