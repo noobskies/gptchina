@@ -3,7 +3,7 @@ const passport = require('passport');
 const { loginLimiter, checkBan, checkDomainAllowed } = require('~/server/middleware');
 const { setAuthTokens } = require('~/server/services/AuthService');
 const { logger } = require('~/config');
-const { handleAndroidToken } = require('~/strategies/googleStrategy');
+const { handleMobileToken } = require('~/strategies/googleStrategy');
 
 const router = express.Router();
 
@@ -128,6 +128,7 @@ router.get(
   }),
   oauthHandler,
 );
+
 router.get(
   '/discord',
   passport.authenticate('discord', {

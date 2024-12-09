@@ -20,51 +20,67 @@ const verifyMobileToken = async (token) => {
     const ticket = await client.verifyIdToken({
       idToken: token,
       audience: [
-        process.env.GOOGLE_CLIENT_ID, // Web client ID
-        '397122273433-cu4vlplj3de7cd6ecmuftc54s1e92cb3.apps.googleusercontent.com', // Web client ID
-        '397122273433-ke16soip38cest3aoochcgbg0grhd73n.apps.googleusercontent.com', // Android client ID
-        '397122273433-qecugthkbekessf6784dntdkgh9u8vlu.apps.googleusercontent.com', // iOS client ID
+        process.env.GOOGLE_CLIENT_ID,
+        '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com', // Android
+        '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com', // iOS
       ],
     });
+
     const payload = ticket.getPayload();
+    if (!payload) {
+      throw new Error('Invalid token payload');
+    }
+
+    // Ensure we have all required fields
+    if (!payload.email || !payload.sub || !payload.given_name) {
+      throw new Error('Missing required profile information');
+    }
 
     return {
-      emails: [{ value: payload.email, verified: payload.email_verified }],
+      emails: [{ value: payload.email, verified: payload.email_verified || false }],
       id: payload.sub,
-      photos: [{ value: payload.picture }],
+      photos: [{ value: payload.picture || '' }],
       name: {
         givenName: payload.given_name,
-        familyName: payload.family_name,
+        familyName: payload.family_name || '',
       },
+      provider: 'google',
     };
   } catch (error) {
     console.error('Token verification error:', error);
-    throw new Error('Invalid token');
+    throw new Error(error.message || 'Invalid token');
   }
 };
 
 const handleMobileToken = async (token) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const profile = await verifyMobileToken(token);
+  try {
+    const profile = await verifyMobileToken(token);
 
-      // Use the same socialLogin function but with mobile token data
+    // Return a promise that wraps the callback-based socialLogin
+    return new Promise((resolve, reject) => {
       googleLogin(
         null, // accessToken (not needed for this flow)
         null, // refreshToken (not needed for this flow)
-        profile, // profile object matching the expected format
+        profile,
         (err, user) => {
           if (err) {
+            console.error('Social login error:', err);
             reject(err);
+          } else if (!user) {
+            reject(new Error('No user returned from social login'));
           } else {
-            resolve({ user, created: !user._id }); // Match the expected response format
+            resolve({
+              user,
+              created: !user._id,
+            });
           }
         },
       );
-    } catch (error) {
-      reject(error);
-    }
-  });
+    });
+  } catch (error) {
+    console.error('Handle mobile token error:', error);
+    throw error; // Re-throw to be caught by the route handler
+  }
 };
 
 module.exports = {
@@ -78,5 +94,5 @@ module.exports = {
       },
       googleLogin,
     ),
-  handleMobileToken, // Export the new unified handler
+  handleMobileToken,
 };

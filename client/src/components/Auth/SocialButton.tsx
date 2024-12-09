@@ -20,55 +20,61 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   label,
 }) => {
   const [isInitialized, setIsInitialized] = useState(false);
+  const isNative = Capacitor.isNativePlatform();
 
   useEffect(() => {
     const initializeGoogleAuth = async () => {
-      if (!isInitialized && Capacitor.isNativePlatform()) {
+      if (!isInitialized && isNative) {
         try {
-          if (Capacitor.getPlatform() === 'android') {
-            await SocialLogin.initialize({
-              google: {
-                webClientId:
-                  '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
-              },
-            });
-          } else if (Capacitor.getPlatform() === 'ios') {
-            await SocialLogin.initialize({
-              google: {
-                iOSClientId:
-                  '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
-              },
-            });
+          const platform = Capacitor.getPlatform();
+          const config = {
+            google:
+              platform === 'android'
+                ? {
+                    webClientId:
+                      '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
+                  }
+                : platform === 'ios'
+                ? {
+                    iOSClientId:
+                      '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
+                  }
+                : null,
+          };
+
+          if (config.google) {
+            await SocialLogin.initialize(config);
+            setIsInitialized(true);
+            console.log('Google Auth initialized successfully for', platform);
           }
-          setIsInitialized(true);
-          console.log('Google Auth initialized successfully');
         } catch (error) {
           console.error('Failed to initialize Google Auth:', error);
         }
       }
     };
 
-    initializeGoogleAuth();
+    if (isNative) {
+      initializeGoogleAuth();
+    }
   }, [isInitialized]);
 
   const handleNativeGoogleLogin = useCallback(async () => {
     try {
-      console.log('Starting Google Sign In...');
+      console.log('Starting Native Google Sign In...');
 
-      if (!isInitialized) {
-        console.log('Google Auth not initialized');
-        return;
-      }
-
-      console.log('Attempting login...');
       const { result } = await SocialLogin.login({
-        provider: 'google' as const,
+        provider: 'google',
         options: {
           scopes: ['email', 'profile'],
         },
       });
 
-      console.log('Login successful, result:', result);
+      console.log('Native login successful, result:', result);
+
+      // Make sure we have the required data
+      if (!result?.idToken) {
+        throw new Error('No ID token received from Google Sign In');
+      }
 
       const response = await fetch(`${serverDomain}/oauth/google/mobile`, {
         method: 'POST',
@@ -83,12 +89,14 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       });
 
       if (!response.ok) {
-        throw new Error('Authentication failed');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Authentication failed');
       }
 
       window.location.href = '/';
     } catch (error) {
-      console.error('Google Sign In Error:', error);
+      console.error('Native Google Sign In Error:', error);
+      // You might want to show this error to the user through your UI
       if (error instanceof Error) {
         console.error('Error details:', {
           message: error.message,
@@ -97,20 +105,21 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         });
       }
     }
-  }, [serverDomain, isInitialized]);
+  }, [serverDomain]);
 
   if (!enabled) {
     return null;
   }
 
-  if (id === 'google' && Capacitor.isNativePlatform()) {
+  // For Google on native platforms
+  if (id === 'google' && isNative) {
     return (
       <div className="mt-2 flex gap-x-2">
         <button
           aria-label={label}
           className="flex w-full items-center space-x-3 rounded-2xl border border-border-light bg-surface-primary px-5 py-3 text-text-primary transition-colors duration-200 hover:bg-surface-tertiary"
           onClick={handleNativeGoogleLogin}
-          data-testid={id}
+          data-testid={`${id}-native`}
         >
           <Icon />
           <p>{label}</p>
@@ -119,6 +128,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
     );
   }
 
+  // Default web version remains unchanged
   return (
     <div className="mt-2 flex gap-x-2">
       <a
