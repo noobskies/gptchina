@@ -22,11 +22,12 @@
     <array>
         <dict>
             <key>CFBundleURLName</key>
-            <string>io.novlisky.app</string>
+            <string>io.novlisky.twa</string>
             <key>CFBundleURLSchemes</key>
             <array>
                 <string>novlisky</string>
                 <string>com.googleusercontent.apps.397122273433-qecugthkbekessf6784dntdkgh9u8vlu</string>
+                <string>com.googleusercontent.apps.397122273433-cu4vlplj3de7cd6ecmuftc54s1e92cb3</string>
             </array>
         </dict>
         <dict>
@@ -35,6 +36,7 @@
             <key>CFBundleURLSchemes</key>
             <array>
                 <string>com.googleusercontent.apps.397122273433-qecugthkbekessf6784dntdkgh9u8vlu</string>
+                <string>com.googleusercontent.apps.397122273433-cu4vlplj3de7cd6ecmuftc54s1e92cb3</string>
             </array>
         </dict>
     </array>
