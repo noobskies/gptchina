@@ -25,20 +25,23 @@ Sentry.init({
 
 const App = () => {
   const { setError } = useApiErrorBoundary();
+  const isNative = Capacitor.isNativePlatform();
 
   useEffect(() => {
     const setupStatusBar = async () => {
-      try {
-        await StatusBar.setStyle({ style: StatusBar.Style.Dark });
-        await StatusBar.setOverlaysWebView({ overlay: false });
-        await StatusBar.show({ animation: StatusBar.Animation.None });
-      } catch (error) {
-        console.error('Status bar setup failed:', error);
+      if (isNative) {
+        try {
+          await StatusBar.setStyle({ style: StatusBar.Style.Dark });
+          await StatusBar.setOverlaysWebView({ overlay: false });
+          await StatusBar.show({ animation: StatusBar.Animation.None });
+        } catch (error) {
+          console.error('Status bar setup failed:', error);
+        }
       }
     };
 
     setupStatusBar();
-  }, []);
+  }, [isNative]);
 
   const queryClient = new QueryClient({
     queryCache: new QueryCache({
