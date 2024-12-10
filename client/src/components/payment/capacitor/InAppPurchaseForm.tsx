@@ -1,10 +1,10 @@
-// capacitor/InAppPurchaseForm.tsx
 import React from 'react';
 import { ArrowLeft, Lock } from 'lucide-react';
 import { Spinner } from '~/components/svg';
 import { useLocalize } from '~/hooks';
 import { useInAppPurchase } from './hooks/useInAppPurchase';
 import { Capacitor } from '@capacitor/core';
+import { tokenOptions } from '../constants/tokenOptions';
 
 interface InAppPurchaseFormProps {
   amount: number;
@@ -41,6 +41,11 @@ export function InAppPurchaseForm({
   const formatTokens = (tokens: number) =>
     tokens >= 1_000_000 ? `${tokens / 1_000_000}M` : `${(tokens / 1000).toFixed(1)}K`;
 
+  const displayPrice = React.useMemo(() => {
+    const tokenPackage = tokenOptions.find((option) => option.tokens === tokens);
+    return tokenPackage?.discountedPrice || `$${(amount / 100).toFixed(2)}`;
+  }, [tokens, amount]);
+
   React.useEffect(() => {
     setIsMounted(true);
 
@@ -50,13 +55,14 @@ export function InAppPurchaseForm({
       amount,
       tokens,
       isReady,
+      displayPrice,
     });
 
     return () => {
       console.log('InAppPurchaseForm unmounting');
       setIsMounted(false);
     };
-  }, [priceId, amount, tokens, isReady]);
+  }, [priceId, amount, tokens, isReady, displayPrice]);
 
   if (!isMounted) {
     console.log('Component not mounted yet');
@@ -116,7 +122,7 @@ export function InAppPurchaseForm({
                 {localize('com_ui_payment_cost')}
               </span>
               <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                ${(amount / 100).toFixed(2)} USD
+                {displayPrice} USD
               </span>
             </div>
             <div className="border-t border-gray-200 pt-2 dark:border-gray-700">

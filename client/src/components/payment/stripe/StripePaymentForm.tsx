@@ -5,8 +5,8 @@ import { ArrowLeft, Lock } from 'lucide-react';
 import { Spinner } from '~/components/svg';
 import { useElements, useStripe, PaymentElement } from '@stripe/react-stripe-js';
 import { PaymentMethod } from '../constants/paymentMethods';
+import { tokenOptions } from '../constants/tokenOptions';
 
-// StripePaymentForm.tsx
 interface StripePaymentFormProps {
   amount: number;
   tokens: number;
@@ -34,6 +34,11 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
   const formatTokens = (tokens: number) =>
     tokens >= 1_000_000 ? `${tokens / 1_000_000}M` : `${(tokens / 1000).toFixed(1)}K`;
 
+  const displayPrice = React.useMemo(() => {
+    const tokenPackage = tokenOptions.find((option) => option.tokens === tokens);
+    return tokenPackage?.discountedPrice || `$${(amount / 100).toFixed(2)}`;
+  }, [tokens, amount]);
+
   const getStripePaymentMethod = (method: PaymentMethod) => {
     const methodMap: Record<PaymentMethod, string[]> = {
       [PaymentMethod.Card]: ['card'],
@@ -55,7 +60,7 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
     stripe,
     elements,
     amount,
-    priceId, // Pass priceId to the hook
+    priceId,
     onSuccess,
     onError,
   });
@@ -100,7 +105,7 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600 dark:text-gray-400">Cost</span>
               <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                ${(amount / 100).toFixed(2)}
+                {displayPrice} USD
               </span>
             </div>
             <div className="flex items-center justify-between border-t border-gray-200 pt-2 dark:border-gray-700">
