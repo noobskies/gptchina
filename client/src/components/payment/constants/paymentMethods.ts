@@ -58,12 +58,12 @@ export const getAvailablePaymentMethods = (): PaymentMethodConfig[] => {
     ];
   }
 
-  // For iOS, only show App Store
+  // For iOS mobile payments
   if (platform === 'ios') {
     return [
       {
         id: PaymentMethod.InAppPurchase,
-        name: 'App Store',
+        name: 'Apple Pay',
         icon: 'apple',
         platforms: ['ios'],
         regions: ['GLOBAL'],
