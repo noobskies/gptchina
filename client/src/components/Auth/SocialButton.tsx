@@ -27,7 +27,6 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       if (!isInitialized && isNative) {
         try {
           const platform = Capacitor.getPlatform();
-          alert(`Initializing on ${platform}`);
 
           const config: InitializeOptions = {
             google:
@@ -42,12 +41,9 @@ const SocialButton: React.FC<SocialButtonProps> = ({
                   },
           };
 
-          alert('Config: ' + JSON.stringify(config));
           await SocialLogin.initialize(config);
           setIsInitialized(true);
-          alert('Initialized successfully');
         } catch (error) {
-          alert('Init error: ' + JSON.stringify(error));
           console.error('Failed to initialize Google Auth:', error);
         }
       }
@@ -58,10 +54,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
 
   const handleNativeGoogleLogin = useCallback(async () => {
     try {
-      alert('Starting login');
-
       if (!isInitialized) {
-        alert('Not initialized');
         return;
       }
 
@@ -71,8 +64,6 @@ const SocialButton: React.FC<SocialButtonProps> = ({
           scopes: ['email', 'profile'],
         },
       });
-
-      alert('Login result: ' + JSON.stringify(result));
 
       if (!result?.idToken) {
         throw new Error('No ID token received');
@@ -96,10 +87,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       }
 
       window.location.href = '/';
-    } catch (error) {
-      alert('Error: ' + JSON.stringify(error));
-      console.error('Native Google Sign In Error:', error);
-    }
+    } catch (error) {}
   }, [serverDomain, isInitialized]);
 
   if (!enabled) {
