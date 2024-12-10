@@ -1,3 +1,52 @@
+import { Capacitor } from '@capacitor/core';
+
+interface TokenPackage {
+  tokens: number;
+  label: string;
+  price: string;
+  amount: number;
+  currency: string;
+  priceId: string;
+  originalPrice: string;
+  discountedPrice: string;
+  discountPercentage?: string;
+}
+
+// Helper function to get platform-specific price
+const getPlatformSpecificPrice = (tokens: number) => {
+  const isIOS = Capacitor.getPlatform() === 'ios';
+
+  if (!isIOS) {
+    // Return default prices for non-iOS platforms
+    switch (tokens) {
+      case 100000:
+        return { originalPrice: '$1.50', discountedPrice: '$1.50' };
+      case 500000:
+        return { originalPrice: '$7.50', discountedPrice: '$5.00' };
+      case 1000000:
+        return { originalPrice: '$15.00', discountedPrice: '$7.50' };
+      case 10000000:
+        return { originalPrice: '$150.00', discountedPrice: '$40.00' };
+      default:
+        return { originalPrice: '$0.00', discountedPrice: '$0.00' };
+    }
+  }
+
+  // Return iOS-specific prices
+  switch (tokens) {
+    case 100000:
+      return { originalPrice: '$1.99', discountedPrice: '$1.99' };
+    case 500000:
+      return { originalPrice: '$4.99', discountedPrice: '$4.99' };
+    case 1000000:
+      return { originalPrice: '$7.99', discountedPrice: '$7.99' };
+    case 10000000:
+      return { originalPrice: '$39.99', discountedPrice: '$39.99' };
+    default:
+      return { originalPrice: '$0.00', discountedPrice: '$0.00' };
+  }
+};
+
 export const tokenOptions: TokenPackage[] = [
   {
     tokens: 100000,
@@ -6,8 +55,7 @@ export const tokenOptions: TokenPackage[] = [
     amount: 1.5 * 100, // $1.50 = 150 cents
     currency: 'USD',
     priceId: 'price_1P6dqBHKD0byXXClWuA2RGY2',
-    originalPrice: '$1.50',
-    discountedPrice: '$1.50',
+    ...getPlatformSpecificPrice(100000),
   },
   {
     tokens: 500000,
@@ -16,9 +64,8 @@ export const tokenOptions: TokenPackage[] = [
     amount: 5.0 * 100, // $5.00 = 500 cents
     currency: 'USD',
     priceId: 'price_1P6dqdHKD0byXXClcboa06Tu',
-    originalPrice: '$7.50',
-    discountedPrice: '$5.00',
-    discountPercentage: '(30% off)',
+    ...getPlatformSpecificPrice(500000),
+    discountPercentage: Capacitor.getPlatform() === 'ios' ? '' : '(30% off)',
   },
   {
     tokens: 1000000,
@@ -27,9 +74,8 @@ export const tokenOptions: TokenPackage[] = [
     amount: 7.5 * 100, // $7.50 = 750 cents
     currency: 'USD',
     priceId: 'price_1P6drEHKD0byXXClOjmSkPKm',
-    originalPrice: '$15.00',
-    discountedPrice: '$7.50',
-    discountPercentage: '(50% off)',
+    ...getPlatformSpecificPrice(1000000),
+    discountPercentage: Capacitor.getPlatform() === 'ios' ? '' : '(50% off)',
   },
   {
     tokens: 10000000,
@@ -38,9 +84,8 @@ export const tokenOptions: TokenPackage[] = [
     amount: 40.0 * 100, // $40.00 = 4000 cents
     currency: 'USD',
     priceId: 'price_1P6drxHKD0byXXClVVLokkLh',
-    originalPrice: '$150.00',
-    discountedPrice: '$40.00',
-    discountPercentage: '(75% off)',
+    ...getPlatformSpecificPrice(10000000),
+    discountPercentage: Capacitor.getPlatform() === 'ios' ? '' : '(75% off)',
   },
 ];
 
