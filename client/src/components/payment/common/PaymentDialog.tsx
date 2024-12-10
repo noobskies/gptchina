@@ -100,8 +100,12 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
     switch (selectedPaymentMethod) {
       case PaymentMethod.InAppPurchase:
         return (
-          <InAppPurchaseProvider onSuccess={handlePaymentComplete} onError={handlePaymentError}>
-            <InAppPurchaseForm {...commonProps} />
+          <InAppPurchaseProvider>
+            <InAppPurchaseForm
+              {...commonProps}
+              onSuccess={handlePaymentComplete}
+              onError={handlePaymentError}
+            />
           </InAppPurchaseProvider>
         );
 
