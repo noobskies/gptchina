@@ -94,8 +94,14 @@ const AgentController = async (req, res, next, initializeClient, addTitle) => {
     conversation.title =
       conversation && !conversation.title ? null : conversation?.title || 'New Chat';
 
-    if (client.options.attachments) {
-      userMessage.files = client.options.attachments;
+    if (req.body.files && client.options.attachments) {
+      userMessage.files = [];
+      const messageFiles = new Set(req.body.files.map((file) => file.file_id));
+      for (let attachment of client.options.attachments) {
+        if (messageFiles.has(attachment.file_id)) {
+          userMessage.files.push(attachment);
+        }
+      }
       delete userMessage.image_urls;
     }
 
@@ -109,16 +115,18 @@ const AgentController = async (req, res, next, initializeClient, addTitle) => {
       });
       res.end();
 
-      await saveMessage(
-        req,
-        { ...response, user },
-        { context: 'api/server/controllers/agents/request.js - response end' },
-      );
+      if (!client.savedMessageIds.has(response.messageId)) {
+        await saveMessage(
+          req,
+          { ...response, user },
+          { context: 'api/server/controllers/agents/request.js - response end' },
+        );
+      }
     }
 
     if (!client.skipSaveUserMessage) {
       await saveMessage(req, userMessage, {
-        context: 'api/server/controllers/agents/request.js - don\'t skip saving user message',
+        context: "api/server/controllers/agents/request.js - don't skip saving user message",
       });
     }
 

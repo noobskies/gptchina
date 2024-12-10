@@ -150,9 +150,9 @@ export default {
   com_endpoint_bing_to_enable_sydney: 'لتمكين سيدني',
   com_endpoint_bing_jailbreak: 'الهروب من السجن',
   com_endpoint_bing_context_placeholder:
-    'يمكن أن يستخدم بينغ ما يصل إلى 7 آلاف رمز لـ \'السياق\'، والذي يمكنه الرجوع إليه للمحادثة. الحد الخاص ليس معروفًا ولكن قد يواجه أخطاء تجاوز 7 آلاف رمز',
+    "يمكن أن يستخدم بينغ ما يصل إلى 7 آلاف رمز لـ 'السياق'، والذي يمكنه الرجوع إليه للمحادثة. الحد الخاص ليس معروفًا ولكن قد يواجه أخطاء تجاوز 7 آلاف رمز",
   com_endpoint_bing_system_message_placeholder:
-    'تحذير: يمكن أن يؤدي سوء استخدام هذه الميزة إلى حظرك من استخدام Bing! انقر على \'رسالة النظام\' للحصول على التعليمات الكاملة والرسالة الافتراضية إذا تم حذفها، والتي هي الإعداد المسبق \'سيدني\' الذي يعتبر آمنًا.',
+    "تحذير: يمكن أن يؤدي سوء استخدام هذه الميزة إلى حظرك من استخدام Bing! انقر على 'رسالة النظام' للحصول على التعليمات الكاملة والرسالة الافتراضية إذا تم حذفها، والتي هي الإعداد المسبق 'سيدني' الذي يعتبر آمنًا.",
   com_endpoint_system_message: 'رسالة النظام',
   com_endpoint_default_blank: 'الافتراضي: فارغ',
   com_endpoint_default_false: 'الافتراضي: خاطئ',
@@ -502,7 +502,7 @@ export default {
   com_endpoint_prompt_prefix_assistants: 'التعليمات الإضافية',
   com_endpoint_instructions_assistants: 'تعليمات التجاوز',
   com_endpoint_stop: 'توقف التسلسلات',
-  com_endpoint_stop_placeholder: 'اضغط على \'Enter\' لفصل القيم',
+  com_endpoint_stop_placeholder: "اضغط على 'Enter' لفصل القيم",
   com_endpoint_openai_max_tokens:
     'حقل `max_tokens` الاختياري، يمثل الحد الأقصى لعدد الرموز التي يمكن توليدها في إكمال المحادثة.\n\nإجمالي طول رموز الإدخال والرموز المولدة محدود بطول سياق النموذج. قد تواجه أخطاء إذا تجاوز هذا العدد الحد الأقصى لرموز السياق.',
   com_endpoint_openai_resend:
@@ -528,7 +528,7 @@ export default {
   com_endpoint_preset_default_item: 'الافتراضي:',
   com_endpoint_preset_default_none: 'لا يوجد إعداد مسبق افتراضي نشط.',
   com_endpoint_preset_title: 'إعداد مسبق',
-  com_endpoint_preset_saved: 'تم الحفظ!',
+  com_ui_saved: 'تم الحفظ!',
   com_endpoint_preset_default: 'أصبح الإعداد المسبق الافتراضي الآن.',
   com_endpoint_preset_selected: 'الإعداد المسبق نشط!',
   com_endpoint_preset_selected_title: 'مُحدَّد!',
@@ -644,7 +644,7 @@ export default {
   com_agents_file_search_info:
     'عند التمكين، سيتم إعلام الوكيل بأسماء الملفات المدرجة أدناه بالضبط، مما يتيح له استرجاع السياق ذي الصلة من هذه الملفات.',
   com_ui_agent_already_shared_to_all: 'هذا المساعد مشارك بالفعل مع جميع المستخدمين',
-  com_agents_execute_code: 'تنفيذ الشفرة',
+  com_ui_run_code: 'تنفيذ الشفرة',
   com_ui_no_changes: 'لا توجد تغييرات للتحديث',
   com_ui_agent_editing_allowed: 'يمكن للمستخدمين الآخرين تعديل هذا الوكيل بالفعل',
   com_ui_error_connection: 'خطأ في الاتصال بالخادم، حاول تحديث الصفحة.',

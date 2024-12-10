@@ -25,7 +25,7 @@ export default {
   com_assistants_knowledge_info:
     'Se carichi file sotto Conoscenza, le conversazioni con il tuo Assistente potrebbero includere i contenuti dei file.',
   com_assistants_knowledge_disabled:
-    'L\'Assistente deve essere creato, e Code Interpreter o Retrieval devono essere abilitati e salvati prima di caricare file come Conoscenza.',
+    "L'Assistente deve essere creato, e Code Interpreter o Retrieval devono essere abilitati e salvati prima di caricare file come Conoscenza.",
   com_assistants_image_vision: 'Visione Immagine',
   com_assistants_code_interpreter: 'Interprete Codice',
   com_assistants_code_interpreter_files:
@@ -40,42 +40,42 @@ export default {
   com_assistants_running_action: 'Azione in corso',
   com_assistants_completed_action: 'Parlato con {0}',
   com_assistants_completed_function: 'Eseguito {0}',
-  com_assistants_function_use: 'L\'Assistente ha usato {0}',
-  com_assistants_domain_info: 'L\'Assistente ha inviato queste informazioni a {0}',
-  com_assistants_delete_actions_success: 'Azione eliminata dall\'Assistente con successo',
+  com_assistants_function_use: "L'Assistente ha usato {0}",
+  com_assistants_domain_info: "L'Assistente ha inviato queste informazioni a {0}",
+  com_assistants_delete_actions_success: "Azione eliminata dall'Assistente con successo",
   com_assistants_update_actions_success: 'Azione creata o aggiornata con successo',
   com_assistants_update_actions_error:
-    'Si è verificato un errore durante la creazione o l\'aggiornamento dell\'azione.',
+    "Si è verificato un errore durante la creazione o l'aggiornamento dell'azione.",
   com_assistants_delete_actions_error:
-    'Si è verificato un errore durante l\'eliminazione dell\'azione.',
+    "Si è verificato un errore durante l'eliminazione dell'azione.",
   com_assistants_actions_info:
     'Permetti al tuo Assistente di recuperare informazioni o eseguire azioni tramite API',
-  com_assistants_name_placeholder: 'Opzionale: Il nome dell\'assistente',
-  com_assistants_instructions_placeholder: 'Le istruzioni di sistema che l\'assistente utilizza',
+  com_assistants_name_placeholder: "Opzionale: Il nome dell'assistente",
+  com_assistants_instructions_placeholder: "Le istruzioni di sistema che l'assistente utilizza",
   com_assistants_description_placeholder: 'Opzionale: Descrivi qui il tuo Assistente',
   com_assistants_actions_disabled: 'Devi prima creare un assistente prima di aggiungere azioni.',
   com_assistants_update_success: 'Aggiornamento avvenuto con successo',
   com_assistants_update_error:
-    'Si è verificato un errore durante l\'aggiornamento del tuo assistente.',
+    "Si è verificato un errore durante l'aggiornamento del tuo assistente.",
   com_assistants_create_success: 'Creazione avvenuta con successo',
   com_assistants_create_error: 'Si è verificato un errore durante la creazione del tuo assistente.',
   com_ui_field_required: 'Questo campo è obbligatorio',
   com_ui_download_error:
     'Errore durante il download del file. Il file potrebbe essere stato eliminato.',
-  com_ui_attach_error_type: 'Tipo di file non supportato per l\'endpoint:',
-  com_ui_attach_error_size: 'Limite dimensione file superato per l\'endpoint:',
+  com_ui_attach_error_type: "Tipo di file non supportato per l'endpoint:",
+  com_ui_attach_error_size: "Limite dimensione file superato per l'endpoint:",
   com_ui_attach_error:
     'Impossibile allegare il file. Crea o seleziona una conversazione, oppure prova a ricaricare la pagina.',
   com_ui_examples: 'Esempi',
   com_ui_new_chat: 'Nuova chat',
   com_ui_happy_birthday: 'È il mio 1° compleanno!',
-  com_ui_example_quantum_computing: 'Spiega l\'informatica quantistica in termini semplici',
+  com_ui_example_quantum_computing: "Spiega l'informatica quantistica in termini semplici",
   com_ui_example_10_year_old_b_day:
     'Hai qualche idea creativa per il compleanno di un bambino di 10 anni?',
   com_ui_example_http_in_js: 'Come faccio a fare una richiesta HTTP in Javascript?',
   com_ui_capabilities: 'Capacità',
-  com_ui_capability_remember: 'Ricorda ciò che l\'utente ha detto prima nella conversazione',
-  com_ui_capability_correction: 'Permette all\'utente di fornire correzioni successive',
+  com_ui_capability_remember: "Ricorda ciò che l'utente ha detto prima nella conversazione",
+  com_ui_capability_correction: "Permette all'utente di fornire correzioni successive",
   com_ui_capability_decline_requests: 'Addestrato a rifiutare richieste inappropriate',
   com_ui_limitations: 'Limitazioni',
   com_ui_limitation_incorrect_info: 'Potrebbe occasionalmente generare informazioni non corrette',
@@ -143,7 +143,7 @@ export default {
   com_ui_fork_info_target:
     'Questa opzione duplica tutti i messaggi che portano al messaggio di destinazione, inclusi i suoi vicini; in altre parole, sono inclusi tutti i rami di messaggi, sia che siano visibili o meno o lungo lo stesso percorso.',
   com_ui_fork_info_start:
-    'Se selezionato, la duplicazione partirà da questo messaggio fino all\'ultimo messaggio della conversazione, in base al comportamento selezionato sopra.',
+    "Se selezionato, la duplicazione partirà da questo messaggio fino all'ultimo messaggio della conversazione, in base al comportamento selezionato sopra.",
   com_ui_fork_info_remember:
     'Seleziona questa opzione per ricordare le opzioni selezionate per un futuro utilizzo, rendendo più veloce la duplicazione delle conversazioni come preferito.',
   com_ui_fork_success: 'Conversazione duplicata con successo',
@@ -156,11 +156,11 @@ export default {
     'Avvia la duplicazione dal messaggio di destinazione per impostazione predefinita',
   com_ui_fork_split_target: 'Avvia la duplicazione da qui',
   com_ui_fork_remember_checked:
-    'La tua selezione verrà ricordata dopo l\'utilizzo. Puoi cambiarla in qualsiasi momento nelle impostazioni.',
+    "La tua selezione verrà ricordata dopo l'utilizzo. Puoi cambiarla in qualsiasi momento nelle impostazioni.",
   com_ui_fork_all_target: 'Includi tutto da/per qui',
   com_ui_fork_branches: 'Includi rami correlati',
   com_ui_fork_visible: 'Solo messaggi visibili',
-  com_ui_fork_from_message: 'Seleziona un\'opzione di duplicazione',
+  com_ui_fork_from_message: "Seleziona un'opzione di duplicazione",
   com_ui_regenerate: 'Rigenera',
   com_ui_continue: 'Continua',
   com_ui_edit: 'Modifica',
@@ -168,12 +168,12 @@ export default {
   com_ui_all: 'tutto',
   com_ui_clear: 'Cancella',
   com_ui_revoke: 'Revoca',
-  com_ui_revoke_info: 'Revoca tutte le credenziali fornite dall\'utente',
+  com_ui_revoke_info: "Revoca tutte le credenziali fornite dall'utente",
   com_ui_import_conversation: 'Importa',
   com_ui_import_conversation_info: 'Importa conversazioni da un file JSON',
   com_ui_import_conversation_success: 'Conversazioni importate con successo',
   com_ui_import_conversation_error:
-    'Si è verificato un errore durante l\'importazione delle conversazioni',
+    "Si è verificato un errore durante l'importazione delle conversazioni",
   com_ui_import_conversation_file_type_error: 'Tipo di importazione non supportato',
   com_ui_confirm_action: 'Conferma Azione',
   com_ui_chats: 'chat',
@@ -194,8 +194,8 @@ export default {
   com_ui_share_link_to_chat: 'Condividi link a chat',
   com_ui_share_error: 'Si è verificato un errore durante la condivisione del link della chat',
   com_ui_share_retrieve_error:
-    'Si è verificato un errore durante l\'eliminazione del link condiviso.',
-  com_ui_share_delete_error: 'Si è verificato un errore durante l\'eliminazione del link condiviso.',
+    "Si è verificato un errore durante l'eliminazione del link condiviso.",
+  com_ui_share_delete_error: "Si è verificato un errore durante l'eliminazione del link condiviso.",
   com_ui_share_create_message:
     'Il tuo nome e qualsiasi messaggio aggiunto dopo la condivisione rimarranno privati.',
   com_ui_share_created_message:
@@ -209,7 +209,7 @@ export default {
   com_ui_delete_confirm: 'Questo eliminerà',
   com_ui_rename: 'Rinomina',
   com_ui_archive: 'Archivia',
-  com_ui_archive_error: 'Errore durante l\'archiviazione della conversazione',
+  com_ui_archive_error: "Errore durante l'archiviazione della conversazione",
   com_ui_unarchive: 'Disarchivia',
   com_ui_unarchive_error: 'Impossibile disarchiviare la conversazione',
   com_ui_more_options: 'Più',
@@ -236,11 +236,11 @@ export default {
   com_ui_bookmarks_update_success: 'Segnalibro aggiornato con successo',
   com_ui_bookmarks_delete_success: 'Segnalibro eliminato con successo',
   com_ui_bookmarks_create_error: 'Si è verificato un errore durante la creazione del segnalibro',
-  com_ui_bookmarks_update_error: 'Si è verificato un errore durante l\'aggiornamento del segnalibro',
-  com_ui_bookmarks_delete_error: 'Si è verificato un errore durante l\'eliminazione del segnalibro',
+  com_ui_bookmarks_update_error: "Si è verificato un errore durante l'aggiornamento del segnalibro",
+  com_ui_bookmarks_delete_error: "Si è verificato un errore durante l'eliminazione del segnalibro",
   com_ui_bookmarks_add_to_conversation: 'Aggiungi alla conversazione attuale',
   com_auth_error_login:
-    'Impossibile eseguire l\'accesso con le informazioni fornite. Controlla le tue credenziali e riprova.',
+    "Impossibile eseguire l'accesso con le informazioni fornite. Controlla le tue credenziali e riprova.",
   com_auth_error_login_rl:
     'Troppi tentativi di accesso in un breve periodo di tempo. Riprova più tardi.',
   com_auth_error_login_ban:
@@ -255,9 +255,9 @@ export default {
   com_auth_github_login: 'Continua con Github',
   com_auth_discord_login: 'Continua con Discord',
   com_auth_email: 'Email',
-  com_auth_email_required: 'L\'email è obbligatoria',
-  com_auth_email_min_length: 'L\'email deve essere di almeno 6 caratteri',
-  com_auth_email_max_length: 'L\'email non deve superare i 120 caratteri',
+  com_auth_email_required: "L'email è obbligatoria",
+  com_auth_email_min_length: "L'email deve essere di almeno 6 caratteri",
+  com_auth_email_max_length: "L'email non deve superare i 120 caratteri",
   com_auth_email_pattern: 'Devi inserire un indirizzo email valido',
   com_auth_email_address: 'Indirizzo email',
   com_auth_password: 'Password',
@@ -287,9 +287,9 @@ export default {
   com_auth_to_reset_your_password: 'per reimpostare la tua password.',
   com_auth_reset_password_link_sent: 'Email inviata',
   com_auth_reset_password_email_sent:
-    'Ti è stata inviata un\'email con ulteriori istruzioni per reimpostare la tua password.',
+    "Ti è stata inviata un'email con ulteriori istruzioni per reimpostare la tua password.",
   com_auth_error_reset_password:
-    'Si è verificato un problema durante il reset della tua password. Nessun utente trovato con l\'indirizzo email fornito. Riprova.',
+    "Si è verificato un problema durante il reset della tua password. Nessun utente trovato con l'indirizzo email fornito. Riprova.",
   com_auth_reset_password_success: 'Reset della password avvenuto con successo',
   com_auth_login_with_new_password: 'Ora puoi accedere con la tua nuova password.',
   com_auth_error_invalid_reset_token: 'Questo token di reset della password non è più valido.',
@@ -297,7 +297,7 @@ export default {
   com_auth_to_try_again: 'per riprovare.',
   com_auth_submit_registration: 'Invia registrazione',
   com_auth_welcome_back: 'Ben tornato',
-  com_auth_back_to_login: 'Torna all\'accesso',
+  com_auth_back_to_login: "Torna all'accesso",
   com_endpoint_open_menu: 'Apri menu',
   com_endpoint_bing_enable_sydney: 'Abilita Sydney',
   com_endpoint_bing_to_enable_sydney: 'Per abilitare Sydney',
@@ -321,18 +321,18 @@ export default {
   com_endpoint_google_temp:
     'Valori più alti = più casualità, mentre valori più bassi = più focalizzati e deterministici. Consigliamo di modificare questo o Top P ma non entrambi.',
   com_endpoint_google_topp:
-    'Top-p cambia il modo in cui il modello seleziona i token per l\'output. I token vengono selezionati dai più probabili K (vedi parametro topK) ai meno probabili fino a quando la somma delle loro probabilità eguaglia il valore top-p.',
+    "Top-p cambia il modo in cui il modello seleziona i token per l'output. I token vengono selezionati dai più probabili K (vedi parametro topK) ai meno probabili fino a quando la somma delle loro probabilità eguaglia il valore top-p.",
   com_endpoint_google_topk:
-    'Top-k cambia il modo in cui il modello seleziona i token per l\'output. Un top-k di 1 significa che il token selezionato è il più probabile tra tutti i token nel vocabolario del modello (anche chiamato greedy decoding), mentre un top-k di 3 significa che il prossimo token è selezionato tra i 3 più probabili (usando la temperatura).',
+    "Top-k cambia il modo in cui il modello seleziona i token per l'output. Un top-k di 1 significa che il token selezionato è il più probabile tra tutti i token nel vocabolario del modello (anche chiamato greedy decoding), mentre un top-k di 3 significa che il prossimo token è selezionato tra i 3 più probabili (usando la temperatura).",
   com_endpoint_google_maxoutputtokens:
     'Numero massimo di token che possono essere generati nella risposta. Specifica un valore più basso per risposte più brevi e un valore più alto per risposte più lunghe.',
   com_endpoint_google_custom_name_placeholder: 'Imposta un nome personalizzato per Google',
   com_endpoint_prompt_prefix_placeholder:
     'Imposta istruzioni personalizzate o contesto. Ignorato se vuoto.',
   com_endpoint_instructions_assistants_placeholder:
-    'Sovrascrive le istruzioni dell\'assistente. Utile per modificare il comportamento su base singola.',
+    "Sovrascrive le istruzioni dell'assistente. Utile per modificare il comportamento su base singola.",
   com_endpoint_prompt_prefix_assistants_placeholder:
-    'Imposta istruzioni o contesto aggiuntivi oltre alle istruzioni principali dell\'Assistente. Ignorato se vuoto.',
+    "Imposta istruzioni o contesto aggiuntivi oltre alle istruzioni principali dell'Assistente. Ignorato se vuoto.",
   com_endpoint_custom_name: 'Nome personalizzato',
   com_endpoint_prompt_prefix: 'Istruzioni personalizzate',
   com_endpoint_prompt_prefix_assistants: 'Istruzioni aggiuntive',
@@ -349,7 +349,7 @@ export default {
   com_endpoint_openai_max:
     'I token massimi da generare. La lunghezza totale dei token di input e dei token generati è limitata dalla lunghezza del contesto del modello.',
   com_endpoint_openai_topp:
-    'Un\'alternativa al campionamento con temperatura, chiamata nucleus sampling, in cui il modello considera i risultati dei token con probabilità di massa top_p. Quindi 0,1 significa che vengono considerati solo i token che compongono la massa di probabilità superiore al 10%. Consigliamo di modificare questo o la temperatura ma non entrambi.',
+    "Un'alternativa al campionamento con temperatura, chiamata nucleus sampling, in cui il modello considera i risultati dei token con probabilità di massa top_p. Quindi 0,1 significa che vengono considerati solo i token che compongono la massa di probabilità superiore al 10%. Consigliamo di modificare questo o la temperatura ma non entrambi.",
   com_endpoint_openai_freq:
     'Numero compreso tra -2.0 e 2.0. Valori positivi penalizzano i nuovi token basati sulla loro frequenza esistente nel testo fino a quel momento, diminuendo la probabilità del modello di ripetere la stessa riga verbatim.',
   com_endpoint_openai_pres:
@@ -360,17 +360,17 @@ export default {
     'Invia nuovamente tutti i file allegati in precedenza. Nota: questo aumenterà il costo dei token e potresti incontrare errori con molti allegati.',
   com_endpoint_openai_detail:
     'La risoluzione per le richieste Vision. "Bassa" è più economica e veloce, "Alta" è più dettagliata e costosa, e "Auto" sceglierà automaticamente tra le due in base alla risoluzione dell\'immagine.',
-  com_endpoint_openai_stop: 'Fino a 4 sequenze in cui l\'API smetterà di generare ulteriori token.',
-  com_endpoint_openai_custom_name_placeholder: 'Imposta un nome personalizzato per l\'IA',
+  com_endpoint_openai_stop: "Fino a 4 sequenze in cui l'API smetterà di generare ulteriori token.",
+  com_endpoint_openai_custom_name_placeholder: "Imposta un nome personalizzato per l'IA",
   com_endpoint_openai_prompt_prefix_placeholder:
     'Imposta istruzioni personalizzate da includere nel Messaggio di Sistema. Predefinito: nessuno',
   com_endpoint_anthropic_temp:
     'Varia da 0 a 1. Usa temp più vicino a 0 per analitica / scelta multipla, e più vicino a 1 per compiti creativi e generativi. Consigliamo di modificare questo o Top P ma non entrambi.',
   com_endpoint_anthropic_topp:
-    'Top-p cambia il modo in cui il modello seleziona i token per l\'output. I token vengono selezionati dai più probabili K (vedi parametro topK) ai meno probabili fino a quando la somma delle loro probabilità eguaglia il valore top-p.',
+    "Top-p cambia il modo in cui il modello seleziona i token per l'output. I token vengono selezionati dai più probabili K (vedi parametro topK) ai meno probabili fino a quando la somma delle loro probabilità eguaglia il valore top-p.",
 
   com_endpoint_anthropic_topk:
-    'Top-k cambia il modo in cui il modello seleziona i token per l\'output. Un top-k di 1 significa che il token selezionato è il più probabile tra tutti i token nel vocabolario del modello (anche chiamato greedy decoding), mentre un top-k di 3 significa che il prossimo token è selezionato tra i 3 più probabili (usando la temperatura).',
+    "Top-k cambia il modo in cui il modello seleziona i token per l'output. Un top-k di 1 significa che il token selezionato è il più probabile tra tutti i token nel vocabolario del modello (anche chiamato greedy decoding), mentre un top-k di 3 significa che il prossimo token è selezionato tra i 3 più probabili (usando la temperatura).",
   com_endpoint_anthropic_maxoutputtokens:
     'Numero massimo di token che possono essere generati nella risposta. Specifica un valore più basso per risposte più brevi e un valore più alto per risposte più lunghe.',
   com_endpoint_anthropic_custom_name_placeholder: 'Imposta un nome personalizzato per Anthropic',
@@ -393,16 +393,16 @@ export default {
     'Sei sicuro di voler eliminare tutte le tue preimpostazioni?',
   com_endpoint_preset_import: 'Preimpostazione importata!',
   com_endpoint_preset_import_error:
-    'Si è verificato un errore durante l\'importazione della preimpostazione. Riprova.',
+    "Si è verificato un errore durante l'importazione della preimpostazione. Riprova.",
   com_endpoint_preset_save_error:
     'Si è verificato un errore durante il salvataggio della preimpostazione. Riprova.',
   com_endpoint_preset_delete_error:
-    'Si è verificato un errore durante l\'eliminazione della preimpostazione. Riprova.',
+    "Si è verificato un errore durante l'eliminazione della preimpostazione. Riprova.",
   com_endpoint_preset_default_removed: 'non è più la preimpostazione predefinita.',
   com_endpoint_preset_default_item: 'Predefinita:',
   com_endpoint_preset_default_none: 'Nessuna preimpostazione predefinita attiva.',
   com_endpoint_preset_title: 'Preimpostazione',
-  com_endpoint_preset_saved: 'Salvata!',
+  com_ui_saved: 'Salvata!',
   com_endpoint_preset_default: 'è ora la preimpostazione predefinita.',
   com_endpoint_preset: 'preimpostazione',
   com_endpoint_presets: 'preimpostazioni',
@@ -433,7 +433,7 @@ export default {
   com_endpoint_my_preset: 'La mia preimpostazione',
   com_endpoint_agent_model: 'Modello Agente (Consigliato: GPT-3.5)',
   com_endpoint_completion_model: 'Modello Completamento (Consigliato: GPT-4)',
-  com_endpoint_func_hover: 'Abilita l\'uso di Plugin come OpenAI Functions',
+  com_endpoint_func_hover: "Abilita l'uso di Plugin come OpenAI Functions",
   com_endpoint_skip_hover:
     'Abilita la possibilità di saltare il passaggio di completamento, che rivede la risposta finale e i passaggi generati',
   com_endpoint_config_key: 'Imposta chiave API',
@@ -459,7 +459,7 @@ export default {
     'Chiave JSON Account di Servizio non valida, hai importato il file corretto?',
   com_endpoint_config_key_get_edge_key: 'Per ottenere il tuo token di accesso per Bing, accedi a',
   com_endpoint_config_key_get_edge_key_dev_tool:
-    'Usa gli strumenti di sviluppo o un\'estensione mentre sei connesso al sito per copiare il contenuto del cookie _U. Se questo fallisce, segui queste',
+    "Usa gli strumenti di sviluppo o un'estensione mentre sei connesso al sito per copiare il contenuto del cookie _U. Se questo fallisce, segui queste",
   com_endpoint_config_key_edge_instructions: 'istruzioni',
   com_endpoint_config_key_edge_full_key_string: 'per fornire le stringhe complete dei cookie.',
   com_endpoint_config_key_chatgpt:
@@ -474,7 +474,7 @@ export default {
     'Assicurati di cliccare su "Crea e Continua" per assegnare almeno il ruolo "Utente Vertex AI". Infine, crea una chiave JSON da importare qui.',
   com_nav_welcome_assistant: 'Seleziona un Assistente',
   com_nav_welcome_message: 'Come posso aiutarti oggi?',
-  com_nav_auto_scroll: 'Scorri automaticamente ai nuovi messaggi all\'apertura',
+  com_nav_auto_scroll: "Scorri automaticamente ai nuovi messaggi all'apertura",
   com_nav_hide_panel: 'Nascondi il Pannello laterale più a destra',
   com_nav_modular_chat: 'Abilita il cambio di Endpoint a metà conversazione',
   com_nav_latex_parsing: 'Analizza LaTeX nei messaggi (potrebbe influire sulle prestazioni)',
@@ -487,7 +487,7 @@ export default {
   com_nav_tool_remove: 'Rimuovi',
   com_nav_tool_dialog: 'Strumenti Assistente',
   com_nav_tool_dialog_description:
-    'L\'Assistente deve essere salvato per conservare le selezioni degli strumenti.',
+    "L'Assistente deve essere salvato per conservare le selezioni degli strumenti.",
   com_show_agent_settings: 'Mostra impostazioni Agente',
   com_show_completion_settings: 'Mostra impostazioni Completamento',
   com_hide_examples: 'Nascondi esempi',
@@ -520,7 +520,7 @@ export default {
   com_nav_enter_to_send: 'Premi Invio per inviare messaggi',
   com_nav_user_name_display: 'Mostra nome utente nei messaggi',
   com_nav_save_drafts: 'Salva bozze localmente',
-  com_nav_show_code: 'Mostra sempre il codice quando si usa l\'interprete di codice',
+  com_nav_show_code: "Mostra sempre il codice quando si usa l'interprete di codice",
   com_nav_clear_all_chats: 'Cancella tutte le chat',
   com_nav_confirm_clear: 'Conferma cancellazione',
   com_nav_close_sidebar: 'Chiudi barra laterale',
@@ -560,14 +560,14 @@ export default {
   /* The following are AI Translated */
   com_assistants_file_search: 'Ricerca File',
   com_assistants_file_search_info:
-    'L\'aggiunta di archivi vettoriali per la Ricerca File non è ancora supportata. Puoi aggiungerli dal Provider Playground o allegare file ai messaggi per la ricerca file su base di thread.',
+    "L'aggiunta di archivi vettoriali per la Ricerca File non è ancora supportata. Puoi aggiungerli dal Provider Playground o allegare file ai messaggi per la ricerca file su base di thread.",
   com_assistants_non_retrieval_model:
     'La ricerca di file non è abilitata su questo modello. Seleziona un altro modello.',
-  com_ui_attach_error_openai: 'Non è possibile allegare file dell\'Assistente ad altri endpoint',
+  com_ui_attach_error_openai: "Non è possibile allegare file dell'Assistente ad altri endpoint",
   com_ui_attach_warn_endpoint:
     'Attenzione: i file non compatibili con lo strumento potrebbero essere ignorati',
   com_ui_assistant_deleted: 'Assistente eliminato con successo',
-  com_ui_assistant_delete_error: 'Si è verificato un errore durante l\'eliminazione dell\'assistente',
+  com_ui_assistant_delete_error: "Si è verificato un errore durante l'eliminazione dell'assistente",
   com_ui_copied: 'Copiato!',
   com_ui_copy_code: 'Copia codice',
   com_nav_source_chat: 'Visualizza chat sorgente',
@@ -594,8 +594,8 @@ export default {
   com_ui_mention: 'Menziona un endpoint, assistente o preset per passare rapidamente ad esso',
   com_ui_accept: 'Accetto',
   com_ui_decline: 'Non accetto',
-  com_ui_terms_and_conditions: 'Termini d\'uso',
-  com_ui_no_terms_content: 'Nessun contenuto dei termini d\'uso da visualizzare',
+  com_ui_terms_and_conditions: "Termini d'uso",
+  com_ui_no_terms_content: "Nessun contenuto dei termini d'uso da visualizzare",
   com_endpoint_context_tokens: 'Token di Contesto Massimi',
   com_endpoint_context_info:
     'Il numero massimo di token che possono essere utilizzati per il contesto. Usalo per controllare quanti token vengono inviati per richiesta. Se non specificato, verranno utilizzate le impostazioni di sistema predefinite in base alle dimensioni del contesto dei modelli noti. Impostare valori più alti potrebbe causare errori e/o costi di token più elevati.',
@@ -632,12 +632,12 @@ export default {
   com_ui_custom_prompt_mode: 'Modalità Prompt Personalizzato',
   com_ui_artifact_click: 'Clicca per aprire',
   com_nav_info_include_shadcnui:
-    'Quando abilitato, verranno incluse le istruzioni per l\'utilizzo dei componenti shadcn/ui. shadcn/ui è una raccolta di componenti riutilizzabili costruiti utilizzando Radix UI e Tailwind CSS. Nota: queste sono istruzioni dettagliate, dovresti abilitarle solo se ritieni importante informare l\'LLM sulle corrette importazioni e sui componenti. Per maggiori informazioni su questi componenti, visita: https://ui.shadcn.com/',
-  com_a11y_start: 'L\'IA ha iniziato la sua risposta',
+    "Quando abilitato, verranno incluse le istruzioni per l'utilizzo dei componenti shadcn/ui. shadcn/ui è una raccolta di componenti riutilizzabili costruiti utilizzando Radix UI e Tailwind CSS. Nota: queste sono istruzioni dettagliate, dovresti abilitarle solo se ritieni importante informare l'LLM sulle corrette importazioni e sui componenti. Per maggiori informazioni su questi componenti, visita: https://ui.shadcn.com/",
+  com_a11y_start: "L'IA ha iniziato la sua risposta",
   com_nav_info_custom_prompt_mode:
-    'Quando attivata, l\'istruzione predefinita del sistema per gli artefatti non verrà inclusa. In questa modalità, tutte le istruzioni per la generazione degli artefatti dovranno essere fornite manualmente.',
-  com_a11y_ai_composing: 'L\'IA sta ancora componendo',
-  com_a11y_end: 'L\'IA ha terminato la sua risposta',
+    "Quando attivata, l'istruzione predefinita del sistema per gli artefatti non verrà inclusa. In questa modalità, tutte le istruzioni per la generazione degli artefatti dovranno essere fornite manualmente.",
+  com_a11y_ai_composing: "L'IA sta ancora componendo",
+  com_a11y_end: "L'IA ha terminato la sua risposta",
   com_error_invalid_request_error:
     'Il servizio AI ha rifiutato la richiesta a causa di un errore. Questo potrebbe essere causato da una chiave API non valida o da una richiesta formattata in modo errato.',
   com_error_no_system_messages:
@@ -647,10 +647,10 @@ export default {
     'Il reinvio del messaggio AI non è supportato per questo endpoint.',
   com_error_files_dupe: 'File duplicato rilevato.',
   com_error_input_length:
-    'Il conteggio dei token dell\'ultimo messaggio è troppo lungo e supera il limite consentito ({0}). Per favore, accorcia il tuo messaggio, modifica la dimensione massima del contesto dai parametri della conversazione, oppure crea una diramazione della conversazione per continuare.',
+    "Il conteggio dei token dell'ultimo messaggio è troppo lungo e supera il limite consentito ({0}). Per favore, accorcia il tuo messaggio, modifica la dimensione massima del contesto dai parametri della conversazione, oppure crea una diramazione della conversazione per continuare.",
   com_error_files_validation: 'Si è verificato un errore durante la validazione del file.',
   com_error_files_upload: 'Si è verificato un errore durante il caricamento del file.',
-  com_error_files_process: 'Si è verificato un errore durante l\'elaborazione del file.',
+  com_error_files_process: "Si è verificato un errore durante l'elaborazione del file.",
   com_generated_files: 'File generati:',
   com_error_files_upload_canceled:
     'La richiesta di caricamento del file è stata annullata. Nota: il caricamento del file potrebbe essere ancora in corso e potrebbe essere necessario eliminarlo manualmente.',
@@ -659,26 +659,26 @@ export default {
   com_click_to_download: 'clicca qui per scaricare',
   com_assistants_conversation_starters: 'Spunti di Conversazione',
   com_assistants_code_interpreter_info:
-    'L\'Interprete Codice permette all\'assistente di scrivere ed eseguire codice. Questo strumento può elaborare file con diversi formati e tipi di dati, e generare file come grafici.',
+    "L'Interprete Codice permette all'assistente di scrivere ed eseguire codice. Questo strumento può elaborare file con diversi formati e tipi di dati, e generare file come grafici.",
   com_assistants_conversation_starters_placeholder: 'Inserisci un argomento di conversazione',
   com_sidepanel_agent_builder: 'Costruttore Agente',
-  com_agents_name_placeholder: 'Opzionale: Il nome dell\'agente',
+  com_agents_name_placeholder: "Opzionale: Il nome dell'agente",
   com_agents_description_placeholder: 'Opzionale: Descrivi qui il tuo Agente',
-  com_agents_instructions_placeholder: 'Le istruzioni di sistema utilizzate dall\'agente',
+  com_agents_instructions_placeholder: "Le istruzioni di sistema utilizzate dall'agente",
   com_agents_search_name: 'Cerca agenti per nome',
-  com_agents_update_error: 'Si è verificato un errore durante l\'aggiornamento del tuo agente.',
+  com_agents_update_error: "Si è verificato un errore durante l'aggiornamento del tuo agente.",
   com_agents_create_error: 'Si è verificato un errore durante la creazione del tuo agente.',
   com_agents_missing_provider_model:
     'Seleziona un provider e un modello prima di creare un agente.',
   com_agents_allow_editing: 'Permetti ad altri utenti di modificare il tuo agente',
   com_agents_not_available: 'Agente Non Disponibile',
-  com_agents_no_access: 'Non hai l\'autorizzazione per modificare questo agente.',
+  com_agents_no_access: "Non hai l'autorizzazione per modificare questo agente.",
   com_agents_enable_file_search: 'Abilita Ricerca File',
   com_agents_file_search_info:
-    'Quando abilitato, l\'agente verrà informato dei nomi esatti dei file elencati di seguito, permettendogli di recuperare il contesto pertinente da questi file.',
-  com_agents_execute_code: 'Esegui Codice',
+    "Quando abilitato, l'agente verrà informato dei nomi esatti dei file elencati di seguito, permettendogli di recuperare il contesto pertinente da questi file.",
+  com_ui_run_code: 'Esegui Codice',
   com_agents_file_search_disabled:
-    'L\'Agente deve essere creato prima di caricare file per la Ricerca File.',
+    "L'Agente deve essere creato prima di caricare file per la Ricerca File.",
   com_ui_agent_already_shared_to_all: 'Questo assistente è già condiviso con tutti gli utenti',
   com_ui_agent_editing_allowed: 'Altri utenti possono già modificare questo assistente',
   com_ui_no_changes: 'Nessuna modifica da aggiornare',
@@ -705,7 +705,7 @@ export default {
   com_ui_error_save_admin_settings:
     'Si è verificato un errore durante il salvataggio delle impostazioni amministrative.',
   com_ui_prompt_preview_not_shared:
-    'L\'autore non ha consentito la collaborazione per questo prompt.',
+    "L'autore non ha consentito la collaborazione per questo prompt.",
   com_ui_prompt_name_required: 'Il nome del prompt è obbligatorio',
   com_ui_prompt_text_required: 'Il testo è obbligatorio',
   com_ui_prompt_text: 'Testo',
@@ -724,11 +724,11 @@ export default {
     'Usa `{{current_date}}` per la data attuale e `{{current_user}}` per il nome del tuo account.',
   com_ui_dropdown_variables_info:
     'Crea menu a tendina personalizzati per i tuoi prompt: `{{nome_variabile:opzione1|opzione2|opzione3}}`',
-  com_ui_latest_footer: 'L\'intelligenza artificiale per tutti.',
+  com_ui_latest_footer: "L'intelligenza artificiale per tutti.",
   com_ui_upload_invalid:
-    'File non valido per il caricamento. Deve essere un\'immagine che non supera il limite',
+    "File non valido per il caricamento. Deve essere un'immagine che non supera il limite",
   com_ui_upload_invalid_var:
-    'File non valido per il caricamento. Deve essere un\'immagine non superiore a {0} MB',
+    "File non valido per il caricamento. Deve essere un'immagine non superiore a {0} MB",
   com_ui_renaming_var: 'Rinominando "{0}"',
   com_ui_read_aloud: 'Leggi ad alta voce',
   com_ui_add_model_preset: 'Aggiungi un modello o una preimpostazione per una risposta aggiuntiva',
@@ -745,7 +745,7 @@ export default {
   com_ui_dashboard: 'Pannello di controllo',
   com_ui_agent_deleted: 'Agente eliminato con successo',
   com_ui_agent: 'Agente',
-  com_ui_agent_delete_error: 'Si è verificato un errore durante l\'eliminazione dell\'agente',
+  com_ui_agent_delete_error: "Si è verificato un errore durante l'eliminazione dell'agente",
   com_ui_delete_agent_confirm: 'Sei sicuro di voler eliminare questo agente?',
   com_ui_agents: 'Agenti',
   com_ui_create_prompt: 'Crea prompt',
@@ -759,7 +759,7 @@ export default {
   com_ui_prompts_allow_create: 'Consenti creazione Prompt',
   com_ui_prompt_shared_to_all: 'Questo prompt è condiviso con tutti gli utenti',
   com_ui_prompts_allow_share_global: 'Consenti la condivisione dei prompt con tutti gli utenti',
-  com_ui_prompt_update_error: 'Si è verificato un errore durante l\'aggiornamento del prompt',
+  com_ui_prompt_update_error: "Si è verificato un errore durante l'aggiornamento del prompt",
   com_ui_prompt_already_shared_to_all: 'Questo prompt è già stato condiviso con tutti gli utenti',
   com_ui_command_placeholder:
     'Opzionale: Inserisci un comando per il prompt o verrà utilizzato il nome',
@@ -786,16 +786,16 @@ export default {
   com_auth_registration_success_generic:
     'Controlla la tua email per verificare il tuo indirizzo di posta elettronica.',
   com_auth_reset_password_if_email_exists:
-    'Se esiste un account associato a questa email, ti abbiamo inviato un\'email con le istruzioni per reimpostare la password. Ricordati di controllare anche la cartella spam.',
+    "Se esiste un account associato a questa email, ti abbiamo inviato un'email con le istruzioni per reimpostare la password. Ricordati di controllare anche la cartella spam.",
   com_auth_email_verification_failed: 'Verifica email fallita',
   com_auth_email_verification_rate_limited: 'Troppe richieste. Per favore riprova più tardi',
   com_auth_email_verification_success: 'Email verificata con successo',
   com_auth_email_resent_success: 'Email di verifica reinviata con successo',
-  com_auth_email_resent_failed: 'Impossibile reinviare l\'email di verifica',
+  com_auth_email_resent_failed: "Impossibile reinviare l'email di verifica",
   com_auth_email_verification_failed_token_missing: 'Verifica fallita, token mancante',
   com_auth_email_verification_invalid: 'Verifica email non valida',
-  com_auth_email_verification_in_progress: 'Verifica dell\'email in corso, attendere prego',
-  com_auth_email_verification_resend_prompt: 'Non hai ricevuto l\'email?',
+  com_auth_email_verification_in_progress: "Verifica dell'email in corso, attendere prego",
+  com_auth_email_verification_resend_prompt: "Non hai ricevuto l'email?",
   com_auth_email_resend_link: 'Reinvia email',
   com_auth_email_verification_redirecting: 'Reindirizzamento in {0} secondi...',
   com_endpoint_anthropic_prompt_cache:
@@ -827,7 +827,7 @@ export default {
   com_ui_drag_drop_file: 'Trascina e rilascia un file qui',
   com_ui_teach_or_explain: 'Apprendimento',
   com_ui_select_file: 'Seleziona un file',
-  com_ui_upload_image: 'Carica un\'immagine',
+  com_ui_upload_image: "Carica un'immagine",
   com_ui_select_a_category: 'Nessuna categoria selezionata',
   com_ui_clear_all: 'Cancella tutto',
   com_nav_chat_direction: 'Direzione della chat',
@@ -844,13 +844,13 @@ export default {
   com_nav_db_sensitivity: 'Sensibilità decibel',
   com_nav_playback_rate: 'Velocità di riproduzione audio',
   com_nav_audio_play_error: 'Errore durante la riproduzione audio: {0}',
-  com_nav_audio_process_error: 'Errore durante l\'elaborazione dell\'audio: {0}',
-  com_nav_long_audio_warning: 'I testi più lunghi richiederanno più tempo per l\'elaborazione.',
+  com_nav_audio_process_error: "Errore durante l'elaborazione dell'audio: {0}",
+  com_nav_long_audio_warning: "I testi più lunghi richiederanno più tempo per l'elaborazione.",
   com_nav_tts_init_error: 'Impossibile inizializzare la sintesi vocale: {0}',
   com_nav_tts_unsupported_error:
     'La sintesi vocale per il motore selezionato non è supportata in questo browser.',
   com_nav_source_buffer_error:
-    'Errore durante l\'impostazione della riproduzione audio. Aggiorna la pagina.',
+    "Errore durante l'impostazione della riproduzione audio. Aggiorna la pagina.",
   com_nav_media_source_init_error:
     'Impossibile preparare il lettore audio. Controlla le impostazioni del browser.',
   com_nav_buffer_append_error:
@@ -869,11 +869,11 @@ export default {
   com_nav_info_enter_to_send:
     'Quando attivo, premendo `INVIO` invierai il tuo messaggio. Quando disattivato, premendo Invio andrai a capo, e dovrai premere `CTRL + INVIO` / `⌘ + INVIO` per inviare il messaggio.',
   com_nav_info_save_draft:
-    'Quando attivata, questa funzione salverà automaticamente come bozze il testo e gli allegati inseriti nella chat. Queste bozze saranno disponibili anche se ricarichi la pagina o passi a un\'altra conversazione. Le bozze vengono memorizzate localmente sul tuo dispositivo e vengono eliminate una volta inviato il messaggio.',
+    "Quando attivata, questa funzione salverà automaticamente come bozze il testo e gli allegati inseriti nella chat. Queste bozze saranno disponibili anche se ricarichi la pagina o passi a un'altra conversazione. Le bozze vengono memorizzate localmente sul tuo dispositivo e vengono eliminate una volta inviato il messaggio.",
   com_nav_info_fork_change_default:
     '"Solo messaggi visibili" include solo il percorso diretto al messaggio selezionato. "Includi rami correlati" aggiunge i rami lungo il percorso. "Includi tutti i messaggi da/verso qui" include tutti i messaggi e i rami connessi.',
   com_nav_info_fork_split_target_setting:
-    'Quando abilitato, la duplicazione inizierà dal messaggio di destinazione fino all\'ultimo messaggio della conversazione, secondo il comportamento selezionato.',
+    "Quando abilitato, la duplicazione inizierà dal messaggio di destinazione fino all'ultimo messaggio della conversazione, secondo il comportamento selezionato.",
   com_nav_info_user_name_display:
     'Quando attivato, il nome utente del mittente verrà mostrato sopra ogni messaggio che invii. Quando disattivato, vedrai solo "Tu" sopra i tuoi messaggi.',
   com_nav_info_latex_parsing:
@@ -881,10 +881,10 @@ export default {
   com_nav_info_revoke:
     'Questa azione revocherà e rimuoverà tutte le chiavi API che hai fornito. Dovrai reinserire queste credenziali per continuare a utilizzare questi endpoint.',
   com_nav_info_delete_cache_storage:
-    'Questa azione eliminerà tutti i file audio TTS (Text-to-Speech) memorizzati nella cache del tuo dispositivo. I file audio in cache vengono utilizzati per velocizzare la riproduzione dell\'audio TTS già generato in precedenza, ma possono occupare spazio di archiviazione sul tuo dispositivo.',
+    "Questa azione eliminerà tutti i file audio TTS (Text-to-Speech) memorizzati nella cache del tuo dispositivo. I file audio in cache vengono utilizzati per velocizzare la riproduzione dell'audio TTS già generato in precedenza, ma possono occupare spazio di archiviazione sul tuo dispositivo.",
   com_nav_chat_commands: 'Comandi Chat',
   com_nav_chat_commands_info:
-    'Questi comandi vengono attivati digitando caratteri specifici all\'inizio del tuo messaggio. Ogni comando viene attivato dal suo prefisso designato. Puoi disabilitarli se usi frequentemente questi caratteri per iniziare i messaggi.',
+    "Questi comandi vengono attivati digitando caratteri specifici all'inizio del tuo messaggio. Ogni comando viene attivato dal suo prefisso designato. Puoi disabilitarli se usi frequentemente questi caratteri per iniziare i messaggi.",
   com_nav_commands: 'Comandi',
   com_nav_commands_tab: 'Impostazioni comandi',
   com_nav_at_command: 'Comando @',

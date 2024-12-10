@@ -251,7 +251,7 @@ export default {
   com_endpoint_preset_default_item: 'По умолчанию:',
   com_endpoint_preset_default_none: 'Активных пресетов по умолчанию нет.',
   com_endpoint_preset_title: 'Пресет',
-  com_endpoint_preset_saved: 'Сохранено!',
+  com_ui_saved: 'Сохранено!',
   com_endpoint_preset_default: 'теперь пресет "По умолчаанию".',
   com_endpoint_preset: 'пресет',
   com_endpoint_presets: 'пресеты',
@@ -316,7 +316,7 @@ export default {
   com_endpoint_config_key_google_vertex_api: 'API в Google Cloud, после',
   com_endpoint_config_key_google_service_account: 'Создать Service Account',
   com_endpoint_config_key_google_vertex_api_role:
-    'Убедитесь что нажали на \'Create and Continue\' чтобы получить как минимум \'Vertex AI User\'. Наконец, создайте JSON-ключ чтобы импортировать его сюда.',
+    "Убедитесь что нажали на 'Create and Continue' чтобы получить как минимум 'Vertex AI User'. Наконец, создайте JSON-ключ чтобы импортировать его сюда.",
   com_nav_welcome_message: 'Чем я могу помочь вам сегодня?',
   com_nav_auto_scroll: 'Автоматически проматывать к самым новым сообщениям при открытии',
   com_nav_hide_panel: 'Скрыть правую боковую панель',
@@ -699,7 +699,7 @@ export default {
 
   com_agents_file_search_disabled: 'Для загрузки файлов в Поиск необходимо сначала создать агента',
 
-  com_agents_execute_code: 'Выполнить код',
+  com_ui_run_code: 'Выполнить код',
 
   com_ui_agent_editing_allowed: 'Другие пользователи уже могут редактировать этого ассистента',
 
@@ -787,7 +787,7 @@ export default {
   com_ui_upload_invalid:
     'Недопустимый файл для загрузки. Загружаемое изображение не должно превышать установленный размер',
 
-  com_ui_renaming_var: 'Переименование \'{0}\'',
+  com_ui_renaming_var: "Переименование '{0}'",
 
   com_ui_upload_invalid_var:
     'Недопустимый файл. Загружаемое изображение не должно превышать {0} МБ',
@@ -880,7 +880,7 @@ export default {
   com_ui_bookmarks_create_exists: 'Такая закладка уже существует',
 
   com_ui_delete_confirm_prompt_version_var:
-    'Это действие удалит выбранную версию для \'{0}\'. Если других версий не существует, промт будет полностью удален.',
+    "Это действие удалит выбранную версию для '{0}'. Если других версий не существует, промт будет полностью удален.",
 
   com_ui_bookmarks_delete: 'Удалить закладку',
 
@@ -1108,7 +1108,7 @@ export default {
     'Переключение команды "@" для выбора эндпоинтов, моделей, пресетов и др.',
 
   com_nav_slash_command_description:
-    'Вызов командной строки клавишей \'/\' для выбора промта с клавиатуры',
+    "Вызов командной строки клавишей '/' для выбора промта с клавиатуры",
 
   com_nav_slash_command: '/-Команда',
 

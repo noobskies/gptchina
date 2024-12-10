@@ -39,7 +39,7 @@ export default {
   com_assistants_update_actions_error: 'Hubo un error al crear o actualizar la acción.',
   com_assistants_delete_actions_error: 'Hubo un error al eliminar la acción.',
   com_assistants_actions_info:
-    'Permita que su Asistente recupere información o realice acciones a través de API\'s',
+    "Permita que su Asistente recupere información o realice acciones a través de API's",
   com_assistants_name_placeholder: 'Opcional: El nombre del asistente',
   com_assistants_instructions_placeholder: 'Las instrucciones del sistema que utiliza el asistente',
   com_assistants_description_placeholder: 'Opcional: Describa su Asistente aquí',
@@ -253,9 +253,9 @@ export default {
   com_endpoint_bing_to_enable_sydney: 'Para habilitar Sydney',
   com_endpoint_bing_jailbreak: 'Jailbreak',
   com_endpoint_bing_context_placeholder:
-    'Bing puede utilizar hasta 7k tokens para el \'contexto\', al que puede hacer referencia en la conversación. El límite específico no se conoce, pero puede producir errores si se exceden los 7k tokens',
+    "Bing puede utilizar hasta 7k tokens para el 'contexto', al que puede hacer referencia en la conversación. El límite específico no se conoce, pero puede producir errores si se exceden los 7k tokens",
   com_endpoint_bing_system_message_placeholder:
-    'ADVERTENCIA: El mal uso de esta función puede hacer que te PROHÍBAN el uso de Bing. Haz clic en \'Mensaje del sistema\' para ver las instrucciones completas y el mensaje predeterminado si se omite, que es la configuración preestablecida \'Sydney\' que se considera segura.',
+    "ADVERTENCIA: El mal uso de esta función puede hacer que te PROHÍBAN el uso de Bing. Haz clic en 'Mensaje del sistema' para ver las instrucciones completas y el mensaje predeterminado si se omite, que es la configuración preestablecida 'Sydney' que se considera segura.",
   com_endpoint_system_message: 'Mensaje del sistema',
   com_endpoint_message: 'Mensaje',
   com_endpoint_message_not_appendable: 'Edita tu mensaje o regénera.',
@@ -350,7 +350,7 @@ export default {
   com_endpoint_preset_default_item: 'Predeterminado:',
   com_endpoint_preset_default_none: 'No hay configuración preestablecida predeterminada activa.',
   com_endpoint_preset_title: 'Configuración preestablecida',
-  com_endpoint_preset_saved: '¡Guardado!',
+  com_ui_saved: '¡Guardado!',
   com_endpoint_preset_default: 'es ahora la configuración preestablecida predeterminada.',
   com_endpoint_preset: 'configuración preestablecida',
   com_endpoint_presets: 'configuraciones preestablecidas',
@@ -414,7 +414,7 @@ export default {
   com_endpoint_config_key_edge_full_key_string:
     'para proporcionar las cadenas de cookies completas.',
   com_endpoint_config_key_chatgpt:
-    'Para obtener tu token de acceso para ChatGPT \'Versión gratuita\', inicia sesión en',
+    "Para obtener tu token de acceso para ChatGPT 'Versión gratuita', inicia sesión en",
   com_endpoint_config_key_chatgpt_then_visit: 'y luego visita',
   com_endpoint_config_key_chatgpt_copy_token: 'Copia el token de acceso.',
   com_endpoint_config_key_google_need_to: 'Necesitas',
@@ -422,7 +422,7 @@ export default {
   com_endpoint_config_key_google_vertex_api: 'API en Google Cloud, luego',
   com_endpoint_config_key_google_service_account: 'Crear una Cuenta de Servicio',
   com_endpoint_config_key_google_vertex_api_role:
-    'Asegúrate de hacer clic en \'Crear y continuar\' para otorgar al menos el rol de \'Usuario de Vertex AI\'. Por último, crea una clave JSON para importar aquí.',
+    "Asegúrate de hacer clic en 'Crear y continuar' para otorgar al menos el rol de 'Usuario de Vertex AI'. Por último, crea una clave JSON para importar aquí.",
   com_nav_welcome_assistant: 'Por favor, selecciona un asistente',
   com_nav_welcome_message: '¿En qué puedo ayudarte hoy?',
   com_nav_auto_scroll: 'Desplazamiento automático al más reciente al abrir',
@@ -545,7 +545,7 @@ export default {
   com_ui_off: 'Desactivado',
   com_ui_none_selected: 'No se ha seleccionado ninguno',
   com_ui_fork_info_1:
-    'com_ui_fork_info_1: \'Utilice esta configuración para bifurcar los mensajes con el comportamiento deseado.\'',
+    "com_ui_fork_info_1: 'Utilice esta configuración para bifurcar los mensajes con el comportamiento deseado.'",
   com_ui_fork_info_2:
     '"Bifurcar" se refiere a crear una nueva conversación que comienza/termina desde mensajes específicos en la conversación actual, creando una copia según las opciones seleccionadas.',
   com_ui_fork_info_visible:
@@ -716,7 +716,7 @@ export default {
   com_agents_file_search_disabled:
     'Es necesario crear el Agente antes de subir archivos para la Búsqueda de Archivos.',
 
-  com_agents_execute_code: 'Ejecutar código',
+  com_ui_run_code: 'Ejecutar código',
 
   com_ui_agent_already_shared_to_all: 'Este asistente ya está compartido con todos los usuarios',
 
@@ -1134,7 +1134,7 @@ export default {
   com_nav_slash_command: 'Comando /',
 
   com_nav_slash_command_description:
-    'Alternar comando \'/\' para seleccionar un mensaje predefinido mediante el teclado',
+    "Alternar comando '/' para seleccionar un mensaje predefinido mediante el teclado",
 
   com_nav_command_settings: 'Configuración de comandos',
 

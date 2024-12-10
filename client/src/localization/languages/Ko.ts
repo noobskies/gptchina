@@ -147,9 +147,9 @@ export default {
   com_endpoint_bing_to_enable_sydney: '시드니를 활성화하려면',
   com_endpoint_bing_jailbreak: 'Jailbreak',
   com_endpoint_bing_context_placeholder:
-    'Bing은 \'컨텍스트\'로 최대 7,000개의 토큰을 사용할 수 있으며, 대화에서 참조할 수 있습니다. 구체적인 제한은 알려져 있지 않지만, 7,000개의 토큰을 초과하면 오류가 발생할 수 있습니다.',
+    "Bing은 '컨텍스트'로 최대 7,000개의 토큰을 사용할 수 있으며, 대화에서 참조할 수 있습니다. 구체적인 제한은 알려져 있지 않지만, 7,000개의 토큰을 초과하면 오류가 발생할 수 있습니다.",
   com_endpoint_bing_system_message_placeholder:
-    '경고: 이 기능의 오용으로 인해 Bing의 사용이 \'금지\'될 수 있습니다. 모든 내용을 보려면 \'시스템 메시지\'를 클릭하세요. 생략된 경우 \'시드니\' 프리셋이 사용됩니다.',
+    "경고: 이 기능의 오용으로 인해 Bing의 사용이 '금지'될 수 있습니다. 모든 내용을 보려면 '시스템 메시지'를 클릭하세요. 생략된 경우 '시드니' 프리셋이 사용됩니다.",
   com_endpoint_system_message: '시스템 메시지',
   com_endpoint_default_blank: '기본값: 공백',
   com_endpoint_default_false: '기본값: false',
@@ -612,7 +612,7 @@ export default {
     '활성화하면 채팅 양식에 입력한 텍스트와 첨부 파일이 자동으로 로컬에 임시 저장됩니다. 페이지를 새로고침하거나 다른 대화로 전환해도 이 임시 저장 내용을 계속 사용할 수 있습니다. 임시 저장 내용은 사용자의 기기에 로컬로 저장되며, 메시지를 보내면 삭제됩니다.',
 
   com_nav_info_fork_change_default:
-    '\'표시된 메시지만\'은 선택한 메시지로 가는 직접 경로만 포함합니다. \'관련 브랜치 포함\'은 경로상의 브랜치도 추가합니다. \'이 메시지 전후 모두 포함\'은 연결된 모든 메시지와 브랜치를 포함합니다.',
+    "'표시된 메시지만'은 선택한 메시지로 가는 직접 경로만 포함합니다. '관련 브랜치 포함'은 경로상의 브랜치도 추가합니다. '이 메시지 전후 모두 포함'은 연결된 모든 메시지와 브랜치를 포함합니다.",
 
   com_nav_info_fork_split_target_setting:
     '활성화되면 선택한 동작에 따라 대상 메시지부터 대화의 최신 메시지까지 포킹이 시작됩니다.',
@@ -859,7 +859,7 @@ export default {
   com_endpoint_preset_default_item: '기본값:',
   com_endpoint_preset_default_none: '기본 프리셋이 설정되지 않았습니다.',
   com_endpoint_preset_title: '프리셋',
-  com_endpoint_preset_saved: '저장되었습니다!',
+  com_ui_saved: '저장되었습니다!',
   com_endpoint_preset_default: '이제 기본 프리셋입니다.',
   com_endpoint_preset_selected: '프리셋 활성화됨',
   com_endpoint_preset_selected_title: '활성화됨',
@@ -875,7 +875,7 @@ export default {
   com_endpoint_config_google_gemini_api: 'Gemini API 설정',
   com_endpoint_config_google_api_info: 'Gemini에서 Generative Language API 키를 얻으려면',
   com_endpoint_config_key_chatgpt:
-    'ChatGPT \'무료 버전\'의 액세스 토큰을 얻으려면 다음 사이트에 로그인하세요',
+    "ChatGPT '무료 버전'의 액세스 토큰을 얻으려면 다음 사이트에 로그인하세요",
   com_endpoint_config_key_chatgpt_then_visit: '그런 다음 방문하세요',
   com_endpoint_config_key_chatgpt_copy_token: '액세스 토큰 복사',
   com_endpoint_config_key_google_need_to: 'API 키를 설정해야 합니다',
@@ -883,7 +883,7 @@ export default {
   com_endpoint_config_key_google_vertex_api: 'Google Cloud에서 제공하는 API',
   com_endpoint_config_key_google_service_account: '서비스 계정 생성',
   com_endpoint_config_key_google_vertex_api_role:
-    '\'Vertex AI 사용자\' 역할을 부여하려면 반드시 \'생성 및 계속\'을 클릭하세요. 마지막으로 여기에 가져올 JSON 키를 생성하세요.',
+    "'Vertex AI 사용자' 역할을 부여하려면 반드시 '생성 및 계속'을 클릭하세요. 마지막으로 여기에 가져올 JSON 키를 생성하세요.",
   com_nav_welcome_assistant: '어시스턴트 선택하기',
   com_nav_welcome_message: '오늘 무엇을 도와드릴까요?',
   com_nav_auto_scroll: '채팅 열렸을 때 최신 메시지로 자동 스크롤',
@@ -1020,7 +1020,7 @@ export default {
   com_agents_file_search_disabled:
     '파일 검색을 위해 파일을 업로드하기 전에 에이전트를 먼저 생성해야 합니다',
 
-  com_agents_execute_code: '코드 실행',
+  com_ui_run_code: '코드 실행',
 
   com_ui_agent_already_shared_to_all: '이 에이전트는 이미 모든 사용자와 공유되어 있습니다',
 

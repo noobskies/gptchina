@@ -73,7 +73,7 @@ export default {
   com_assistants_update_actions_error: 'Houve um erro ao criar ou atualizar a ação.',
   com_assistants_delete_actions_error: 'Houve um erro ao excluir a ação.',
   com_assistants_actions_info:
-    'Permita que seu Assistente recupere informações ou execute ações via API\'s',
+    "Permita que seu Assistente recupere informações ou execute ações via API's",
   com_assistants_name_placeholder: 'Opcional: O nome do assistente',
   com_assistants_instructions_placeholder: 'As instruções do sistema que o assistente usa',
   com_assistants_description_placeholder: 'Opcional: Descreva seu Assistente aqui',
@@ -548,7 +548,7 @@ export default {
   com_endpoint_preset_default_item: 'Padrão:',
   com_endpoint_preset_default_none: 'Nenhum preset padrão ativo.',
   com_endpoint_preset_title: 'Preset',
-  com_endpoint_preset_saved: 'Salvo!',
+  com_ui_saved: 'Salvo!',
   com_endpoint_preset_default: 'é agora o preset padrão.',
   com_endpoint_preset: 'preset',
   com_endpoint_presets: 'presets',

@@ -167,9 +167,9 @@ export default {
   com_endpoint_bing_to_enable_sydney: 'Untuk mengaktifkan Sydney',
   com_endpoint_bing_jailbreak: 'Jailbreak',
   com_endpoint_bing_context_placeholder:
-    'Bing dapat menggunakan hingga 7k token untuk \'konteks\', yang dapat dirujuk untuk percakapan. Batas spesifik tidak diketahui tetapi mungkin menemui kesalahan melebihi 7k token',
+    "Bing dapat menggunakan hingga 7k token untuk 'konteks', yang dapat dirujuk untuk percakapan. Batas spesifik tidak diketahui tetapi mungkin menemui kesalahan melebihi 7k token",
   com_endpoint_bing_system_message_placeholder:
-    'PERINGATAN: Penyalahgunaan fitur ini dapat membuat Anda DILARANG menggunakan Bing! Klik pada \'Pesan Sistem\' untuk instruksi lengkap dan pesan default jika diabaikan, yang merupakan preset \'Sydney\' yang dianggap aman.',
+    "PERINGATAN: Penyalahgunaan fitur ini dapat membuat Anda DILARANG menggunakan Bing! Klik pada 'Pesan Sistem' untuk instruksi lengkap dan pesan default jika diabaikan, yang merupakan preset 'Sydney' yang dianggap aman.",
   com_endpoint_system_message: 'Pesan Sistem',
   com_endpoint_message: 'Pesan',
   com_endpoint_message_not_appendable: 'Edit pesan Anda atau Regenerasi.',
@@ -248,7 +248,7 @@ export default {
   com_endpoint_preset_default_item: 'Default:',
   com_endpoint_preset_default_none: 'Tidak ada preset default yang aktif.',
   com_endpoint_preset_title: 'Preset',
-  com_endpoint_preset_saved: 'Tersimpan!',
+  com_ui_saved: 'Tersimpan!',
   com_endpoint_preset_default: 'sekarang menjadi preset default.',
   com_endpoint_preset: 'preset',
   com_endpoint_presets: 'presets',
@@ -304,7 +304,7 @@ export default {
   com_endpoint_config_key_edge_instructions: 'instruksi',
   com_endpoint_config_key_edge_full_key_string: 'untuk memberikan string cookie lengkap.',
   com_endpoint_config_key_chatgpt:
-    'Untuk mendapatkan token akses Anda Untuk ChatGPT \'Versi Gratis\', masuk ke',
+    "Untuk mendapatkan token akses Anda Untuk ChatGPT 'Versi Gratis', masuk ke",
   com_endpoint_config_key_chatgpt_then_visit: 'kemudian kunjungi',
   com_endpoint_config_key_chatgpt_copy_token: 'Salin token akses.',
   com_endpoint_config_key_google_need_to: 'Anda perlu',
@@ -312,7 +312,7 @@ export default {
   com_endpoint_config_key_google_vertex_api: 'API di Google Cloud, kemudian',
   com_endpoint_config_key_google_service_account: 'Buat Akun Layanan',
   com_endpoint_config_key_google_vertex_api_role:
-    'Pastikan untuk mengklik \'Buat dan Lanjutkan\' untuk memberikan setidaknya peran \'Pengguna Vertex AI\'. Terakhir, buat kunci JSON untuk diimpor di sini.',
+    "Pastikan untuk mengklik 'Buat dan Lanjutkan' untuk memberikan setidaknya peran 'Pengguna Vertex AI'. Terakhir, buat kunci JSON untuk diimpor di sini.",
   com_nav_welcome_message: 'Bagaimana saya bisa membantu Anda hari ini?',
   com_nav_auto_scroll: 'Otomatis gulir ke Baru saat Buka',
   com_nav_modular_chat: 'Aktifkan penggantian Endpoint di tengah percakapan',

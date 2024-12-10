@@ -388,9 +388,9 @@ export default {
   com_endpoint_bing_to_enable_sydney: 'Ottaaksesi Sydneyn käyttöön',
   com_endpoint_bing_jailbreak: 'Jailbreak',
   com_endpoint_bing_context_placeholder:
-    'Bing voi käyttää jopa 7000 tokenia keskustelussa viittausympäristönä käytettyä \'kontekstia\' varten. Tarkka raja ei ole tiedossa, mutta yli 7000 tokenia käyttäessä voi esiintyä virheitä.',
+    "Bing voi käyttää jopa 7000 tokenia keskustelussa viittausympäristönä käytettyä 'kontekstia' varten. Tarkka raja ei ole tiedossa, mutta yli 7000 tokenia käyttäessä voi esiintyä virheitä.",
   com_endpoint_bing_system_message_placeholder:
-    'VAROITUS: Tämän ominaisuuden väärinkäyttö saattaa johtaa Bingin KÄYTTÖKIELTOON! Napauta \'Järjestelmäviestiä\', niin saat täydet ohjeet ja oletusviestin (jos jätetty pois), mikä on turvalliseksi katsottu \'Sydney\'-esiasetus.',
+    "VAROITUS: Tämän ominaisuuden väärinkäyttö saattaa johtaa Bingin KÄYTTÖKIELTOON! Napauta 'Järjestelmäviestiä', niin saat täydet ohjeet ja oletusviestin (jos jätetty pois), mikä on turvalliseksi katsottu 'Sydney'-esiasetus.",
   com_endpoint_system_message: 'Järjestelmäviesti',
   com_endpoint_message: 'Vastaanottajana',
   com_endpoint_messages: 'Viestit',
@@ -421,7 +421,7 @@ export default {
   com_endpoint_instructions_assistants_placeholder:
     'Yliajaa Avustajan ohjeet. Tätä voi hyödyntää käytöksen muuttamiseen keskustelukohtaisesti.',
   com_endpoint_prompt_prefix_assistants_placeholder:
-    'Anna lisäohjeita tai kontekstia Avustajan pääohjeiden lisäksi. Set additional instructions or context on top of the Assistant\'s main instructions. Jätetään huomiotta, jos tyhjä.',
+    "Anna lisäohjeita tai kontekstia Avustajan pääohjeiden lisäksi. Set additional instructions or context on top of the Assistant's main instructions. Jätetään huomiotta, jos tyhjä.",
   com_endpoint_custom_name: 'Mukautettu nimi',
   com_endpoint_prompt_prefix: 'Mukautetut ohjeet',
   com_endpoint_prompt_prefix_assistants: 'Lisäohjeet',
@@ -489,7 +489,7 @@ export default {
   com_endpoint_preset_default_item: 'Oletus:',
   com_endpoint_preset_default_none: 'Oletus-esiasetusta ei ole käytössä',
   com_endpoint_preset_title: 'Esiasetus',
-  com_endpoint_preset_saved: 'Tallennettu!',
+  com_ui_saved: 'Tallennettu!',
   com_endpoint_preset_default: 'on nyt oletus-esiasetus.',
   com_endpoint_preset: 'esiasetus',
   com_endpoint_presets: 'esiasetukset',
@@ -552,7 +552,7 @@ export default {
   com_endpoint_config_key_edge_instructions: 'ohjeita',
   com_endpoint_config_key_edge_full_key_string: 'saadaksesi täydet evästemerkkijonot.',
   com_endpoint_config_key_chatgpt:
-    'Saadaksesi pääsytunnuksesi ChatGPT:n \'ilmaisversiota\' varten, kirjaudu',
+    "Saadaksesi pääsytunnuksesi ChatGPT:n 'ilmaisversiota' varten, kirjaudu",
   com_endpoint_config_key_chatgpt_then_visit: 'sitten vieraile',
   com_endpoint_config_key_chatgpt_copy_token: 'Kopioi pääsytunnus.',
   com_endpoint_config_key_google_need_to: 'Sinun täytyy',
@@ -560,7 +560,7 @@ export default {
   com_endpoint_config_key_google_vertex_api: 'API Google Cloud:issa, sitten',
   com_endpoint_config_key_google_service_account: 'Luo Palvelutili (Service Account)',
   com_endpoint_config_key_google_vertex_api_role:
-    'Muista napauttaa \'Create and Continue\' jotta saat ainakin \'Vertex AI User\' -roolin. Lopuksi luo JSON-avain tänne tuotavaksi.',
+    "Muista napauttaa 'Create and Continue' jotta saat ainakin 'Vertex AI User' -roolin. Lopuksi luo JSON-avain tänne tuotavaksi.",
   com_nav_welcome_assistant: 'Ole hyvä ja valitse Avustaja',
   com_nav_welcome_message: 'Miten voin auttaa tänään?',
   com_nav_auto_scroll: 'Vieritä automaattisesti viimeisimpään viestiin keskustelua avatessa',
@@ -671,7 +671,7 @@ export default {
   com_nav_info_save_draft:
     'Jos tämä on päällä, teksti ja liitteet jotka syötät keskusteluun tallennetaan automaattisesti paikallisina luonnoksina. Nämä luonnokset ovat käytettävissä, vaikka välillä lataisit sivun uudestaan tai vaihtaisit toiseen keskusteluun. Luonnokset on tallettettu paikallisesti omalle laitteellesi, ja ne poistetaan, kun viesti on lähetetty.',
   com_nav_info_fork_change_default:
-    '\'Vain näkyvät viestit\' sisältää vain suoran polun valittuun viestiin. \'Sisällytä sivupolut\' lisää polun varrella olevat sivupolut. \'Lisää kaikki tänne/täältä\' sisällyttää kaikki kytköksissä olevat viestit ja sivupolut.',
+    "'Vain näkyvät viestit' sisältää vain suoran polun valittuun viestiin. 'Sisällytä sivupolut' lisää polun varrella olevat sivupolut. 'Lisää kaikki tänne/täältä' sisällyttää kaikki kytköksissä olevat viestit ja sivupolut.",
   com_nav_info_fork_split_target_setting:
     'Jos tämä on päällä, haara syntyy kohdeviestistä keskustelun viimeiseen viestiin valitun haarautumistavan mukaisesti.',
   com_nav_info_user_name_display:
