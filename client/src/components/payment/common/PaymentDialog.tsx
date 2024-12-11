@@ -12,6 +12,7 @@ import { StripePaymentForm } from '../stripe/StripePaymentForm';
 import { StripePaymentProvider } from '../stripe/StripePaymentProvider';
 import { InAppPurchaseForm } from '../capacitor/InAppPurchaseForm';
 import { InAppPurchaseProvider } from '../capacitor/InAppPurchaseProvider';
+import { Capacitor } from '@capacitor/core';
 
 interface PaymentDialogProps {
   open: boolean;
@@ -26,9 +27,10 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
   const queryClient = useQueryClient();
   const [step, setStep] = React.useState<PaymentStep>('select');
   const [selectedTokens, setSelectedTokens] = React.useState<number | null>(null);
+  const isIOS = Capacitor.getPlatform() === 'ios';
   const availablePaymentMethods = React.useMemo(() => getAvailablePaymentMethods(), []);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = React.useState<PaymentMethod | null>(
-    null,
+    isIOS ? PaymentMethod.InAppPurchase : null,
   );
   const [error, setError] = React.useState<string | null>(null);
   const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
@@ -73,12 +75,12 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
   const resetDialog = () => {
     setStep('select');
     setSelectedTokens(null);
-    setSelectedPaymentMethod(null);
+    setSelectedPaymentMethod(isIOS ? PaymentMethod.InAppPurchase : null);
     setError(null);
   };
 
   const handleContinue = () => {
-    if (!selectedTokens || !selectedPaymentMethod) {
+    if (!selectedTokens || (!selectedPaymentMethod && !isIOS)) {
       setError(localize('com_ui_payment_select_required'));
       return;
     }
@@ -148,28 +150,32 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
               ))}
             </div>
 
-            <div className="my-2 flex items-center">
-              <div className="flex-1 border-t border-gray-300 dark:border-gray-700" />
-              <span className="mx-2 text-xs text-gray-600 dark:text-gray-400">
-                {localize('com_ui_payment_options')}
-              </span>
-              <div className="flex-1 border-t border-gray-300 dark:border-gray-700" />
-            </div>
+            {!isIOS && (
+              <>
+                <div className="my-2 flex items-center">
+                  <div className="flex-1 border-t border-gray-300 dark:border-gray-700" />
+                  <span className="mx-2 text-xs text-gray-600 dark:text-gray-400">
+                    {localize('com_ui_payment_options')}
+                  </span>
+                  <div className="flex-1 border-t border-gray-300 dark:border-gray-700" />
+                </div>
 
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {availablePaymentMethods.map((method) => (
-                <PaymentOptionButton
-                  key={method.id}
-                  {...method}
-                  isSelected={selectedPaymentMethod === method.id}
-                  onClick={() => handlePaymentMethodSelect(method.id)}
-                />
-              ))}
-            </div>
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                  {availablePaymentMethods.map((method) => (
+                    <PaymentOptionButton
+                      key={method.id}
+                      {...method}
+                      isSelected={selectedPaymentMethod === method.id}
+                      onClick={() => handlePaymentMethodSelect(method.id)}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
 
             <button
               onClick={handleContinue}
-              disabled={!selectedTokens || !selectedPaymentMethod}
+              disabled={!selectedTokens || (!selectedPaymentMethod && !isIOS)}
               className="focus:bg-blue-650 mt-3 w-full rounded bg-blue-600 p-2 text-sm
                 text-white hover:bg-blue-700 active:bg-blue-800 
                 disabled:cursor-not-allowed disabled:bg-blue-500"
