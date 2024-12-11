@@ -10,6 +10,7 @@ import {
 import AiTokenBurnRates from '~/components/AiTokenBurnRates/AiTokenBurnRates';
 import TermsOfService from '~/components/TermsOfService/TermsOfService';
 import PrivacyPolicy from '~/components/PrivacyPolicy/PrivacyPolicy';
+import GetApp from '~/components/GetApp/GetApp';
 import { AuthContextProvider } from '~/hooks/AuthContext';
 import DeepLinkHandler from '~/components/Tools/DeepLinkHandler';
 import StartupLayout from './Layouts/Startup';
@@ -100,5 +101,9 @@ export const router = createBrowserRouter([
   {
     path: 'token-burn-rates',
     element: <AiTokenBurnRates />,
+  },
+  {
+    path: 'get-app',
+    element: <GetApp />,
   },
 ]);
