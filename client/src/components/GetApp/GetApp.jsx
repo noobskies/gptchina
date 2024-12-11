@@ -6,7 +6,7 @@ const GetApp = () => {
   return (
     <div className="min-h-screen bg-white text-gray-900 antialiased">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-white/40 px-5 py-8 backdrop-blur-lg lg:bg-transparent lg:px-10 lg:backdrop-blur-none">
+      <header className="sticky top-0 z-10 bg-white/40 px-5 py-4 backdrop-blur-lg lg:bg-transparent lg:px-10 lg:backdrop-blur-none">
         <nav className="mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Link to="/" className="flex items-center gap-2">
