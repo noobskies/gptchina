@@ -49,7 +49,7 @@ const configureSocialLogins = (app) => {
     process.env.APPLE_CLIENT_ID &&
     process.env.APPLE_TEAM_ID &&
     process.env.APPLE_KEY_ID &&
-    process.env.APPLE_PRIVATE_KEY_LOCATION
+    process.env.APPLE_PRIVATE_KEY
   ) {
     passport.use(appleLogin());
   }
