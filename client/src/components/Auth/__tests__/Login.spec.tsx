@@ -13,7 +13,7 @@ const mockStartupConfig = {
   isLoading: false,
   isError: false,
   data: {
-    socialLogins: ['google', 'facebook', 'openid', 'github', 'discord'],
+    socialLogins: ['google', 'facebook', 'openid', 'github', 'discord', 'apple'],
     discordLoginEnabled: true,
     facebookLoginEnabled: true,
     githubLoginEnabled: true,

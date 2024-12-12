@@ -7,7 +7,7 @@ import { specsConfigSchema } from './models';
 import { FileSources } from './types/files';
 import { TModelsConfig } from './types';
 
-export const defaultSocialLogins = ['google', 'facebook', 'openid', 'github', 'discord'];
+export const defaultSocialLogins = ['google', 'facebook', 'openid', 'github', 'discord', 'apple'];
 
 export const defaultRetrievalModels = [
   'gpt-4o',

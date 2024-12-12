@@ -8,6 +8,7 @@ const {
   githubLogin,
   discordLogin,
   facebookLogin,
+  appleLogin,
 } = require('~/strategies');
 const { isEnabled } = require('~/server/utils');
 const { logger } = require('~/config');
@@ -42,6 +43,17 @@ const configureSocialLogins = (app) => {
   if (process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET) {
     passport.use(discordLogin());
   }
+
+  // Add Apple OAuth Configuration
+  if (
+    process.env.APPLE_CLIENT_ID &&
+    process.env.APPLE_TEAM_ID &&
+    process.env.APPLE_KEY_ID &&
+    process.env.APPLE_PRIVATE_KEY_LOCATION
+  ) {
+    passport.use(appleLogin());
+  }
+
   if (
     process.env.OPENID_CLIENT_ID &&
     process.env.OPENID_CLIENT_SECRET &&

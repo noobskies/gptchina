@@ -1,10 +1,15 @@
 // client/src/components/Auth/SocialLoginRender.tsx
-import { GoogleIcon, FacebookIcon, OpenIDIcon, GithubIcon, DiscordIcon } from '~/components';
+import {
+  GoogleIcon,
+  FacebookIcon,
+  OpenIDIcon,
+  GithubIcon,
+  DiscordIcon,
+  AppleIcon,
+} from '~/components';
 
 import SocialButton from './SocialButton';
-
 import { useLocalize } from '~/hooks';
-
 import { TStartupConfig } from 'librechat-data-provider';
 
 function SocialLoginRender({
@@ -12,6 +17,7 @@ function SocialLoginRender({
 }: {
   startupConfig: TStartupConfig | null | undefined;
 }) {
+  console.log('startupConfig:', startupConfig);
   const localize = useLocalize();
 
   if (!startupConfig) {
@@ -78,6 +84,18 @@ function SocialLoginRender({
         }
         label={startupConfig.openidLabel}
         id="openid"
+      />
+    ),
+    // Add Apple provider
+    apple: startupConfig?.appleLoginEnabled && (
+      <SocialButton
+        key="apple"
+        enabled={startupConfig.appleLoginEnabled}
+        serverDomain={startupConfig.serverDomain}
+        oauthPath="apple"
+        Icon={AppleIcon}
+        label={localize('com_auth_apple_login')}
+        id="apple"
       />
     ),
   };

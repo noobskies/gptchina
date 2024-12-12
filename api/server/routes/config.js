@@ -41,6 +41,11 @@ router.get('/', async function (req, res) {
     const payload = {
       appTitle: process.env.VITE_APP_AUTHOR || process.env.APP_TITLE || 'Novlisky',
       socialLogins: req.app.locals.socialLogins ?? defaultSocialLogins,
+      appleLoginEnabled:
+        !!process.env.APPLE_CLIENT_ID &&
+        !!process.env.APPLE_TEAM_ID &&
+        !!process.env.APPLE_KEY_ID &&
+        !!process.env.APPLE_PRIVATE_KEY,
       discordLoginEnabled: !!process.env.DISCORD_CLIENT_ID && !!process.env.DISCORD_CLIENT_SECRET,
       facebookLoginEnabled:
         !!process.env.FACEBOOK_CLIENT_ID && !!process.env.FACEBOOK_CLIENT_SECRET,

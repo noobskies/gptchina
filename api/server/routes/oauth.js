@@ -129,6 +129,29 @@ router.get(
   oauthHandler,
 );
 
+/**
+ * Apple Routes
+ */
+router.get(
+  '/apple',
+  passport.authenticate('apple', {
+    scope: ['name', 'email'],
+    session: false,
+  }),
+);
+
+router.post(
+  // Note: Apple uses POST for callback
+  '/apple/callback',
+  passport.authenticate('apple', {
+    failureRedirect: `${domains.client}/login`,
+    failureMessage: true,
+    session: false,
+    scope: ['name', 'email'],
+  }),
+  oauthHandler,
+);
+
 router.get(
   '/discord',
   passport.authenticate('discord', {

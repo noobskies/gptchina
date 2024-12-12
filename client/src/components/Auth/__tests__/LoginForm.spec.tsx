@@ -9,7 +9,7 @@ jest.mock('librechat-data-provider/react-query');
 const mockLogin = jest.fn();
 
 const mockStartupConfig: TStartupConfig = {
-  socialLogins: ['google', 'facebook', 'openid', 'github', 'discord'],
+  socialLogins: ['google', 'facebook', 'openid', 'github', 'discord', 'apple'],
   discordLoginEnabled: true,
   facebookLoginEnabled: true,
   githubLoginEnabled: true,
