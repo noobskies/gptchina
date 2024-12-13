@@ -24,9 +24,18 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   const platform = Capacitor.getPlatform();
 
   useEffect(() => {
+    alert(`Button mounted:
+      id: ${id}
+      isNative: ${isNative}
+      platform: ${platform}
+    `);
+  }, [id]);
+
+  useEffect(() => {
     const initializeSocialAuth = async () => {
       if (!isInitialized && isNative) {
         try {
+          alert(`Initializing ${id} auth`);
           const config: InitializeOptions = {
             google:
               platform === 'android'
@@ -95,13 +104,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         throw new Error('No ID token received');
       }
 
-      // Use specific endpoint for Google
-      const endpoint =
-        id === 'google'
-          ? `${serverDomain}/oauth/google/mobile`
-          : `${serverDomain}/oauth/${id}/mobile`;
-
-      const apiResponse = await fetch(endpoint, {
+      const apiResponse = await fetch(`${serverDomain}/oauth/${id}/mobile`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -109,7 +112,6 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         body: JSON.stringify({
           token: result.idToken,
           profile: result.profile,
-          raw: result,
         }),
         credentials: 'include',
       });
