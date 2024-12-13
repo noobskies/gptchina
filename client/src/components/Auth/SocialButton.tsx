@@ -71,7 +71,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       const { result } = await SocialLogin.login({
         provider: id as 'apple' | 'google',
         options: {
-          scopes: ['email', 'profile'],
+          scopes: id === 'apple' ? ['email', 'name'] : ['email', 'profile'],
         },
       });
 
