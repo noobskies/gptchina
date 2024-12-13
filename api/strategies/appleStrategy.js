@@ -3,7 +3,7 @@ const socialLogin = require('./socialLogin');
 const { logger } = require('~/config');
 
 const getProfileDetails = (profile, idToken) => {
-  console.log('getProfileDetails called with:', {
+  logger.info('getProfileDetails called with:', {
     profile: JSON.stringify(profile, null, 2),
     idToken: idToken ? 'present' : 'missing',
   });
@@ -24,7 +24,7 @@ const getProfileDetails = (profile, idToken) => {
   const decodedIdToken = idToken
     ? JSON.parse(Buffer.from(idToken.split('.')[1], 'base64').toString())
     : {};
-  console.log('Decoded ID token:', JSON.stringify(decodedIdToken, null, 2));
+  logger.info('Decoded ID token:', JSON.stringify(decodedIdToken, null, 2));
 
   const appleId = decodedIdToken.sub;
   const email = decodedIdToken.email || `private.${appleId}@privaterelay.appleid.com`;
@@ -42,11 +42,16 @@ const getProfileDetails = (profile, idToken) => {
     emailVerified: true,
   };
 
-  console.log('Constructed profile details:', JSON.stringify(profileDetails, null, 2));
+  logger.info('Constructed profile details:', JSON.stringify(profileDetails, null, 2));
   return profileDetails;
 };
 
 const appleLogin = socialLogin('apple', getProfileDetails);
+
+const handleMobileToken = async (token) => {
+  const userProfile = getProfileDetails({}, token);
+  return await socialLogin('apple', () => userProfile)(null, null, userProfile);
+};
 
 module.exports = () =>
   new AppleStrategy(
@@ -61,7 +66,7 @@ module.exports = () =>
     },
     async (req, accessToken, refreshToken, idToken, profile, cb) => {
       try {
-        console.log('Apple OAuth Callback Data:', {
+        logger.info('Apple OAuth Callback Data:', {
           hasAccessToken: !!accessToken,
           hasRefreshToken: !!refreshToken,
           hasIdToken: !!idToken,
@@ -73,15 +78,17 @@ module.exports = () =>
         const userProfile = getProfileDetails(profile, idToken);
 
         if (!userProfile.id) {
-          console.log('No Apple ID found in token');
+          logger.error('No Apple ID found in token');
           throw new Error('No Apple ID found in token');
         }
 
         return appleLogin(accessToken, refreshToken, userProfile, cb);
       } catch (error) {
-        console.log('Error in Apple Strategy:', error);
-        console.log('Error Stack:', error.stack);
+        logger.error('Error in Apple Strategy:', error);
+        logger.error('Error Stack:', error.stack);
         return cb(error);
       }
     },
   );
+
+module.exports.handleMobileToken = handleMobileToken;

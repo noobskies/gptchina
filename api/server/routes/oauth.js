@@ -3,7 +3,8 @@ const passport = require('passport');
 const { loginLimiter, checkBan, checkDomainAllowed } = require('~/server/middleware');
 const { setAuthTokens } = require('~/server/services/AuthService');
 const { logger } = require('~/config');
-const { handleMobileToken } = require('~/strategies/googleStrategy');
+const { handleMobileToken: handleGoogleMobileToken } = require('~/strategies/googleStrategy');
+const { handleMobileToken: handleAppleMobileToken } = require('~/strategies/appleStrategy');
 
 const router = express.Router();
 
@@ -37,7 +38,29 @@ router.post('/google/mobile', async (req, res) => {
     }
 
     try {
-      const { user, created } = await handleMobileToken(token);
+      const { user, created } = await handleGoogleMobileToken(token);
+      req.user = user;
+      await oauthHandler(req, res);
+    } catch (error) {
+      logger.error('Error in mobile token verification:', error);
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+  } catch (err) {
+    logger.error('Error in mobile authentication:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+router.post('/apple/mobile', async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ error: 'Token is required' });
+    }
+
+    try {
+      const { user, created } = await handleAppleMobileToken(token);
       req.user = user;
       await oauthHandler(req, res);
     } catch (error) {
