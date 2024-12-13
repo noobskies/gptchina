@@ -28,7 +28,6 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       if (!isInitialized && isNative) {
         try {
           const config: InitializeOptions = {
-            // Google config
             google:
               platform === 'android'
                 ? {
@@ -39,36 +38,46 @@ const SocialButton: React.FC<SocialButtonProps> = ({
                     iOSClientId:
                       '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
                   },
-            // Apple config
             apple:
               platform === 'android'
                 ? {
                     clientId: 'io.novlisky.signin',
                     redirectUrl: 'https://novlisky.io/oauth/apple/callback',
+                    scope: 'email name',
+                    responseType: 'code id_token',
+                    responseMode: 'form_post',
+                    state: true,
                   }
                 : {
                     clientId: 'io.novlisky.signin',
+                    scope: 'email name',
+                    responseType: 'code id_token',
+                    responseMode: 'form_post',
+                    state: true,
                   },
           };
 
           await SocialLogin.initialize(config);
           setIsInitialized(true);
+          alert(`${id} auth initialized`);
         } catch (error) {
-          console.error('Failed to initialize Social Auth:', error);
+          alert(`Failed to initialize ${id} auth: ${error}`);
         }
       }
     };
 
     initializeSocialAuth();
-  }, [isInitialized, platform]);
+  }, [isInitialized, platform, id]);
 
   const handleNativeSocialLogin = useCallback(async () => {
+    alert(`Native ${id} login clicked`);
     try {
       if (!isInitialized) {
         alert('Social login not initialized');
         return;
       }
 
+      alert('Attempting social login...');
       const response = await SocialLogin.login({
         provider: id as 'apple' | 'google',
         options: {
@@ -76,7 +85,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         },
       });
 
-      alert(`Social Login Response: ${JSON.stringify(response, null, 2)}`);
+      alert(`Response received: ${JSON.stringify(response)}`);
 
       const { result } = response;
       alert(`Social Login Result: ${JSON.stringify(result, null, 2)}`);
@@ -109,9 +118,9 @@ const SocialButton: React.FC<SocialButtonProps> = ({
 
       window.location.href = '/';
     } catch (error) {
-      alert(`Native ${id} login error: ${error.message}`);
+      alert(`Error during ${id} login: ${error}`);
     }
-  }, [serverDomain, isInitialized, id]);
+  }, [id, isInitialized, serverDomain]);
 
   if (!enabled) {
     return null;
@@ -128,13 +137,12 @@ const SocialButton: React.FC<SocialButtonProps> = ({
           data-testid={`${id}-native`}
         >
           <Icon />
-          <p>{label}</p>
+          <p>{label} (Native)</p>
         </button>
       </div>
     );
   }
 
-  // Default web version
   return (
     <div className="mt-2 flex gap-x-2">
       <a
@@ -144,7 +152,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         data-testid={id}
       >
         <Icon />
-        <p>{label}</p>
+        <p>{label} (Web)</p>
       </a>
     </div>
   );
