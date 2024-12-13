@@ -53,22 +53,31 @@ router.post('/google/mobile', async (req, res) => {
 
 router.post('/apple/mobile', async (req, res) => {
   try {
-    const { token } = req.body;
+    const { token, profile, raw } = req.body;
+    console.log('Apple mobile login request body:', JSON.stringify(req.body, null, 2));
 
     if (!token) {
+      console.log('No token provided in request');
       return res.status(400).json({ error: 'Token is required' });
     }
 
     try {
+      // Log the token we're trying to decode
+      console.log('Attempting to decode token:', token);
+
       const { user, created } = await handleAppleMobileToken(token);
+      console.log('User created/found:', { user, created });
+
       req.user = user;
       await oauthHandler(req, res);
     } catch (error) {
-      logger.error('Error in mobile token verification:', error);
+      console.log('Error in mobile token verification:', error);
+      console.log('Error details:', error.stack);
       return res.status(401).json({ error: 'Invalid token' });
     }
   } catch (err) {
-    logger.error('Error in mobile authentication:', err);
+    console.log('Error in mobile authentication:', err);
+    console.log('Error stack:', err.stack);
     res.status(500).json({ error: 'Server error' });
   }
 });

@@ -65,21 +65,28 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   const handleNativeSocialLogin = useCallback(async () => {
     try {
       if (!isInitialized) {
+        alert('Social login not initialized');
         return;
       }
 
-      const { result } = await SocialLogin.login({
+      const response = await SocialLogin.login({
         provider: id as 'apple' | 'google',
         options: {
           scopes: id === 'apple' ? ['email', 'name'] : ['email', 'profile'],
         },
       });
 
+      alert(`Social Login Response: ${JSON.stringify(response, null, 2)}`);
+
+      const { result } = response;
+      alert(`Social Login Result: ${JSON.stringify(result, null, 2)}`);
+
       if (!result?.idToken) {
+        alert(`No ID token in result: ${JSON.stringify(result, null, 2)}`);
         throw new Error('No ID token received');
       }
 
-      const response = await fetch(`${serverDomain}/oauth/${id}/mobile`, {
+      const apiResponse = await fetch(`${serverDomain}/oauth/${id}/mobile`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -87,18 +94,22 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         body: JSON.stringify({
           token: result.idToken,
           profile: result.profile,
+          raw: result,
         }),
         credentials: 'include',
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
+      const responseData = await apiResponse.clone().json();
+      alert(`API Response: ${JSON.stringify(responseData, null, 2)}`);
+
+      if (!apiResponse.ok) {
+        const errorData = await apiResponse.json();
         throw new Error(errorData.error || 'Authentication failed');
       }
 
       window.location.href = '/';
     } catch (error) {
-      console.error(`Native ${id} login error:`, error);
+      alert(`Native ${id} login error: ${error.message}`);
     }
   }, [serverDomain, isInitialized, id]);
 
