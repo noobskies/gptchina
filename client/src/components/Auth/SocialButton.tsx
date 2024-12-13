@@ -24,18 +24,10 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   const platform = Capacitor.getPlatform();
 
   useEffect(() => {
-    alert(`Button mounted:
-      id: ${id}
-      isNative: ${isNative}
-      platform: ${platform}
-    `);
-  }, [id]);
-
-  useEffect(() => {
     const initializeSocialAuth = async () => {
       if (!isInitialized && isNative) {
         try {
-          alert(`Initializing ${id} auth`);
+          // alert(`Initializing ${id} auth`);
           const config: InitializeOptions = {
             google:
               platform === 'android'
@@ -68,9 +60,9 @@ const SocialButton: React.FC<SocialButtonProps> = ({
 
           await SocialLogin.initialize(config);
           setIsInitialized(true);
-          alert(`${id} auth initialized`);
+          // alert(`${id} auth initialized`);
         } catch (error) {
-          alert(`Failed to initialize ${id} auth: ${error}`);
+          // alert(`Failed to initialize ${id} auth: ${error}`);
         }
       }
     };
