@@ -8,6 +8,18 @@ const getProfileDetails = (profile, idToken) => {
     idToken: idToken ? 'present' : 'missing',
   });
 
+  // If profile already has an id, use that instead of decoding token again
+  if (profile?.id) {
+    return {
+      email: profile.email,
+      id: profile.id,
+      avatarUrl: '',
+      username: profile.username,
+      name: profile.name,
+      emailVerified: true,
+    };
+  }
+
   // Extract data from idToken which contains the user info
   const decodedIdToken = idToken
     ? JSON.parse(Buffer.from(idToken.split('.')[1], 'base64').toString())
@@ -17,7 +29,9 @@ const getProfileDetails = (profile, idToken) => {
   const appleId = decodedIdToken.sub;
   const email = decodedIdToken.email || `private.${appleId}@privaterelay.appleid.com`;
 
-  const username = `apple_${appleId}`;
+  // Create shorter username using first part of the sub
+  const shortId = appleId ? appleId.split('.')[0] : 'unknown';
+  const username = `apple_${shortId}`;
 
   const profileDetails = {
     email,
@@ -55,7 +69,7 @@ module.exports = () =>
           body: JSON.stringify(req.body, null, 2),
         });
 
-        // We pass the idToken to getProfileDetails since the profile is empty
+        // Only get profile details once
         const userProfile = getProfileDetails(profile, idToken);
 
         if (!userProfile.id) {
