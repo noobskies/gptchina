@@ -1,18 +1,21 @@
-// api/strategies/appleStrategy.js
 const { Strategy: AppleStrategy } = require('passport-apple');
 const socialLogin = require('./socialLogin');
 const { logger } = require('~/config');
 
-const getProfileDetails = (profile) => {
-  console.log('Apple profile received:', JSON.stringify(profile, null, 2));
+const getProfileDetails = (profile, idToken) => {
+  console.log('getProfileDetails called with:', {
+    profile: JSON.stringify(profile, null, 2),
+    idToken: idToken ? 'present' : 'missing',
+  });
 
-  const appleId = profile.id || profile.sub;
-  console.log('Apple ID extracted:', appleId);
+  // Extract data from idToken which contains the user info
+  const decodedIdToken = idToken
+    ? JSON.parse(Buffer.from(idToken.split('.')[1], 'base64').toString())
+    : {};
+  console.log('Decoded ID token:', JSON.stringify(decodedIdToken, null, 2));
 
-  const email =
-    profile.email ||
-    (profile._json && profile._json.email) ||
-    `private.${appleId}@privaterelay.appleid.com`;
+  const appleId = decodedIdToken.sub;
+  const email = decodedIdToken.email || `private.${appleId}@privaterelay.appleid.com`;
 
   const username = `apple_${appleId}`;
 
@@ -52,12 +55,15 @@ module.exports = () =>
           body: JSON.stringify(req.body, null, 2),
         });
 
-        if (!profile) {
-          console.log('No profile received from Apple');
-          throw new Error('No profile received from Apple');
+        // We pass the idToken to getProfileDetails since the profile is empty
+        const userProfile = getProfileDetails(profile, idToken);
+
+        if (!userProfile.id) {
+          console.log('No Apple ID found in token');
+          throw new Error('No Apple ID found in token');
         }
 
-        return appleLogin(accessToken, refreshToken, profile, cb);
+        return appleLogin(accessToken, refreshToken, userProfile, cb);
       } catch (error) {
         console.log('Error in Apple Strategy:', error);
         console.log('Error Stack:', error.stack);
