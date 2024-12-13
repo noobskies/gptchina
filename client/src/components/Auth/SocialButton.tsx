@@ -95,7 +95,13 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         throw new Error('No ID token received');
       }
 
-      const apiResponse = await fetch(`${serverDomain}/oauth/${id}/mobile`, {
+      // Use specific endpoint for Google
+      const endpoint =
+        id === 'google'
+          ? `${serverDomain}/oauth/google/mobile`
+          : `${serverDomain}/oauth/${id}/mobile`;
+
+      const apiResponse = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
