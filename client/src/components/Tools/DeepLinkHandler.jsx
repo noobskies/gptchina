@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
@@ -16,66 +16,47 @@ const DeepLinkHandler = () => {
 
       try {
         const urlObj = new URL(url);
-        const path = urlObj.pathname;
-        const searchParams = new URLSearchParams(urlObj.search);
+        alert(`Path: ${urlObj.pathname}`);
 
-        alert(`Path: ${path}\nSearch params: ${urlObj.search}`);
-
-        // Try to close any open in-app browser
+        // Try to close any open browser
         try {
           await Browser.close();
         } catch (err) {
-          alert(`Error closing browser: ${err.message}`);
+          console.warn('Error closing browser:', err);
         }
 
-        // Handle Apple OAuth callback
-        if (path.includes('/oauth/apple/callback')) {
-          alert('Apple callback detected');
-          const code = searchParams.get('code');
-          const state = searchParams.get('state');
-
-          alert(`Apple code: ${code}\nState: ${state}`);
-
-          if (code) {
-            try {
-              alert('Attempting to handle Apple callback');
-              await SocialLogin.handleCallback({
-                url: url,
-                provider: 'apple',
-              });
-              alert('Apple callback handled successfully');
-              navigate('/');
-            } catch (error) {
-              alert(`Error handling Apple callback: ${error.message}`);
-            }
+        // Handle Apple Sign In callback
+        if (urlObj.pathname.includes('/oauth/apple/callback')) {
+          alert('Handling Apple callback');
+          try {
+            await SocialLogin.handleCallback({
+              url,
+              provider: 'apple',
+            });
+            alert('Apple callback handled successfully');
+            navigate('/c/new');
+          } catch (error) {
+            alert(`Error handling Apple callback: ${error.message || String(error)}`);
           }
         }
-        // Handle Apple Sign In success
-        else if (path.includes('/oauth/login-success')) {
+        // Handle success redirect
+        else if (urlObj.pathname.includes('/oauth/login-success')) {
           alert('Login success detected');
-          const token = searchParams.get('token');
-          alert(`Token: ${token}`);
           navigate('/');
-        }
-        // Your existing handlers
-        else if (path.includes('/stripe-success')) {
-          alert('Stripe success detected');
-          window.location.reload();
         } else {
-          alert(`Unhandled path: ${path}`);
-          navigate('/');
+          alert(`Unknown path: ${urlObj.pathname}`);
         }
       } catch (err) {
-        alert(`Error handling URL: ${err.message}\nURL was: ${url}`);
+        alert(`URL handling error: ${err.message || String(err)}`);
       }
     };
 
     const handler = CapacitorApp.addListener('appUrlOpen', (data) => {
-      alert(`App URL opened: ${data.url}`);
+      alert(`App opened with URL: ${data.url}`);
       handleUrl(data.url);
     });
 
-    // Handle initial URL if app was opened via deep link
+    // Handle initial URL
     CapacitorApp.getLaunchUrl().then((result) => {
       if (result?.url) {
         alert(`Launch URL: ${result.url}`);
