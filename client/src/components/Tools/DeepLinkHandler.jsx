@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
+import { SocialLogin } from '@capgo/capacitor-social-login';
 
 const DeepLinkHandler = () => {
   const navigate = useNavigate();
@@ -18,38 +19,58 @@ const DeepLinkHandler = () => {
         const path = urlObj.pathname;
         const searchParams = new URLSearchParams(urlObj.search);
 
-        console.log('Parsed URL:', { path, searchParams: Object.fromEntries(searchParams) });
+        alert('Parsed URL:', { path, searchParams: Object.fromEntries(searchParams) });
 
-        // Close any in-app browser if needed
+        // Try to close any open in-app browser
         try {
           await Browser.close();
         } catch (err) {
           console.warn('Error closing browser:', err);
         }
 
-        // Now handle the URL in a general way:
-        // For example, if your app defines certain routes, you can map them:
-        if (path.includes('/stripe-success')) {
+        // Handle Apple OAuth callback
+        if (path.includes('/oauth/apple/callback')) {
+          alert('Handling Apple OAuth callback');
+          const code = searchParams.get('code');
+          const state = searchParams.get('state');
+
+          if (code) {
+            try {
+              // Let the SocialLogin plugin handle the callback
+              await SocialLogin.handleCallback({
+                url: url,
+                provider: 'apple',
+              });
+              alert('Successfully handled Apple callback');
+              navigate('/');
+            } catch (error) {
+              alert('Error handling Apple callback:', error);
+            }
+          }
+        }
+        // Handle Apple Sign In success
+        else if (path.includes('/oauth/login-success')) {
+          alert('Apple Sign In success detected');
+          navigate('/');
+        }
+        // Your existing handlers
+        else if (path.includes('/stripe-success')) {
           console.log('Stripe success detected, reloading app...');
           window.location.reload();
         } else if (path.includes('/stripe-cancel')) {
-          console.log('Stripe cancel detected, just log or handle gracefully.');
-          // Navigate or update state within the app as needed.
-        } else if (path.includes('/login-success')) {
-          console.log('Login success path detected, navigating to home screen.');
-          navigate('/'); // Navigate to your home screen or a specific route in your app
+          console.log('Stripe cancel detected');
         } else {
-          // Catch-all: If the path doesn't match anything you specifically check for
-          // you could log it or navigate to a default screen
-          console.log('No specific handler for this path, navigating to home.');
+          console.log('No specific handler for path:', path);
           navigate('/');
         }
       } catch (err) {
         console.error('Deep link handling error:', err);
+        console.error('Error details:', err.message);
       }
     };
 
     const handler = CapacitorApp.addListener('appUrlOpen', (data) => {
+      console.log('App URL opened:', data.url);
       handleUrl(data.url);
     });
 
