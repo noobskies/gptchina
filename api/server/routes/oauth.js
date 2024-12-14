@@ -190,10 +190,12 @@ router.post('/apple/mobile', async (req, res) => {
       await setAuthTokens(user._id, res);
       logger.info('Auth tokens set');
 
-      // Redirect back to apple callback
-      const redirectUrl = `https://novlisky.io/oauth/apple/callback?userId=${user._id}`;
-      logger.info('Redirecting to app:', redirectUrl);
-      return res.redirect(redirectUrl);
+      // Return success JSON with redirect URL
+      return res.json({
+        success: true,
+        redirect: `https://novlisky.io/mobile-success?userId=${user._id}`,
+        user,
+      });
     } catch (error) {
       logger.error('Error in Apple mobile token verification:', error);
       return res.status(401).json({ error: 'Invalid token' });

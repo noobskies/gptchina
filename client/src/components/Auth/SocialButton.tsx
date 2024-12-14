@@ -75,8 +75,6 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   const handleNativeLogin = useCallback(async () => {
     try {
       console.log('Starting login for:', id);
-      alert('Starting login process...');
-
       if (!isInitialized) {
         console.log('Not initialized yet, returning');
         return;
@@ -91,11 +89,6 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       });
 
       console.log('Login result:', loginResult);
-      alert(
-        `Got login result: ${JSON.stringify(
-          loginResult.result.idToken ? 'token present' : 'no token',
-        )}`,
-      );
 
       if (!loginResult?.result?.idToken) {
         throw new Error('No ID token received');
@@ -119,26 +112,14 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       }
 
       const data = await response.json();
-      alert(`Got server response: ${JSON.stringify(data)}`);
-
-      if (data.success && data.user?._id) {
-        const redirectUrl = `https://novlisky.io/oauth/login-success?userId=${data.user._id}`;
-        alert(`Redirecting to: ${redirectUrl}`);
-
-        // Try using window.location.replace instead of href
-        window.location.replace(redirectUrl);
-
-        // If that doesn't work, we can try forcing the URL to have all components:
-        // const fullUrl = `https://novlisky.io/oauth/login-success?userId=${data.user._id}&time=${Date.now()}`;
-        // window.location.href = fullUrl;
+      if (data.success && data.redirect) {
+        console.log('Auth successful, redirecting to:', data.redirect);
+        window.location.href = data.redirect;
       } else {
-        console.log('No user ID found in response');
-        alert('No user ID in response');
         window.location.href = '/';
       }
     } catch (error) {
       console.error(`Native ${id} login error:`, error);
-      alert(`Error during login: ${error.message}`);
     }
   }, [serverDomain, isInitialized, id]);
 
