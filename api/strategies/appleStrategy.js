@@ -16,6 +16,25 @@ const getProfileDetails = (profile) => ({
 
 const appleLogin = socialLogin('apple', getProfileDetails);
 
+const createProfileFromToken = (decodedToken) => {
+  const shortId = decodedToken.sub.substring(0, 6);
+  return {
+    emails: [
+      {
+        value: decodedToken.email,
+        verified: decodedToken.email_verified,
+      },
+    ],
+    id: decodedToken.sub,
+    photos: [{ value: '' }],
+    name: {
+      givenName: `Apple_${shortId}`,
+      familyName: '',
+    },
+    provider: 'apple',
+  };
+};
+
 const verifyMobileToken = async (token) => {
   try {
     const decodedToken = jwt.decode(token);
@@ -25,22 +44,7 @@ const verifyMobileToken = async (token) => {
       throw new Error('Invalid token or missing sub');
     }
 
-    const shortId = decodedToken.sub.substring(0, 6);
-    return {
-      emails: [
-        {
-          value: decodedToken.email,
-          verified: decodedToken.email_verified,
-        },
-      ],
-      id: decodedToken.sub,
-      photos: [{ value: '' }],
-      name: {
-        givenName: `Apple_${shortId}`,
-        familyName: '',
-      },
-      provider: 'apple',
-    };
+    return createProfileFromToken(decodedToken);
   } catch (error) {
     console.error('Apple token verification error:', error);
     throw error;
@@ -84,30 +88,27 @@ const strategy = () =>
       scope: ['name', 'email'],
       passReqToCallback: true,
     },
-    (req, accessToken, refreshToken, idToken, profile, cb) => {
-      console.log('Apple callback called with req:', req);
-      console.log('Apple callback called with profile:', JSON.stringify(profile, null, 2));
-      console.log('Apple callback called with idToken:', idToken);
-      console.log('Apple callback called with accessToken:', accessToken);
-      if (idToken) {
-        const decodedToken = jwt.decode(idToken);
-        profile = {
-          emails: [
-            {
-              value: decodedToken.email,
-              verified: decodedToken.email_verified,
-            },
-          ],
-          id: decodedToken.sub,
-          photos: [{ value: '' }],
-          name: {
-            givenName: `Apple_${decodedToken.sub.substring(0, 6)}`,
-            familyName: '',
-          },
-          provider: 'apple',
-        };
+    async (req, accessToken, refreshToken, idToken, profile, cb) => {
+      try {
+        console.log('Apple callback called with profile:', JSON.stringify(profile, null, 2));
+        console.log('Apple callback called with idToken:', idToken);
+        console.log('Apple callback called with accessToken:', accessToken);
+
+        let userProfile;
+        if (idToken) {
+          const decodedToken = jwt.decode(idToken);
+          console.log('Decoded ID token:', JSON.stringify(decodedToken, null, 2));
+          userProfile = createProfileFromToken(decodedToken);
+          console.log('Created profile from token:', JSON.stringify(userProfile, null, 2));
+        } else {
+          throw new Error('No ID token provided');
+        }
+
+        return appleLogin(accessToken, refreshToken, userProfile, cb);
+      } catch (error) {
+        console.error('Error in Apple Strategy:', error);
+        return cb(error);
       }
-      return appleLogin(accessToken, refreshToken, profile, cb);
     },
   );
 
