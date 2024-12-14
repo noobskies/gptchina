@@ -109,12 +109,16 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         throw new Error(errorData.error || 'Authentication failed');
       }
 
-      window.location.href = '/';
+      const data = await response.json();
+      if (data.success && data.redirect) {
+        console.log('Redirecting to:', data.redirect);
+        window.location.href = data.redirect;
+      } else {
+        console.log('No redirect URL found in response');
+        window.location.href = '/';
+      }
     } catch (error) {
       console.error(`Native ${id} login error:`, error);
-      if (error instanceof Error) {
-        console.error('Error details:', error.message);
-      }
     }
   }, [serverDomain, isInitialized, id]);
 

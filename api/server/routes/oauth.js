@@ -54,15 +54,28 @@ router.post('/google/mobile', async (req, res) => {
 router.post('/apple/mobile', async (req, res) => {
   try {
     const { token } = req.body;
+    logger.info('Received Apple mobile auth request');
 
     if (!token) {
+      logger.error('No token provided');
       return res.status(400).json({ error: 'Token is required' });
     }
 
     try {
       const { user, created } = await handleAppleToken(token);
-      req.user = user;
-      await oauthHandler(req, res);
+      logger.info('Apple token handled successfully');
+
+      await setAuthTokens(user._id, res);
+      logger.info('Auth tokens set');
+
+      // Redirect back to the app with success parameters
+      const redirectUrl = `https://novlisky.io/oauth/login-success?userId=${user._id}`;
+      logger.info('Redirecting to app:', redirectUrl);
+      return res.json({
+        success: true,
+        redirect: redirectUrl,
+        user,
+      });
     } catch (error) {
       logger.error('Error in Apple mobile token verification:', error);
       return res.status(401).json({ error: 'Invalid token' });
