@@ -47,10 +47,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
           } else if (id === 'apple') {
             config = {
               apple: {
-                clientId:
-                  platform === 'android'
-                    ? 'io.novlisky.signin' // Replace with your Apple Service ID
-                    : process.env.NEXT_PUBLIC_APPLE_CLIENT_ID,
+                clientId: `io.novlisky.signin`,
                 redirectUrl:
                   platform === 'android' ? `${serverDomain}/oauth/apple/callback` : undefined,
               },
