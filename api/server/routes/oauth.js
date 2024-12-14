@@ -4,6 +4,7 @@ const { loginLimiter, checkBan, checkDomainAllowed } = require('~/server/middlew
 const { setAuthTokens } = require('~/server/services/AuthService');
 const { logger } = require('~/config');
 const { handleMobileToken } = require('~/strategies/googleStrategy');
+const { handleAppleMobileToken } = require('~/strategies/appleStrategy');
 
 const router = express.Router();
 
