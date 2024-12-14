@@ -49,7 +49,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
               apple: {
                 clientId:
                   platform === 'android'
-                    ? 'io.novlisky.twa' // Use your Apple Service ID here
+                    ? 'io.novlisky.twa' // Replace with your Apple Service ID
                     : process.env.NEXT_PUBLIC_APPLE_CLIENT_ID,
                 redirectUrl:
                   platform === 'android' ? `${serverDomain}/oauth/apple/callback` : undefined,
@@ -81,10 +81,11 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         return;
       }
 
+      console.log(`Attempting ${id} login...`);
       const loginResult = await SocialLogin.login({
         provider: id as 'google' | 'apple',
         options: {
-          scopes: ['email', 'profile'],
+          scopes: id === 'apple' ? ['name', 'email'] : ['email', 'profile'],
         },
       });
 
