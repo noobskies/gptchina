@@ -21,31 +21,42 @@ const SocialButton: React.FC<SocialButtonProps> = ({
 }) => {
   const [isInitialized, setIsInitialized] = useState(false);
   const isNative = Capacitor.isNativePlatform();
+  const platform = Capacitor.getPlatform();
 
   useEffect(() => {
     const initializeSocialAuth = async () => {
       if (!isInitialized && isNative) {
         try {
-          const platform = Capacitor.getPlatform();
-          const config: InitializeOptions = {
-            google:
-              platform === 'android'
-                ? {
-                    webClientId:
-                      '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
-                  }
-                : {
-                    iOSClientId:
-                      '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
-                  },
-            apple: {
-              clientId: process.env.APPLE_CLIENT_ID || '',
-              redirectUri: `${process.env.DOMAIN_SERVER}${process.env.APPLE_CALLBACK_URL}`,
-              scope: 'name email',
-            },
-          };
+          console.log('Initializing social auth for:', id);
 
+          let config: InitializeOptions = {};
+
+          if (id === 'google') {
+            config = {
+              google:
+                platform === 'android'
+                  ? {
+                      webClientId:
+                        '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
+                    }
+                  : {
+                      iOSClientId:
+                        '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
+                    },
+            };
+          } else if (id === 'apple') {
+            config = {
+              apple: {
+                clientId: process.env.NEXT_PUBLIC_APPLE_CLIENT_ID || '',
+                redirectUrl:
+                  platform === 'android' ? `${serverDomain}/oauth/apple/callback` : undefined, // undefined for iOS as it's not needed
+              },
+            };
+          }
+
+          console.log('Config:', config);
           await SocialLogin.initialize(config);
+          console.log('Social auth initialized successfully');
           setIsInitialized(true);
         } catch (error) {
           console.error('Failed to initialize Social Auth:', error);
@@ -54,22 +65,25 @@ const SocialButton: React.FC<SocialButtonProps> = ({
     };
 
     initializeSocialAuth();
-  }, [isInitialized]);
+  }, [isInitialized, id, platform, serverDomain]);
 
   const handleNativeLogin = useCallback(async () => {
     try {
+      console.log('Starting login for:', id);
       if (!isInitialized) {
         return;
       }
 
-      const { result } = await SocialLogin.login({
+      const loginResult = await SocialLogin.login({
         provider: id as 'google' | 'apple',
         options: {
           scopes: ['email', 'profile'],
         },
       });
 
-      if (!result?.idToken) {
+      console.log('Login result:', loginResult);
+
+      if (!loginResult?.result?.idToken) {
         throw new Error('No ID token received');
       }
 
@@ -79,8 +93,8 @@ const SocialButton: React.FC<SocialButtonProps> = ({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          token: result.idToken,
-          profile: result.profile,
+          token: loginResult.result.idToken,
+          profile: loginResult.result.profile,
         }),
         credentials: 'include',
       });
