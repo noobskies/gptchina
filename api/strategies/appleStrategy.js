@@ -2,8 +2,14 @@ const { Strategy: AppleStrategy } = require('passport-apple');
 const socialLogin = require('./socialLogin');
 const { logger } = require('~/config');
 
+/**
+ * Extracts and normalizes profile information from Apple authentication
+ * @param {Object} profile - The profile object from Apple
+ * @param {string} idToken - The ID token from Apple (optional)
+ * @returns {Object} Normalized user profile information
+ */
 const getProfileDetails = (profile, idToken) => {
-  console.log('getProfileDetails called with:', {
+  logger.debug('getProfileDetails called with:', {
     profile: JSON.stringify(profile, null, 2),
     idToken: idToken ? 'present' : 'missing',
   });
@@ -14,8 +20,8 @@ const getProfileDetails = (profile, idToken) => {
       email: profile.email,
       id: profile.id,
       avatarUrl: '',
-      username: profile.username,
-      name: profile.name,
+      username: profile.username || `apple_${profile.id.split('.')[0]}`,
+      name: profile.name || `apple_${profile.id.split('.')[0]}`,
       emailVerified: true,
     };
   }
@@ -24,7 +30,7 @@ const getProfileDetails = (profile, idToken) => {
   const decodedIdToken = idToken
     ? JSON.parse(Buffer.from(idToken.split('.')[1], 'base64').toString())
     : {};
-  console.log('Decoded ID token:', JSON.stringify(decodedIdToken, null, 2));
+  logger.debug('Decoded ID token:', JSON.stringify(decodedIdToken, null, 2));
 
   const appleId = decodedIdToken.sub;
   const email = decodedIdToken.email || `private.${appleId}@privaterelay.appleid.com`;
@@ -42,13 +48,63 @@ const getProfileDetails = (profile, idToken) => {
     emailVerified: true,
   };
 
-  console.log('Constructed profile details:', JSON.stringify(profileDetails, null, 2));
+  logger.debug('Constructed profile details:', JSON.stringify(profileDetails, null, 2));
   return profileDetails;
 };
 
+/**
+ * Handles Apple mobile token verification and user creation/lookup
+ * @param {string} token - The ID token from Apple mobile login
+ * @returns {Promise<Object>} Object containing the user
+ */
+const handleAppleMobileToken = async (token) => {
+  try {
+    if (!token) {
+      throw new Error('Token is required');
+    }
+
+    // Verify and decode the Apple ID token
+    const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    logger.debug('Decoded mobile token:', JSON.stringify(decodedToken, null, 2));
+
+    const appleId = decodedToken.sub;
+    if (!appleId) {
+      throw new Error('No Apple ID found in token');
+    }
+
+    // Create profile using existing function
+    const userProfile = getProfileDetails(
+      {
+        id: appleId,
+        email: decodedToken.email,
+        name: decodedToken.name,
+      },
+      token,
+    );
+
+    // Use the existing socialLogin handler
+    const user = await new Promise((resolve, reject) => {
+      appleLogin(null, null, userProfile, (err, user) => {
+        if (err) reject(err);
+        else resolve(user);
+      });
+    });
+
+    return { user };
+  } catch (error) {
+    logger.error('Error handling Apple mobile token:', error);
+    throw error;
+  }
+};
+
+// Create the social login handler using our common socialLogin factory
 const appleLogin = socialLogin('apple', getProfileDetails);
 
-module.exports = () =>
+/**
+ * Creates and configures the Apple authentication strategy
+ * @returns {AppleStrategy} Configured Apple authentication strategy
+ */
+const createAppleStrategy = () =>
   new AppleStrategy(
     {
       clientID: process.env.APPLE_CLIENT_ID,
@@ -61,7 +117,7 @@ module.exports = () =>
     },
     async (req, accessToken, refreshToken, idToken, profile, cb) => {
       try {
-        console.log('Apple OAuth Callback Data:', {
+        logger.debug('Apple OAuth Callback Data:', {
           hasAccessToken: !!accessToken,
           hasRefreshToken: !!refreshToken,
           hasIdToken: !!idToken,
@@ -69,19 +125,24 @@ module.exports = () =>
           body: JSON.stringify(req.body, null, 2),
         });
 
-        // Only get profile details once
+        // Get profile details from token
         const userProfile = getProfileDetails(profile, idToken);
 
         if (!userProfile.id) {
-          console.log('No Apple ID found in token');
+          logger.error('No Apple ID found in token');
           throw new Error('No Apple ID found in token');
         }
 
         return appleLogin(accessToken, refreshToken, userProfile, cb);
       } catch (error) {
-        console.log('Error in Apple Strategy:', error);
-        console.log('Error Stack:', error.stack);
+        logger.error('Error in Apple Strategy:', error);
+        logger.error('Error Stack:', error.stack);
         return cb(error);
       }
     },
   );
+
+module.exports = {
+  createAppleStrategy,
+  handleAppleMobileToken,
+};
