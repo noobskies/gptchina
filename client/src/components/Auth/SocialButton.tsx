@@ -47,19 +47,25 @@ const SocialButton: React.FC<SocialButtonProps> = ({
           } else if (id === 'apple') {
             config = {
               apple: {
-                clientId: process.env.NEXT_PUBLIC_APPLE_CLIENT_ID || '',
+                clientId:
+                  platform === 'android'
+                    ? 'services.your.appid' // Use your Apple Service ID here
+                    : process.env.NEXT_PUBLIC_APPLE_CLIENT_ID,
                 redirectUrl:
-                  platform === 'android' ? `${serverDomain}/oauth/apple/callback` : undefined, // undefined for iOS as it's not needed
+                  platform === 'android' ? `${serverDomain}/oauth/apple/callback` : undefined,
               },
             };
           }
 
-          console.log('Config:', config);
+          console.log('Initializing with config:', config);
           await SocialLogin.initialize(config);
           console.log('Social auth initialized successfully');
           setIsInitialized(true);
         } catch (error) {
           console.error('Failed to initialize Social Auth:', error);
+          if (error instanceof Error) {
+            console.error('Error details:', error.message);
+          }
         }
       }
     };
@@ -71,6 +77,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
     try {
       console.log('Starting login for:', id);
       if (!isInitialized) {
+        console.log('Not initialized yet, returning');
         return;
       }
 
@@ -107,6 +114,9 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       window.location.href = '/';
     } catch (error) {
       console.error(`Native ${id} login error:`, error);
+      if (error instanceof Error) {
+        console.error('Error details:', error.message);
+      }
     }
   }, [serverDomain, isInitialized, id]);
 
@@ -121,7 +131,10 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         <button
           aria-label={label}
           className="flex w-full items-center space-x-3 rounded-2xl border border-border-light bg-surface-primary px-5 py-3 text-text-primary transition-colors duration-200 hover:bg-surface-tertiary"
-          onClick={handleNativeLogin}
+          onClick={() => {
+            console.log('Button clicked for:', id);
+            handleNativeLogin();
+          }}
           data-testid={`${id}-native`}
         >
           <Icon />
