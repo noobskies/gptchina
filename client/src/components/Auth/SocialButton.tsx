@@ -23,10 +23,11 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   const isNative = Capacitor.isNativePlatform();
 
   useEffect(() => {
-    const initializeSocialAuth = async () => {
+    const initializeGoogleAuth = async () => {
       if (!isInitialized && isNative) {
         try {
           const platform = Capacitor.getPlatform();
+
           const config: InitializeOptions = {
             google:
               platform === 'android'
@@ -38,80 +39,69 @@ const SocialButton: React.FC<SocialButtonProps> = ({
                     iOSClientId:
                       '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
                   },
-            apple: {
-              clientId: process.env.APPLE_CLIENT_ID || '',
-              redirectUri: `${process.env.DOMAIN_SERVER}${process.env.APPLE_CALLBACK_URL}`,
-              scopes: ['name', 'email'],
-            },
           };
 
           await SocialLogin.initialize(config);
           setIsInitialized(true);
         } catch (error) {
-          console.error('Failed to initialize Social Auth:', error);
+          console.error('Failed to initialize Google Auth:', error);
         }
       }
     };
 
-    initializeSocialAuth();
+    initializeGoogleAuth();
   }, [isInitialized]);
 
-  const handleNativeSocialLogin = useCallback(
-    async (provider: 'google' | 'apple') => {
-      try {
-        if (!isInitialized) {
-          return;
-        }
-
-        const { result } = await SocialLogin.login({
-          provider,
-          options: {
-            scopes: provider === 'google' ? ['email', 'profile'] : ['name', 'email'],
-          },
-        });
-
-        if (!result?.idToken) {
-          throw new Error('No ID token received');
-        }
-
-        const endpoint = provider === 'google' ? 'google/mobile' : 'apple/mobile';
-        const response = await fetch(`${serverDomain}/oauth/${endpoint}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            token: result.idToken,
-            profile: result.profile,
-          }),
-          credentials: 'include',
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Authentication failed');
-        }
-
-        window.location.href = '/';
-      } catch (error) {
-        console.error(`${provider} login failed:`, error);
+  const handleNativeGoogleLogin = useCallback(async () => {
+    try {
+      if (!isInitialized) {
+        return;
       }
-    },
-    [serverDomain, isInitialized],
-  );
+
+      const { result } = await SocialLogin.login({
+        provider: 'google',
+        options: {
+          scopes: ['email', 'profile'],
+        },
+      });
+
+      if (!result?.idToken) {
+        throw new Error('No ID token received');
+      }
+
+      const response = await fetch(`${serverDomain}/oauth/google/mobile`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          token: result.idToken,
+          profile: result.profile,
+        }),
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Authentication failed');
+      }
+
+      window.location.href = '/';
+    } catch (error) {}
+  }, [serverDomain, isInitialized]);
 
   if (!enabled) {
     return null;
   }
 
-  // For Google or Apple on native platforms
-  if ((id === 'google' || id === 'apple') && isNative) {
+  // For Google on native platforms
+  if (id === 'google' && isNative) {
     return (
       <div className="mt-2 flex gap-x-2">
         <button
           aria-label={label}
           className="flex w-full items-center space-x-3 rounded-2xl border border-border-light bg-surface-primary px-5 py-3 text-text-primary transition-colors duration-200 hover:bg-surface-tertiary"
-          onClick={() => handleNativeSocialLogin(id as 'google' | 'apple')}
+          onClick={handleNativeGoogleLogin}
           data-testid={`${id}-native`}
         >
           <Icon />
