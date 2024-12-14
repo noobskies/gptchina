@@ -1,101 +1,136 @@
-const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
-const { OAuth2Client } = require('google-auth-library');
+const { Strategy: AppleStrategy } = require('passport-apple');
+const jwt = require('jsonwebtoken');
 const socialLogin = require('./socialLogin');
+const { logger } = require('~/config');
 
 const getProfileDetails = (profile) => ({
   email: profile.emails[0].value,
   id: profile.id,
-  avatarUrl: profile.photos[0].value,
-  username: profile.name.givenName,
-  name: `${profile.name.givenName} ${profile.name.familyName}`,
+  avatarUrl: profile.photos?.[0]?.value || '',
+  username: profile.name?.givenName || `apple_${profile.id.substring(0, 6)}`,
+  name: profile.name?.givenName
+    ? `${profile.name.givenName} ${profile.name.familyName || ''}`
+    : `Apple User ${profile.id.substring(0, 6)}`,
   emailVerified: profile.emails[0].verified,
 });
 
-const googleLogin = socialLogin('google', getProfileDetails);
+const appleLogin = socialLogin('apple', getProfileDetails);
 
-// Verify mobile token (iOS or Android)
+// Verify mobile token (iOS)
 const verifyMobileToken = async (token) => {
   try {
-    const client = new OAuth2Client();
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: [
-        process.env.GOOGLE_CLIENT_ID,
-        // Android client IDs
-        '397122273433-d4tjq5l65rr8552b1t2km42lpd6nolin.apps.googleusercontent.com',
-        '397122273433-vh06gkk90ai18bj90nmfapm80udnrpso.apps.googleusercontent.com',
-        // iOS client ID
-        '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
-      ],
-    });
+    const decodedToken = jwt.decode(token);
+    console.log('Decoded token:', JSON.stringify(decodedToken, null, 2));
 
-    const payload = ticket.getPayload();
-    if (!payload) {
-      throw new Error('Invalid token payload');
+    if (!decodedToken) {
+      throw new Error('Invalid token format');
     }
 
-    // Ensure we have all required fields
-    if (!payload.email || !payload.sub || !payload.given_name) {
+    if (!decodedToken.sub) {
       throw new Error('Missing required profile information');
     }
 
+    // Structure the profile to match Google's format
     return {
-      emails: [{ value: payload.email, verified: payload.email_verified || false }],
-      id: payload.sub,
-      photos: [{ value: payload.picture || '' }],
+      emails: [
+        {
+          value: decodedToken.email,
+          verified: decodedToken.email_verified,
+        },
+      ],
+      id: decodedToken.sub,
+      photos: [{ value: '' }],
       name: {
-        givenName: payload.given_name,
-        familyName: payload.family_name || '',
+        givenName: decodedToken.name || `Apple_${decodedToken.sub.substring(0, 6)}`,
+        familyName: '',
       },
-      provider: 'google',
+      provider: 'apple',
     };
   } catch (error) {
-    console.error('Token verification error:', error);
+    console.error('Apple token verification error:', error);
     throw new Error(error.message || 'Invalid token');
   }
 };
 
-const handleMobileToken = async (token) => {
+const handleAppleToken = async (token) => {
   try {
     const profile = await verifyMobileToken(token);
+    console.log('Profile after verification:', JSON.stringify(profile, null, 2));
 
-    // Return a promise that wraps the callback-based socialLogin
     return new Promise((resolve, reject) => {
-      googleLogin(
-        null, // accessToken (not needed for this flow)
-        null, // refreshToken (not needed for this flow)
-        profile,
-        (err, user) => {
-          if (err) {
-            console.error('Social login error:', err);
-            reject(err);
-          } else if (!user) {
-            reject(new Error('No user returned from social login'));
-          } else {
-            resolve({
-              user,
-              created: !user._id,
-            });
-          }
-        },
-      );
+      appleLogin(null, null, profile, (err, user) => {
+        if (err) {
+          console.error('Social login error:', err);
+          reject(err);
+        } else if (!user) {
+          reject(new Error('No user returned from social login'));
+        } else {
+          resolve({
+            user,
+            created: !user._id,
+          });
+        }
+      });
     });
   } catch (error) {
-    console.error('Handle mobile token error:', error);
-    throw error; // Re-throw to be caught by the route handler
+    console.error('Handle Apple token error:', error);
+    throw error;
   }
 };
 
 module.exports = {
   strategy: () =>
-    new GoogleStrategy(
+    new AppleStrategy(
       {
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: `${process.env.DOMAIN_SERVER}${process.env.GOOGLE_CALLBACK_URL}`,
-        proxy: true,
+        clientID: process.env.APPLE_CLIENT_ID,
+        teamID: process.env.APPLE_TEAM_ID,
+        keyID: process.env.APPLE_KEY_ID,
+        privateKeyString: process.env.APPLE_PRIVATE_KEY,
+        callbackURL: `${process.env.DOMAIN_SERVER}${process.env.APPLE_CALLBACK_URL}`,
+        scope: ['name', 'email'],
+        passReqToCallback: true,
       },
-      googleLogin,
+      (req, accessToken, refreshToken, idToken, profile, cb) => {
+        try {
+          console.log('Apple OAuth Callback Data:', {
+            hasAccessToken: !!accessToken,
+            hasRefreshToken: !!refreshToken,
+            hasIdToken: !!idToken,
+            profile: JSON.stringify(profile, null, 2),
+          });
+
+          if (idToken) {
+            const decodedToken = jwt.decode(idToken);
+            console.log('Decoded ID token:', JSON.stringify(decodedToken, null, 2));
+
+            // Structure the profile to match Google's format
+            profile = {
+              emails: [
+                {
+                  value: decodedToken.email,
+                  verified: decodedToken.email_verified,
+                },
+              ],
+              id: decodedToken.sub,
+              photos: [{ value: '' }],
+              name: {
+                givenName: decodedToken.name || `Apple_${decodedToken.sub.substring(0, 6)}`,
+                familyName: '',
+              },
+              provider: 'apple',
+            };
+          }
+
+          console.log(
+            'Final profile being passed to appleLogin:',
+            JSON.stringify(profile, null, 2),
+          );
+          return appleLogin(accessToken, refreshToken, profile, cb);
+        } catch (error) {
+          console.error('Error in Apple Strategy:', error);
+          return cb(error);
+        }
+      },
     ),
-  handleMobileToken,
+  handleAppleToken,
 };
