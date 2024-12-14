@@ -49,7 +49,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
               apple: {
                 clientId:
                   platform === 'android'
-                    ? 'services.your.appid' // Use your Apple Service ID here
+                    ? 'services.novlisky.twa' // Use your Apple Service ID here
                     : process.env.NEXT_PUBLIC_APPLE_CLIENT_ID,
                 redirectUrl:
                   platform === 'android' ? `${serverDomain}/oauth/apple/callback` : undefined,
