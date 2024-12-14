@@ -23,11 +23,10 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   const isNative = Capacitor.isNativePlatform();
 
   useEffect(() => {
-    const initializeGoogleAuth = async () => {
+    const initializeSocialAuth = async () => {
       if (!isInitialized && isNative) {
         try {
           const platform = Capacitor.getPlatform();
-
           const config: InitializeOptions = {
             google:
               platform === 'android'
@@ -39,27 +38,32 @@ const SocialButton: React.FC<SocialButtonProps> = ({
                     iOSClientId:
                       '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
                   },
+            apple: {
+              clientId: process.env.APPLE_CLIENT_ID || '',
+              redirectUri: `${process.env.DOMAIN_SERVER}${process.env.APPLE_CALLBACK_URL}`,
+              scope: 'name email',
+            },
           };
 
           await SocialLogin.initialize(config);
           setIsInitialized(true);
         } catch (error) {
-          console.error('Failed to initialize Google Auth:', error);
+          console.error('Failed to initialize Social Auth:', error);
         }
       }
     };
 
-    initializeGoogleAuth();
+    initializeSocialAuth();
   }, [isInitialized]);
 
-  const handleNativeGoogleLogin = useCallback(async () => {
+  const handleNativeLogin = useCallback(async () => {
     try {
       if (!isInitialized) {
         return;
       }
 
       const { result } = await SocialLogin.login({
-        provider: 'google',
+        provider: id as 'google' | 'apple',
         options: {
           scopes: ['email', 'profile'],
         },
@@ -69,7 +73,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         throw new Error('No ID token received');
       }
 
-      const response = await fetch(`${serverDomain}/oauth/google/mobile`, {
+      const response = await fetch(`${serverDomain}/oauth/${id}/mobile`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -87,21 +91,23 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       }
 
       window.location.href = '/';
-    } catch (error) {}
-  }, [serverDomain, isInitialized]);
+    } catch (error) {
+      console.error(`Native ${id} login error:`, error);
+    }
+  }, [serverDomain, isInitialized, id]);
 
   if (!enabled) {
     return null;
   }
 
-  // For Google on native platforms
-  if (id === 'google' && isNative) {
+  // For native platforms
+  if ((id === 'google' || id === 'apple') && isNative) {
     return (
       <div className="mt-2 flex gap-x-2">
         <button
           aria-label={label}
           className="flex w-full items-center space-x-3 rounded-2xl border border-border-light bg-surface-primary px-5 py-3 text-text-primary transition-colors duration-200 hover:bg-surface-tertiary"
-          onClick={handleNativeGoogleLogin}
+          onClick={handleNativeLogin}
           data-testid={`${id}-native`}
         >
           <Icon />
@@ -111,7 +117,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
     );
   }
 
-  // Default web version remains unchanged
+  // Default web version
   return (
     <div className="mt-2 flex gap-x-2">
       <a

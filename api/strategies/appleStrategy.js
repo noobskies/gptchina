@@ -1,52 +1,66 @@
 const { Strategy: AppleStrategy } = require('passport-apple');
+const jwt = require('jsonwebtoken');
 const socialLogin = require('./socialLogin');
 const { logger } = require('~/config');
 
-const getProfileDetails = (profile, idToken) => {
-  console.log('getProfileDetails called with:', {
-    profile: JSON.stringify(profile, null, 2),
-    idToken: idToken ? 'present' : 'missing',
-  });
-
-  // If profile already has an id, use that instead of decoding token again
-  if (profile?.id) {
-    return {
-      email: profile.email,
-      id: profile.id,
-      avatarUrl: '',
-      username: profile.username,
-      name: profile.name,
-      emailVerified: true,
-    };
-  }
-
-  // Extract data from idToken which contains the user info
-  const decodedIdToken = idToken
-    ? JSON.parse(Buffer.from(idToken.split('.')[1], 'base64').toString())
-    : {};
-  console.log('Decoded ID token:', JSON.stringify(decodedIdToken, null, 2));
-
-  const appleId = decodedIdToken.sub;
-  const email = decodedIdToken.email || `private.${appleId}@privaterelay.appleid.com`;
-
-  // Create shorter username using first part of the sub
-  const shortId = appleId ? appleId.split('.')[0] : 'unknown';
-  const username = `apple_${shortId}`;
-
-  const profileDetails = {
-    email,
-    id: appleId,
-    avatarUrl: '',
-    username,
-    name: username,
-    emailVerified: true,
-  };
-
-  console.log('Constructed profile details:', JSON.stringify(profileDetails, null, 2));
-  return profileDetails;
-};
+const getProfileDetails = (profile) => ({
+  email: profile.email,
+  id: profile.id || profile.sub,
+  avatarUrl: '',
+  username: profile.username || `apple_${(profile.id || profile.sub).substring(0, 8)}`,
+  name: profile.name || profile.username || `Apple User`,
+  emailVerified: true,
+});
 
 const appleLogin = socialLogin('apple', getProfileDetails);
+
+const verifyMobileToken = async (token) => {
+  try {
+    const decodedToken = jwt.decode(token);
+    if (!decodedToken) {
+      throw new Error('Invalid token format');
+    }
+
+    if (!decodedToken.sub) {
+      throw new Error('Missing required profile information');
+    }
+
+    return {
+      id: decodedToken.sub,
+      email: decodedToken.email || `private.${decodedToken.sub}@privaterelay.appleid.com`,
+      sub: decodedToken.sub,
+      provider: 'apple',
+    };
+  } catch (error) {
+    logger.error('Apple token verification error:', error);
+    throw new Error(error.message || 'Invalid token');
+  }
+};
+
+const handleAppleToken = async (token) => {
+  try {
+    const profile = await verifyMobileToken(token);
+
+    return new Promise((resolve, reject) => {
+      appleLogin(null, null, profile, (err, user) => {
+        if (err) {
+          logger.error('Social login error:', err);
+          reject(err);
+        } else if (!user) {
+          reject(new Error('No user returned from social login'));
+        } else {
+          resolve({
+            user,
+            created: !user._id,
+          });
+        }
+      });
+    });
+  } catch (error) {
+    logger.error('Handle Apple token error:', error);
+    throw error;
+  }
+};
 
 module.exports = () =>
   new AppleStrategy(
@@ -59,28 +73,29 @@ module.exports = () =>
       scope: ['name', 'email'],
       passReqToCallback: true,
     },
-    async (req, accessToken, refreshToken, idToken, profile, cb) => {
+    (req, accessToken, refreshToken, idToken, profile, cb) => {
       try {
-        console.log('Apple OAuth Callback Data:', {
+        logger.info('Apple OAuth Callback Data:', {
           hasAccessToken: !!accessToken,
           hasRefreshToken: !!refreshToken,
           hasIdToken: !!idToken,
-          profile: JSON.stringify(profile, null, 2),
-          body: JSON.stringify(req.body, null, 2),
+          profile: JSON.stringify(profile),
         });
 
-        // Only get profile details once
-        const userProfile = getProfileDetails(profile, idToken);
-
-        if (!userProfile.id) {
-          console.log('No Apple ID found in token');
-          throw new Error('No Apple ID found in token');
+        // Merge profile data from idToken if available
+        if (idToken) {
+          const decodedToken = jwt.decode(idToken);
+          profile = {
+            ...profile,
+            id: decodedToken.sub,
+            email: decodedToken.email,
+            sub: decodedToken.sub,
+          };
         }
 
-        return appleLogin(accessToken, refreshToken, userProfile, cb);
+        return appleLogin(accessToken, refreshToken, profile, cb);
       } catch (error) {
-        console.log('Error in Apple Strategy:', error);
-        console.log('Error Stack:', error.stack);
+        logger.error('Error in Apple Strategy:', error);
         return cb(error);
       }
     },
