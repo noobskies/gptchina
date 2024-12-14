@@ -141,10 +141,22 @@ const strategy = () =>
         return appleLogin(accessToken, refreshToken, userProfile, (err, user) => {
           if (err) {
             console.error('Error in appleLogin callback:', err);
-          } else {
-            console.log('Apple login user:', JSON.stringify(user, null, 2));
+            return cb(err);
           }
-          cb(err, user);
+
+          console.log('Apple login user:', JSON.stringify(user, null, 2));
+
+          // Check if this is a mobile request
+          const isMobile =
+            req.headers['user-agent']?.toLowerCase().includes('mobile') ||
+            req.query.mobile === 'true';
+
+          if (isMobile) {
+            // Set redirect info that OAuth route can use
+            req.authRedirect = `https://novlisky.io/oauth/login-success?userId=${user._id}`;
+          }
+
+          return cb(null, user);
         });
       } catch (error) {
         console.error('Error in Apple Strategy:', error);

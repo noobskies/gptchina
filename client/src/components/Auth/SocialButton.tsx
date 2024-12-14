@@ -49,7 +49,9 @@ const SocialButton: React.FC<SocialButtonProps> = ({
               apple: {
                 clientId: `io.novlisky.signin`,
                 redirectUrl:
-                  platform === 'android' ? `${serverDomain}/oauth/apple/callback` : undefined,
+                  platform === 'android'
+                    ? `${serverDomain}/oauth/apple/callback?mobile=true`
+                    : undefined,
               },
             };
           }

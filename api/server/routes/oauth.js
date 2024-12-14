@@ -23,6 +23,18 @@ const oauthHandler = async (req, res) => {
       return;
     }
     await setAuthTokens(req.user._id, res);
+
+    // Check for mobile client
+    if (
+      req.headers['user-agent']?.toLowerCase().includes('mobile') ||
+      req.query.mobile === 'true'
+    ) {
+      logger.info('Mobile client detected in oauthHandler');
+      const redirectUrl = `https://novlisky.io/oauth/login-success?userId=${req.user._id}`;
+      logger.info('Redirecting to:', redirectUrl);
+      return res.redirect(redirectUrl);
+    }
+
     res.redirect(domains.client);
   } catch (err) {
     logger.error('Error in setting authentication tokens:', err);
@@ -64,18 +76,15 @@ router.post('/apple/mobile', async (req, res) => {
     try {
       const { user, created } = await handleAppleToken(token);
       logger.info('Apple token handled successfully');
+      req.user = user;
 
       await setAuthTokens(user._id, res);
       logger.info('Auth tokens set');
 
-      // Redirect back to the app with success parameters
+      // Always redirect for mobile Apple auth
       const redirectUrl = `https://novlisky.io/oauth/login-success?userId=${user._id}`;
       logger.info('Redirecting to app:', redirectUrl);
-      return res.json({
-        success: true,
-        redirect: redirectUrl,
-        user,
-      });
+      return res.redirect(redirectUrl);
     } catch (error) {
       logger.error('Error in Apple mobile token verification:', error);
       return res.status(401).json({ error: 'Invalid token' });
@@ -177,7 +186,6 @@ router.get(
 );
 
 router.post(
-  // Note: Apple uses POST for callback
   '/apple/callback',
   passport.authenticate('apple', {
     failureRedirect: `${domains.client}/login`,
@@ -185,7 +193,28 @@ router.post(
     session: false,
     scope: ['name', 'email'],
   }),
-  oauthHandler,
+  async (req, res) => {
+    try {
+      await setAuthTokens(req.user._id, res);
+
+      // Check for mobile client
+      if (
+        req.headers['user-agent']?.toLowerCase().includes('mobile') ||
+        req.query.mobile === 'true'
+      ) {
+        logger.info('Mobile client detected in Apple callback');
+        const redirectUrl = `https://novlisky.io/oauth/login-success?userId=${req.user._id}`;
+        logger.info('Redirecting to:', redirectUrl);
+        return res.redirect(redirectUrl);
+      }
+
+      // Default web redirect
+      res.redirect(domains.client);
+    } catch (err) {
+      logger.error('Error in apple callback:', err);
+      res.redirect(`${domains.client}/login`);
+    }
+  },
 );
 
 router.get(
