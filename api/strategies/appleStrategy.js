@@ -85,6 +85,10 @@ const strategy = () =>
       passReqToCallback: true,
     },
     (req, accessToken, refreshToken, idToken, profile, cb) => {
+      console.log('Apple callback called with req:', req);
+      console.log('Apple callback called with profile:', JSON.stringify(profile, null, 2));
+      console.log('Apple callback called with idToken:', idToken);
+      console.log('Apple callback called with accessToken:', accessToken);
       if (idToken) {
         const decodedToken = jwt.decode(idToken);
         profile = {
