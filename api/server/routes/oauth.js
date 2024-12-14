@@ -23,18 +23,6 @@ const oauthHandler = async (req, res) => {
       return;
     }
     await setAuthTokens(req.user._id, res);
-
-    // Check for mobile client
-    if (
-      req.headers['user-agent']?.toLowerCase().includes('mobile') ||
-      req.query.mobile === 'true'
-    ) {
-      logger.info('Mobile client detected in oauthHandler');
-      const redirectUrl = `https://novlisky.io/oauth/login-success?userId=${req.user._id}`;
-      logger.info('Redirecting to:', redirectUrl);
-      return res.redirect(redirectUrl);
-    }
-
     res.redirect(domains.client);
   } catch (err) {
     logger.error('Error in setting authentication tokens:', err);
@@ -185,37 +173,36 @@ router.get(
   }),
 );
 
-router.post(
-  '/apple/callback',
-  passport.authenticate('apple', {
-    failureRedirect: `${domains.client}/login`,
-    failureMessage: true,
-    session: false,
-    scope: ['name', 'email'],
-  }),
-  async (req, res) => {
-    try {
-      await setAuthTokens(req.user._id, res);
+router.post('/apple/mobile', async (req, res) => {
+  try {
+    const { token } = req.body;
+    logger.info('Received Apple mobile auth request');
 
-      // Check for mobile client
-      if (
-        req.headers['user-agent']?.toLowerCase().includes('mobile') ||
-        req.query.mobile === 'true'
-      ) {
-        logger.info('Mobile client detected in Apple callback');
-        const redirectUrl = `https://novlisky.io/oauth/login-success?userId=${req.user._id}`;
-        logger.info('Redirecting to:', redirectUrl);
-        return res.redirect(redirectUrl);
-      }
-
-      // Default web redirect
-      res.redirect(domains.client);
-    } catch (err) {
-      logger.error('Error in apple callback:', err);
-      res.redirect(`${domains.client}/login`);
+    if (!token) {
+      logger.error('No token provided');
+      return res.status(400).json({ error: 'Token is required' });
     }
-  },
-);
+
+    try {
+      const { user, created } = await handleAppleToken(token);
+      logger.info('Apple token handled successfully');
+
+      await setAuthTokens(user._id, res);
+      logger.info('Auth tokens set');
+
+      // Redirect back to apple callback
+      const redirectUrl = `https://novlisky.io/oauth/apple/callback?userId=${user._id}`;
+      logger.info('Redirecting to app:', redirectUrl);
+      return res.redirect(redirectUrl);
+    } catch (error) {
+      logger.error('Error in Apple mobile token verification:', error);
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+  } catch (err) {
+    logger.error('Error in Apple mobile authentication:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 router.get(
   '/discord',
