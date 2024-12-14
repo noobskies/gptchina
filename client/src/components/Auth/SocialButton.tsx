@@ -27,7 +27,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
     const initializeSocialAuth = async () => {
       if (!isInitialized && isNative) {
         try {
-          // alert(`Initializing ${id} auth`);
+          console.log(`Initializing ${id} auth`);
           const config: InitializeOptions = {
             google:
               platform === 'android'
@@ -60,9 +60,9 @@ const SocialButton: React.FC<SocialButtonProps> = ({
 
           await SocialLogin.initialize(config);
           setIsInitialized(true);
-          // alert(`${id} auth initialized`);
+          console.log(`${id} auth initialized`);
         } catch (error) {
-          // alert(`Failed to initialize ${id} auth: ${error}`);
+          console.log(`Failed to initialize ${id} auth: ${error}`);
         }
       }
     };
@@ -71,14 +71,14 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   }, [isInitialized, platform, id]);
 
   const handleNativeSocialLogin = useCallback(async () => {
-    alert(`Native ${id} login clicked`);
+    console.log(`Native ${id} login clicked`);
     try {
       if (!isInitialized) {
-        alert('Social login not initialized');
+        console.log('Social login not initialized');
         return;
       }
 
-      alert('Attempting social login...');
+      console.log('Attempting social login...');
       const response = await SocialLogin.login({
         provider: id as 'apple' | 'google',
         options: {
@@ -86,13 +86,13 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         },
       });
 
-      alert(`Response received: ${JSON.stringify(response)}`);
+      console.log(`Response received: ${JSON.stringify(response)}`);
 
       const { result } = response;
-      alert(`Social Login Result: ${JSON.stringify(result, null, 2)}`);
+      console.log(`Social Login Result: ${JSON.stringify(result, null, 2)}`);
 
       if (!result?.idToken) {
-        alert(`No ID token in result: ${JSON.stringify(result, null, 2)}`);
+        console.log(`No ID token in result: ${JSON.stringify(result, null, 2)}`);
         throw new Error('No ID token received');
       }
 
@@ -109,7 +109,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       });
 
       const responseData = await apiResponse.clone().json();
-      alert(`API Response: ${JSON.stringify(responseData, null, 2)}`);
+      console.log(`API Response: ${JSON.stringify(responseData, null, 2)}`);
 
       if (!apiResponse.ok) {
         const errorData = await apiResponse.json();
@@ -118,7 +118,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
 
       window.location.href = '/';
     } catch (error) {
-      alert(`Error during ${id} login: ${error}`);
+      console.log(`Error during ${id} login: ${error}`);
     }
   }, [id, isInitialized, serverDomain]);
 
