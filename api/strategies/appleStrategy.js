@@ -1,9 +1,10 @@
 const { Strategy: AppleStrategy } = require('passport-apple');
+const jwksClient = require('jwks-rsa');
+const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const socialLogin = require('./socialLogin');
-const { logger } = require('~/config');
 
-const getProfileDetails = (profile) => ({
+const appleLogin = socialLogin('apple', (profile) => ({
   email: profile.emails[0].value,
   id: profile.id,
   avatarUrl: profile.photos?.[0]?.value || '',
@@ -12,9 +13,7 @@ const getProfileDetails = (profile) => ({
     ? `${profile.name.givenName} ${profile.name.familyName || ''}`
     : `Apple User ${profile.id.substring(0, 6)}`,
   emailVerified: profile.emails[0].verified,
-});
-
-const appleLogin = socialLogin('apple', getProfileDetails);
+}));
 
 const createProfileFromToken = (decodedToken) => {
   const shortId = decodedToken.sub.substring(0, 6);
@@ -35,40 +34,42 @@ const createProfileFromToken = (decodedToken) => {
   };
 };
 
-const verifyMobileToken = async (token) => {
-  try {
-    const decodedToken = jwt.decode(token);
-    console.log('Decoded token:', JSON.stringify(decodedToken, null, 2));
+// Apple JWT verification
+const client = jwksClient({
+  jwksUri: 'https://appleid.apple.com/auth/keys',
+});
+const getKey = promisify(client.getSigningKey).bind(client);
 
-    if (!decodedToken || !decodedToken.sub) {
-      throw new Error('Invalid token or missing sub');
-    }
-
-    return createProfileFromToken(decodedToken);
-  } catch (error) {
-    console.error('Apple token verification error:', error);
-    throw error;
+const verifyAppleToken = async (idToken) => {
+  const decodedHeader = jwt.decode(idToken, { complete: true });
+  if (!decodedHeader || !decodedHeader.header || !decodedHeader.header.kid) {
+    throw new Error('Invalid token header');
   }
+
+  const key = await getKey(decodedHeader.header.kid);
+  const signingKey = key.getPublicKey();
+
+  return jwt.verify(idToken, signingKey, {
+    issuer: 'https://appleid.apple.com',
+  });
+};
+
+const verifyMobileToken = async (token) => {
+  const verifiedPayload = await verifyAppleToken(token);
+  if (!verifiedPayload || !verifiedPayload.sub) {
+    throw new Error('Invalid token payload');
+  }
+  return createProfileFromToken(verifiedPayload);
 };
 
 const handleAppleToken = async (token) => {
   try {
     const profile = await verifyMobileToken(token);
-    console.log('Profile after verification:', JSON.stringify(profile, null, 2));
-
     return new Promise((resolve, reject) => {
       appleLogin(null, null, profile, (err, user) => {
-        if (err) {
-          console.error('Social login error:', err);
-          reject(err);
-        } else if (!user) {
-          reject(new Error('No user returned from social login'));
-        } else {
-          resolve({
-            user,
-            created: !user._id,
-          });
-        }
+        if (err) return reject(err);
+        if (!user) return reject(new Error('No user returned from social login'));
+        resolve({ user, created: !user._id });
       });
     });
   } catch (error) {
@@ -90,20 +91,12 @@ const strategy = () =>
     },
     async (req, accessToken, refreshToken, idToken, profile, cb) => {
       try {
-        console.log('Apple callback called with profile:', JSON.stringify(profile, null, 2));
-        console.log('Apple callback called with idToken:', idToken);
-        console.log('Apple callback called with accessToken:', accessToken);
-
-        let userProfile;
-        if (idToken) {
-          const decodedToken = jwt.decode(idToken);
-          console.log('Decoded ID token:', JSON.stringify(decodedToken, null, 2));
-          userProfile = createProfileFromToken(decodedToken);
-          console.log('Created profile from token:', JSON.stringify(userProfile, null, 2));
-        } else {
+        if (!idToken) {
           throw new Error('No ID token provided');
         }
 
+        const verifiedPayload = await verifyAppleToken(idToken);
+        const userProfile = createProfileFromToken(verifiedPayload);
         return appleLogin(accessToken, refreshToken, userProfile, cb);
       } catch (error) {
         console.error('Error in Apple Strategy:', error);
