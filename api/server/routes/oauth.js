@@ -59,32 +59,39 @@ router.post('/google/mobile', async (req, res) => {
 
 router.post('/apple/mobile', async (req, res) => {
   try {
-    const { token, profile, raw } = req.body;
-    console.log('Apple mobile login request body:', JSON.stringify(req.body, null, 2));
+    const { token, profile } = req.body;
+    logger.info('Apple mobile login request body:', {
+      token,
+      profile: JSON.stringify(profile, null, 2),
+    });
 
     if (!token) {
-      console.log('No token provided in request');
+      logger.error('No token provided in request');
       return res.status(400).json({ error: 'Token is required' });
     }
 
     try {
-      // Log the token we're trying to decode
-      console.log('Attempting to decode token:', token);
+      const result = await handleAppleMobileToken(token, profile);
+      logger.info('Apple login successful:', result);
 
-      const { user, created } = await handleAppleMobileToken(token);
-      console.log('User created/found:', { user, created });
+      req.user = result.user;
 
-      req.user = user;
-      await oauthHandler(req, res);
+      // Do the same checks but return JSON instead of redirecting
+      await checkDomainAllowed(req, res);
+      await checkBan(req, res);
+      if (req.banned) {
+        return res.status(403).json({ error: 'User is banned' });
+      }
+
+      await setAuthTokens(req.user._id, res);
+      return res.json({ success: true });
     } catch (error) {
-      console.log('Error in mobile token verification:', error);
-      console.log('Error details:', error.stack);
+      logger.error('Error in Apple mobile token verification:', error);
       return res.status(401).json({ error: 'Invalid token' });
     }
   } catch (err) {
-    console.log('Error in mobile authentication:', err);
-    console.log('Error stack:', err.stack);
-    res.status(500).json({ error: 'Server error' });
+    logger.error('Error in Apple mobile authentication:', err);
+    return res.status(500).json({ error: 'Server error' });
   }
 });
 

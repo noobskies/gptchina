@@ -11,32 +11,27 @@ const client = jwksClient({
 });
 
 const getClientSecret = () => {
-  try {
-    const time = new Date().getTime() / 1000;
-    const privateKey = process.env.APPLE_PRIVATE_KEY;
+  const privateKey = process.env.APPLE_PRIVATE_KEY;
+  const time = new Date().getTime() / 1000;
 
-    const headers = {
-      kid: process.env.APPLE_KEY_ID,
-      typ: undefined,
-      alg: 'ES256',
-    };
+  const headers = {
+    kid: process.env.APPLE_KEY_ID,
+    typ: undefined,
+    alg: 'ES256',
+  };
 
-    const claims = {
-      iss: process.env.APPLE_TEAM_ID,
-      iat: time,
-      exp: time + 86400 * 180,
-      aud: 'https://appleid.apple.com',
-      sub: process.env.APPLE_CLIENT_ID,
-    };
+  const claims = {
+    iss: process.env.APPLE_TEAM_ID,
+    iat: time,
+    exp: time + 86400 * 180,
+    aud: 'https://appleid.apple.com',
+    sub: process.env.APPLE_CLIENT_ID,
+  };
 
-    return jwt.sign(claims, privateKey, {
-      algorithm: 'ES256',
-      header: headers,
-    });
-  } catch (error) {
-    logger.error('Error generating client secret:', error);
-    throw error;
-  }
+  return jwt.sign(claims, privateKey, {
+    algorithm: 'ES256',
+    header: headers,
+  });
 };
 
 const exchangeAuthorizationCode = async (authCode) => {
@@ -51,18 +46,11 @@ const exchangeAuthorizationCode = async (authCode) => {
       client_secret: clientSecret,
     };
 
-    logger.info('Token exchange request:', {
-      code: authCode,
-      clientId: process.env.APPLE_CLIENT_ID,
-    });
-
     const response = await axios.post(
       'https://appleid.apple.com/auth/token',
       new URLSearchParams(requestBody),
       {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       },
     );
 
@@ -109,35 +97,36 @@ const getProfileDetails = (profile, idToken) => {
     idToken: idToken ? 'present' : 'missing',
   });
 
-  if (profile?.id) {
+  if (profile?.id || profile?.user) {
+    // Handle both web profile and mobile profile formats
     return {
       email: profile.email,
-      id: profile.id,
+      id: profile.id || profile.user,
       avatarUrl: '',
-      username: profile.username || `apple_${profile.id.substring(0, 8)}`,
+      username: `apple_${(profile.id || profile.user).substring(0, 8)}`,
       name: profile.name?.firstName
         ? `${profile.name.firstName} ${profile.name.lastName || ''}`
-        : profile.username || `apple_${profile.id.substring(0, 8)}`,
+        : profile.givenName && profile.familyName
+        ? `${profile.givenName} ${profile.familyName}`
+        : `apple_${(profile.id || profile.user).substring(0, 8)}`,
       emailVerified: true,
     };
   }
 
+  // Extract data from idToken which contains the user info
   const decodedIdToken = idToken
     ? JSON.parse(Buffer.from(idToken.split('.')[1], 'base64').toString())
     : {};
-  logger.info('Decoded ID token:', JSON.stringify(decodedIdToken, null, 2));
 
   const appleId = decodedIdToken.sub;
   const email = decodedIdToken.email || `private.${appleId}@privaterelay.appleid.com`;
-  const shortId = appleId ? appleId.substring(0, 8) : 'unknown';
-  const username = `apple_${shortId}`;
 
   const profileDetails = {
     email,
     id: appleId,
     avatarUrl: '',
-    username,
-    name: username,
+    username: `apple_${appleId?.substring(0, 8)}`,
+    name: `apple_${appleId?.substring(0, 8)}`,
     emailVerified: true,
   };
 
@@ -148,37 +137,27 @@ const getProfileDetails = (profile, idToken) => {
 const appleLogin = socialLogin('apple', getProfileDetails);
 
 // Handle mobile token (used by the /oauth/apple/mobile endpoint)
-const handleMobileToken = async (req) => {
+const handleMobileToken = async (authCode, profile) => {
   try {
-    logger.info('Handling mobile Apple token request:', req.body);
-    const { token: authCode, profile } = req.body;
+    logger.info('Handling mobile Apple auth code', { hasProfile: !!profile });
 
-    if (!authCode) {
-      logger.error('No authorization code provided');
-      throw new Error('Authorization code is required');
-    }
-
-    // Exchange the authorization code for tokens
+    // Exchange the auth code for tokens
     const tokens = await exchangeAuthorizationCode(authCode);
     logger.info('Successfully exchanged authorization code for tokens');
 
-    // Create user profile from the provided data
-    const userProfile = {
-      id: profile.user, // Apple's user identifier
-      email: profile.email,
-      name: `${profile.givenName} ${profile.familyName}`,
-      emailVerified: true,
-      username: `apple_${profile.user.substring(0, 8)}`,
-    };
+    // Use profile data from the native SDK if available
+    const userProfile = getProfileDetails(profile);
 
     logger.info('Created user profile:', userProfile);
 
     // Use the existing social login flow
-    return await socialLogin('apple', () => userProfile)(
+    const result = await socialLogin('apple', () => userProfile)(
       tokens.access_token,
       tokens.refresh_token,
       userProfile,
     );
+
+    return result;
   } catch (error) {
     logger.error('Error handling mobile token:', error);
     throw error;
