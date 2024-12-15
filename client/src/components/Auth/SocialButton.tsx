@@ -32,37 +32,22 @@ const SocialButton: React.FC<SocialButtonProps> = ({
             google:
               platform === 'android'
                 ? {
-                    webClientId:
-                      '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
+                    webClientId: process.env.GOOGLE_WEB_CLIENT_ID,
                   }
                 : {
-                    iOSClientId:
-                      '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
+                    iOSClientId: process.env.GOOGLE_IOS_CLIENT_ID,
                   },
-            apple:
-              platform === 'android'
-                ? {
-                    clientId: 'io.novlisky.signin',
-                    redirectUrl: 'https://novlisky.io/oauth/apple/callback',
-                    scope: 'email name',
-                    responseType: 'code id_token',
-                    responseMode: 'form_post',
-                    state: true,
-                  }
-                : {
-                    clientId: 'io.novlisky.signin',
-                    scope: 'email name',
-                    responseType: 'code id_token',
-                    responseMode: 'form_post',
-                    state: true,
-                  },
+            apple: {
+              // For iOS, we only need to initialize with an empty object
+              // The SignInWithApple capability in Xcode handles the rest
+            },
           };
 
           await SocialLogin.initialize(config);
           setIsInitialized(true);
           console.log(`${id} auth initialized`);
         } catch (error) {
-          console.log(`Failed to initialize ${id} auth: ${error}`);
+          console.error(`Failed to initialize ${id} auth:`, error);
         }
       }
     };
@@ -74,25 +59,20 @@ const SocialButton: React.FC<SocialButtonProps> = ({
     console.log(`Native ${id} login clicked`);
     try {
       if (!isInitialized) {
-        console.log('Social login not initialized');
+        console.error('Social login not initialized');
         return;
       }
 
       console.log('Attempting social login...');
       const response = await SocialLogin.login({
         provider: id as 'apple' | 'google',
-        options: {
-          scopes: id === 'apple' ? ['email', 'name'] : ['email', 'profile'],
-        },
+        options: {}, // For Apple login on iOS, no additional options needed
       });
 
-      console.log(`Response received: ${JSON.stringify(response)}`);
+      console.log(`Response received:`, response);
 
-      const { result } = response;
-      console.log(`Social Login Result: ${JSON.stringify(result, null, 2)}`);
-
-      if (!result?.idToken) {
-        console.log(`No ID token in result: ${JSON.stringify(result, null, 2)}`);
+      if (!response?.result?.idToken) {
+        console.error('No ID token in response');
         throw new Error('No ID token received');
       }
 
@@ -102,14 +82,11 @@ const SocialButton: React.FC<SocialButtonProps> = ({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          token: result.idToken,
-          profile: result.profile,
+          token: response.result.idToken,
+          profile: response.result.profile,
         }),
         credentials: 'include',
       });
-
-      const responseData = await apiResponse.clone().json();
-      console.log(`API Response: ${JSON.stringify(responseData, null, 2)}`);
 
       if (!apiResponse.ok) {
         const errorData = await apiResponse.json();
@@ -118,13 +95,11 @@ const SocialButton: React.FC<SocialButtonProps> = ({
 
       window.location.href = '/';
     } catch (error) {
-      console.log(`Error during ${id} login: ${error}`);
+      console.error(`Error during ${id} login:`, error);
     }
   }, [id, isInitialized, serverDomain]);
 
-  if (!enabled) {
-    return null;
-  }
+  if (!enabled) return null;
 
   // For native platforms
   if ((id === 'google' || id === 'apple') && isNative) {
