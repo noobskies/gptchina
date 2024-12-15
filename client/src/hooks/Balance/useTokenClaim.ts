@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useGetUserBalance, useGetStartupConfig } from 'librechat-data-provider/react-query';
 import { useAuthContext } from '~/hooks/AuthContext';
 import { useToastContext } from '~/Providers';
@@ -8,6 +8,7 @@ export const useTokenClaim = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingStatus, setIsCheckingStatus] = useState(true);
   const [nextClaimTime, setNextClaimTime] = useState<Date | null>(null);
+  const timerRef = useRef<NodeJS.Timeout>();
   const { showToast } = useToastContext();
   const { isAuthenticated, token } = useAuthContext();
   const { data: startupConfig } = useGetStartupConfig();
@@ -16,29 +17,7 @@ export const useTokenClaim = () => {
     enabled: !!isAuthenticated && startupConfig?.checkBalance,
   });
 
-  const refreshBalance = useCallback(async () => {
-    await queryClient.invalidateQueries(['balance']);
-    await balanceQuery.refetch();
-  }, [queryClient, balanceQuery]);
-
-  const scheduleNextCheck = useCallback(
-    (nextTime: Date) => {
-      const now = new Date();
-      const timeUntilNext = nextTime.getTime() - now.getTime();
-
-      if (timeUntilNext > 0) {
-        const timer = setTimeout(() => {
-          checkClaimStatus();
-        }, timeUntilNext);
-        return () => clearTimeout(timer);
-      }
-    },
-    [
-      /* checkClaimStatus will be added by useCallback */
-    ],
-  );
-
-  const checkClaimStatus = useCallback(async () => {
+  const checkClaimStatus = async () => {
     if (!token || !isAuthenticated) {
       setIsCheckingStatus(false);
       return;
@@ -48,17 +27,13 @@ export const useTokenClaim = () => {
       setIsCheckingStatus(true);
       const response = await fetch('/api/balance/claim-tokens', {
         method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const data = await response.json();
 
       if (!data.canClaim && data.nextClaimTime) {
-        const nextTime = new Date(data.nextClaimTime);
-        setNextClaimTime(nextTime);
-        scheduleNextCheck(nextTime);
+        setNextClaimTime(new Date(data.nextClaimTime));
       } else {
         setNextClaimTime(null);
       }
@@ -67,20 +42,11 @@ export const useTokenClaim = () => {
     } finally {
       setIsCheckingStatus(false);
     }
-  }, [token, isAuthenticated, scheduleNextCheck]);
-
-  // Add checkClaimStatus to scheduleNextCheck dependencies
-  useEffect(() => {
-    const updatedScheduleNextCheck = scheduleNextCheck;
-    scheduleNextCheck.bind(null, checkClaimStatus);
-  }, [checkClaimStatus, scheduleNextCheck]);
+  };
 
   const claimTokens = async () => {
     if (!isAuthenticated || !token) {
-      showToast({
-        status: 'error',
-        message: 'Please login to claim tokens',
-      });
+      showToast({ status: 'error', message: 'Please login to claim tokens' });
       return;
     }
 
@@ -98,13 +64,8 @@ export const useTokenClaim = () => {
 
       if (!response.ok) {
         if (response.status === 400 && data.nextClaimTime) {
-          const nextTime = new Date(data.nextClaimTime);
-          setNextClaimTime(nextTime);
-          scheduleNextCheck(nextTime);
-          showToast({
-            status: 'error',
-            message: `Too early to claim tokens`,
-          });
+          setNextClaimTime(new Date(data.nextClaimTime));
+          showToast({ status: 'error', message: `Too early to claim tokens` });
           return;
         }
         throw new Error(data.error || 'Failed to claim tokens');
@@ -112,17 +73,12 @@ export const useTokenClaim = () => {
 
       if (data.success) {
         if (data.nextClaimTime) {
-          const nextTime = new Date(data.nextClaimTime);
-          setNextClaimTime(nextTime);
-          scheduleNextCheck(nextTime);
+          setNextClaimTime(new Date(data.nextClaimTime));
         }
+        await queryClient.invalidateQueries(['balance']);
+        await balanceQuery.refetch();
 
-        await refreshBalance();
-
-        showToast({
-          status: 'success',
-          message: "You've claimed 20,000 tokens!",
-        });
+        showToast({ status: 'success', message: "You've claimed 20,000 tokens!" });
       }
     } catch (error) {
       console.error('Error claiming tokens:', error);
@@ -132,11 +88,8 @@ export const useTokenClaim = () => {
   };
 
   useEffect(() => {
-    const cleanup = checkClaimStatus();
-    return () => {
-      cleanup && cleanup();
-    };
-  }, [checkClaimStatus]);
+    checkClaimStatus();
+  }, [token, isAuthenticated]);
 
   return {
     isLoading,
