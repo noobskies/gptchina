@@ -193,14 +193,21 @@ const handleMobileToken = async (authCode, profile) => {
 
     console.log('Created user profile:', userProfile);
 
-    // Use the existing social login flow
-    const result = await socialLogin('apple', () => userProfile)(
-      tokens.access_token,
-      tokens.refresh_token,
-      userProfile,
-    );
-
-    return result;
+    // Wrap the socialLogin callback in a Promise
+    return new Promise((resolve, reject) => {
+      socialLogin('apple', () => userProfile)(
+        tokens.access_token,
+        tokens.refresh_token,
+        userProfile,
+        (error, user) => {
+          if (error) {
+            console.error('Error in social login:', error);
+            return reject(error);
+          }
+          resolve({ user });
+        },
+      );
+    });
   } catch (error) {
     console.error('Error handling mobile token:', error);
     throw error;
