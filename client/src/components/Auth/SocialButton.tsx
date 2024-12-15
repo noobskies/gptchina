@@ -28,12 +28,8 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       if (!isInitialized && isNative) {
         try {
           console.log(`Initializing ${id} auth`);
-
-          // Only initialize the config for the current provider
-          const config: InitializeOptions = {};
-
-          if (id === 'google') {
-            config.google =
+          const config: InitializeOptions = {
+            google:
               platform === 'android'
                 ? {
                     webClientId:
@@ -42,36 +38,31 @@ const SocialButton: React.FC<SocialButtonProps> = ({
                 : {
                     iOSClientId:
                       '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
-                  };
-          }
-
-          if (id === 'apple') {
-            config.apple =
+                  },
+            apple:
               platform === 'android'
                 ? {
                     clientId: 'io.novlisky.signin',
-                    redirectUrl: `${serverDomain}/oauth/apple/callback`,
+                    redirectUrl: 'https://novlisky.io/oauth/apple/callback',
                     scope: 'email name',
                     responseType: 'code id_token',
                     responseMode: 'form_post',
                     state: true,
                   }
-                : {
-                    clientId: 'io.novlisky.signin',
-                  };
-          }
+                : {}, // For iOS, just pass empty object as per documentation
+          };
 
           await SocialLogin.initialize(config);
           setIsInitialized(true);
           console.log(`${id} auth initialized`);
         } catch (error) {
-          console.log(`Failed to initialize ${id} auth:`, error);
+          console.log(`Failed to initialize ${id} auth: ${error}`);
         }
       }
     };
 
     initializeSocialAuth();
-  }, [isInitialized, platform, id, serverDomain]);
+  }, [isInitialized, platform, id]);
 
   const handleNativeSocialLogin = useCallback(async () => {
     console.log(`Native ${id} login clicked`);
@@ -89,13 +80,13 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         },
       });
 
-      console.log(`Response received:`, response);
+      console.log(`Response received: ${JSON.stringify(response)}`);
 
       const { result } = response;
-      console.log(`Social Login Result:`, result);
+      console.log(`Social Login Result: ${JSON.stringify(result, null, 2)}`);
 
       if (!result?.idToken) {
-        console.log(`No ID token in result:`, result);
+        console.log(`No ID token in result: ${JSON.stringify(result, null, 2)}`);
         throw new Error('No ID token received');
       }
 
@@ -112,7 +103,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       });
 
       const responseData = await apiResponse.clone().json();
-      console.log(`API Response:`, responseData);
+      console.log(`API Response: ${JSON.stringify(responseData, null, 2)}`);
 
       if (!apiResponse.ok) {
         const errorData = await apiResponse.json();
@@ -121,7 +112,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
 
       window.location.href = '/';
     } catch (error) {
-      console.log(`Error during ${id} login:`, error);
+      console.log(`Error during ${id} login: ${error}`);
     }
   }, [id, isInitialized, serverDomain]);
 
