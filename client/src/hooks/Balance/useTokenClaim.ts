@@ -17,10 +17,26 @@ export const useTokenClaim = () => {
   });
 
   const refreshBalance = useCallback(async () => {
-    // Invalidate and refetch both to ensure fresh data
     await queryClient.invalidateQueries(['balance']);
     await balanceQuery.refetch();
   }, [queryClient, balanceQuery]);
+
+  const scheduleNextCheck = useCallback(
+    (nextTime: Date) => {
+      const now = new Date();
+      const timeUntilNext = nextTime.getTime() - now.getTime();
+
+      if (timeUntilNext > 0) {
+        const timer = setTimeout(() => {
+          checkClaimStatus();
+        }, timeUntilNext);
+        return () => clearTimeout(timer);
+      }
+    },
+    [
+      /* checkClaimStatus will be added by useCallback */
+    ],
+  );
 
   const checkClaimStatus = useCallback(async () => {
     if (!token || !isAuthenticated) {
@@ -38,23 +54,26 @@ export const useTokenClaim = () => {
       });
 
       const data = await response.json();
-      console.log(data);
 
       if (!data.canClaim && data.nextClaimTime) {
-        setNextClaimTime(new Date(data.nextClaimTime));
+        const nextTime = new Date(data.nextClaimTime);
+        setNextClaimTime(nextTime);
+        scheduleNextCheck(nextTime);
       } else {
         setNextClaimTime(null);
       }
     } catch (error) {
       console.error('Error checking claim status:', error);
-      // showToast({
-      //   status: 'error',
-      //   message: 'Error checking claim status',
-      // });
     } finally {
       setIsCheckingStatus(false);
     }
-  }, [token, isAuthenticated, showToast]);
+  }, [token, isAuthenticated, scheduleNextCheck]);
+
+  // Add checkClaimStatus to scheduleNextCheck dependencies
+  useEffect(() => {
+    const updatedScheduleNextCheck = scheduleNextCheck;
+    scheduleNextCheck.bind(null, checkClaimStatus);
+  }, [checkClaimStatus, scheduleNextCheck]);
 
   const claimTokens = async () => {
     if (!isAuthenticated || !token) {
@@ -78,16 +97,10 @@ export const useTokenClaim = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        // if (response.status === 401) {
-        //   showToast({
-        //     status: 'error',
-        //     message: 'Session expired. Please login again.',
-        //   });
-        //   return;
-        // }
-
         if (response.status === 400 && data.nextClaimTime) {
-          setNextClaimTime(new Date(data.nextClaimTime));
+          const nextTime = new Date(data.nextClaimTime);
+          setNextClaimTime(nextTime);
+          scheduleNextCheck(nextTime);
           showToast({
             status: 'error',
             message: `Too early to claim tokens`,
@@ -99,10 +112,11 @@ export const useTokenClaim = () => {
 
       if (data.success) {
         if (data.nextClaimTime) {
-          setNextClaimTime(new Date(data.nextClaimTime));
+          const nextTime = new Date(data.nextClaimTime);
+          setNextClaimTime(nextTime);
+          scheduleNextCheck(nextTime);
         }
 
-        // Refresh balance using both methods to ensure consistency
         await refreshBalance();
 
         showToast({
@@ -112,20 +126,16 @@ export const useTokenClaim = () => {
       }
     } catch (error) {
       console.error('Error claiming tokens:', error);
-      // showToast({
-      //   status: 'error',
-      //   message:
-      //     error instanceof Error ? error.message : 'Failed to claim tokens. Please try again.',
-      // });
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    checkClaimStatus();
-    const interval = setInterval(checkClaimStatus, 60000);
-    return () => clearInterval(interval);
+    const cleanup = checkClaimStatus();
+    return () => {
+      cleanup && cleanup();
+    };
   }, [checkClaimStatus]);
 
   return {
