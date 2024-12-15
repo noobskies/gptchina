@@ -32,15 +32,21 @@ const oauthHandler = async (req, res) => {
 router.post('/google/mobile', async (req, res) => {
   try {
     const { token } = req.body;
-
     if (!token) {
       return res.status(400).json({ error: 'Token is required' });
     }
-
     try {
       const { user, created } = await handleGoogleMobileToken(token);
       req.user = user;
-      await oauthHandler(req, res);
+
+      // Do the same checks but return JSON instead of redirecting
+      await checkDomainAllowed(req, res);
+      await checkBan(req, res);
+      if (req.banned) {
+        return res.status(403).json({ error: 'User is banned' });
+      }
+      await setAuthTokens(req.user._id, res);
+      return res.json({ success: true });
     } catch (error) {
       logger.error('Error in mobile token verification:', error);
       return res.status(401).json({ error: 'Invalid token' });
