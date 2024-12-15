@@ -23,6 +23,11 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   const isNative = Capacitor.isNativePlatform();
   const platform = Capacitor.getPlatform();
 
+  // Hide Apple login on Android
+  if (id === 'apple' && platform === 'android') {
+    return null;
+  }
+
   useEffect(() => {
     const initializeSocialAuth = async () => {
       if (!isInitialized && isNative) {
@@ -39,17 +44,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
                     iOSClientId:
                       '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
                   },
-            apple:
-              platform === 'android'
-                ? {
-                    clientId: 'io.novlisky.signin',
-                    redirectUrl: 'https://novlisky.io/oauth/apple/callback',
-                    scope: 'email name',
-                    responseType: 'code id_token',
-                    responseMode: 'form_post',
-                    state: true,
-                  }
-                : {}, // For iOS, just pass empty object as per documentation
+            apple: platform === 'android' ? undefined : {}, // Don't include Apple config on Android
           };
 
           await SocialLogin.initialize(config);
