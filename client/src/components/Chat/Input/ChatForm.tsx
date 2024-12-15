@@ -26,7 +26,7 @@ import { useGetFileConfig } from '~/data-provider';
 import { cn, removeFocusRings } from '~/utils';
 import TextareaHeader from './TextareaHeader';
 import PromptsCommand from './PromptsCommand';
-import AudioRecorder from './AudioRecorder';
+// import AudioRecorder from './AudioRecorder';
 import { mainTextareaId } from '~/common';
 import StreamAudio from './StreamAudio';
 import StopButton from './StopButton';
@@ -39,7 +39,7 @@ const ChatForm = ({ index = 0 }) => {
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
   useQueryParams({ textAreaRef });
 
-  const SpeechToText = useRecoilValue(store.speechToText);
+  // const SpeechToText = useRecoilValue(store.speechToText);
   const TextToSpeech = useRecoilValue(store.textToSpeech);
   const automaticPlayback = useRecoilValue(store.automaticPlayback);
 
@@ -189,7 +189,7 @@ const ChatForm = ({ index = 0 }) => {
                 />
               )}
             </FileFormWrapper>
-            {SpeechToText && (
+            {/* {SpeechToText && (
               <AudioRecorder
                 disabled={!!disableInputs}
                 textAreaRef={textAreaRef}
@@ -198,7 +198,7 @@ const ChatForm = ({ index = 0 }) => {
                 methods={methods}
               />
             )}
-            {TextToSpeech && automaticPlayback && <StreamAudio index={index} />}
+            {TextToSpeech && automaticPlayback && <StreamAudio index={index} />} */}
           </div>
           <div
             className={cn(

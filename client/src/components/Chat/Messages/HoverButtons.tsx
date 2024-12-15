@@ -39,7 +39,7 @@ export default function HoverButtons({
   const { endpoint: _endpoint, endpointType } = conversation ?? {};
   const endpoint = endpointType ?? _endpoint;
   const [isCopied, setIsCopied] = useState(false);
-  const [TextToSpeech] = useRecoilState<boolean>(store.textToSpeech);
+  // const [TextToSpeech] = useRecoilState<boolean>(store.textToSpeech);
 
   const {
     hideEditButton,
@@ -73,7 +73,7 @@ export default function HoverButtons({
 
   return (
     <div className="visible mt-0 flex justify-center gap-1 self-end text-gray-500 lg:justify-start">
-      {TextToSpeech && (
+      {/* {TextToSpeech && (
         <MessageAudio
           index={index}
           messageId={message.messageId}
@@ -81,7 +81,7 @@ export default function HoverButtons({
           isLast={isLast}
           className="hover-button rounded-md p-1 pl-0 text-gray-500 hover:bg-gray-100 hover:text-gray-500 dark:text-gray-400/70 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400 md:group-hover:visible md:group-[.final-completion]:visible"
         />
-      )}
+      )} */}
       {isEditableEndpoint && (
         <button
           className={cn(
