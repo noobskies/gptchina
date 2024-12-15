@@ -21,7 +21,7 @@ export default function Settings({ open, onOpenChange }: TDialogProps) {
       SettingsTabValues.CHAT,
       SettingsTabValues.BETA,
       SettingsTabValues.COMMANDS,
-      SettingsTabValues.SPEECH,
+      // SettingsTabValues.SPEECH,
       SettingsTabValues.DATA,
       SettingsTabValues.ACCOUNT,
     ];
@@ -147,11 +147,11 @@ export default function Settings({ open, onOpenChange }: TDialogProps) {
                         icon: <Command className="icon-sm" />,
                         label: 'com_nav_commands',
                       },
-                      {
-                        value: SettingsTabValues.SPEECH,
-                        icon: <SpeechIcon className="icon-sm" />,
-                        label: 'com_nav_setting_speech',
-                      },
+                      // {
+                      //   value: SettingsTabValues.SPEECH,
+                      //   icon: <SpeechIcon className="icon-sm" />,
+                      //   label: 'com_nav_setting_speech',
+                      // },
                       {
                         value: SettingsTabValues.DATA,
                         icon: <DataIcon />,
