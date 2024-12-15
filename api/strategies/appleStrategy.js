@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const jwksClient = require('jwks-rsa');
 const axios = require('axios');
 const socialLogin = require('./socialLogin');
-const { logger } = require('~/config');
 
 // Initialize the JWKS client for Apple token verification
 const client = jwksClient({
@@ -11,32 +10,48 @@ const client = jwksClient({
 });
 
 const getClientSecret = () => {
-  const privateKey = process.env.APPLE_PRIVATE_KEY;
-  const time = new Date().getTime() / 1000;
+  try {
+    const privateKey = process.env.APPLE_PRIVATE_KEY;
+    const time = new Date().getTime() / 1000;
 
-  const headers = {
-    kid: process.env.APPLE_KEY_ID,
-    typ: undefined,
-    alg: 'ES256',
-  };
+    console.log('Generating client secret with params:', {
+      keyIdLength: process.env.APPLE_KEY_ID?.length,
+      teamIdLength: process.env.APPLE_TEAM_ID?.length,
+      privateKeyLength: privateKey?.length,
+      clientIdLength: process.env.APPLE_CLIENT_ID?.length,
+      timestamp: time,
+    });
 
-  const claims = {
-    iss: process.env.APPLE_TEAM_ID,
-    iat: time,
-    exp: time + 86400 * 180,
-    aud: 'https://appleid.apple.com',
-    sub: process.env.APPLE_CLIENT_ID,
-  };
+    const headers = {
+      kid: process.env.APPLE_KEY_ID,
+      typ: undefined,
+      alg: 'ES256',
+    };
 
-  return jwt.sign(claims, privateKey, {
-    algorithm: 'ES256',
-    header: headers,
-  });
+    const claims = {
+      iss: process.env.APPLE_TEAM_ID,
+      iat: time,
+      exp: time + 86400 * 180,
+      aud: 'https://appleid.apple.com',
+      sub: process.env.APPLE_CLIENT_ID,
+    };
+
+    const token = jwt.sign(claims, privateKey, {
+      algorithm: 'ES256',
+      header: headers,
+    });
+
+    console.log('Client secret generated successfully');
+    return token;
+  } catch (error) {
+    console.error('Error generating client secret:', error);
+    throw error;
+  }
 };
 
 const exchangeAuthorizationCode = async (authCode) => {
   try {
-    logger.info('Exchanging authorization code for tokens');
+    console.log('Exchanging authorization code for tokens');
     const clientSecret = getClientSecret();
 
     const requestBody = {
@@ -44,20 +59,48 @@ const exchangeAuthorizationCode = async (authCode) => {
       code: authCode,
       client_id: process.env.APPLE_CLIENT_ID,
       client_secret: clientSecret,
+      redirect_uri: process.env.APPLE_CALLBACK_URL,
     };
 
-    const response = await axios.post(
-      'https://appleid.apple.com/auth/token',
-      new URLSearchParams(requestBody),
-      {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      },
-    );
+    console.log('Token exchange request body:', {
+      ...requestBody,
+      client_secret: 'REDACTED',
+      code: authCode.substring(0, 10) + '...',
+    });
 
-    logger.info('Token exchange successful');
+    console.log('Environment variables check:', {
+      hasClientId: !!process.env.APPLE_CLIENT_ID,
+      hasTeamId: !!process.env.APPLE_TEAM_ID,
+      hasKeyId: !!process.env.APPLE_KEY_ID,
+      hasPrivateKey: !!process.env.APPLE_PRIVATE_KEY,
+      callbackUrl: process.env.APPLE_CALLBACK_URL,
+    });
+
+    const response = await axios
+      .post('https://appleid.apple.com/auth/token', new URLSearchParams(requestBody), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'User-Agent': 'Node.js App',
+        },
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.error('Apple token exchange error response:', {
+            status: error.response.status,
+            data: error.response.data,
+            headers: error.response.headers,
+          });
+        } else if (error.request) {
+          console.error('No response received from Apple:', error.request);
+        }
+        throw error;
+      });
+
+    console.log('Token exchange successful');
     return response.data;
   } catch (error) {
-    logger.error('Error exchanging authorization code:', error.response?.data || error);
+    console.error('Error exchanging authorization code:', error.response?.data || error);
+    console.error('Full error:', error);
     throw error;
   }
 };
@@ -66,7 +109,7 @@ const verifyAppleToken = async (token) => {
   try {
     const decoded = jwt.decode(token, { complete: true });
     if (!decoded || !decoded.header || !decoded.header.kid) {
-      logger.error('Invalid token format');
+      console.error('Invalid token format');
       throw new Error('Invalid token format');
     }
 
@@ -78,7 +121,7 @@ const verifyAppleToken = async (token) => {
       audience: process.env.APPLE_CLIENT_ID,
     });
 
-    logger.info('Apple token verified successfully:', {
+    console.log('Apple token verified successfully:', {
       sub: verified.sub,
       email: verified.email,
       emailVerified: verified.email_verified,
@@ -86,13 +129,13 @@ const verifyAppleToken = async (token) => {
 
     return verified;
   } catch (error) {
-    logger.error('Apple token verification failed:', error);
+    console.error('Apple token verification failed:', error);
     throw error;
   }
 };
 
 const getProfileDetails = (profile, idToken) => {
-  logger.info('getProfileDetails called with:', {
+  console.log('getProfileDetails called with:', {
     profile: JSON.stringify(profile, null, 2),
     idToken: idToken ? 'present' : 'missing',
   });
@@ -130,7 +173,7 @@ const getProfileDetails = (profile, idToken) => {
     emailVerified: true,
   };
 
-  logger.info('Constructed profile details:', JSON.stringify(profileDetails, null, 2));
+  console.log('Constructed profile details:', JSON.stringify(profileDetails, null, 2));
   return profileDetails;
 };
 
@@ -139,16 +182,16 @@ const appleLogin = socialLogin('apple', getProfileDetails);
 // Handle mobile token (used by the /oauth/apple/mobile endpoint)
 const handleMobileToken = async (authCode, profile) => {
   try {
-    logger.info('Handling mobile Apple auth code', { hasProfile: !!profile });
+    console.log('Handling mobile Apple token:', { authCode, profile });
 
     // Exchange the auth code for tokens
     const tokens = await exchangeAuthorizationCode(authCode);
-    logger.info('Successfully exchanged authorization code for tokens');
+    console.log('Successfully exchanged authorization code for tokens');
 
     // Use profile data from the native SDK if available
     const userProfile = getProfileDetails(profile);
 
-    logger.info('Created user profile:', userProfile);
+    console.log('Created user profile:', userProfile);
 
     // Use the existing social login flow
     const result = await socialLogin('apple', () => userProfile)(
@@ -159,7 +202,7 @@ const handleMobileToken = async (authCode, profile) => {
 
     return result;
   } catch (error) {
-    logger.error('Error handling mobile token:', error);
+    console.error('Error handling mobile token:', error);
     throw error;
   }
 };
@@ -178,7 +221,7 @@ module.exports = () =>
     },
     async (req, accessToken, refreshToken, idToken, profile, cb) => {
       try {
-        logger.info('Apple OAuth Callback Data:', {
+        console.log('Apple OAuth Callback Data:', {
           hasAccessToken: !!accessToken,
           hasRefreshToken: !!refreshToken,
           hasIdToken: !!idToken,
@@ -189,14 +232,14 @@ module.exports = () =>
         const userProfile = getProfileDetails(profile, idToken);
 
         if (!userProfile.id) {
-          logger.error('No Apple ID found in token');
+          console.error('No Apple ID found in token');
           throw new Error('No Apple ID found in token');
         }
 
         return appleLogin(accessToken, refreshToken, userProfile, cb);
       } catch (error) {
-        logger.error('Error in Apple Strategy:', error);
-        logger.error('Error Stack:', error.stack);
+        console.error('Error in Apple Strategy:', error);
+        console.error('Error Stack:', error.stack);
         return cb(error);
       }
     },
