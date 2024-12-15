@@ -28,51 +28,74 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       if (!isInitialized && isNative) {
         try {
           console.log(`Initializing ${id} auth`);
-          const config: InitializeOptions = {
-            google:
+
+          // Only initialize the config for the current provider
+          const config: InitializeOptions = {};
+
+          if (id === 'google') {
+            config.google =
               platform === 'android'
                 ? {
-                    webClientId: process.env.GOOGLE_WEB_CLIENT_ID,
+                    webClientId:
+                      '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
                   }
                 : {
-                    iOSClientId: process.env.GOOGLE_IOS_CLIENT_ID,
-                  },
-            apple: {
-              // For iOS, we only need to initialize with an empty object
-              // The SignInWithApple capability in Xcode handles the rest
-            },
-          };
+                    iOSClientId:
+                      '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com',
+                  };
+          }
+
+          if (id === 'apple') {
+            config.apple =
+              platform === 'android'
+                ? {
+                    clientId: 'io.novlisky.signin',
+                    redirectUrl: `${serverDomain}/oauth/apple/callback`,
+                    scope: 'email name',
+                    responseType: 'code id_token',
+                    responseMode: 'form_post',
+                    state: true,
+                  }
+                : {
+                    clientId: 'io.novlisky.signin',
+                  };
+          }
 
           await SocialLogin.initialize(config);
           setIsInitialized(true);
           console.log(`${id} auth initialized`);
         } catch (error) {
-          console.error(`Failed to initialize ${id} auth:`, error);
+          console.log(`Failed to initialize ${id} auth:`, error);
         }
       }
     };
 
     initializeSocialAuth();
-  }, [isInitialized, platform, id]);
+  }, [isInitialized, platform, id, serverDomain]);
 
   const handleNativeSocialLogin = useCallback(async () => {
     console.log(`Native ${id} login clicked`);
     try {
       if (!isInitialized) {
-        console.error('Social login not initialized');
+        console.log('Social login not initialized');
         return;
       }
 
       console.log('Attempting social login...');
       const response = await SocialLogin.login({
         provider: id as 'apple' | 'google',
-        options: {}, // For Apple login on iOS, no additional options needed
+        options: {
+          scopes: id === 'apple' ? ['email', 'name'] : ['email', 'profile'],
+        },
       });
 
       console.log(`Response received:`, response);
 
-      if (!response?.result?.idToken) {
-        console.error('No ID token in response');
+      const { result } = response;
+      console.log(`Social Login Result:`, result);
+
+      if (!result?.idToken) {
+        console.log(`No ID token in result:`, result);
         throw new Error('No ID token received');
       }
 
@@ -82,11 +105,14 @@ const SocialButton: React.FC<SocialButtonProps> = ({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          token: response.result.idToken,
-          profile: response.result.profile,
+          token: result.idToken,
+          profile: result.profile,
         }),
         credentials: 'include',
       });
+
+      const responseData = await apiResponse.clone().json();
+      console.log(`API Response:`, responseData);
 
       if (!apiResponse.ok) {
         const errorData = await apiResponse.json();
@@ -95,11 +121,13 @@ const SocialButton: React.FC<SocialButtonProps> = ({
 
       window.location.href = '/';
     } catch (error) {
-      console.error(`Error during ${id} login:`, error);
+      console.log(`Error during ${id} login:`, error);
     }
   }, [id, isInitialized, serverDomain]);
 
-  if (!enabled) return null;
+  if (!enabled) {
+    return null;
+  }
 
   // For native platforms
   if ((id === 'google' || id === 'apple') && isNative) {
