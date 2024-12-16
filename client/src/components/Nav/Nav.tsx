@@ -38,7 +38,7 @@ const Nav = ({
 
   const [navWidth, setNavWidth] = useState('260px');
   const [isHovering, setIsHovering] = useState(false);
-  const isSmallScreen = useMediaQuery('(max-width: 768px)');
+  const isSmallScreen = useMediaQuery('(max-width: 1024px)');
   const [newUser, setNewUser] = useLocalStorage('newUser', true);
   const [isToggleHovering, setIsToggleHovering] = useState(false);
 
@@ -208,7 +208,7 @@ const Nav = ({
         setIsHovering={setIsToggleHovering}
         onToggle={toggleNavVisible}
         navVisible={navVisible}
-        className="fixed left-0 top-1/2 z-40 hidden md:flex"
+        className="fixed left-0 top-1/2 z-40 hidden lg:flex"
       />
       <div
         role="button"
