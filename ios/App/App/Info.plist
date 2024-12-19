@@ -71,5 +71,8 @@
     <array>
         <string>applinks:novlisky.io</string>
     </array>
+    <!-- Add the NSCameraUsageDescription key -->
+    <key>NSCameraUsageDescription</key>
+    <string>This app requires access to the camera for taking photos and videos.</string>
 </dict>
 </plist>
