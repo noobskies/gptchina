@@ -10,7 +10,7 @@ import { useLocalize } from '~/hooks';
 const BodyTextWrapper: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <div
-      className="relative mt-4 rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700 dark:bg-green-900 dark:text-white"
+      className="relative mt-6 rounded-lg border border-green-500/20 bg-green-50/50 px-6 py-4 text-green-700 shadow-sm transition-all dark:bg-green-950/30 dark:text-green-100"
       role="alert"
     >
       {children}
@@ -21,13 +21,14 @@ const BodyTextWrapper: FC<{ children: ReactNode }> = ({ children }) => {
 const ResetPasswordBodyText = () => {
   const localize = useLocalize();
   return (
-    <div className="flex flex-col">
-      {localize('com_auth_reset_password_if_email_exists')}
-      <span>
-        <a className="text-sm text-green-500 hover:underline" href="/login">
-          {localize('com_auth_back_to_login')}
-        </a>
-      </span>
+    <div className="flex flex-col space-y-4">
+      <p>{localize('com_auth_reset_password_if_email_exists')}</p>
+      <a
+        className="inline-flex text-sm font-medium text-green-600 transition-colors hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+        href="/login"
+      >
+        {localize('com_auth_back_to_login')}
+      </a>
     </div>
   );
 };
@@ -76,12 +77,12 @@ function RequestPasswordReset() {
 
   return (
     <form
-      className="mt-6"
+      className="mt-8 space-y-6"
       aria-label="Password reset form"
       method="POST"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div className="mb-2">
+      <div className="space-y-2">
         <div className="relative">
           <input
             type="email"
@@ -115,12 +116,12 @@ function RequestPasswordReset() {
           </label>
         </div>
         {errors.email && (
-          <span role="alert" className="mt-1 text-sm text-red-500 dark:text-red-900">
+          <p role="alert" className="text-sm font-medium text-red-600 dark:text-red-400">
             {errors.email.message}
-          </span>
+          </p>
         )}
       </div>
-      <div className="mt-6">
+      <div className="space-y-4">
         <button
           type="submit"
           disabled={!!errors.email}
