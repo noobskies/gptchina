@@ -16,7 +16,7 @@ const FileUpload = forwardRef<HTMLInputElement, FileUploadProps>(
           ref={ref}
           multiple
           type="file"
-          capture={false}
+          accept=".pdf,.doc,.docx,.txt,image/*"
           style={{ display: 'none' }}
           onChange={handleFileChange}
         />
