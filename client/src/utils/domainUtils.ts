@@ -5,6 +5,7 @@ interface DomainData {
   logoDarkPath: string;
   logoLightPath: string;
   trackingCode: string;
+  smallLogoPath: string;
 }
 
 const domainData: Record<string, DomainData> = {
@@ -15,6 +16,7 @@ const domainData: Record<string, DomainData> = {
     logoDarkPath: '/assets/logo-china.png',
     logoLightPath: '/assets/logo-china.png',
     trackingCode: 'G-2HYZSSFTSV',
+    smallLogoPath: '/assets/logo-china.png',
   },
   'gptafrica.io': {
     logoText: 'GPT Africa',
@@ -23,46 +25,7 @@ const domainData: Record<string, DomainData> = {
     logoDarkPath: '/assets/logo-africa.png',
     logoLightPath: '/assets/logo-africa.png',
     trackingCode: 'G-268NPHEPVM',
-  },
-  'gptglobal.io': {
-    logoText: 'GPT Global',
-    logoFilename: 'logo-global.png',
-    logoPath: '/assets/logo-global.png',
-    logoDarkPath: '/assets/logo-global.png',
-    logoLightPath: '/assets/logo-global.png',
-    trackingCode: 'G-FRZD0ZXQHP',
-  },
-  'gptiran.io': {
-    logoText: 'GPT Iran',
-    logoFilename: 'logo-iran.png',
-    logoPath: '/assets/logo-iran.png',
-    logoDarkPath: '/assets/logo-iran.png',
-    logoLightPath: '/assets/logo-iran.png',
-    trackingCode: 'G-0NGSJ9SP6Z',
-  },
-  'gptitaly.io': {
-    logoText: 'GPT Italy',
-    logoFilename: 'logo-italy.png',
-    logoPath: '/assets/logo-italy.png',
-    logoDarkPath: '/assets/logo-italy.png',
-    logoLightPath: '/assets/logo-italy.png',
-    trackingCode: 'G-40QF6KBX1L',
-  },
-  'gptrussia.io': {
-    logoText: 'GPT Russia',
-    logoFilename: 'logo-russia.png',
-    logoPath: '/assets/logo-russia.png',
-    logoDarkPath: '/assets/logo-russia.png',
-    logoLightPath: '/assets/logo-russia.png',
-    trackingCode: 'G-N5L46P3PCX',
-  },
-  'gptusa.io': {
-    logoText: 'GPT USA',
-    logoFilename: 'logo-usa.png',
-    logoPath: '/assets/logo-usa.png',
-    logoDarkPath: '/assets/logo-usa.png',
-    logoLightPath: '/assets/logo-usa.png',
-    trackingCode: 'G-46JS78DD0K',
+    smallLogoPath: '/assets/logo-africa.png',
   },
   'novlisky.io': {
     logoText: 'Novlisky',
@@ -71,6 +34,7 @@ const domainData: Record<string, DomainData> = {
     logoDarkPath: '/assets/logo-novlisky-white.png',
     logoLightPath: '/assets/logo-novlisky.png',
     trackingCode: 'G-XYDFX0BJEY',
+    smallLogoPath: '/assets/logo-novlisky-small.png',
   },
 };
 
@@ -81,6 +45,7 @@ const defaultData: DomainData = {
   logoDarkPath: '/assets/logo-novlisky-white.png',
   logoLightPath: '/assets/logo-novlisky.png',
   trackingCode: 'G-XYDFX0BJEY',
+  smallLogoPath: '/assets/logo-novlisky-small.png',
 };
 
 export const getDomainData = (): DomainData => {

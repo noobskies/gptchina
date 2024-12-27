@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { getDomainData } from '../../utils/domainUtils';
 
 const Footer = () => {
+  const domainData = getDomainData();
+
   return (
     <footer className="flex flex-col items-center justify-center space-y-8 pb-10">
       <div className="flex flex-col items-center space-y-3 text-gray-400 sm:flex-row sm:space-x-8 sm:space-y-0">
@@ -13,7 +16,7 @@ const Footer = () => {
         </Link>
       </div>
       <Link to="/">
-        <img src="assets/logo.png" alt="Novlisky Logo" className="h-8 w-8" />
+        <img src={domainData.logoPath} alt={`${domainData.logoText} Logo`} className="h-8 w-8" />
       </Link>
     </footer>
   );
