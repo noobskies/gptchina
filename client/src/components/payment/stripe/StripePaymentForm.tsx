@@ -34,9 +34,19 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
   const formatTokens = (tokens: number) =>
     tokens >= 1_000_000 ? `${tokens / 1_000_000}M` : `${(tokens / 1000).toFixed(1)}K`;
 
-  const displayPrice = React.useMemo(() => {
+  const { displayPrice, currency } = React.useMemo(() => {
     const tokenPackage = tokenOptions.find((option) => option.tokens === tokens);
-    return tokenPackage?.discountedPrice || `$${(amount / 100).toFixed(2)}`;
+    if (!tokenPackage) {
+      return {
+        displayPrice: `$${(amount / 100).toFixed(2)}`,
+        currency: 'USD',
+      };
+    }
+
+    return {
+      displayPrice: tokenPackage.discountedPrice,
+      currency: tokenPackage.currency,
+    };
   }, [tokens, amount]);
 
   const getStripePaymentMethod = (method: PaymentMethod) => {
@@ -105,7 +115,7 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600 dark:text-gray-400">Cost</span>
               <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {displayPrice} USD
+                {displayPrice} {currency.toUpperCase()}
               </span>
             </div>
             <div className="flex items-center justify-between border-t border-gray-200 pt-2 dark:border-gray-700">
@@ -169,5 +179,3 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
     </div>
   );
 };
-
-export default StripePaymentForm;

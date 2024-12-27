@@ -7,7 +7,7 @@ import TokenOptionButton from './TokenOptionButton';
 import PaymentOptionButton from './PaymentOptionButton';
 import PaymentConfirmation from './PaymentConfirmation';
 import { getAvailablePaymentMethods, PaymentMethod } from '../constants/paymentMethods';
-import { tokenOptions } from '../constants/tokenOptions';
+import { getTokenOptions } from '../constants/tokenOptions'; // Changed this import
 import { StripePaymentForm } from '../stripe/StripePaymentForm';
 import { StripePaymentProvider } from '../stripe/StripePaymentProvider';
 import { InAppPurchaseForm } from '../capacitor/InAppPurchaseForm';
@@ -35,13 +35,15 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
   const [error, setError] = React.useState<string | null>(null);
   const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
 
+  // Get domain-specific token options
+  const tokenOptions = React.useMemo(() => getTokenOptions(), []);
+
   const selectedPackage = React.useMemo(
     () => tokenOptions.find((option) => option.tokens === selectedTokens),
-    [selectedTokens],
+    [selectedTokens, tokenOptions], // Added tokenOptions to dependency array
   );
 
   const handleClose = async () => {
-    // If payment was successful (we're on confirmation step), refresh balance before closing
     if (step === 'confirmation') {
       await queryClient.invalidateQueries(['balance']);
     }
@@ -63,7 +65,6 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
     if (paymentIntentId) {
       setPaymentIntentId(paymentIntentId);
     }
-    // Refresh balance as soon as payment completes
     await queryClient.invalidateQueries(['balance']);
     setStep('confirmation');
   };
