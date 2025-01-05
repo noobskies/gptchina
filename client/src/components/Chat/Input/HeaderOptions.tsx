@@ -2,7 +2,7 @@ import { useRecoilState } from 'recoil';
 import { Settings2 } from 'lucide-react';
 import { Root, Anchor } from '@radix-ui/react-popover';
 import { useState, useEffect, useMemo } from 'react';
-import { tPresetUpdateSchema, EModelEndpoint, isParamEndpoint } from 'librechat-data-provider';
+import { tConvoUpdateSchema, EModelEndpoint, isParamEndpoint } from 'librechat-data-provider';
 import type { TPreset, TInterfaceConfig } from 'librechat-data-provider';
 import { EndpointSettings, SaveAsPresetDialog, AlternativeSettings } from '~/components/Endpoints';
 import { PluginStoreDialog, TooltipAnchor } from '~/components';
@@ -86,19 +86,19 @@ export default function HeaderOptions({
               {!noSettings[endpoint] &&
                 interfaceConfig?.parameters === true &&
                 paramEndpoint === false && (
-                <TooltipAnchor
-                  id="parameters-button"
-                  aria-label={localize('com_ui_model_parameters')}
-                  description={localize('com_ui_model_parameters')}
-                  tabIndex={0}
-                  role="button"
-                  onClick={triggerAdvancedMode}
-                  data-testid="parameters-button"
-                  className="inline-flex size-10 items-center justify-center rounded-lg border border-border-light bg-transparent text-text-primary transition-all ease-in-out hover:bg-surface-tertiary disabled:pointer-events-none disabled:opacity-50 radix-state-open:bg-surface-tertiary"
-                >
-                  <Settings2 size={16} aria-label="Settings/Parameters Icon" />
-                </TooltipAnchor>
-              )}
+                  <TooltipAnchor
+                    id="parameters-button"
+                    aria-label={localize('com_ui_model_parameters')}
+                    description={localize('com_ui_model_parameters')}
+                    tabIndex={0}
+                    role="button"
+                    onClick={triggerAdvancedMode}
+                    data-testid="parameters-button"
+                    className="inline-flex size-10 items-center justify-center rounded-lg border border-border-light bg-transparent text-text-primary transition-all ease-in-out hover:bg-surface-tertiary disabled:pointer-events-none disabled:opacity-50 radix-state-open:bg-surface-tertiary"
+                  >
+                    <Settings2 size={16} aria-label="Settings/Parameters Icon" />
+                  </TooltipAnchor>
+                )}
             </div>
             {interfaceConfig?.parameters === true && paramEndpoint === false && (
               <OptionsPopover
@@ -123,7 +123,7 @@ export default function HeaderOptions({
                 open={saveAsDialogShow}
                 onOpenChange={setSaveAsDialogShow}
                 preset={
-                  tPresetUpdateSchema.parse({
+                  tConvoUpdateSchema.parse({
                     ...conversation,
                   }) as TPreset
                 }

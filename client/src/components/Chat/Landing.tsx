@@ -23,6 +23,8 @@ export default function Landing({ Header }: { Header?: ReactNode }) {
 
   let { endpoint = '' } = conversation ?? {};
 
+  console.log('endpoint', endpoint);
+
   if (
     endpoint === EModelEndpoint.chatGPTBrowser ||
     endpoint === EModelEndpoint.azureOpenAI ||

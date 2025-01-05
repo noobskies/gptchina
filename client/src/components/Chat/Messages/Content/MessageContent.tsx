@@ -66,23 +66,15 @@ export const ErrorMessage = ({
   }
   return (
     <Container message={message}>
-      <div>
-        <div
-          role="alert"
-          aria-live="assertive"
-          className={cn(
-            'rounded-xl border border-red-500/20 bg-red-500/5 px-3 py-2 text-sm text-gray-600 dark:text-gray-200',
-            className,
-          )}
-        >
-          <Error text={text} />
-        </div>
-        <div
-          onClick={() => handleSentryFeedback(user)}
-          className="mt-2 flex cursor-pointer items-center gap-2 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-        >
-          <FeedbackDialog user={user} />
-        </div>
+      <div
+        role="alert"
+        aria-live="assertive"
+        className={cn(
+          'rounded-xl border border-red-500/20 bg-red-500/5 px-3 py-2 text-sm text-gray-600 dark:text-gray-200',
+          className,
+        )}
+      >
+        <Error text={text} />
       </div>
     </Container>
   );

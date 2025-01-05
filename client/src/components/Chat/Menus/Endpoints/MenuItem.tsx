@@ -36,9 +36,9 @@ const MenuItem: FC<MenuItemProps> = ({
 
   const { getExpiry } = useUserKey(endpoint);
   const localize = useLocalize();
-  const expiryTime = getExpiry();
+  const expiryTime = getExpiry() ?? '';
 
-  const onSelectEndpoint = (newEndpoint: EModelEndpoint) => {
+  const onSelectEndpoint = (newEndpoint?: EModelEndpoint) => {
     if (!newEndpoint) {
       return;
     }
@@ -93,7 +93,8 @@ const MenuItem: FC<MenuItemProps> = ({
   return (
     <>
       <div
-        role="menuitem"
+        role="option"
+        aria-selected={selected}
         className={cn(
           'group m-1.5 flex max-h-[40px] cursor-pointer gap-2 rounded px-5 py-2.5 !pr-3 text-sm !opacity-100 hover:bg-surface-hover',
           'radix-disabled:pointer-events-none radix-disabled:opacity-50',
@@ -130,8 +131,10 @@ const MenuItem: FC<MenuItemProps> = ({
             {userProvidesKey && (
               <div className="text-token-text-primary" key={`set-key-${endpoint}`}>
                 <button
+                  tabIndex={0}
+                  aria-label={`${localize('com_endpoint_config_key')} for ${title}`}
                   className={cn(
-                    'invisible flex gap-x-1 group-hover:visible',
+                    'invisible flex gap-x-1 group-focus-within:visible group-hover:visible',
                     selected ? 'visible' : '',
                     expiryTime ? 'text-token-text-primary w-full rounded-lg p-2' : '',
                   )}
@@ -140,10 +143,17 @@ const MenuItem: FC<MenuItemProps> = ({
                     e.stopPropagation();
                     setDialogOpen(true);
                   }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setDialogOpen(true);
+                    }
+                  }}
                 >
                   <div
                     className={cn(
-                      'invisible group-hover:visible text-black dark:text-white',
+                      'invisible group-focus-within:visible group-hover:visible',
                       expiryTime ? 'text-xs' : '',
                     )}
                   >
@@ -160,7 +170,7 @@ const MenuItem: FC<MenuItemProps> = ({
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="icon-md block group-hover:hidden text-black dark:text-white"
+                className="icon-md block text-black group-hover:hidden dark:text-white"
               >
                 <path
                   fillRule="evenodd"
@@ -171,7 +181,7 @@ const MenuItem: FC<MenuItemProps> = ({
               </svg>
             )}
             {(!userProvidesKey || expiryTime) && (
-              <div className="text-black dark:text-white hidden gap-x-1 group-hover:flex">
+              <div className="hidden gap-x-1 text-black group-hover:flex dark:text-white">
                 {!userProvidesKey && <div>{localize('com_ui_new_chat')}</div>}
                 <svg
                   width="24"
