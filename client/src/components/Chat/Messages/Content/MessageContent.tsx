@@ -13,6 +13,7 @@ import Container from './Container';
 import Markdown from './Markdown';
 import { cn } from '~/utils';
 import store from '~/store';
+import FeedbackDialog, { handleSentryFeedback } from '~/components/Nav/FeedbackDialog';
 
 export const ErrorMessage = ({
   text,
@@ -22,6 +23,8 @@ export const ErrorMessage = ({
   message?: TMessage;
 }) => {
   const localize = useLocalize();
+  const user = useRecoilValue(store.user);
+
   if (text === 'Error connecting to server, try refreshing the page.') {
     console.log('error message', message);
     return (
@@ -40,13 +43,21 @@ export const ErrorMessage = ({
       >
         <DelayedRender delay={5500}>
           <Container message={message}>
-            <div
-              className={cn(
-                'rounded-md border border-red-500 bg-red-500/10 px-3 py-2 text-sm text-gray-600 dark:text-gray-200',
-                className,
-              )}
-            >
-              {localize('com_ui_error_connection')}
+            <div>
+              <div
+                className={cn(
+                  'rounded-md border border-red-500 bg-red-500/10 px-3 py-2 text-sm text-gray-600 dark:text-gray-200',
+                  className,
+                )}
+              >
+                {localize('com_ui_error_connection')}
+              </div>
+              <div
+                onClick={() => handleSentryFeedback(user)}
+                className="mt-2 flex cursor-pointer items-center gap-2 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                <FeedbackDialog user={user} />
+              </div>
             </div>
           </Container>
         </DelayedRender>
@@ -55,15 +66,23 @@ export const ErrorMessage = ({
   }
   return (
     <Container message={message}>
-      <div
-        role="alert"
-        aria-live="assertive"
-        className={cn(
-          'rounded-xl border border-red-500/20 bg-red-500/5 px-3 py-2 text-sm text-gray-600 dark:text-gray-200',
-          className,
-        )}
-      >
-        <Error text={text} />
+      <div>
+        <div
+          role="alert"
+          aria-live="assertive"
+          className={cn(
+            'rounded-xl border border-red-500/20 bg-red-500/5 px-3 py-2 text-sm text-gray-600 dark:text-gray-200',
+            className,
+          )}
+        >
+          <Error text={text} />
+        </div>
+        <div
+          onClick={() => handleSentryFeedback(user)}
+          className="mt-2 flex cursor-pointer items-center gap-2 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+        >
+          <FeedbackDialog user={user} />
+        </div>
       </div>
     </Container>
   );
