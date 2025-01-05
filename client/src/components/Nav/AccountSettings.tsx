@@ -1,9 +1,9 @@
 import { useRecoilState } from 'recoil';
 import * as Select from '@ariakit/react/select';
 import { Fragment, useState, memo } from 'react';
-import { FileText, LogOut } from 'lucide-react';
+import { FileText, LogOut, TabletSmartphone } from 'lucide-react';
 import { useGetUserBalance, useGetStartupConfig } from 'librechat-data-provider/react-query';
-import { LinkIcon, GearIcon, DropdownMenuSeparator } from '~/components';
+import { GearIcon, DropdownMenuSeparator } from '~/components';
 import FilesView from '~/components/Chat/Input/Files/FilesView';
 import { useAuthContext } from '~/hooks/AuthContext';
 import useAvatar from '~/hooks/Messages/useAvatar';
@@ -14,6 +14,7 @@ import store from '~/store';
 import FeedbackDialog, { handleSentryFeedback } from './FeedbackDialog';
 import PaymentDialog from '~/components/payment/common/PaymentDialog';
 import TokenClaimButton from '../TokenClaim/TokenClaimButton';
+import { getDomainData } from '~/utils/domainUtils';
 
 function AccountSettings() {
   const localize = useLocalize();
@@ -28,6 +29,7 @@ function AccountSettings() {
 
   const avatarSrc = useAvatar(user);
   const name = user?.avatar ?? user?.username ?? '';
+  const domainData = getDomainData();
 
   const formatTokens = (num) => {
     const n = parseFloat(num);
@@ -138,16 +140,16 @@ function AccountSettings() {
             <FileText className="icon-md" aria-hidden="true" />
             {localize('com_nav_my_files')}
           </Select.SelectItem>
-          {/* {startupConfig?.helpAndFaqURL !== '/' && (
+          {domainData.logoText === 'Novlisky' && (
             <Select.SelectItem
               value=""
-              onClick={() => window.open(startupConfig?.helpAndFaqURL, '_blank')}
+              onClick={() => window.open('/get-app', '_blank')}
               className="select-item text-sm"
             >
-              <LinkIcon aria-hidden="true" />
-              {localize('com_nav_help_faq')}
+              <TabletSmartphone className="icon-md" aria-hidden="true" />
+              Get the App
             </Select.SelectItem>
-          )} */}
+          )}
           <Select.SelectItem
             value=""
             onClick={() => setShowSettings(true)}

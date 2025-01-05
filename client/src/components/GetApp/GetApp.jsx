@@ -10,7 +10,7 @@ const GetApp = () => {
         <nav className="mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Link to="/" className="flex items-center gap-2">
-              <img src="assets/logo.png" alt="Novlisky Logo" className="h-8 w-8" />
+              <img src="assets/logo-novlisky-small.png" alt="Novlisky Logo" className="h-8 w-8" />
               <span className="text-xl font-semibold">Novlisky</span>
             </Link>
           </div>
@@ -30,7 +30,7 @@ const GetApp = () => {
               </p>
               <div className="flex gap-2">
                 <a
-                  href="https://apps.apple.com/app/your-app-id"
+                  href="https://apps.apple.com/app/6670143059"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center space-x-2 rounded-lg bg-gray-900 px-3 py-2 text-white hover:bg-blue-600"
