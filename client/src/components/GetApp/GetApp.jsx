@@ -211,15 +211,15 @@ const GetApp = () => {
           {/* Footer */}
           <footer className="flex flex-col items-center justify-center space-y-8 pb-10">
             <div className="flex flex-col items-center space-y-3 text-gray-400 sm:flex-row sm:space-x-8 sm:space-y-0">
-              <Link to="/privacy-policy" className="hover:text-blue-600">
+              <Link to="/privacy-policy" target="_blank" className="hover:text-blue-600">
                 Privacy Policy
               </Link>
-              <Link to="/terms-of-service" className="hover:text-blue-600">
+              <Link to="/terms-of-service" target="_blank" className="hover:text-blue-600">
                 Terms of Service
               </Link>
             </div>
             <Link to="/">
-              <img src="assets/logo.png" alt="Novlisky Logo" className="h-8 w-8" />
+              <img src="assets/logo-novlisky-small.png" alt="Novlisky Logo" className="h-8 w-8" />
             </Link>
           </footer>
         </div>
