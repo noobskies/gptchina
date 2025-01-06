@@ -4,7 +4,7 @@ export enum PaymentMethod {
   WeChatPay = 'wechat_pay',
   AliPay = 'alipay',
   Card = 'card',
-  Bitcoin = 'bitcoin',
+  OpenNode = 'opennode', // OpenNode for all crypto payments
   GooglePay = 'google_pay',
   ApplePay = 'apple_pay',
   InAppPurchase = 'in_app_purchase',
@@ -17,12 +17,14 @@ export interface PaymentMethodConfig {
   regions?: string[];
   providers?: string[];
   platforms?: string[];
+  description?: string;
 }
 
 export const getAvailablePaymentMethods = (): PaymentMethodConfig[] => {
   const platform = Capacitor.getPlatform();
+  const currentDomain = window.location.hostname;
 
-  // For Android, show only in-app purchase as Google Pay
+  // For Android, show specific payment methods
   if (platform === 'android') {
     return [
       {
@@ -30,6 +32,12 @@ export const getAvailablePaymentMethods = (): PaymentMethodConfig[] => {
         name: 'Credit Card',
         icon: 'credit-card',
         providers: ['visa', 'mastercard', 'amex'],
+      },
+      {
+        id: PaymentMethod.OpenNode,
+        name: 'Bitcoin',
+        icon: 'bitcoin',
+        description: 'Pay with Bitcoin or Lightning Network',
       },
       {
         id: PaymentMethod.WeChatPay,
@@ -42,11 +50,6 @@ export const getAvailablePaymentMethods = (): PaymentMethodConfig[] => {
         name: 'AliPay',
         icon: 'alipay',
         regions: ['CN'],
-      },
-      {
-        id: PaymentMethod.Bitcoin,
-        name: 'Bitcoin',
-        icon: 'bitcoin',
       },
       {
         id: PaymentMethod.InAppPurchase,
@@ -68,11 +71,17 @@ export const getAvailablePaymentMethods = (): PaymentMethodConfig[] => {
         platforms: ['ios'],
         regions: ['GLOBAL'],
       },
+      {
+        id: PaymentMethod.OpenNode,
+        name: 'Bitcoin',
+        icon: 'bitcoin',
+        description: 'Pay with Bitcoin or Lightning Network',
+      },
     ];
   }
 
-  // Web gets all other payment methods
-  return [
+  // Base payment methods for web
+  const basePaymentMethods: PaymentMethodConfig[] = [
     {
       id: PaymentMethod.Card,
       name: 'Credit Card',
@@ -80,21 +89,10 @@ export const getAvailablePaymentMethods = (): PaymentMethodConfig[] => {
       providers: ['visa', 'mastercard', 'amex'],
     },
     {
-      id: PaymentMethod.WeChatPay,
-      name: 'WeChat Pay',
-      icon: 'wechat',
-      regions: ['CN'],
-    },
-    {
-      id: PaymentMethod.AliPay,
-      name: 'AliPay',
-      icon: 'alipay',
-      regions: ['CN'],
-    },
-    {
-      id: PaymentMethod.Bitcoin,
+      id: PaymentMethod.OpenNode,
       name: 'Bitcoin',
       icon: 'bitcoin',
+      description: 'Pay with Bitcoin or Lightning Network',
     },
     {
       id: PaymentMethod.GooglePay,
@@ -109,6 +107,26 @@ export const getAvailablePaymentMethods = (): PaymentMethodConfig[] => {
       regions: ['GLOBAL'],
     },
   ];
+
+  // Add China-specific payment methods if on Chinese domain
+  if (currentDomain === 'gptchina.io') {
+    basePaymentMethods.push(
+      {
+        id: PaymentMethod.WeChatPay,
+        name: 'WeChat Pay',
+        icon: 'wechat',
+        regions: ['CN'],
+      },
+      {
+        id: PaymentMethod.AliPay,
+        name: 'AliPay',
+        icon: 'alipay',
+        regions: ['CN'],
+      },
+    );
+  }
+
+  return basePaymentMethods;
 };
 
 export const paymentMethods = getAvailablePaymentMethods();

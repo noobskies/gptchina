@@ -12,6 +12,8 @@ import { StripePaymentForm } from '../stripe/StripePaymentForm';
 import { StripePaymentProvider } from '../stripe/StripePaymentProvider';
 import { InAppPurchaseForm } from '../capacitor/InAppPurchaseForm';
 import { InAppPurchaseProvider } from '../capacitor/InAppPurchaseProvider';
+import { OpenNodePaymentForm } from '../opennode/OpenNodePaymentForm';
+import { OpenNodePaymentProvider } from '../opennode/OpenNodePaymentProvider';
 import { Capacitor } from '@capacitor/core';
 
 interface PaymentDialogProps {
@@ -88,8 +90,16 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
     setStep('payment');
   };
 
+  // Inside PaymentDialog.tsx
   const renderPaymentForm = () => {
     if (!selectedPackage) return null;
+
+    console.log('Payment Form Props:', {
+      amount: selectedPackage.amount,
+      user,
+      priceId: selectedPackage.priceId,
+      selectedPaymentMethod,
+    });
 
     const commonProps = {
       amount: selectedPackage.amount,
@@ -104,12 +114,19 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
       case PaymentMethod.InAppPurchase:
         return (
           <InAppPurchaseProvider>
-            <InAppPurchaseForm
-              {...commonProps}
-              onSuccess={handlePaymentComplete}
-              onError={handlePaymentError}
-            />
+            <InAppPurchaseForm {...commonProps} />
           </InAppPurchaseProvider>
+        );
+
+      case PaymentMethod.OpenNode:
+        return (
+          <OpenNodePaymentProvider
+            amount={selectedPackage.amount}
+            user={user}
+            priceId={selectedPackage.priceId}
+          >
+            <OpenNodePaymentForm {...commonProps} />
+          </OpenNodePaymentProvider>
         );
 
       case PaymentMethod.Card:
@@ -117,7 +134,6 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
       case PaymentMethod.ApplePay:
       case PaymentMethod.WeChatPay:
       case PaymentMethod.AliPay:
-      case PaymentMethod.Bitcoin:
         return (
           <StripePaymentProvider
             amount={selectedPackage.amount}
