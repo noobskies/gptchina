@@ -23,8 +23,8 @@ const SocialButton: React.FC<SocialButtonProps> = ({
   const isNative = Capacitor.isNativePlatform();
   const platform = Capacitor.getPlatform();
 
-  // Hide Apple login on Android
-  if (id === 'apple' && platform === 'android') {
+  // Hide Apple login on Android and web
+  if (id === 'apple' && (platform === 'android' || platform === 'web')) {
     return null;
   }
 
