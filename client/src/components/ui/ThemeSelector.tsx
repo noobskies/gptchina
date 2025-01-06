@@ -6,7 +6,7 @@ const Theme = ({ theme, onChange }: { theme: string; onChange: (value: string) =
   const themeIcons = {
     system: <Monitor />,
     dark: <Moon color="white" />,
-    light: <Sun />,
+    light: <Sun color="black" />,
   };
 
   return (

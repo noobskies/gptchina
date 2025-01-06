@@ -4,6 +4,7 @@ const { EModelEndpoint, defaultModels, CacheKeys } = require('librechat-data-pro
 const { inputSchema, logAxiosError, extractBaseURL, processModelData } = require('~/utils');
 const { OllamaClient } = require('~/app/clients/OllamaClient');
 const getLogStores = require('~/cache/getLogStores');
+const { tokenValues, getMultiplier } = require('~/models/tx');
 
 /**
  * Splits a string by commas and trims each resulting value.

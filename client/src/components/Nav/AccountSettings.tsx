@@ -152,18 +152,18 @@ function AccountSettings() {
           )}
           <Select.SelectItem
             value=""
+            onClick={() => handleSentryFeedback(user)}
+            className="select-item text-sm"
+          >
+            <FeedbackDialog user={user} />
+          </Select.SelectItem>
+          <Select.SelectItem
+            value=""
             onClick={() => setShowSettings(true)}
             className="select-item text-sm"
           >
             <GearIcon className="icon-md" aria-hidden="true" />
             {localize('com_nav_settings')}
-          </Select.SelectItem>
-          <Select.SelectItem
-            value=""
-            onClick={() => handleSentryFeedback(user)}
-            className="select-item text-sm"
-          >
-            <FeedbackDialog user={user} />
           </Select.SelectItem>
           <DropdownMenuSeparator />
           <Select.SelectItem

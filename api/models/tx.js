@@ -1,5 +1,5 @@
 const { matchModelName } = require('../utils');
-const defaultRate = 6;
+const defaultRate = 2.55;
 
 /**
  * AWS Bedrock pricing

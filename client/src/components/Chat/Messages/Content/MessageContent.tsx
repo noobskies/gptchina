@@ -76,6 +76,12 @@ export const ErrorMessage = ({
       >
         <Error text={text} />
       </div>
+      <div
+        onClick={() => handleSentryFeedback(user)}
+        className="flex cursor-pointer items-center gap-2 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+      >
+        <FeedbackDialog user={user} />
+      </div>
     </Container>
   );
 };

@@ -1,8 +1,14 @@
 import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { EModelEndpoint, Constants } from 'librechat-data-provider';
-import { useGetEndpointsQuery, useGetStartupConfig } from 'librechat-data-provider/react-query';
+import {
+  useGetEndpointsQuery,
+  useGetStartupConfig,
+  useGetModelRatesQuery,
+} from 'librechat-data-provider/react-query';
 import type * as t from 'librechat-data-provider';
 import type { ReactNode } from 'react';
+import { useAuthContext } from '~/hooks/AuthContext';
 import { useChatContext, useAgentsMapContext, useAssistantsMapContext } from '~/Providers';
 import { useGetAssistantDocsQuery } from '~/data-provider';
 import ConvoIcon from '~/components/Endpoints/ConvoIcon';
@@ -16,14 +22,41 @@ export default function Landing({ Header }: { Header?: ReactNode }) {
   const { conversation } = useChatContext();
   const agentsMap = useAgentsMapContext();
   const assistantMap = useAssistantsMapContext();
+  const { token } = useAuthContext();
   const { data: startupConfig } = useGetStartupConfig();
   const { data: endpointsConfig } = useGetEndpointsQuery();
 
+  const { data: modelRates } = useQuery(
+    ['modelRates'],
+    async () => {
+      if (!token) return null;
+
+      const response = await fetch('/api/models/rates', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch model rates');
+      }
+      return response.json();
+    },
+    {
+      enabled: !!token, // Only run query when token is available
+    },
+  );
+
   const localize = useLocalize();
 
-  let { endpoint = '' } = conversation ?? {};
+  let { endpoint = '', model = '' } = conversation ?? {};
 
-  console.log('endpoint', endpoint);
+  const currentModelRates = useMemo(() => {
+    if (!modelRates || !endpoint || !model) {
+      return null;
+    }
+    return modelRates[endpoint]?.[model];
+  }, [modelRates, endpoint, model]);
 
   if (
     endpoint === EModelEndpoint.chatGPTBrowser ||
@@ -119,14 +152,18 @@ export default function Landing({ Header }: { Header?: ReactNode }) {
             <div className="max-w-md text-center text-sm font-normal text-text-primary ">
               {description ? description : localize('com_nav_welcome_message')}
             </div>
-            {/* <div className="mt-1 flex items-center gap-1 text-token-text-tertiary">
-            <div className="text-sm text-token-text-tertiary">By Daniel Avila</div>
-          </div> */}
           </div>
         ) : (
           <h2 className="mb-5 max-w-[75vh] px-12 text-center text-lg font-medium dark:text-white md:px-0 md:text-2xl">
             {getWelcomeMessage()}
           </h2>
+        )}
+        {currentModelRates && (
+          <div className="mt-2 text-center text-sm text-gray-600 dark:text-gray-300">
+            <div className="mb-1 font-semibold">Model: {model}</div>
+            <div>Prompt: ${currentModelRates.promptRate}/1M tokens</div>
+            <div>Completion: ${currentModelRates.completionRate}/1M tokens</div>
+          </div>
         )}
         <div className="mt-8 flex flex-wrap justify-center gap-3 px-4">
           {conversation_starters.length > 0 &&
