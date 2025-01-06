@@ -133,13 +133,6 @@ const handleMobileToken = async (token) => {
 
 module.exports = {
   strategy: () => {
-    console.log('Initializing Google Strategy with:', {
-      clientID: process.env.GOOGLE_CLIENT_ID ? 'Set' : 'Missing',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ? 'Set' : 'Missing',
-      callbackURL: `${process.env.DOMAIN_SERVER}${process.env.GOOGLE_CALLBACK_URL}`,
-      proxy: true,
-    });
-
     return new GoogleStrategy(
       {
         clientID: process.env.GOOGLE_CLIENT_ID,

@@ -126,7 +126,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
           data-testid={`${id}-native`}
         >
           <Icon />
-          <p>{label} (Native)</p>
+          <p>{label}</p>
         </button>
       </div>
     );
@@ -141,7 +141,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         data-testid={id}
       >
         <Icon />
-        <p>{label} (Web)</p>
+        <p>{label}</p>
       </a>
     </div>
   );
