@@ -1,5 +1,8 @@
 const { matchModelName } = require('../utils');
-const defaultRate = 2.55; // Reduced from 3 by 15%
+const defaultRates = {
+  prompt: 1.5, // Default rate for prompt tokens
+  completion: 2.5, // Default rate for completion tokens
+};
 
 /**
  * AWS Bedrock pricing
@@ -237,15 +240,15 @@ const getValueKey = (model, endpoint) => {
  * @param {string} [params.model] - The model name to derive the value key from if not provided.
  * @param {string} [params.endpoint] - The endpoint name to derive the value key from if not provided.
  * @param {EndpointTokenConfig} [params.endpointTokenConfig] - The token configuration for the endpoint.
- * @returns {number} The multiplier for the given parameters, or a default value if not found.
+ * @returns {number} The multiplier for the given parameters, or the appropriate default value if not found.
  */
 const getMultiplier = ({ valueKey, tokenType, model, endpoint, endpointTokenConfig }) => {
   if (endpointTokenConfig) {
-    return endpointTokenConfig?.[model]?.[tokenType] ?? defaultRate;
+    return endpointTokenConfig?.[model]?.[tokenType] ?? defaultRates[tokenType];
   }
 
   if (valueKey && tokenType) {
-    return tokenValues[valueKey][tokenType] ?? defaultRate;
+    return tokenValues[valueKey][tokenType] ?? defaultRates[tokenType];
   }
 
   if (!tokenType || !model) {
@@ -254,11 +257,11 @@ const getMultiplier = ({ valueKey, tokenType, model, endpoint, endpointTokenConf
 
   valueKey = getValueKey(model, endpoint);
   if (!valueKey) {
-    return defaultRate;
+    return defaultRates[tokenType];
   }
 
-  // If we got this far, and values[tokenType] is undefined somehow, return a rough average of default multipliers
-  return tokenValues[valueKey]?.[tokenType] ?? defaultRate;
+  // If we got this far, return the appropriate default rate for the token type
+  return tokenValues[valueKey]?.[tokenType] ?? defaultRates[tokenType];
 };
 
 /**
@@ -300,6 +303,6 @@ module.exports = {
   getValueKey,
   getMultiplier,
   getCacheMultiplier,
-  defaultRate,
+  defaultRates,
   cacheTokenValues,
 };

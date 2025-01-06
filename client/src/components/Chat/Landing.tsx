@@ -161,8 +161,8 @@ export default function Landing({ Header }: { Header?: ReactNode }) {
         {currentModelRates && (
           <div className="mt-2 text-center text-sm text-gray-600 dark:text-gray-300">
             <div className="mb-1 font-semibold">Model: {model}</div>
-            <div>Prompt: ${currentModelRates.promptRate}/1M tokens</div>
-            <div>Completion: ${currentModelRates.completionRate}/1M tokens</div>
+            <div>Input: {currentModelRates.promptRate}</div>
+            <div>Output: {currentModelRates.completionRate}</div>
           </div>
         )}
         <div className="mt-8 flex flex-wrap justify-center gap-3 px-4">
