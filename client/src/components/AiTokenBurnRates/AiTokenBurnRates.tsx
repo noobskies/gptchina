@@ -28,9 +28,9 @@ const AiTokenBurnRates = () => {
           <div className="grid gap-8 md:grid-cols-2">
             {/* Token Calculation Section */}
             <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-              <div className="mb-4">
-                <h2 className="flex items-center gap-2 text-2xl font-semibold text-gray-900 dark:text-gray-50">
-                  <Calculator className="h-6 w-6" />
+              <div className="mb-6">
+                <h2 className="flex flex-col items-center gap-3 text-2xl font-semibold text-gray-900 dark:text-gray-50 sm:flex-row sm:gap-2">
+                  <Calculator className="h-8 w-8 sm:h-6 sm:w-6" />
                   Token Calculation
                 </h2>
               </div>
@@ -60,20 +60,20 @@ const AiTokenBurnRates = () => {
 
             {/* Tips Section */}
             <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-              <div className="mb-4">
-                <h2 className="flex items-center gap-2 text-2xl font-semibold text-gray-900 dark:text-gray-50">
-                  <TrendingUp className="h-6 w-6 text-green-500" />
+              <div className="mb-6">
+                <h2 className="flex flex-col items-center gap-3 text-2xl font-semibold text-gray-900 dark:text-gray-50 sm:flex-row sm:gap-2">
+                  <TrendingUp className="hidden text-green-500 sm:block sm:h-6 sm:w-6" />
                   Tips to Optimize Token Usage
                 </h2>
               </div>
               <div className="space-y-6">
-                <div className="flex items-start gap-3">
-                  <RefreshCw className="mt-1 h-5 w-5 text-green-500" />
+                <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-start">
+                  <RefreshCw className="h-8 w-8 text-green-500 sm:mt-1 sm:h-6 sm:w-6" />
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-gray-50">
+                    <h3 className="text-center font-semibold text-gray-900 dark:text-gray-50 sm:text-left">
                       Start a New Chat for Each Topic
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300">
+                    <p className="text-center text-gray-600 dark:text-gray-300 sm:text-left">
                       Context is treated as part of your input, so longer threads consume more
                       tokens. Starting a new chat for each topic helps reduce unnecessary input
                       token usage.
@@ -81,26 +81,26 @@ const AiTokenBurnRates = () => {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3">
-                  <TrendingUp className="mt-1 h-5 w-5 text-green-500" />
+                <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-start">
+                  <TrendingUp className="h-8 w-8 text-green-500 sm:mt-1 sm:h-6 sm:w-6" />
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-gray-50">
+                    <h3 className="text-center font-semibold text-gray-900 dark:text-gray-50 sm:text-left">
                       Use Models Strategically
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300">
+                    <p className="text-center text-gray-600 dark:text-gray-300 sm:text-left">
                       Experiment with different models to find the best balance between cost and
                       performance.
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3">
-                  <Calculator className="mt-1 h-5 w-5 text-green-500" />
+                <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-start">
+                  <Calculator className="h-8 w-8 text-green-500 sm:mt-1 sm:h-6 sm:w-6" />
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-gray-50">
+                    <h3 className="text-center font-semibold text-gray-900 dark:text-gray-50 sm:text-left">
                       Understand Multipliers
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300">
+                    <p className="text-center text-gray-600 dark:text-gray-300 sm:text-left">
                       Higher multipliers (e.g., for powerful models like Claude 3 Opus or OpenAI's
                       o1) may cost more but often deliver better performance.
                     </p>
