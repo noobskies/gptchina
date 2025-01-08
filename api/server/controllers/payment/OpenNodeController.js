@@ -16,7 +16,7 @@ class OpenNodeController {
         return res.status(400).json({ error: 'Amount, priceId, and tokens are required' });
       }
 
-      logger.info('Creating OpenNode charge', {
+      console.log('Creating OpenNode charge', {
         amount,
         userId: user._id,
         priceId,
@@ -39,7 +39,7 @@ class OpenNodeController {
         status: charge.status,
       });
     } catch (error) {
-      logger.error('Charge creation error:', error);
+      console.log('Charge creation error:', error);
       res.status(500).json({
         error: 'Failed to create charge',
         details: error.message,
@@ -55,7 +55,7 @@ class OpenNodeController {
         return res.status(400).json({ error: 'No signature found in headers' });
       }
 
-      logger.info('Processing OpenNode webhook', {
+      console.log('Processing OpenNode webhook', {
         signatureExists: !!signature,
         bodyLength: req.rawBody?.length,
       });
@@ -67,7 +67,7 @@ class OpenNodeController {
         req.session.openNodeChargeId = event.id;
       }
 
-      logger.info('Webhook processed successfully', {
+      console.log('Webhook processed successfully', {
         status: event.status,
         chargeId: event.id,
         metadata: event.metadata,
@@ -75,7 +75,7 @@ class OpenNodeController {
 
       res.json({ received: true });
     } catch (err) {
-      logger.error('Webhook processing error:', err);
+      console.log('Webhook processing error:', err);
       res.status(400).json({ error: err.message });
     }
   }
@@ -112,7 +112,7 @@ class OpenNodeController {
         transactionId: transaction.id,
       });
     } catch (err) {
-      logger.error('Payment verification error:', err);
+      console.log('Payment verification error:', err);
       res.status(500).json({ error: err.message });
     }
   }
@@ -128,7 +128,7 @@ class OpenNodeController {
       const transactions = await OpenNodeService.listTransactions(user._id);
       res.json(transactions);
     } catch (err) {
-      logger.error('List transactions error:', err);
+      console.log('List transactions error:', err);
       res.status(500).json({ error: err.message });
     }
   }
