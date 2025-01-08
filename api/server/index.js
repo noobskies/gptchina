@@ -18,6 +18,7 @@ const validateImageRequest = require('./middleware/validateImageRequest');
 const errorController = require('./controllers/ErrorController');
 const StripeController = require('./controllers/payment/StripeController');
 const StripeService = require('./services/payment/StripeService');
+const OpenNodeService = require('./services/payment/OpenNodeService');
 const configureSocialLogins = require('./socialLogins');
 const AppService = require('./services/AppService');
 const staticCache = require('./utils/staticCache');
@@ -79,6 +80,34 @@ const startServer = async () => {
       }
     },
   );
+
+  app.post(
+    '/api/payment/opennode/webhook',
+    express.raw({ type: 'application/json' }),
+    async (req, res) => {
+      const signature = req.headers['x-opennode-signature'];
+
+      console.log('OpenNode webhook received:', {
+        status: JSON.parse(req.body.toString()).status,
+        signature: signature?.slice(0, 20) + '...',
+      });
+
+      try {
+        const event = await OpenNodeService.handleWebhook(req.body, signature);
+        console.log('OpenNode webhook processed:', {
+          status: event.status,
+          chargeId: event.id,
+          metadata: event.metadata,
+        });
+
+        res.json({ received: true });
+      } catch (err) {
+        console.error('OpenNode webhook error:', err);
+        res.status(400).json({ error: err.message });
+      }
+    },
+  );
+
   app.use(
     express.json({
       limit: '5mb',
@@ -141,6 +170,7 @@ const startServer = async () => {
   app.use('/api/config', routes.config);
   app.use('/api/payment/stripe', routes.payment.stripe);
   app.use('/api/payment/inapp', routes.payment.inapp);
+  app.use('/api/payment/opennode', routes.payment.opennode);
   app.use('/api/assistants', routes.assistants);
   app.use('/api/files', await routes.files.initialize());
   app.use('/images/', validateImageRequest, routes.staticRoute);

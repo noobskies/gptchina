@@ -12,6 +12,8 @@ import { StripePaymentForm } from '../stripe/StripePaymentForm';
 import { StripePaymentProvider } from '../stripe/StripePaymentProvider';
 import { InAppPurchaseForm } from '../capacitor/InAppPurchaseForm';
 import { InAppPurchaseProvider } from '../capacitor/InAppPurchaseProvider';
+import { OpenNodePaymentForm } from '../opennode/OpenNodePaymentForm';
+import { OpenNodePaymentProvider } from '../opennode/OpenNodePaymentProvider';
 import { Capacitor } from '@capacitor/core';
 
 interface PaymentDialogProps {
@@ -101,6 +103,21 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
     };
 
     switch (selectedPaymentMethod) {
+      case PaymentMethod.Bitcoin:
+        return (
+          <OpenNodePaymentProvider
+            amount={selectedPackage.amount}
+            user={user}
+            priceId={selectedPackage.priceId}
+          >
+            <OpenNodePaymentForm
+              {...commonProps}
+              onSuccess={handlePaymentComplete}
+              onError={handlePaymentError}
+            />
+          </OpenNodePaymentProvider>
+        );
+
       case PaymentMethod.InAppPurchase:
         return (
           <InAppPurchaseProvider>
@@ -117,7 +134,6 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
       case PaymentMethod.ApplePay:
       case PaymentMethod.WeChatPay:
       case PaymentMethod.AliPay:
-      case PaymentMethod.Bitcoin:
         return (
           <StripePaymentProvider
             amount={selectedPackage.amount}
