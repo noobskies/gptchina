@@ -124,7 +124,7 @@ class OpenNodeService {
         priceId,
       });
 
-      console.log('Bitcoin payment processed successfully', {
+      logger.info('Bitcoin payment processed successfully', {
         chargeId: event.id,
         userId,
         tokenAmount,
