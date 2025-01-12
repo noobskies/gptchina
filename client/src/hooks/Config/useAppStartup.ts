@@ -1,3 +1,4 @@
+// client/src/hooks/Config/useAppStartup.ts
 import { useEffect } from 'react';
 import TagManager from 'react-gtm-module';
 import { useRecoilState, useSetRecoilState } from 'recoil';

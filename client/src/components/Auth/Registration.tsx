@@ -7,6 +7,7 @@ import type { TLoginLayoutContext } from '~/common';
 import { ErrorMessage } from './ErrorMessage';
 import { Spinner } from '~/components/svg';
 import { useLocalize } from '~/hooks';
+import { trackSignUpEvent } from '~/utils/gtm';
 
 const AutofillStyleFix = () => (
   <style jsx global>{`
@@ -57,6 +58,7 @@ const Registration: React.FC = () => {
     onSuccess: () => {
       setIsSubmitting(false);
       setCountdown(3);
+      trackSignUpEvent(token ? 'invite' : 'email');
       const timer = setInterval(() => {
         setCountdown((prevCountdown) => {
           if (prevCountdown <= 1) {
