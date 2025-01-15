@@ -75,7 +75,7 @@ const tokenValues = Object.assign(
   {
     // OpenAI models
     o1: { prompt: 12.75, completion: 51.0 },
-    'chatgpt-4o-latest': { prompt: 1.97, completion: 7.5 },
+    'chatgpt-4o-latest': { prompt: 1.97, completion: 7.23 },
     'gpt-4o': { prompt: 1.97, completion: 7.23 },
     'gpt-4o-mini': { prompt: 0.13, completion: 0.51 },
     'gpt-4-0125-preview': { prompt: 1.97, completion: 7.23 },
@@ -554,9 +554,9 @@ const tokenValues = Object.assign(
     'openai/gpt-4o-mini-2024-07-18': { prompt: 0.13, completion: 0.6 },
     'gpt-4o-mini': { prompt: 0.13, completion: 0.6 },
     'gpt-4o-mini-2024-07-18': { prompt: 0.13, completion: 0.6 },
-    'openai/chatgpt-4o-latest': { prompt: 1.97, completion: 8.5 },
+    'openai/chatgpt-4o-latest': { prompt: 1.97, completion: 7.23 },
     'chatgpt-4o': { prompt: 1.97, completion: 8.5 },
-    'chatgpt-4o-latest': { prompt: 1.97, completion: 8.5 },
+    'chatgpt-4o-latest': { prompt: 1.97, completion: 7.23 },
     'openai/gpt-4o-2024-08-06': { prompt: 4.26, completion: 15.0 },
     'gpt-4o-16k': { prompt: 4.26, completion: 15.0 },
     'gpt-4o-2024-08-06': { prompt: 4.26, completion: 15.0 },
