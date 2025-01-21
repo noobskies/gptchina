@@ -103,6 +103,19 @@ export default defineConfig(({ mode }) => {
           display: 'standalone',
           background_color: '#000000',
           theme_color: '#009688',
+          prefer_related_applications: true,
+          related_applications: [
+            {
+              platform: 'play',
+              url: 'https://play.google.com/store/apps/details?id=twa.novlisky.io',
+              id: 'twa.novlisky.io',
+            },
+            {
+              platform: 'itunes',
+              url: 'https://apps.apple.com/app/6670143059',
+              id: '6670143059',
+            },
+          ],
           icons: [
             {
               src: env.VITE_APP_FAVICON_32 || '/assets/favicon-32x32.png',
