@@ -561,7 +561,7 @@ const tokenValues = Object.assign(
     'gpt-4o-16k': { prompt: 4.26, completion: 15.0 },
     'gpt-4o-2024-08-06': { prompt: 4.26, completion: 15.0 },
     'openai/gpt-4o-2024-05-13': { prompt: 1.97, completion: 8.5 },
-    'gpt-4o': { prompt: 1.97, completion: 8.5 },
+    'gpt-4o': { prompt: 1.97, completion: 7.23 },
     'gpt-4o-2024-05-13': { prompt: 1.97, completion: 8.5 },
     'openai/gpt-4-turbo-2024-04-09': { prompt: 8.51, completion: 30.0 },
     'gpt-4-turbo': { prompt: 8.51, completion: 30.0 },
