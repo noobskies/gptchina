@@ -3,32 +3,23 @@ const { isEnabled } = require('~/server/utils');
 const { findUser } = require('~/models');
 const { logger } = require('~/config');
 
-// Default avatar URL - you can replace this with your preferred placeholder
-const DEFAULT_AVATAR = 'https://www.gravatar.com/avatar/default?d=mp';
-
-const getDefaultAvatar = (name) => {
-  // Create avatar with user's initials if name exists
-  if (name) {
-    const encodedName = encodeURIComponent(name.replace(/\s+/g, '+'));
-    return `${DEFAULT_AVATAR}${encodedName}`;
-  }
-  return `${DEFAULT_AVATAR}User`;
-};
+// Use your local asset as the default avatar
+const DEFAULT_AVATAR = '/assets/logo-novlisky-small.png';
 
 const socialLogin =
   (provider, getProfileDetails) => async (accessToken, refreshToken, profile, cb) => {
     try {
       const { email, id, avatarUrl, username, name, emailVerified } = getProfileDetails(profile);
 
-      // For Apple login, use a default avatar
-      const finalAvatarUrl = provider === 'apple' ? getDefaultAvatar(name) : avatarUrl;
+      // For Apple login, use your local logo
+      const finalAvatarUrl = provider === 'apple' ? DEFAULT_AVATAR : avatarUrl;
 
       const oldUser = await findUser({ email: email.trim() });
       const ALLOW_SOCIAL_REGISTRATION = isEnabled(process.env.ALLOW_SOCIAL_REGISTRATION);
 
       if (oldUser) {
-        // Only update avatar if one is provided or it's Apple login
-        if (finalAvatarUrl) {
+        // Only update avatar if one is provided and it's not Apple login
+        if (finalAvatarUrl && provider !== 'apple') {
           await handleExistingUser(oldUser, finalAvatarUrl);
         }
         return cb(null, oldUser);
