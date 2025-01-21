@@ -1,61 +1,30 @@
-const { createSocialUser, handleExistingUser } = require('./process');
+const { createSocialUser } = require('./process');
 const { isEnabled } = require('~/server/utils');
 const { findUser } = require('~/models');
 const { logger } = require('~/config');
 
-// Helper function to validate and format URL
-const ensureAbsoluteUrl = (url) => {
-  if (!url) return null;
-
-  try {
-    // Check if URL is already absolute
-    if (url.startsWith('http://') || url.startsWith('https://')) {
-      return url;
-    }
-
-    // If URL starts with //, add https:
-    if (url.startsWith('//')) {
-      return `https:${url}`;
-    }
-
-    // If URL starts with /, add your base URL
-    if (url.startsWith('/')) {
-      return `${process.env.DOMAIN_CLIENT || 'https://novlisky.io'}${url}`;
-    }
-
-    // If none of the above, assume https://
-    return `https://${url}`;
-  } catch (error) {
-    logger.warn('Invalid avatar URL:', url);
-    return null;
-  }
-};
-
 const socialLogin =
   (provider, getProfileDetails) => async (accessToken, refreshToken, profile, cb) => {
     try {
-      const { email, id, avatarUrl, username, name, emailVerified } = getProfileDetails(profile);
-
-      // Format the avatar URL properly
-      const formattedAvatarUrl = ensureAbsoluteUrl(avatarUrl);
+      const { email, id, username, name, emailVerified } = getProfileDetails(profile);
 
       const oldUser = await findUser({ email: email.trim() });
       const ALLOW_SOCIAL_REGISTRATION = isEnabled(process.env.ALLOW_SOCIAL_REGISTRATION);
 
+      // If user exists, just return them
       if (oldUser) {
-        // Pass the formatted avatar URL
-        await handleExistingUser(oldUser, formattedAvatarUrl);
         return cb(null, oldUser);
       }
 
+      // If social registration is allowed, create new user without avatar
       if (ALLOW_SOCIAL_REGISTRATION) {
         const newUser = await createSocialUser({
           email,
-          avatarUrl: formattedAvatarUrl, // Use the formatted URL
+          avatarUrl: null, // Skip avatar handling completely
           provider,
           providerKey: `${provider}Id`,
           providerId: id,
-          username,
+          username: username || `${provider}_${id.substring(0, 10)}`,
           name,
           emailVerified,
         });
