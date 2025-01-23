@@ -85,14 +85,46 @@ const startServer = async () => {
     '/api/payment/opennode/webhook',
     express.raw({ type: 'application/json' }),
     async (req, res) => {
-      console.log('OpenNode webhook received');
+      console.log('OpenNode webhook received', {
+        headers: req.headers,
+        timestamp: new Date().toISOString(),
+      });
 
       try {
-        await OpenNodeService.handleWebhook(req.body);
-        res.sendStatus(200); // OpenNode expects a 200 response
+        // Log raw body before parsing
+        const rawBody = req.body.toString();
+        console.log('OpenNode webhook raw payload:', {
+          rawBody,
+          contentType: req.headers['content-type'],
+        });
+
+        // Parse the body
+        const payload = JSON.parse(rawBody);
+        console.log('OpenNode webhook parsed payload:', {
+          id: payload.id,
+          status: payload.status,
+          orderId: payload.order_id,
+          metadata: payload.metadata,
+        });
+
+        // Process the webhook
+        await OpenNodeService.handleWebhook(payload);
+
+        console.log('OpenNode webhook processed successfully', {
+          id: payload.id,
+          status: payload.status,
+        });
+
+        res.sendStatus(200);
       } catch (err) {
-        console.error('OpenNode webhook error:', err);
-        res.sendStatus(200); // Still send 200 even on error as per OpenNode's requirements
+        console.log('OpenNode webhook processing error:', {
+          error: err.message,
+          stack: err.stack,
+          headers: req.headers,
+        });
+
+        // Still send 200 even on error as per OpenNode's requirements
+        res.sendStatus(200);
       }
     },
   );

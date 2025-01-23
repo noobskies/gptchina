@@ -73,7 +73,7 @@ class OpenNodeService {
         order_id: `${userId}_${priceId}`,
         customer_email: email,
         description: `Purchase of ${PRICE_TOKEN_MAPPING[priceId]} tokens`,
-        success_url: `${process.env.DOMAIN_CLIENT}/payment/success`,
+        success_url: `${process.env.DOMAIN_CLIENT}/`,
         callback_url: `${process.env.DOMAIN_CLIENT}/api/payment/opennode/webhook`,
         auto_settle: false,
         metadata: {
@@ -128,16 +128,34 @@ class OpenNodeService {
 
   static async handleWebhook(payload) {
     try {
-      console.log('Processing webhook payload:', JSON.stringify(payload, null, 2));
+      logger.info('Received OpenNode webhook payload:', {
+        payloadType: typeof payload,
+        rawPayload: JSON.stringify(payload, null, 2),
+      });
+
+      if (!payload) {
+        logger.error('Empty webhook payload received');
+        throw new Error('Empty webhook payload');
+      }
+
+      logger.info('Webhook basic details:', {
+        status: payload.status,
+        id: payload.id,
+        orderId: payload.order_id,
+        metadata: payload.metadata,
+      });
 
       const isValid = await opennode.signatureIsValid(payload);
+      logger.info('Webhook signature validation:', { isValid });
+
       if (!isValid) {
+        logger.error('Invalid webhook signature');
         throw new Error('Invalid webhook signature');
       }
 
       const { status, id, metadata } = payload;
 
-      console.log('Webhook event details:', {
+      logger.info('Processing webhook with status:', {
         status,
         id,
         metadata,
@@ -145,23 +163,37 @@ class OpenNodeService {
 
       switch (status) {
         case 'processing':
-          console.log('Payment processing:', {
+          logger.info('Payment processing:', {
             id,
             metadata,
+            amount: payload.amount,
+            fiatValue: payload.fiat_value,
           });
           break;
 
         case 'paid':
-          await this.handleSuccessfulPayment(payload);
+          logger.info('Starting paid payment processing');
+          const transaction = await this.handleSuccessfulPayment(payload);
+          logger.info('Successfully processed paid payment:', {
+            transactionId: transaction._id,
+            chargeId: id,
+            userId: metadata?.userId,
+          });
           break;
 
         case 'expired':
         case 'cancelled':
+          logger.info('Starting failed payment processing');
           await this.handleFailedPayment(payload);
+          logger.info('Processed failed payment:', {
+            status,
+            id,
+            userId: metadata?.userId,
+          });
           break;
 
         default:
-          console.log(`Unhandled status: ${status}`, {
+          logger.info(`Unhandled payment status: ${status}`, {
             id,
             status,
           });
@@ -169,7 +201,101 @@ class OpenNodeService {
 
       return payload;
     } catch (error) {
-      console.error('Webhook processing error:', error);
+      console.log('Webhook processing error:', {
+        error: error.message,
+        stack: error.stack,
+        payload: JSON.stringify(payload, null, 2),
+      });
+      throw error;
+    }
+  }
+
+  static async handleSuccessfulPayment(charge) {
+    logger.info('Starting successful payment processing:', {
+      chargeId: charge.id,
+      metadata: charge.metadata,
+    });
+
+    const { userId, priceId } = charge.metadata || {};
+
+    if (!priceId || !PRICE_TOKEN_MAPPING[priceId]) {
+      console.log('Invalid metadata in charge:', {
+        chargeId: charge.id,
+        metadata: charge.metadata,
+      });
+      throw new Error('Valid priceId is required');
+    }
+
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        console.log('User not found:', { userId });
+        throw new Error('User not found');
+      }
+
+      // Check for existing transaction
+      const existingTransaction = await Transaction.findOne({
+        user: userId,
+        tokenType: 'credits',
+        context: 'purchase',
+        paymentId: charge.id,
+        paymentProvider: 'opennode',
+      });
+
+      if (existingTransaction) {
+        console.log('Payment already processed:', {
+          chargeId: charge.id,
+          transactionId: existingTransaction._id,
+        });
+        return existingTransaction;
+      }
+
+      const tokenAmount = PRICE_TOKEN_MAPPING[priceId];
+      console.log('Creating transaction record:', {
+        userId,
+        tokenAmount,
+        chargeId: charge.id,
+      });
+
+      const transaction = await Transaction.create({
+        user: userId,
+        tokenType: 'credits',
+        context: 'purchase',
+        rawAmount: tokenAmount,
+        paymentId: charge.id,
+        priceId: priceId,
+        paymentProvider: 'opennode',
+        btcAmount: charge.btc_amount,
+        checkoutUrl: charge.hosted_checkout_url,
+      });
+
+      console.log('Created transaction record:', {
+        transactionId: transaction._id,
+      });
+
+      // Update user's token balance
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { $inc: { tokenBalance: tokenAmount } },
+        { new: true },
+      );
+
+      console.log('Updated user token balance:', {
+        userId,
+        oldBalance: user.tokenBalance,
+        newBalance: updatedUser.tokenBalance,
+        addedTokens: tokenAmount,
+      });
+
+      return transaction;
+    } catch (error) {
+      console.log('Failed to process successful payment:', {
+        error: error.message,
+        stack: error.stack,
+        chargeId: charge.id,
+        userId,
+        priceId,
+      });
       throw error;
     }
   }
