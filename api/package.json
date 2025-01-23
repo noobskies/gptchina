@@ -88,6 +88,7 @@
     "openai": "^4.47.1",
     "openai-chat-tokens": "^0.2.8",
     "openid-client": "^5.4.2",
+    "opennode": "^1.5.0",
     "passport": "^0.6.0",
     "passport-apple": "^2.0.2",
     "passport-custom": "^1.1.1",

@@ -1,3 +1,4 @@
+// src/components/payment/common/PaymentDialog.tsx
 import React, { useState } from 'react';
 import { OGDialog, OGDialogContent, OGDialogHeader } from '~/components';
 import { useAuthContext } from '~/hooks/AuthContext';
@@ -12,6 +13,8 @@ import { StripePaymentForm } from '../stripe/StripePaymentForm';
 import { StripePaymentProvider } from '../stripe/StripePaymentProvider';
 import { InAppPurchaseForm } from '../capacitor/InAppPurchaseForm';
 import { InAppPurchaseProvider } from '../capacitor/InAppPurchaseProvider';
+import { OpenNodeCheckoutForm } from '../opennode/OpenNodeCheckoutForm';
+import { OpenNodePaymentProvider } from '../opennode/OpenNodePaymentProvider';
 import { Capacitor } from '@capacitor/core';
 
 interface PaymentDialogProps {
@@ -112,12 +115,22 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
           </InAppPurchaseProvider>
         );
 
+      case PaymentMethod.Bitcoin:
+        return (
+          <OpenNodePaymentProvider
+            amount={selectedPackage.amount}
+            user={user}
+            priceId={selectedPackage.priceId}
+          >
+            <OpenNodeCheckoutForm {...commonProps} />
+          </OpenNodePaymentProvider>
+        );
+
       case PaymentMethod.Card:
       case PaymentMethod.GooglePay:
       case PaymentMethod.ApplePay:
       case PaymentMethod.WeChatPay:
       case PaymentMethod.AliPay:
-      case PaymentMethod.Bitcoin:
         return (
           <StripePaymentProvider
             amount={selectedPackage.amount}
