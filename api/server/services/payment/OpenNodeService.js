@@ -57,7 +57,7 @@ class OpenNodeService {
         throw new Error(`Invalid amount for priceId. Expected: ${expectedAmount}, Got: ${amount}`);
       }
 
-      logger.info('Creating OpenNode charge', {
+      console.log('Creating OpenNode charge', {
         amount,
         userId,
         priceId,
@@ -82,13 +82,13 @@ class OpenNodeService {
         },
       };
 
-      logger.info('OpenNode charge payload:', {
+      console.log('OpenNode charge payload:', {
         payload: JSON.stringify(chargePayload, null, 2),
       });
 
       try {
         const charge = await opennode.createCharge(chargePayload);
-        logger.info('OpenNode charge response:', {
+        console.log('OpenNode charge response:', {
           response: JSON.stringify(charge, null, 2),
         });
         return charge;
@@ -145,7 +145,7 @@ class OpenNodeService {
 
       switch (status) {
         case 'processing':
-          logger.info('Payment processing:', {
+          console.log('Payment processing:', {
             id,
             metadata,
           });
@@ -161,7 +161,7 @@ class OpenNodeService {
           break;
 
         default:
-          logger.info(`Unhandled status: ${status}`, {
+          console.log(`Unhandled status: ${status}`, {
             id,
             status,
           });
@@ -198,11 +198,13 @@ class OpenNodeService {
       });
 
       if (existingTransaction) {
-        logger.info('Payment already processed', { id: charge.id });
+        console.log('Payment already processed', { id: charge.id });
         return;
       }
 
       const tokenAmount = PRICE_TOKEN_MAPPING[priceId];
+
+      // Create transaction record
       const transaction = await Transaction.create({
         user: userId,
         tokenType: 'credits',
@@ -215,11 +217,17 @@ class OpenNodeService {
         checkoutUrl: charge.hosted_checkout_url,
       });
 
-      logger.info('Successful payment processed via webhook', {
+      // Add tokens to user's balance
+      await User.findByIdAndUpdate(userId, {
+        $inc: { tokenBalance: tokenAmount },
+      });
+
+      console.log('Successful payment processed via webhook', {
         id: charge.id,
         userId,
         tokenAmount,
         transactionId: transaction._id,
+        newBalance: user.tokenBalance + tokenAmount,
       });
 
       return transaction;
