@@ -315,6 +315,8 @@ const tokenValues = Object.assign(
     'llama-3.1-sonar-small-128k-online': { prompt: 0.17, completion: 0.17 },
     'llama-3.1-sonar-large-128k-online': { prompt: 0.85, completion: 0.85 },
     'llama-3.1-sonar-huge-128k-online': { prompt: 4.26, completion: 4.26 },
+    'sonar-pro': { prompt: 2.56, completion: 11.75 },
+    sonar: { prompt: 0.75, completion: 1.15 },
 
     // OpenRouter models
     'deepseek/deepseek-chat': { prompt: 0.12, completion: 0.24 },
