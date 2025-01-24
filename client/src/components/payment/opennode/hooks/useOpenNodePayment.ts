@@ -49,17 +49,17 @@ export const useOpenNodePayment = ({
 
       const { hosted_checkout_url } = await response.json();
 
-      // Redirect to OpenNode's hosted checkout
+      // Redirect to OpenNode's hosted checkout without calling onSuccess
       window.location.href = hosted_checkout_url;
 
-      onSuccess();
+      // Don't call onSuccess here - it will be handled when the user returns via success_url
+      // The success handling should now be done in PaymentDialog based on URL parameters
     } catch (err) {
       console.error('Payment processing error:', err);
       const errorMessage = err instanceof Error ? err.message : 'Payment failed';
       setError(errorMessage);
       onError(errorMessage);
-    } finally {
-      setIsProcessing(false);
+      setIsProcessing(false); // Reset processing state on error
     }
   };
 
