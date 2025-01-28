@@ -99,42 +99,45 @@ class OpenNodeService {
 
   async handlePaymentNotification(charge) {
     try {
+      // First, fetch the complete charge information from OpenNode
+      const completeCharge = await this.getCharge(charge.id);
+
       console.log('Processing payment notification:', {
-        chargeId: charge.id,
-        status: charge.status,
-        metadata: charge.metadata,
-        transactions: charge.transactions,
+        chargeId: completeCharge.id,
+        status: completeCharge.status,
+        metadata: completeCharge.metadata,
+        transactions: completeCharge.transactions,
       });
 
-      switch (charge.status) {
+      switch (completeCharge.status) {
         case 'processing':
           console.log('Payment is processing (in mempool)', {
-            id: charge.id,
-            transactions: charge.transactions,
+            id: completeCharge.id,
+            transactions: completeCharge.transactions,
           });
           return;
 
         case 'underpaid':
           console.log('Payment was underpaid', {
-            id: charge.id,
-            missing: charge.missing_amt,
-            transactions: charge.transactions,
+            id: completeCharge.id,
+            missing: completeCharge.missing_amt,
+            transactions: completeCharge.transactions,
           });
           return;
 
         case 'expired':
-          console.log('Charge expired', { id: charge.id });
+          console.log('Charge expired', { id: completeCharge.id });
           return;
 
         case 'refunded':
           console.log('Payment was refunded', {
-            id: charge.id,
-            transactions: charge.transactions,
+            id: completeCharge.id,
+            transactions: completeCharge.transactions,
           });
           return;
 
         case 'paid':
-          const { userId, priceId, tokens } = charge.metadata;
+          const { userId, priceId, tokens } = completeCharge.metadata;
           if (!userId || !priceId || !tokens) {
             throw new Error('Missing metadata in charge');
           }
@@ -144,7 +147,7 @@ class OpenNodeService {
           if (!user) {
             console.log('User not found for payment:', {
               userId,
-              chargeId: charge.id,
+              chargeId: completeCharge.id,
             });
             throw new Error('User not found');
           }
@@ -154,11 +157,11 @@ class OpenNodeService {
             user: userId,
             tokenType: 'credits',
             context: 'purchase',
-            paymentId: charge.id,
+            paymentId: completeCharge.id,
           });
 
           if (existingTransaction) {
-            console.log('Payment already processed', { id: charge.id });
+            console.log('Payment already processed', { id: completeCharge.id });
             return user;
           }
 
@@ -168,7 +171,7 @@ class OpenNodeService {
             tokenType: 'credits',
             context: 'purchase',
             rawAmount: tokens,
-            paymentId: charge.id,
+            paymentId: completeCharge.id,
             priceId,
           });
 
@@ -180,7 +183,7 @@ class OpenNodeService {
           );
 
           console.log('Bitcoin payment processed successfully', {
-            chargeId: charge.id,
+            chargeId: completeCharge.id,
             userId,
             tokens,
             transactionId: transaction._id,
@@ -191,8 +194,8 @@ class OpenNodeService {
 
         default:
           console.log('Unhandled payment status', {
-            id: charge.id,
-            status: charge.status,
+            id: completeCharge.id,
+            status: completeCharge.status,
           });
           return null;
       }
