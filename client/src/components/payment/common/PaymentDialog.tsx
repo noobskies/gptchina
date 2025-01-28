@@ -13,7 +13,7 @@ import { StripePaymentForm } from '../stripe/StripePaymentForm';
 import { StripePaymentProvider } from '../stripe/StripePaymentProvider';
 import { InAppPurchaseForm } from '../capacitor/InAppPurchaseForm';
 import { InAppPurchaseProvider } from '../capacitor/InAppPurchaseProvider';
-import { OpenNodeCheckoutForm } from '../opennode/OpenNodeCheckoutForm';
+import { OpenNodePaymentForm } from '../opennode/OpenNodePaymentForm';
 import { OpenNodePaymentProvider } from '../opennode/OpenNodePaymentProvider';
 import { Capacitor } from '@capacitor/core';
 
@@ -116,15 +116,7 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
         );
 
       case PaymentMethod.Bitcoin:
-        return (
-          <OpenNodePaymentProvider
-            amount={selectedPackage.amount}
-            user={user}
-            priceId={selectedPackage.priceId}
-          >
-            <OpenNodeCheckoutForm {...commonProps} />
-          </OpenNodePaymentProvider>
-        );
+        return <OpenNodePaymentForm {...commonProps} />;
 
       case PaymentMethod.Card:
       case PaymentMethod.GooglePay:

@@ -5,10 +5,6 @@ const OpenNodeController = require('../../controllers/payment/OpenNodeController
 const { requireJwtAuth } = require('../../middleware');
 
 router.post('/create-charge', requireJwtAuth, OpenNodeController.createCharge);
-router.post(
-  '/webhook',
-  express.raw({ type: 'application/json' }),
-  OpenNodeController.handleWebhook,
-);
+router.get('/charge/:chargeId', requireJwtAuth, OpenNodeController.getCharge);
 
 module.exports = router;
