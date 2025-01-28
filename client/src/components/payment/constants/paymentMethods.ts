@@ -93,7 +93,7 @@ export const getAvailablePaymentMethods = (): PaymentMethodConfig[] => {
     },
     {
       id: PaymentMethod.Bitcoin,
-      name: 'USDC',
+      name: 'Bitcoin',
       icon: 'bitcoin',
     },
     {
