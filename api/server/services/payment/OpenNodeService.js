@@ -228,13 +228,12 @@ class OpenNodeService {
     }
   }
 
-  validateWebhook(payload, signature) {
+  validateWebhook(payload) {
     try {
-      if (!payload?.id || !signature) {
+      if (!payload?.id || !payload?.hashed_order) {
         console.log('Missing required webhook fields', {
           hasId: !!payload?.id,
-          hasSignature: !!signature,
-          receivedSignature: signature,
+          hasHashedOrder: !!payload?.hashed_order,
         });
         return false;
       }
@@ -245,12 +244,12 @@ class OpenNodeService {
         .update(payload.id)
         .digest('hex');
 
-      // Compare with received signature
-      const isValid = signature === calculated;
+      // Compare with received hashed_order
+      const isValid = payload.hashed_order === calculated;
 
       console.log('Webhook validation:', {
         calculated: calculated?.substring(0, 10) + '...',
-        received: signature?.substring(0, 10) + '...',
+        received: payload.hashed_order?.substring(0, 10) + '...',
         isValid,
         chargeId: payload.id,
       });
@@ -265,17 +264,15 @@ class OpenNodeService {
     }
   }
 
-  async handleWebhook(payload, signature) {
+  async handleWebhook(payload) {
     try {
       console.log('Processing webhook:', {
         id: payload.id,
         status: payload.status,
         hashedOrder: payload.hashed_order,
-        signatureReceived: !!signature,
       });
 
-      if (!this.validateWebhook(payload, signature)) {
-        // Pass the signature here
+      if (!this.validateWebhook(payload)) {
         throw new Error('Invalid webhook signature');
       }
 
