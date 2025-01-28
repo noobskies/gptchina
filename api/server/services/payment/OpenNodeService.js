@@ -234,6 +234,7 @@ class OpenNodeService {
         console.log('Missing required webhook fields', {
           hasId: !!payload?.id,
           hasSignature: !!signature,
+          receivedSignature: signature,
         });
         return false;
       }
@@ -264,15 +265,17 @@ class OpenNodeService {
     }
   }
 
-  async handleWebhook(payload) {
+  async handleWebhook(payload, signature) {
     try {
       console.log('Processing webhook:', {
         id: payload.id,
         status: payload.status,
         hashedOrder: payload.hashed_order,
+        signatureReceived: !!signature,
       });
 
-      if (!this.validateWebhook(payload)) {
+      if (!this.validateWebhook(payload, signature)) {
+        // Pass the signature here
         throw new Error('Invalid webhook signature');
       }
 

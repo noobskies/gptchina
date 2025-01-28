@@ -102,17 +102,20 @@ class OpenNodeController {
   static async handleWebhook(req, res) {
     try {
       const payload = req.body;
+      const signature = req.headers['x-webhook-signature']; // Add this line
+
       console.log('Received OpenNode webhook:', {
         id: payload.id,
         status: payload.status,
         order_id: payload.order_id,
+        signature: signature, // Log this for debugging
       });
 
       if (!payload.id) {
         throw new Error('Missing charge ID in webhook');
       }
 
-      await OpenNodeService.handleWebhook(payload);
+      await OpenNodeService.handleWebhook(payload, signature); // Pass the signature
 
       console.log('Webhook processed successfully:', {
         id: payload.id,
