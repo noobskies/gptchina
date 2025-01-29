@@ -137,7 +137,7 @@ const tokenValues = Object.assign(
     'gemma2-9b-it': { prompt: 0.17, completion: 0.17 },
 
     // DeepSeek models
-    'deepseek-chat': { prompt: 0.05, completion: 1.12 },
+    'deepseek-chat': { prompt: 0.15, completion: 1.12 },
     'deepseek-coder': { prompt: 0.27, completion: 4.4 },
 
     // APIPie Models
