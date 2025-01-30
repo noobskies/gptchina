@@ -182,9 +182,13 @@ export default function PaymentDialog({ open, onOpenChange }: PaymentDialogProps
             <button
               onClick={handleContinue}
               disabled={!selectedTokens || (!selectedPaymentMethod && !isIOS)}
-              className="focus:bg-blue-650 mt-3 w-full rounded bg-blue-600 p-2 text-sm
-                text-white hover:bg-blue-700 active:bg-blue-800 
-                disabled:cursor-not-allowed disabled:bg-blue-500"
+              className="
+                mt-3 w-full rounded bg-blue-600 px-3 py-2 text-sm font-medium text-white
+                transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2
+                focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed
+                disabled:opacity-50 disabled:hover:bg-blue-600 dark:bg-blue-600
+                dark:hover:bg-blue-700
+              "
             >
               {localize('com_ui_payment_title')}
             </button>
