@@ -32,7 +32,6 @@ export default {
     'Wszystkie rozmowy z AI w jednym miejscu. Płatność za połączenie, a nie za miesiąc',
   com_ui_share: 'Udostępnij',
   com_ui_copy_link: 'Skopiuj link',
-  com_ui_update_link: 'Zaktualizuj link',
   com_ui_create_link: 'Utwórz link',
   com_ui_share_link_to_chat: 'Udostępnij link w czacie',
   com_ui_share_error: 'Wystąpił błąd podczas udostępniania linku do czatu',
@@ -123,9 +122,9 @@ export default {
   com_endpoint_bing_to_enable_sydney: 'Aby aktywować Sydney',
   com_endpoint_bing_jailbreak: 'Odblokuj',
   com_endpoint_bing_context_placeholder:
-    'Bing może użyć do 7k tokenów dla \'kontekstu\', które mogą odnosić się do rozmowy.  Dokładny limit nie jest znany, ale przekroczenie 7 tysięcy tokenów może prowadzić do błędów.',
+    "Bing może użyć do 7k tokenów dla 'kontekstu', które mogą odnosić się do rozmowy.  Dokładny limit nie jest znany, ale przekroczenie 7 tysięcy tokenów może prowadzić do błędów.",
   com_endpoint_bing_system_message_placeholder:
-    'OSTRZEŻENIE: Nadużywanie tej funkcji może skutkować ZAKAZEM korzystania z Bing! Kliknij na \'Wiadomość systemowa\' , aby uzyskać pełne instrukcje oraz domyślną wiadomość, jeśli zostanie pominięta, co jest predefiniowaną opcją \'Sydney\', uważaną za bezpieczną.',
+    "OSTRZEŻENIE: Nadużywanie tej funkcji może skutkować ZAKAZEM korzystania z Bing! Kliknij na 'Wiadomość systemowa' , aby uzyskać pełne instrukcje oraz domyślną wiadomość, jeśli zostanie pominięta, co jest predefiniowaną opcją 'Sydney', uważaną za bezpieczną.",
   com_endpoint_system_message: 'Wiadomość systemowa',
   com_endpoint_default_blank: 'domyślnie: puste',
   com_endpoint_default_false: 'domyślnie: fałsz',

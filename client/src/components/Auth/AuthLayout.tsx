@@ -8,7 +8,7 @@ import { ThemeSelector } from '~/components/ui';
 import { Banner } from '../Banners';
 import Footer from './Footer';
 import Particles, { initParticlesEngine } from '@tsparticles/react';
-import { type Container, type ISourceOptions, MoveDirection, OutMode } from '@tsparticles/engine';
+import { type Container, type ISourceOptions } from '@tsparticles/engine';
 import { loadSlim } from '@tsparticles/slim';
 import { TypeAnimation } from 'react-type-animation';
 import { getDomainData } from '~/utils/domainUtils';
@@ -58,7 +58,16 @@ function AuthLayout({
     checkPlatform();
   }, []);
 
+  useEffect(() => {
+    initParticlesEngine(async (engine) => {
+      await loadSlim(engine);
+    }).then(() => {
+      setInit(true);
+    });
+  }, []);
+
   const hasStartupConfigError = startupConfigError !== null && startupConfigError !== undefined;
+
   const DisplayError = () => {
     if (hasStartupConfigError) {
       return <ErrorRender>{localize('com_auth_error_login_server')}</ErrorRender>;
@@ -77,14 +86,6 @@ function AuthLayout({
     }
     return null;
   };
-
-  useEffect(() => {
-    initParticlesEngine(async (engine) => {
-      await loadSlim(engine);
-    }).then(() => {
-      setInit(true);
-    });
-  }, []);
 
   const particlesLoaded = async (container?: Container): Promise<void> => {
     console.log(container);
@@ -152,9 +153,10 @@ function AuthLayout({
   );
 
   return (
-    <section className="flex flex-col md:h-screen md:flex-row">
+    <section className="flex min-h-screen flex-col md:flex-row">
       <div className="relative z-10 flex w-full flex-col items-center justify-center bg-white dark:bg-gray-800 md:w-1/2">
         <div className="relative flex min-h-screen w-full flex-col bg-white dark:bg-gray-900">
+          <Banner />
           <DisplayError />
           <div className="absolute bottom-0 left-0 md:m-4">
             <ThemeSelector />
@@ -171,8 +173,18 @@ function AuthLayout({
                   />
                 </div>
               </BlinkAnimation>
+              {!hasStartupConfigError && !isFetching && (
+                <h1
+                  className="mb-4 text-center text-3xl font-semibold text-black dark:text-white"
+                  style={{ userSelect: 'none' }}
+                >
+                  {header}
+                </h1>
+              )}
               {children}
-              <SocialLoginRender startupConfig={startupConfig} />
+              {(pathname.includes('login') || pathname.includes('register')) && (
+                <SocialLoginRender startupConfig={startupConfig} />
+              )}
             </div>
           </div>
           <Footer startupConfig={startupConfig} />
@@ -188,15 +200,13 @@ function AuthLayout({
           />
         )}
         <div className="z-10 text-left">
-          <div className="z-10 text-left">
-            <TypeAnimation
-              sequence={[`${localize('home_welcome_to')} ${logoText}`, 1000]}
-              speed={50}
-              repeat={Infinity}
-              cursor={true}
-              className="mb-4 text-3xl font-bold text-white sm:text-4xl lg:text-5xl"
-            />
-          </div>
+          <TypeAnimation
+            sequence={[`${localize('home_welcome_to')} ${logoText}`, 1000]}
+            speed={50}
+            repeat={Infinity}
+            cursor={true}
+            className="mb-4 text-3xl font-bold text-white sm:text-4xl lg:text-5xl"
+          />
           <p className="mb-4 text-base text-white sm:text-lg">{localize('home_intro_text_1')}</p>
           <p className="mb-4 text-base text-white sm:text-lg">{localize('home_intro_text_2')}</p>
           <ul className="mb-4 text-base text-white sm:text-lg">

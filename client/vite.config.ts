@@ -70,14 +70,6 @@ export default defineConfig(({ mode }) => {
           target: 'http://localhost:3080',
           changeOrigin: true,
         },
-        entryFileNames: 'assets/[name].[hash].js',
-        chunkFileNames: 'assets/[name].[hash].js',
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.name && /\.(woff|woff2|eot|ttf|otf)$/.test(assetInfo.name)) {
-            return 'assets/[name][extname]';
-          }
-          return 'assets/[name].[hash][extname]';
-        },
       },
     },
     // All other env variables are filtered out
@@ -88,13 +80,14 @@ export default defineConfig(({ mode }) => {
       nodePolyfills(),
       VitePWA({
         injectRegister: 'auto', // 'auto' | 'manual' | 'disabled'
-        registerType: 'autoUpdate', // 'prompt' | 'auto' | 'disabled'
+        registerType: 'autoUpdate', // 'prompt' | 'autoUpdate'
         devOptions: {
           enabled: false, // enable/disable registering SW in development mode
         },
         workbox: {
           globPatterns: ['assets/**/*.{png,jpg,svg,ico}', '**/*.{js,css,html,ico,woff2}'],
-          maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+          maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+          navigateFallbackDenylist: [/^\/oauth/],
         },
         manifest: {
           name: env.VITE_APP_AUTHOR || 'Novlisky',
@@ -128,12 +121,12 @@ export default defineConfig(({ mode }) => {
               type: 'image/png',
             },
             {
-              src: env.VITE_APP_FAVICON_32 || '/assets/favicon-32x32.png',
+              src: env.VITE_APP_FAVICON_32 || '/assets/apple-touch-icon-180x180.png',
               sizes: '180x180',
               type: 'image/png',
             },
             {
-              src: env.VITE_APP_FAVICON_32 || '/assets/favicon-32x32.png',
+              src: env.VITE_APP_FAVICON_32 || '/assets/maskable-icon.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'maskable',
@@ -169,6 +162,14 @@ export default defineConfig(({ mode }) => {
               return 'vendor';
             }
           },
+          entryFileNames: 'assets/[name].[hash].js',
+          chunkFileNames: 'assets/[name].[hash].js',
+          assetFileNames: (assetInfo) => {
+            if (assetInfo.name && /\.(woff|woff2|eot|ttf|otf)$/.test(assetInfo.name)) {
+              return 'assets/[name][extname]';
+            }
+            return 'assets/[name].[hash][extname]';
+          },
         },
         onwarn(warning, warn) {
           if (warning.message.includes('Error when using sourcemap')) {
@@ -197,7 +198,7 @@ export function sourcemapExclude(opts?: SourcemapExclude): Plugin {
       if (opts?.excludeNodeModules && id.includes('node_modules')) {
         return {
           code,
-          // https://github.com/rollup/rollup/blob/master/docs/plugin-development/index.md#source-code-transformations
+          // https://github.com/rollup/rollup/docs/plugin-development/index.md#source-code-transformations
           map: { mappings: '' },
         };
       }

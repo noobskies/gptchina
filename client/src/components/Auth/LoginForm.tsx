@@ -81,7 +81,7 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
         }
       `}</style>
       {showResendLink && (
-        <div className="mt-2 rounded-md border border-green-500 bg-green-500/10 px-3 py-2 text-sm text-gray-600 dark:text-gray-200">
+        <div className="mt-2 rounded-md border border-blue-500 bg-blue-500/10 px-3 py-2 text-sm text-gray-600 dark:text-gray-200">
           {localize('com_auth_email_verification_resend_prompt')}
           <button
             type="button"
@@ -118,7 +118,7 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
               className="
                 webkit-dark-styles transition-color peer w-full rounded-2xl border border-border-light
                 bg-surface-primary px-3.5 pb-2.5 pt-3 text-text-primary duration-200 
-                focus:border-green-500 focus:outline-none
+                focus:border-blue-500 focus:outline-none
               "
               placeholder=" "
             />
@@ -127,7 +127,7 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
               className="
                 absolute start-3 top-1.5 z-10 origin-[0] -translate-y-4 scale-75 transform bg-surface-primary px-2 text-sm text-text-secondary-alt duration-200
                 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100
-                peer-focus:top-1.5 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-2 peer-focus:text-green-600 dark:peer-focus:text-green-500
+                peer-focus:top-1.5 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-2 peer-focus:text-blue-600 dark:peer-focus:text-blue-500
                 rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4
                 "
             >
@@ -151,7 +151,7 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
                 maxLength: { value: 128, message: localize('com_auth_password_max_length') },
               })}
               aria-invalid={!!errors.password}
-              className="webkit-dark-styles peer block w-full appearance-none rounded-md border border-gray-300 bg-transparent px-3.5 pb-3.5 pt-4 text-sm text-text-primary focus:border-blue-500 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-green-500"
+              className="webkit-dark-styles peer block w-full appearance-none rounded-md border border-gray-300 bg-transparent px-3.5 pb-3.5 pt-4 text-sm text-text-primary focus:border-blue-500 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
               placeholder=" "
             />
             <label
@@ -159,7 +159,7 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
               className="
                 absolute start-3 top-1.5 z-10 origin-[0] -translate-y-4 scale-75 transform bg-surface-primary px-2 text-sm text-text-secondary-alt duration-200
                 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100
-                peer-focus:top-1.5 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-2 peer-focus:text-green-600 dark:peer-focus:text-green-500
+                peer-focus:top-1.5 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-2 peer-focus:text-blue-600 dark:peer-focus:text-blue-500
                 rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4
                 "
             >
@@ -169,7 +169,10 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
           {renderError('password')}
         </div>
         {startupConfig.passwordResetEnabled && (
-          <a href="/forgot-password" className="text-sm text-blue-600">
+          <a
+            href="/forgot-password"
+            className="inline-flex p-1 text-sm font-medium text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+          >
             {localize('com_auth_password_forgot')}
           </a>
         )}
@@ -178,7 +181,12 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
             aria-label={localize('com_auth_continue')}
             data-testid="login-button"
             type="submit"
-            className="hover:bg-blue-550 focus:bg-blue-550 w-full transform rounded-md bg-blue-500 px-4 py-3 tracking-wide text-white transition-colors duration-200 focus:outline-none disabled:cursor-not-allowed disabled:hover:bg-blue-500"
+            className="
+            w-full rounded-2xl bg-blue-600 px-4 py-3 text-sm font-medium text-white
+            transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2
+            focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50
+            disabled:hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700
+          "
           >
             {localize('com_auth_continue')}
           </button>

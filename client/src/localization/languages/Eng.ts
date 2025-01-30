@@ -10,6 +10,7 @@ export default {
   com_ui_payment_purchase_button: 'Purchase',
   com_ui_payment_please_note:
     'Please Note! WeChat and Alipay valid only with a Chinese National ID-linked account',
+  com_ui_collapse_chat: 'Collapse Chat',
   com_ui_enter_api_key: 'Enter API Key',
   com_ui_librechat_code_api_title: 'Run AI Code',
   com_ui_librechat_code_api_subtitle: 'Secure. Multi-language. Input/Output Files.',
@@ -59,7 +60,7 @@ export default {
   com_download_expired: '(download expired)',
   com_download_expires: '(click here to download - expires {0})',
   com_click_to_download: '(click here to download)',
-  com_files_number_selected: '{0} of {1} file(s) selected',
+  com_files_number_selected: '{0} of {1} items(s) selected',
   com_sidepanel_select_assistant: 'Select an Assistant',
   com_sidepanel_parameters: 'Parameters',
   com_sidepanel_assistant_builder: 'Assistant Builder',
@@ -153,6 +154,8 @@ export default {
   com_ui_date_november: 'November',
   com_ui_date_december: 'December',
   com_ui_field_required: 'This field is required',
+  com_ui_download_artifact: 'Download Artifact',
+  com_ui_download: 'Download',
   com_ui_download_error: 'Error downloading file. The file may have been deleted.',
   com_ui_attach_error_type: 'Unsupported file type for endpoint:',
   com_ui_attach_error_openai: 'Cannot attach Assistant files to other endpoints',
@@ -360,7 +363,6 @@ export default {
   com_ui_share_var: 'Share {0}',
   com_ui_enter_var: 'Enter {0}',
   com_ui_copy_link: 'Copy link',
-  com_ui_update_link: 'Update link',
   com_ui_create_link: 'Create link',
   com_ui_share_to_all_users: 'Share to all users',
   com_ui_my_prompts: 'My Prompts',
@@ -385,6 +387,8 @@ export default {
   com_ui_share_error: 'There was an error sharing the chat link',
   com_ui_share_retrieve_error: 'There was an error retrieving the shared links',
   com_ui_share_delete_error: 'There was an error deleting the shared link',
+  com_ui_bulk_delete_error: 'Failed to delete shared links',
+  com_ui_bulk_delete_partial_error: 'Failed to delete {0} shared links',
   com_ui_share_create_message: 'Your name and any messages you add after sharing stay private.',
   com_ui_share_created_message:
     'A shared link to your chat has been created. Manage previously shared chats at any time via Settings.',
@@ -412,6 +416,8 @@ export default {
   com_ui_more_options: 'More',
   com_ui_more_info: 'More info',
   com_ui_preview: 'Preview',
+  com_ui_thoughts: 'Thoughts',
+  com_ui_thinking: 'Thinking...',
   com_ui_upload: 'Upload',
   com_ui_connect: 'Connect',
   com_ui_locked: 'Locked',
@@ -448,6 +454,14 @@ export default {
   com_ui_add_multi_conversation: 'Add multi-conversation',
   com_ui_duplicate_agent_confirm: 'Are you sure you want to duplicate this agent?',
   com_ui_page: 'Page',
+  com_ui_refresh_link: 'Refresh link',
+  com_ui_show_qr: 'Show QR Code',
+  com_ui_hide_qr: 'Hide QR Code',
+  com_ui_title: 'Title',
+  com_ui_view_source: 'View source chat',
+  com_ui_shared_link_delete_success: 'Successfully deleted shared link',
+  com_ui_shared_link_bulk_delete_success: 'Successfully deleted shared links',
+  com_ui_search: 'Search',
   com_auth_error_login:
     'Unable to login with the information provided. Please check your credentials and try again.',
   com_auth_error_login_rl:
@@ -534,7 +548,7 @@ export default {
   com_endpoint_system_message: 'System Message',
   com_endpoint_message: 'Message',
   com_endpoint_ai: 'AI',
-  com_endpoint_message_new: 'Message {0} or type "@" to switch AI',
+  com_endpoint_message_new: 'Message {0}',
   com_endpoint_message_not_appendable: 'Edit your message or Regenerate.',
   com_endpoint_default_blank: 'default: blank',
   com_endpoint_default_false: 'default: false',
@@ -838,10 +852,13 @@ export default {
   com_nav_enable_cache_tts: 'Enable cache TTS',
   com_nav_voice_select: 'Voice',
   com_nav_enable_cloud_browser_voice: 'Use cloud-based voices',
+  com_nav_show_thinking: 'Open Thinking Dropdowns by Default',
   com_nav_info_enter_to_send:
     "When enabled, pressing `ENTER` will send your message. When disabled, pressing Enter will add a new line, and you'll need to press `CTRL + ENTER` / `⌘ + ENTER` to send your message.",
   com_nav_info_save_draft:
     'When enabled, the text and attachments you enter in the chat form will be automatically saved locally as drafts. These drafts will be available even if you reload the page or switch to a different conversation. Drafts are stored locally on your device and are deleted once the message is sent.',
+  com_nav_info_show_thinking:
+    "When enabled, the chat will display the thinking dropdowns open by default, allowing you to view the AI's reasoning in real-time. When disabled, the thinking dropdowns will remain closed by default for a cleaner and more streamlined interface",
   com_nav_info_fork_change_default:
     '`Visible messages only` includes just the direct path to the selected message. `Include related branches` adds branches along the path. `Include all to/from here` includes all connected messages and branches.',
   com_nav_info_fork_split_target_setting:

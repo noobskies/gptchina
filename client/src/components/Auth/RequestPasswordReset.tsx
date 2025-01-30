@@ -10,7 +10,7 @@ import { useLocalize } from '~/hooks';
 const BodyTextWrapper: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <div
-      className="relative mt-6 rounded-lg border border-green-500/20 bg-green-50/50 px-6 py-4 text-green-700 shadow-sm transition-all dark:bg-green-950/30 dark:text-green-100"
+      className="relative mt-6 rounded-lg border border-blue-500/20 bg-blue-50/50 px-6 py-4 text-blue-700 shadow-sm transition-all dark:bg-blue-950/30 dark:text-blue-100"
       role="alert"
     >
       {children}
@@ -24,7 +24,7 @@ const ResetPasswordBodyText = () => {
     <div className="flex flex-col space-y-4">
       <p>{localize('com_auth_reset_password_if_email_exists')}</p>
       <a
-        className="inline-flex text-sm font-medium text-green-600 transition-colors hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+        className="inline-flex text-sm font-medium text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
         href="/login"
       >
         {localize('com_auth_back_to_login')}
@@ -53,7 +53,7 @@ function RequestPasswordReset() {
           setBodyText(
             <span>
               {localize('com_auth_click')}{' '}
-              <a className="text-green-500 hover:underline" href={data.link}>
+              <a className="text-blue-500 hover:underline" href={data.link}>
                 {localize('com_auth_here')}
               </a>{' '}
               {localize('com_auth_to_reset_your_password')}
@@ -105,12 +105,23 @@ function RequestPasswordReset() {
               },
             })}
             aria-invalid={!!errors.email}
-            className="webkit-dark-styles peer block w-full appearance-none rounded-md border border-black/10 bg-white px-2.5 pb-2.5 pt-5 text-sm text-gray-800 focus:border-blue-500 focus:outline-none dark:border-white/20 dark:bg-gray-900 dark:text-white dark:focus:border-blue-500"
-            placeholder=" "
+            className="
+              peer w-full rounded-lg border border-gray-300 bg-transparent px-4 py-3
+              text-base text-gray-900 placeholder-transparent transition-all
+              focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20
+              dark:border-gray-700 dark:text-white dark:focus:border-blue-500
+            "
+            placeholder="email@example.com"
           />
           <label
             htmlFor="email"
-            className="absolute start-1 top-2 z-10 origin-[0] -translate-y-4 scale-75 transform bg-white px-3 text-sm text-gray-500 duration-100 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-3 peer-focus:text-blue-600 dark:bg-gray-900 dark:text-gray-400 dark:peer-focus:text-blue-500 rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4"
+            className="
+              absolute -top-2 left-2 z-10 bg-white px-2 text-sm text-gray-600
+              transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base
+              peer-placeholder-shown:text-gray-500 peer-focus:-top-2 peer-focus:text-sm
+              peer-focus:text-blue-600 dark:bg-gray-900 dark:text-gray-400
+              dark:peer-focus:text-blue-500
+            "
           >
             {localize('com_auth_email_address')}
           </label>
@@ -125,15 +136,21 @@ function RequestPasswordReset() {
         <button
           type="submit"
           disabled={!!errors.email}
-          className="focus:bg-blue-650 w-full transform rounded-md bg-blue-600 px-4 py-3 tracking-wide text-white transition-colors duration-200 hover:bg-blue-700 focus:outline-none active:bg-blue-800 disabled:cursor-not-allowed disabled:bg-blue-500 disabled:hover:bg-blue-500"
+          className="
+            w-full rounded-2xl bg-blue-600 px-4 py-3 text-sm font-medium text-white
+            transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2
+            focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50
+            disabled:hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700
+          "
         >
           {localize('com_auth_continue')}
         </button>
-        <div className="mt-4 flex justify-center">
-          <a href="/login" className="text-sm text-blue-600">
-            {localize('com_auth_back_to_login')}
-          </a>
-        </div>
+        <a
+          href="/login"
+          className="block text-center text-sm font-medium text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+        >
+          {localize('com_auth_back_to_login')}
+        </a>
       </div>
     </form>
   );

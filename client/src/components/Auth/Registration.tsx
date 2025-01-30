@@ -96,7 +96,7 @@ const Registration: React.FC = () => {
           className="
           webkit-dark-styles transition-color peer w-full rounded-2xl border border-border-light
           bg-surface-primary px-3.5 pb-2.5 pt-3 text-text-primary duration-200 
-          focus:border-green-500 focus:outline-none"
+          focus:border-blue-500 focus:outline-none"
           placeholder=" "
           data-testid={id}
         />
@@ -125,7 +125,7 @@ const Registration: React.FC = () => {
       )}
       {registerUser.isSuccess && countdown > 0 && (
         <div
-          className="rounded-md border border-green-500 bg-green-500/10 px-3 py-2 text-sm text-gray-600 dark:text-gray-200"
+          className="rounded-md border border-blue-500 bg-blue-500/10 px-3 py-2 text-sm text-gray-600 dark:text-gray-200"
           role="alert"
         >
           {localize(
@@ -203,7 +203,12 @@ const Registration: React.FC = () => {
                 disabled={Object.keys(errors).length > 0}
                 type="submit"
                 aria-label="Submit registration"
-                className="focus:bg-blue-650 w-full transform rounded-md bg-blue-600 px-4 py-3 tracking-wide text-white transition-colors duration-200 hover:bg-blue-700 focus:outline-none active:bg-blue-800 disabled:cursor-not-allowed disabled:bg-blue-500 disabled:hover:bg-blue-500"
+                className="
+            w-full rounded-2xl bg-blue-600 px-4 py-3 text-sm font-medium text-white
+            transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2
+            focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50
+            disabled:hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700
+          "
               >
                 {isSubmitting ? <Spinner /> : localize('com_auth_continue')}
               </button>
@@ -212,7 +217,11 @@ const Registration: React.FC = () => {
 
           <p className="my-4 text-center text-sm font-light text-gray-700 dark:text-white">
             {localize('com_auth_already_have_account')}{' '}
-            <a href="/login" aria-label="Login" className="p-1 text-blue-600">
+            <a
+              href="/login"
+              aria-label="Login"
+              className="inline-flex p-1 text-sm font-medium text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+            >
               {localize('com_auth_login')}
             </a>
           </p>
