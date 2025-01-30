@@ -20,11 +20,18 @@ function TokenClaimButton({ fullWidth = true }) {
     <button
       onClick={claimTokens}
       disabled={isLoading || !isAuthenticated || !!timeLeft || isCheckingStatus}
-      className={`focus:bg-blue-650 mt-2 flex items-center justify-center gap-2 rounded p-2 text-white transition-colors duration-200 focus:outline-none ${
-        isLoading || !isAuthenticated || !!timeLeft || isCheckingStatus
-          ? 'cursor-not-allowed bg-gray-400'
-          : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800'
-      } ${fullWidth ? 'w-full' : 'w-auto'}`}
+      className={`
+        w-${fullWidth ? 'full' : 'auto'} mt-2 flex items-center justify-center gap-2 
+        rounded bg-blue-600 px-3 py-2 text-sm font-medium text-white
+        transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2
+        focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50
+        disabled:hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700
+        ${
+          isLoading || !isAuthenticated || !!timeLeft || isCheckingStatus
+            ? 'cursor-not-allowed !bg-gray-400'
+            : 'active:bg-blue-800'
+        }
+      `}
     >
       {buttonContent}
     </button>
