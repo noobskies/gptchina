@@ -75,6 +75,7 @@ const tokenValues = Object.assign(
   {
     // OpenAI models
     o1: { prompt: 12.75, completion: 51.0 },
+    'o3-mini': { prompt: 0.94, completion: 3.74 },
     'chatgpt-4o-latest': { prompt: 1.97, completion: 7.23 },
     'gpt-4o': { prompt: 1.97, completion: 7.23 },
     'gpt-4o-mini': { prompt: 0.13, completion: 0.51 },
