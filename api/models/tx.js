@@ -761,6 +761,8 @@ const tokenValues = Object.assign(
  * @type {Object.<string, {write: number, read: number }>}
  */
 const cacheTokenValues = {
+  'claude-3.7-sonnet': { write: 3.75, read: 0.3 },
+  'claude-3-7-sonnet': { write: 3.75, read: 0.3 },
   'claude-3.5-sonnet': { write: 3.75, read: 0.3 },
   'claude-3-5-sonnet': { write: 3.75, read: 0.3 },
   'claude-3.5-haiku': { write: 1, read: 0.08 },

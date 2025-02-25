@@ -83,6 +83,12 @@ const conversationPreset = {
   promptCache: {
     type: Boolean,
   },
+  thinking: {
+    type: Boolean,
+  },
+  thinkingBudget: {
+    type: Number,
+  },
   system: {
     type: String,
   },
