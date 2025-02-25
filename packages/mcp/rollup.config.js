@@ -24,15 +24,17 @@ export default [
   {
     input: 'src/index.ts',
     output: [
-      {
-        file: pkg.main,
-        format: 'cjs',
-        sourcemap: true,
-        exports: 'named',
-      },
+      // We're only keeping the ESM format since it supports top-level await
       {
         file: pkg.module,
         format: 'esm',
+        sourcemap: true,
+        exports: 'named',
+      },
+      // Optionally, you can add a system format output which also supports top-level await
+      {
+        file: pkg.main,
+        format: 'system',
         sourcemap: true,
         exports: 'named',
       },
