@@ -112,7 +112,7 @@ const tokenValues = Object.assign(
     // 'gemini-pro-vision': { prompt: 0.43, completion: 1.5 },
 
     // Anthropic models
-    'claude-3-7-sonnet-latest': { prompt: 2.26, completion: 9.15 },
+    'claude-3-7-sonnet': { prompt: 2.26, completion: 9.15 },
     'claude-3-7-sonnet-20250219': { prompt: 2.36, completion: 9.15 },
     'claude-3-5-sonnet-latest': { prompt: 2.26, completion: 9.15 },
     'claude-3-5-sonnet-20240620': { prompt: 2.36, completion: 9.15 },
