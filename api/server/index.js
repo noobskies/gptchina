@@ -48,9 +48,24 @@ const startServer = async () => {
   /* Middleware */
   app.use(noIndex);
   app.use(errorController);
-  app.use(express.json({ limit: '3mb' }));
+  // Configure body parsing middleware
+  app.use((req, res, next) => {
+    // Skip body parsing for Stripe webhooks to preserve the raw body
+    if (req.originalUrl === '/api/stripe/webhook') {
+      next();
+    } else {
+      express.json({ limit: '3mb' })(req, res, next);
+    }
+  });
   app.use(mongoSanitize());
-  app.use(express.urlencoded({ extended: true, limit: '3mb' }));
+  app.use((req, res, next) => {
+    // Skip urlencoded parsing for Stripe webhooks
+    if (req.originalUrl === '/api/stripe/webhook') {
+      next();
+    } else {
+      express.urlencoded({ extended: true, limit: '3mb' })(req, res, next);
+    }
+  });
   app.use(staticCache(app.locals.paths.dist));
   app.use(staticCache(app.locals.paths.fonts));
   app.use(staticCache(app.locals.paths.assets));
@@ -112,6 +127,9 @@ const startServer = async () => {
   app.use('/api/bedrock', routes.bedrock);
 
   app.use('/api/tags', routes.tags);
+
+  // Register Stripe routes
+  app.use('/api/stripe', routes.stripe);
 
   app.use((req, res) => {
     res.set({

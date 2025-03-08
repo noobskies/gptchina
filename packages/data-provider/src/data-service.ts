@@ -810,3 +810,12 @@ export function verifyTwoFactorTemp(
 ): Promise<t.TVerify2FATempResponse> {
   return request.post(endpoints.verifyTwoFactorTemp(), payload);
 }
+
+/* Stripe */
+import * as stripe from './types/stripe';
+
+export const createPaymentIntent = (
+  payload: stripe.CreatePaymentIntentRequest,
+): Promise<stripe.CreatePaymentIntentResponse> => {
+  return request.post(endpoints.stripeCreatePaymentIntent(), payload);
+};

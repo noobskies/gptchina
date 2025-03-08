@@ -897,7 +897,6 @@ export const useUploadAssistantAvatarMutation = (
   unknown // context
 > => {
   return useMutation([MutationKeys.assistantAvatarUpload], {
-
     mutationFn: ({ postCreation, ...variables }: t.AssistantAvatarVariables) =>
       dataService.uploadAssistantAvatar(variables),
     ...(options || {}),
@@ -1090,4 +1089,29 @@ export const useClaimTokensMutation = (): UseMutationResult<
       queryClient.invalidateQueries([QueryKeys.balance]);
     },
   });
+};
+
+/**
+ * Hook for creating a Stripe payment intent
+ */
+export const useCreatePaymentIntentMutation = (): UseMutationResult<
+  { clientSecret: string },
+  unknown,
+  { amount: number; packageId: string },
+  unknown
+> => {
+  return useMutation(
+    (payload: { amount: number; packageId: string }) => {
+      console.log('Creating payment intent with payload:', payload);
+      return dataService.createPaymentIntent(payload);
+    },
+    {
+      onSuccess: (data) => {
+        console.log('Payment intent created successfully:', data);
+      },
+      onError: (error) => {
+        console.error('Error creating payment intent:', error);
+      },
+    },
+  );
 };

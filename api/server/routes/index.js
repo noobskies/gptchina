@@ -8,6 +8,7 @@ const presets = require('./presets');
 const prompts = require('./prompts');
 const balance = require('./balance');
 const plugins = require('./plugins');
+const stripe = require('./stripe');
 const bedrock = require('./bedrock');
 const actions = require('./actions');
 const search = require('./search');
@@ -56,4 +57,5 @@ module.exports = {
   categories,
   staticRoute,
   banner,
+  stripe,
 };

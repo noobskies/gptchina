@@ -846,5 +846,13 @@
   "token_popular": "Popular",
   "token_tokens": "Tokens",
   "token_discount_off": "{{percent}}% off",
-  "token_purchase": "Purchase"
+  "token_purchase": "Purchase",
+  "token_payment_secure": "All payments are secure and encrypted",
+  "token_payment_processing": "Processing...",
+  "token_payment_pay": "Pay ${{amount}}",
+  "token_payment_success": "Payment Successful!",
+  "token_payment_error": "Payment Failed",
+  "token_payment_try_again": "Try Again",
+  "token_payment_back": "Back to package selection",
+  "token_payment_for_tokens": "Purchase {{tokens}} tokens for ${{amount}}"
 }

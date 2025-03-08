@@ -8,12 +8,6 @@ async function balanceController(req, res) {
     const tokenCredits = balanceDoc?.tokenCredits ?? '';
     const lastTokenClaim = balanceDoc?.lastTokenClaim ?? null;
 
-    logger.debug('[balanceController] Returning balance info', {
-      userId: req.user.id,
-      tokenCredits,
-      lastTokenClaim,
-    });
-
     res.status(200).json({
       balance: '' + tokenCredits,
       lastTokenClaim,

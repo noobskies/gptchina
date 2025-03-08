@@ -23,7 +23,9 @@ function TokenActions() {
 
   // Format the balance to display in millions with one decimal place
   const formatBalance = (balance: string) => {
-    if (!balance || isNaN(parseFloat(balance))) {return '0.0M';}
+    if (!balance || isNaN(parseFloat(balance))) {
+      return '0.0M';
+    }
     const balanceNum = parseFloat(balance);
     const balanceInMillions = balanceNum / 1000000;
     return `${balanceInMillions.toFixed(1)}M`;
@@ -43,9 +45,18 @@ function TokenActions() {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Refetch balance when component mounts
+  useEffect(() => {
+    if (isAuthenticated && startupConfig?.checkBalance) {
+      balanceQuery.refetch();
+    }
+  }, [isAuthenticated, startupConfig, balanceQuery]);
+
   // Check for cooldown on component mount or when balance data changes
   useEffect(() => {
-    if (!balanceQuery.data || !balanceQuery.data.lastTokenClaim) {return;}
+    if (!balanceQuery.data || !balanceQuery.data.lastTokenClaim) {
+      return;
+    }
 
     const lastClaimTime = new Date(balanceQuery.data.lastTokenClaim);
     const now = new Date();
@@ -63,7 +74,9 @@ function TokenActions() {
 
   // Update the countdown timer
   useEffect(() => {
-    if (!inCooldown || !nextClaimTime) {return;}
+    if (!inCooldown || !nextClaimTime) {
+      return;
+    }
 
     const updateCountdown = () => {
       const now = new Date();

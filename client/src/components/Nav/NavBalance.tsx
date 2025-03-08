@@ -1,14 +1,32 @@
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 import { useGetUserBalance, useGetStartupConfig } from '~/data-provider';
 import { useLocalize, useAuthContext } from '~/hooks';
+import { useQueryClient } from '@tanstack/react-query';
+import { QueryKeys } from 'librechat-data-provider';
 
 function NavBalance() {
   const localize = useLocalize();
   const { isAuthenticated } = useAuthContext();
   const { data: startupConfig } = useGetStartupConfig();
+  const queryClient = useQueryClient();
   const balanceQuery = useGetUserBalance({
     enabled: !!isAuthenticated && startupConfig?.checkBalance,
   });
+
+  // Refetch balance when component mounts or when balance query changes
+  useEffect(() => {
+    if (isAuthenticated && startupConfig?.checkBalance) {
+      // Refetch balance
+      balanceQuery.refetch();
+
+      // Set up an interval to refetch the balance every 5 seconds
+      const intervalId = setInterval(() => {
+        balanceQuery.refetch();
+      }, 5000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [isAuthenticated, startupConfig, balanceQuery]);
 
   if (
     !startupConfig?.checkBalance ||
