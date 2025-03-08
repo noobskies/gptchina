@@ -12,8 +12,9 @@ function NavBalance() {
 
   if (
     !startupConfig?.checkBalance ||
-    balanceQuery.data == null ||
-    isNaN(parseFloat(balanceQuery.data))
+    !balanceQuery.data ||
+    !balanceQuery.data.balance ||
+    isNaN(parseFloat(balanceQuery.data.balance))
   ) {
     return null;
   }
@@ -28,7 +29,7 @@ function NavBalance() {
   return (
     <div className="border-token-border-light mb-2 flex items-center justify-between rounded-md border bg-surface-primary px-3 py-2 text-sm text-text-primary">
       <span>{localize('token_remaining')}</span>
-      <span className="font-medium">{formatBalance(balanceQuery.data)}</span>
+      <span className="font-medium">{formatBalance(balanceQuery.data.balance)}</span>
     </div>
   );
 }

@@ -18,17 +18,30 @@ export const useGetBannerQuery = (
   });
 };
 
+export type TBalanceResponse = {
+  balance: string;
+  lastTokenClaim: string | null;
+};
+
 export const useGetUserBalance = (
-  config?: UseQueryOptions<string>,
-): QueryObserverResult<string> => {
+  config?: UseQueryOptions<TBalanceResponse>,
+): QueryObserverResult<TBalanceResponse> => {
   const queriesEnabled = useRecoilValue<boolean>(store.queriesEnabled);
-  return useQuery<string>([QueryKeys.balance], () => dataService.getUserBalance(), {
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: true,
-    refetchOnMount: true,
-    ...config,
-    enabled: (config?.enabled ?? true) === true && queriesEnabled,
-  });
+  return useQuery<TBalanceResponse, unknown, TBalanceResponse>(
+    [QueryKeys.balance],
+    // Use a more explicit type assertion with unknown as an intermediate step
+    async () => {
+      const response = await dataService.getUserBalance();
+      return response as unknown as TBalanceResponse;
+    },
+    {
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+      refetchOnMount: true,
+      ...config,
+      enabled: (config?.enabled ?? true) === true && queriesEnabled,
+    },
+  );
 };
 
 export const useGetSearchEnabledQuery = (
