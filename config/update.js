@@ -71,12 +71,12 @@ async function validateDockerRunning() {
     execSync('git fetch origin', { stdio: 'inherit' });
 
     // Switch to main branch
-    console.purple('Switching to main branch...');
-    execSync('git checkout main', { stdio: 'inherit' });
+    // console.purple('Switching to main branch...');
+    // execSync('git checkout main', { stdio: 'inherit' });
 
-    // Git pull origin main
-    console.purple('Pulling the latest code from main...');
-    execSync('git pull origin main', { stdio: 'inherit' });
+    // // Git pull origin main
+    // console.purple('Pulling the latest code from main...');
+    // execSync('git pull origin main', { stdio: 'inherit' });
   }
 
   if (docker) {

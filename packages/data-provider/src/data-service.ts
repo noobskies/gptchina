@@ -129,6 +129,16 @@ export function getUserBalance(): Promise<string> {
   return request.get(endpoints.balance());
 }
 
+export function claimTokens(): Promise<{
+  message: string;
+  balance?: string;
+  cooldown: boolean;
+  secondsRemaining?: number;
+  nextClaimTime?: string;
+}> {
+  return request.post(endpoints.claimTokens());
+}
+
 export const updateTokenCount = (text: string) => {
   return request.post(endpoints.tokenizer(), { arg: text });
 };
@@ -779,15 +789,11 @@ export function enableTwoFactor(): Promise<t.TEnable2FAResponse> {
   return request.get(endpoints.enableTwoFactor());
 }
 
-export function verifyTwoFactor(
-  payload: t.TVerify2FARequest,
-): Promise<t.TVerify2FAResponse> {
+export function verifyTwoFactor(payload: t.TVerify2FARequest): Promise<t.TVerify2FAResponse> {
   return request.post(endpoints.verifyTwoFactor(), payload);
 }
 
-export function confirmTwoFactor(
-  payload: t.TVerify2FARequest,
-): Promise<t.TVerify2FAResponse> {
+export function confirmTwoFactor(payload: t.TVerify2FARequest): Promise<t.TVerify2FAResponse> {
   return request.post(endpoints.confirmTwoFactor(), payload);
 }
 

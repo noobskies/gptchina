@@ -4,6 +4,7 @@ export const health = () => '/health';
 export const user = () => '/api/user';
 
 export const balance = () => '/api/balance';
+export const claimTokens = () => '/api/balance/claim';
 
 export const userPlugins = () => '/api/user/plugins';
 

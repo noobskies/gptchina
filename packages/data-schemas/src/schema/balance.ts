@@ -3,6 +3,7 @@ import { Schema, Document, Types } from 'mongoose';
 export interface IBalance extends Document {
   user: Types.ObjectId;
   tokenCredits: number;
+  lastTokenClaim?: Date;
 }
 
 const balanceSchema = new Schema<IBalance>({
@@ -16,6 +17,11 @@ const balanceSchema = new Schema<IBalance>({
   tokenCredits: {
     type: Number,
     default: 0,
+  },
+  // Timestamp of the last token claim for cooldown tracking
+  lastTokenClaim: {
+    type: Date,
+    default: null,
   },
 });
 

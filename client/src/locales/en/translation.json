@@ -834,5 +834,17 @@
   "com_ui_yes": "Yes",
   "com_ui_zoom": "Zoom",
   "com_user_message": "You",
-  "com_warning_resubmit_unsupported": "Resubmitting the AI message is not supported for this endpoint."
+  "com_warning_resubmit_unsupported": "Resubmitting the AI message is not supported for this endpoint.",
+  "token_claim_button": "Claim 20,000 Tokens",
+  "token_claiming": "Claiming...",
+  "token_next_claim": "Next claim in {{time}}",
+  "token_remaining": "Tokens Remaining:",
+  "token_buy": "Buy Tokens",
+  "token_buy_title": "Buy Tokens",
+  "token_select_package": "Select Token Package",
+  "token_select_payment": "Select Payment Option",
+  "token_popular": "Popular",
+  "token_tokens": "Tokens",
+  "token_discount_off": "{{percent}}% off",
+  "token_purchase": "Purchase"
 }

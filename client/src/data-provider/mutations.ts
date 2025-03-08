@@ -897,7 +897,7 @@ export const useUploadAssistantAvatarMutation = (
   unknown // context
 > => {
   return useMutation([MutationKeys.assistantAvatarUpload], {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     mutationFn: ({ postCreation, ...variables }: t.AssistantAvatarVariables) =>
       dataService.uploadAssistantAvatar(variables),
     ...(options || {}),
@@ -1066,5 +1066,28 @@ export const useAcceptTermsMutation = (
     },
     onError: options?.onError,
     onMutate: options?.onMutate,
+  });
+};
+
+/**
+ * Hook for claiming tokens
+ */
+export const useClaimTokensMutation = (): UseMutationResult<
+  {
+    message: string;
+    balance?: string;
+    cooldown: boolean;
+    secondsRemaining?: number;
+    nextClaimTime?: string;
+  },
+  unknown,
+  void,
+  unknown
+> => {
+  const queryClient = useQueryClient();
+  return useMutation(() => dataService.claimTokens(), {
+    onSuccess: () => {
+      queryClient.invalidateQueries([QueryKeys.balance]);
+    },
   });
 };

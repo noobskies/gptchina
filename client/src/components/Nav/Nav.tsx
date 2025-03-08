@@ -10,7 +10,11 @@ import {
   useLocalStorage,
   useNavScrolling,
 } from '~/hooks';
-import { useConversationsInfiniteQuery } from '~/data-provider';
+import {
+  useConversationsInfiniteQuery,
+  useGetUserBalance,
+  useGetStartupConfig,
+} from '~/data-provider';
 import { Conversations } from '~/components/Conversations';
 import BookmarkNav from './Bookmarks/BookmarkNav';
 import AccountSettings from './AccountSettings';
@@ -18,6 +22,8 @@ import { useSearchContext } from '~/Providers';
 import { Spinner } from '~/components/svg';
 import SearchBar from './SearchBar';
 import NavToggle from './NavToggle';
+import NavBalance from './NavBalance';
+import TokenActions from './TokenActions';
 import NewChat from './NewChat';
 import { cn } from '~/utils';
 import store from '~/store';
@@ -80,14 +86,14 @@ const Nav = ({
   useEffect(() => {
     // When a tag is selected, refetch the list of conversations related to that tag
     refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [tags]);
   const { containerRef, moveToTop } = useNavScrolling<ConversationListResponse>({
     setShowLoading,
     hasNextPage: searchQuery ? searchQueryRes?.hasNextPage : hasNextPage,
     fetchNextPage: searchQuery ? searchQueryRes?.fetchNextPage : fetchNextPage,
     isFetchingNextPage: searchQuery
-      ? searchQueryRes?.isFetchingNextPage ?? false
+      ? (searchQueryRes?.isFetchingNextPage ?? false)
       : isFetchingNextPage,
   });
 
@@ -188,6 +194,7 @@ const Nav = ({
                       <Spinner className={cn('m-1 mx-auto mb-4 h-4 w-4 text-text-primary')} />
                     )}
                   </div>
+                  <TokenActions />
                   <AccountSettings />
                 </nav>
               </div>

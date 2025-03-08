@@ -376,3 +376,23 @@ export const useGetCustomConfigSpeechQuery = (
     },
   );
 };
+
+export const useClaimTokensMutation = (): UseMutationResult<
+  {
+    message: string;
+    balance?: string;
+    cooldown: boolean;
+    secondsRemaining?: number;
+    nextClaimTime?: string;
+  },
+  unknown,
+  void,
+  unknown
+> => {
+  const queryClient = useQueryClient();
+  return useMutation(() => dataService.claimTokens(), {
+    onSuccess: () => {
+      queryClient.invalidateQueries([QueryKeys.balance]);
+    },
+  });
+};

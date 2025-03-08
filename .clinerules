@@ -1,0 +1,138 @@
+# LibreChat Project Guidelines
+
+## Minimizing Merge Conflicts
+
+### File Organization Strategy
+- Create separate files for new functionality rather than modifying existing core files
+- Use component composition to extend functionality without changing base components
+- Isolate feature-specific code in dedicated directories/files
+- Prefer creating new components over modifying existing ones
+- When modifying existing files, keep changes minimal and focused
+
+### Code Separation Practices
+- Use higher-order components or render props to extend component functionality
+- Leverage hooks for reusable logic instead of modifying existing hooks
+- Create utility functions in separate files rather than adding to existing utilities
+- Use feature flags for experimental features to avoid conflicts in main code paths
+- Implement plugins or middleware patterns to extend functionality without core changes
+
+### State Management
+- Create separate state atoms/selectors for new features
+- Avoid modifying existing state structures
+- Use namespaced state keys to prevent collisions
+
+## Security
+
+### Sensitive Files
+
+DO NOT read or modify:
+- .env files and .env.example
+- */config/secrets.*
+- Any file containing API keys, tokens, or credentials
+- Private user data in the database
+
+### Security Practices
+- Use environment variables for secrets as shown in .env.example
+- Keep credentials out of logs and output
+- Never hardcode API keys or tokens in the codebase
+- Follow the existing pattern for handling authentication
+- Use JWT-based, stateless authentication with the requireJWTAuth middleware
+
+## Coding Conventions
+
+### General Guidelines
+- Follow the Airbnb JavaScript Style Guide for general JavaScript coding conventions
+- Use "clean code" principles (small functions/modules, single responsibility, readable code)
+- Use meaningful and descriptive variable and function names
+- Prioritize code readability and maintainability over brevity
+- Use the provided .eslintrc and .prettierrc files for consistent code formatting
+- Organize and modularize the codebase using separate files for different concerns
+
+### Node.js API Server
+
+#### API Design
+- Follow RESTful principles when designing APIs
+- Use appropriate HTTP methods (GET, POST, PUT, DELETE) for each route
+- Use proper status codes and response structures (2xx for success, 4xx for client errors, 5xx for server errors)
+- Implement proper error handling with try-catch blocks
+- Use the logging system in the utils directory for important events and errors
+- Prefix all routes with the /api namespace
+
+#### File Structure
+- Follow the structure that separates routes, controllers, services, and models
+
+##### Routes
+- Define routes using Express Router in separate files for each resource
+- Use descriptive route names adhering to RESTful conventions
+- Keep routes focused on a single responsibility
+
+##### Controllers
+- Create separate controller files for each route using PascalCase with "Controller" suffix
+- Keep controllers thin by delegating complex operations to services
+- Handle request/response logic in controller methods
+
+##### Services
+- Name service files using PascalCase with "Service" suffix
+- Avoid tightly coupling services to specific models or databases
+- Maintain single responsibility principle within each service
+
+##### Models
+- Use singular, PascalCase names for model files
+- Include only necessary fields, indexes, and validations
+- Keep models independent of the API layer
+
+#### Database Access (MongoDB and Mongoose)
+- Use Mongoose as the MongoDB ODM
+- Create separate model files for each entity
+- Use Mongoose schema validation to enforce data integrity
+- Handle database connections efficiently
+- Use Mongoose query builders for concise and readable queries
+
+### React Client
+
+#### TypeScript and React Best Practices
+- Use TypeScript for static typing and improved tooling
+- Group related files together within folders
+- Name components using PascalCase convention
+- Use concise and descriptive names that reflect the component's purpose
+- Split complex components into smaller, reusable ones
+- Keep rendering logic within components minimal
+- Extract reusable parts into separate functions or hooks
+- Apply prop type definitions using TypeScript types or interfaces
+- Use React Hook Form for form validation and submission
+
+#### Component Guidelines
+- Create reusable components when functionality is needed in multiple places
+- Follow the existing naming conventions
+- Maintain proper TypeScript typing
+- Keep components focused on a single responsibility
+
+#### State Management
+- Use Recoil for state management
+- DO NOT pollute global state with unnecessary data
+- Use local state or props for data only used within a component or passed down
+- Follow the existing pattern for global state management
+- Keep state updates predictable and traceable
+
+#### Data Services
+- Use the conventions in the data-provider directory for handling data services
+
+## Documentation
+- Include JSDoc comments for functions and components
+- Keep README.md updated with new features or changes
+- Document API endpoints and their parameters
+- Add comments for complex logic or algorithms
+
+## Testing
+- Write unit tests for critical and complex functionalities using Jest
+- Write integration tests for API endpoints using Supertest
+- Write end-to-end tests for client-side functionalities using Playwright
+- Use descriptive test case and function names
+- Ensure tests are isolated and don't depend on external services
+- Mock external dependencies appropriately
+
+## Pull Request Guidelines
+- Keep changes focused and minimal
+- Provide clear descriptions of changes
+- Reference related issues
+- Ensure tests pass before submitting
