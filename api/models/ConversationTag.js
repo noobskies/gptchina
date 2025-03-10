@@ -1,6 +1,10 @@
-const ConversationTag = require('./schema/conversationTagSchema');
+const mongoose = require('mongoose');
 const Conversation = require('./schema/convoSchema');
 const logger = require('~/config/winston');
+
+const { conversationTagSchema } = require('@librechat/data-schemas');
+
+const ConversationTag = mongoose.model('ConversationTag', conversationTagSchema);
 
 /**
  * Retrieves all conversation tags for a user.
@@ -136,13 +140,13 @@ const adjustPositions = async (user, oldPosition, newPosition) => {
   const position =
     oldPosition < newPosition
       ? {
-        $gt: Math.min(oldPosition, newPosition),
-        $lte: Math.max(oldPosition, newPosition),
-      }
+          $gt: Math.min(oldPosition, newPosition),
+          $lte: Math.max(oldPosition, newPosition),
+        }
       : {
-        $gte: Math.min(oldPosition, newPosition),
-        $lt: Math.max(oldPosition, newPosition),
-      };
+          $gte: Math.min(oldPosition, newPosition),
+          $lt: Math.max(oldPosition, newPosition),
+        };
 
   await ConversationTag.updateMany(
     {

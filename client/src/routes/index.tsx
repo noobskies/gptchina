@@ -6,6 +6,7 @@ import {
   ResetPassword,
   VerifyEmail,
   ApiErrorWatcher,
+  TwoFactorScreen,
 } from '~/components/Auth';
 import AiTokenBurnRates from '~/components/AiTokenBurnRates/AiTokenBurnRates';
 import TermsOfService from '~/components/TermsOfService/TermsOfService';
@@ -71,6 +72,10 @@ export const router = createBrowserRouter([
           {
             path: 'login',
             element: <Login />,
+          },
+          {
+            path: 'login/2fa',
+            element: <TwoFactorScreen />,
           },
         ],
       },

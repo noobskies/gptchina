@@ -52,6 +52,10 @@ export namespace Agents {
     id?: string;
     /** If provided, the output of the tool call */
     output?: string;
+    /** Auth URL */
+    auth?: string;
+    /** Expiration time */
+    expires_at?: number;
   };
 
   export type ToolEndEvent = {
@@ -155,12 +159,14 @@ export namespace Agents {
     index: number; // #new
     stepIndex?: number; // #new
     stepDetails: StepDetails;
-    usage: null | {
-      // Define usage structure if it's ever non-null
-      // prompt_tokens: number; // #new
-      // completion_tokens: number; // #new
-      // total_tokens: number; // #new
-    };
+    usage:
+      | null
+      | {
+          // Define usage structure if it's ever non-null
+          // prompt_tokens: number; // #new
+          // completion_tokens: number; // #new
+          // total_tokens: number; // #new
+        };
   };
   /**
    * Represents a run step delta i.e. any changed fields on a run step during
@@ -190,6 +196,8 @@ export namespace Agents {
   export type ToolCallDelta = {
     type: StepTypes.TOOL_CALLS | string;
     tool_calls?: ToolCallChunk[];
+    auth?: string;
+    expires_at?: number;
   };
   export type AgentToolCall = FunctionToolCall | ToolCall;
   export interface ExtendedMessageContent {

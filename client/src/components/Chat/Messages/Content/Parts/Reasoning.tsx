@@ -11,14 +11,21 @@ type ReasoningProps = {
 const Reasoning = memo(({ reasoning }: ReasoningProps) => {
   const { isExpanded, nextType } = useMessageContext();
   const reasoningText = useMemo(() => {
-    return reasoning.replace(/^<think>\s*/, '').replace(/\s*<\/think>$/, '');
+    return reasoning
+      .replace(/^<think>\s*/, '')
+      .replace(/\s*<\/think>$/, '')
+      .trim();
   }, [reasoning]);
+
+  if (!reasoningText) {
+    return null;
+  }
 
   return (
     <div
       className={cn(
         'grid transition-all duration-300 ease-out',
-        nextType !== ContentTypes.THINK && isExpanded && 'mb-10',
+        nextType !== ContentTypes.THINK && isExpanded && 'mb-8',
       )}
       style={{
         gridTemplateRows: isExpanded ? '1fr' : '0fr',

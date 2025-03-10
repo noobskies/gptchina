@@ -56,7 +56,7 @@ class OpenNodeService {
         success_url: `${process.env.DOMAIN_SERVER}`,
         customer_email: email,
         auto_settle: true,
-        ttl: 60,
+        ttl: 3600, // 1 hour instead of 60 seconds
         metadata: {
           userId,
           priceId,

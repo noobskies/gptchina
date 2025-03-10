@@ -1,4 +1,3 @@
-// client/src/components/Auth/SocialLoginRender.tsx
 import {
   GoogleIcon,
   FacebookIcon,
@@ -9,7 +8,9 @@ import {
 } from '~/components';
 
 import SocialButton from './SocialButton';
+
 import { useLocalize } from '~/hooks';
+
 import { TStartupConfig } from 'librechat-data-provider';
 
 function SocialLoginRender({
@@ -17,7 +18,6 @@ function SocialLoginRender({
 }: {
   startupConfig: TStartupConfig | null | undefined;
 }) {
-  console.log('startupConfig:', startupConfig);
   const localize = useLocalize();
 
   if (!startupConfig) {
@@ -25,7 +25,7 @@ function SocialLoginRender({
   }
 
   const providerComponents = {
-    discord: startupConfig?.discordLoginEnabled && (
+    discord: startupConfig.discordLoginEnabled && (
       <SocialButton
         key="discord"
         enabled={startupConfig.discordLoginEnabled}
@@ -36,7 +36,7 @@ function SocialLoginRender({
         id="discord"
       />
     ),
-    facebook: startupConfig?.facebookLoginEnabled && (
+    facebook: startupConfig.facebookLoginEnabled && (
       <SocialButton
         key="facebook"
         enabled={startupConfig.facebookLoginEnabled}
@@ -47,7 +47,7 @@ function SocialLoginRender({
         id="facebook"
       />
     ),
-    github: startupConfig?.githubLoginEnabled && (
+    github: startupConfig.githubLoginEnabled && (
       <SocialButton
         key="github"
         enabled={startupConfig.githubLoginEnabled}
@@ -58,7 +58,7 @@ function SocialLoginRender({
         id="github"
       />
     ),
-    google: startupConfig?.googleLoginEnabled && (
+    google: startupConfig.googleLoginEnabled && (
       <SocialButton
         key="google"
         enabled={startupConfig.googleLoginEnabled}
@@ -69,7 +69,18 @@ function SocialLoginRender({
         id="google"
       />
     ),
-    openid: startupConfig?.openidLoginEnabled && (
+    apple: startupConfig.appleLoginEnabled && (
+      <SocialButton
+        key="apple"
+        enabled={startupConfig.appleLoginEnabled}
+        serverDomain={startupConfig.serverDomain}
+        oauthPath="apple"
+        Icon={AppleIcon}
+        label={localize('com_auth_apple_login')}
+        id="apple"
+      />
+    ),
+    openid: startupConfig.openidLoginEnabled && (
       <SocialButton
         key="openid"
         enabled={startupConfig.openidLoginEnabled}
@@ -84,18 +95,6 @@ function SocialLoginRender({
         }
         label={startupConfig.openidLabel}
         id="openid"
-      />
-    ),
-    // Add Apple provider
-    apple: startupConfig?.appleLoginEnabled && (
-      <SocialButton
-        key="apple"
-        enabled={startupConfig.appleLoginEnabled}
-        serverDomain={startupConfig.serverDomain}
-        oauthPath="apple"
-        Icon={AppleIcon}
-        label={localize('com_auth_apple_login')}
-        id="apple"
       />
     ),
   };

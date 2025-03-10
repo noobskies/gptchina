@@ -2,8 +2,8 @@ import { useRecoilState } from 'recoil';
 import * as Select from '@ariakit/react/select';
 import { Fragment, useState, memo } from 'react';
 import { FileText, LogOut, TabletSmartphone } from 'lucide-react';
-import { useGetUserBalance, useGetStartupConfig } from 'librechat-data-provider/react-query';
-import { GearIcon, DropdownMenuSeparator } from '~/components';
+import { useGetUserBalance, useGetStartupConfig } from '~/data-provider';
+import { LinkIcon, GearIcon, DropdownMenuSeparator } from '~/components';
 import FilesView from '~/components/Chat/Input/Files/FilesView';
 import { useAuthContext } from '~/hooks/AuthContext';
 import useAvatar from '~/hooks/Messages/useAvatar';
@@ -50,14 +50,8 @@ function AccountSettings() {
         balanceQuery.data != null &&
         !isNaN(parseFloat(balanceQuery.data)) && (
           <>
-            <div className="m-1 ml-3 flex flex-col items-start whitespace-nowrap">
-              <div className="flex items-center text-sm text-gray-800 dark:text-gray-200">
-                {`Tokens Remaining: ${formatTokens(balanceQuery.data)}`}
-              </div>
-              <a href="/token-burn-rates" target="_blank" className="text-xs text-blue-600">
-                Learn More 🔥
-              </a>
-              <DropdownMenuSeparator />
+            <div className="text-token-text-secondary ml-3 mr-2 py-2 text-sm" role="note">
+              {localize('com_nav_balance')}: {parseFloat(balanceQuery.data).toFixed(2)}
             </div>
           </>
         )}
@@ -65,12 +59,7 @@ function AccountSettings() {
         <button
           onClick={() => setShowPayment(true)}
           data-payment-trigger
-          className="
-          w-full rounded bg-blue-600 px-3 py-2 text-sm font-medium text-white
-          transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2
-          focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50
-          disabled:hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700
-        "
+          className="w-full rounded bg-blue-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
         >
           {localize('com_ui_buy_token')}
         </button>

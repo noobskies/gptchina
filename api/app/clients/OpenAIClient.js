@@ -7,6 +7,7 @@ const {
   ImageDetail,
   EModelEndpoint,
   resolveHeaders,
+  KnownEndpoints,
   openAISettings,
   ImageDetailCost,
   CohereConstants,
@@ -108,18 +109,14 @@ class OpenAIClient extends BaseClient {
     const omniPattern = /\b(o1|o3)\b/i;
     this.isOmni = omniPattern.test(this.modelOptions.model);
 
-    const { OPENROUTER_API_KEY, OPENAI_FORCE_PROMPT } = process.env ?? {};
-    if (OPENROUTER_API_KEY && !this.azure) {
-      this.apiKey = OPENROUTER_API_KEY;
-      this.useOpenRouter = true;
-    }
-
+    const { OPENAI_FORCE_PROMPT } = process.env ?? {};
     const { reverseProxyUrl: reverseProxy } = this.options;
 
     if (
       !this.useOpenRouter &&
-      reverseProxy &&
-      reverseProxy.includes('https://openrouter.ai/api/v1')
+      ((reverseProxy && reverseProxy.includes(KnownEndpoints.openrouter)) ||
+        (this.options.endpoint &&
+          this.options.endpoint.toLowerCase().includes(KnownEndpoints.openrouter)))
     ) {
       this.useOpenRouter = true;
     }
@@ -306,7 +303,9 @@ class OpenAIClient extends BaseClient {
   }
 
   getEncoding() {
-    return this.model?.includes('gpt-4o') ? 'o200k_base' : 'cl100k_base';
+    return this.modelOptions?.model && /gpt-4[^-\s]/.test(this.modelOptions.model)
+      ? 'o200k_base'
+      : 'cl100k_base';
   }
 
   /**
@@ -506,9 +505,8 @@ class OpenAIClient extends BaseClient {
     if (promptPrefix && this.isOmni === true) {
       const lastUserMessageIndex = payload.findLastIndex((message) => message.role === 'user');
       if (lastUserMessageIndex !== -1) {
-        payload[
-          lastUserMessageIndex
-        ].content = `${promptPrefix}\n${payload[lastUserMessageIndex].content}`;
+        payload[lastUserMessageIndex].content =
+          `${promptPrefix}\n${payload[lastUserMessageIndex].content}`;
       }
     }
 
@@ -614,7 +612,7 @@ class OpenAIClient extends BaseClient {
   }
 
   initializeLLM({
-    model = 'gpt-4o-mini',
+    model = openAISettings.model.default,
     modelName,
     temperature = 0.2,
     max_tokens,
@@ -715,7 +713,7 @@ class OpenAIClient extends BaseClient {
 
     const { OPENAI_TITLE_MODEL } = process.env ?? {};
 
-    let model = this.options.titleModel ?? OPENAI_TITLE_MODEL ?? 'gpt-4o-mini';
+    let model = this.options.titleModel ?? OPENAI_TITLE_MODEL ?? openAISettings.model.default;
     if (model === Constants.CURRENT_MODEL) {
       model = this.modelOptions.model;
     }
@@ -908,7 +906,7 @@ ${convo}
     let prompt;
 
     // TODO: remove the gpt fallback and make it specific to endpoint
-    const { OPENAI_SUMMARY_MODEL = 'gpt-4o-mini' } = process.env ?? {};
+    const { OPENAI_SUMMARY_MODEL = openAISettings.model.default } = process.env ?? {};
     let model = this.options.summaryModel ?? OPENAI_SUMMARY_MODEL;
     if (model === Constants.CURRENT_MODEL) {
       model = this.modelOptions.model;
@@ -1067,14 +1065,36 @@ ${convo}
     });
   }
 
-  getStreamText() {
+  /**
+   *
+   * @param {string[]} [intermediateReply]
+   * @returns {string}
+   */
+  getStreamText(intermediateReply) {
     if (!this.streamHandler) {
-      return '';
+      return intermediateReply?.join('') ?? '';
+    }
+
+    let thinkMatch;
+    let remainingText;
+    let reasoningText = '';
+
+    if (this.streamHandler.reasoningTokens.length > 0) {
+      reasoningText = this.streamHandler.reasoningTokens.join('');
+      thinkMatch = reasoningText.match(/<think>([\s\S]*?)<\/think>/)?.[1]?.trim();
+      if (thinkMatch != null && thinkMatch) {
+        const reasoningTokens = `:::thinking\n${thinkMatch}\n:::\n`;
+        remainingText = reasoningText.split(/<\/think>/)?.[1]?.trim() || '';
+        return `${reasoningTokens}${remainingText}${this.streamHandler.tokens.join('')}`;
+      } else if (thinkMatch === '') {
+        remainingText = reasoningText.split(/<\/think>/)?.[1]?.trim() || '';
+        return `${remainingText}${this.streamHandler.tokens.join('')}`;
+      }
     }
 
     const reasoningTokens =
-      this.streamHandler.reasoningTokens.length > 0
-        ? `:::thinking\n${this.streamHandler.reasoningTokens.join('')}\n:::\n`
+      reasoningText.length > 0
+        ? `:::thinking\n${reasoningText.replace('<think>', '').replace('</think>', '').trim()}\n:::\n`
         : '';
 
     return `${reasoningTokens}${this.streamHandler.tokens.join('')}`;
@@ -1282,18 +1302,29 @@ ${convo}
       if (
         this.isOmni === true &&
         (this.azure || /o1(?!-(?:mini|preview)).*$/.test(modelOptions.model)) &&
+        !/o3-.*$/.test(this.modelOptions.model) &&
         modelOptions.stream
       ) {
         delete modelOptions.stream;
         delete modelOptions.stop;
-      } else if (!this.isOmni && modelOptions.reasoning_effort != null) {
+      } else if (
+        (!this.isOmni || /^o1-(mini|preview)/i.test(modelOptions.model)) &&
+        modelOptions.reasoning_effort != null
+      ) {
         delete modelOptions.reasoning_effort;
+        delete modelOptions.temperature;
       }
 
       let reasoningKey = 'reasoning_content';
       if (this.useOpenRouter) {
         modelOptions.include_reasoning = true;
         reasoningKey = 'reasoning';
+      }
+      if (this.useOpenRouter && modelOptions.reasoning_effort != null) {
+        modelOptions.reasoning = {
+          effort: modelOptions.reasoning_effort,
+        };
+        delete modelOptions.reasoning_effort;
       }
 
       this.streamHandler = new SplitStreamHandler({
@@ -1313,11 +1344,19 @@ ${convo}
         streamPromise = new Promise((resolve) => {
           streamResolve = resolve;
         });
+        /** @type {OpenAI.OpenAI.CompletionCreateParamsStreaming} */
+        const params = {
+          ...modelOptions,
+          stream: true,
+        };
+        if (
+          this.options.endpoint === EModelEndpoint.openAI ||
+          this.options.endpoint === EModelEndpoint.azureOpenAI
+        ) {
+          params.stream_options = { include_usage: true };
+        }
         const stream = await openai.beta.chat.completions
-          .stream({
-            ...modelOptions,
-            stream: true,
-          })
+          .stream(params)
           .on('abort', () => {
             /* Do nothing here */
           })
@@ -1448,7 +1487,7 @@ ${convo}
         this.options.context !== 'title' &&
         message.content.startsWith('<think>')
       ) {
-        return message.content.replace('<think>', ':::thinking').replace('</think>', ':::');
+        return this.getStreamText();
       }
 
       return message.content;
@@ -1457,7 +1496,7 @@ ${convo}
         err?.message?.includes('abort') ||
         (err instanceof OpenAI.APIError && err?.message?.includes('abort'))
       ) {
-        return intermediateReply.join('');
+        return this.getStreamText(intermediateReply);
       }
       if (
         err?.message?.includes(
@@ -1472,10 +1511,18 @@ ${convo}
         (err instanceof OpenAI.OpenAIError && err?.message?.includes('missing finish_reason'))
       ) {
         logger.error('[OpenAIClient] Known OpenAI error:', err);
-        return intermediateReply.join('');
+        if (this.streamHandler && this.streamHandler.reasoningTokens.length) {
+          return this.getStreamText();
+        } else if (intermediateReply.length > 0) {
+          return this.getStreamText(intermediateReply);
+        } else {
+          throw err;
+        }
       } else if (err instanceof OpenAI.APIError) {
-        if (intermediateReply.length > 0) {
-          return intermediateReply.join('');
+        if (this.streamHandler && this.streamHandler.reasoningTokens.length) {
+          return this.getStreamText();
+        } else if (intermediateReply.length > 0) {
+          return this.getStreamText(intermediateReply);
         } else {
           throw err;
         }

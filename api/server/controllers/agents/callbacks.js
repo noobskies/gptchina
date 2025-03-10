@@ -1,8 +1,10 @@
-const { Tools, StepTypes, imageGenTools, FileContext } = require('librechat-data-provider');
+const { nanoid } = require('nanoid');
+const { Tools, StepTypes, FileContext } = require('librechat-data-provider');
 const {
   EnvVar,
   Providers,
   GraphEvents,
+  getMessageId,
   ToolEndHandler,
   handleToolCalls,
   ChatModelStreamHandler,
@@ -46,7 +48,7 @@ class ModelEndHandler {
     }
 
     try {
-      if (metadata.provider === Providers.GOOGLE) {
+      if (metadata.provider === Providers.GOOGLE || graph.clientOptions?.disableStreaming) {
         handleToolCalls(data?.output?.tool_calls, metadata, graph);
       }
 
@@ -59,6 +61,38 @@ class ModelEndHandler {
       }
 
       this.collectedUsage.push(usage);
+      if (!graph.clientOptions?.disableStreaming) {
+        return;
+      }
+      if (!data.output.content) {
+        return;
+      }
+      const stepKey = graph.getStepKey(metadata);
+      const message_id = getMessageId(stepKey, graph) ?? '';
+      if (message_id) {
+        graph.dispatchRunStep(stepKey, {
+          type: StepTypes.MESSAGE_CREATION,
+          message_creation: {
+            message_id,
+          },
+        });
+      }
+      const stepId = graph.getStepIdByKey(stepKey);
+      const content = data.output.content;
+      if (typeof content === 'string') {
+        graph.dispatchMessageDelta(stepId, {
+          content: [
+            {
+              type: 'text',
+              text: content,
+            },
+          ],
+        });
+      } else if (content.every((c) => c.type?.startsWith('text'))) {
+        graph.dispatchMessageDelta(stepId, {
+          content,
+        });
+      }
     } catch (error) {
       logger.error('Error handling model end event:', error);
     }
@@ -166,6 +200,22 @@ function getDefaultHandlers({ res, aggregateContent, toolEndCallback, collectedU
         aggregateContent({ event, data });
       },
     },
+    [GraphEvents.ON_REASONING_DELTA]: {
+      /**
+       * Handle ON_REASONING_DELTA event.
+       * @param {string} event - The event name.
+       * @param {StreamEventData} data - The event data.
+       * @param {GraphRunnableConfig['configurable']} [metadata] The runnable metadata.
+       */
+      handle: (event, data, metadata) => {
+        if (metadata?.last_agent_index === metadata?.agent_index) {
+          sendEvent(res, { event, data });
+        } else if (!metadata?.hide_sequential_outputs) {
+          sendEvent(res, { event, data });
+        }
+        aggregateContent({ event, data });
+      },
+    },
   };
 
   return handlers;
@@ -193,32 +243,6 @@ function createToolEndCallback({ req, res, artifactPromises }) {
       return;
     }
 
-    if (imageGenTools.has(output.name)) {
-      artifactPromises.push(
-        (async () => {
-          const fileMetadata = Object.assign(output.artifact, {
-            messageId: metadata.run_id,
-            toolCallId: output.tool_call_id,
-            conversationId: metadata.thread_id,
-          });
-          if (!res.headersSent) {
-            return fileMetadata;
-          }
-
-          if (!fileMetadata) {
-            return null;
-          }
-
-          res.write(`event: attachment\ndata: ${JSON.stringify(fileMetadata)}\n\n`);
-          return fileMetadata;
-        })().catch((error) => {
-          logger.error('Error processing code output:', error);
-          return null;
-        }),
-      );
-      return;
-    }
-
     if (output.artifact.content) {
       /** @type {FormattedContent[]} */
       const content = output.artifact.content;
@@ -229,7 +253,7 @@ function createToolEndCallback({ req, res, artifactPromises }) {
         const { url } = part.image_url;
         artifactPromises.push(
           (async () => {
-            const filename = `${output.tool_call_id}-image-${new Date().getTime()}`;
+            const filename = `${output.name}_${output.tool_call_id}_img_${nanoid()}`;
             const file = await saveBase64Image(url, {
               req,
               filename,

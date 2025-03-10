@@ -1,16 +1,13 @@
 import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { EModelEndpoint, Constants } from 'librechat-data-provider';
-import {
-  useGetEndpointsQuery,
-  useGetStartupConfig,
-  useGetModelRatesQuery,
-} from 'librechat-data-provider/react-query';
 import type * as t from 'librechat-data-provider';
 import type { ReactNode } from 'react';
-import { useAuthContext } from '~/hooks/AuthContext';
 import { useChatContext, useAgentsMapContext, useAssistantsMapContext } from '~/Providers';
-import { useGetAssistantDocsQuery } from '~/data-provider';
+import {
+  useGetAssistantDocsQuery,
+  useGetEndpointsQuery,
+  useGetStartupConfig,
+} from '~/data-provider';
 import ConvoIcon from '~/components/Endpoints/ConvoIcon';
 import { getIconEndpoint, getEntity, cn } from '~/utils';
 import { useLocalize, useSubmitMessage } from '~/hooks';
@@ -22,41 +19,12 @@ export default function Landing({ Header }: { Header?: ReactNode }) {
   const { conversation } = useChatContext();
   const agentsMap = useAgentsMapContext();
   const assistantMap = useAssistantsMapContext();
-  const { token } = useAuthContext();
   const { data: startupConfig } = useGetStartupConfig();
   const { data: endpointsConfig } = useGetEndpointsQuery();
 
-  const { data: modelRates } = useQuery(
-    ['modelRates'],
-    async () => {
-      if (!token) return null;
-
-      const response = await fetch('/api/models/rates', {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error('Failed to fetch model rates');
-      }
-      return response.json();
-    },
-    {
-      enabled: !!token, // Only run query when token is available
-    },
-  );
-
   const localize = useLocalize();
 
-  let { endpoint = '', model = '' } = conversation ?? {};
-
-  const currentModelRates = useMemo(() => {
-    if (!modelRates || !endpoint || !model) {
-      return null;
-    }
-    return modelRates[endpoint]?.[model];
-  }, [modelRates, endpoint, model]);
+  let { endpoint = '' } = conversation ?? {};
 
   if (
     endpoint === EModelEndpoint.chatGPTBrowser ||
@@ -83,8 +51,8 @@ export default function Landing({ Header }: { Header?: ReactNode }) {
   const name = entity?.name ?? '';
   const description = entity?.description ?? '';
   const avatar = isAgent
-    ? (entity as t.Agent | undefined)?.avatar?.filepath ?? ''
-    : ((entity as t.Assistant | undefined)?.metadata?.avatar as string | undefined) ?? '';
+    ? ((entity as t.Agent | undefined)?.avatar?.filepath ?? '')
+    : (((entity as t.Assistant | undefined)?.metadata?.avatar as string | undefined) ?? '');
   const conversation_starters = useMemo(() => {
     /* The user made updates, use client-side cache, or they exist in an Agent */
     if (entity && (entity.conversation_starters?.length ?? 0) > 0) {
@@ -119,7 +87,9 @@ export default function Landing({ Header }: { Header?: ReactNode }) {
       return localize('com_nav_welcome_agent');
     }
 
-    return localize('com_nav_welcome_message');
+    return typeof startupConfig?.interface?.customWelcome === 'string'
+      ? startupConfig?.interface?.customWelcome
+      : localize('com_nav_welcome_message');
   };
 
   return (
@@ -149,21 +119,20 @@ export default function Landing({ Header }: { Header?: ReactNode }) {
         {name ? (
           <div className="flex flex-col items-center gap-0 p-2">
             <div className="text-center text-2xl font-medium dark:text-white">{name}</div>
-            <div className="max-w-md text-center text-sm font-normal text-text-primary ">
-              {description ? description : localize('com_nav_welcome_message')}
+            <div className="max-w-md text-center text-sm font-normal text-text-primary">
+              {description ||
+                (typeof startupConfig?.interface?.customWelcome === 'string'
+                  ? startupConfig?.interface?.customWelcome
+                  : localize('com_nav_welcome_message'))}
             </div>
+            {/* <div className="mt-1 flex items-center gap-1 text-token-text-tertiary">
+             <div className="text-sm text-token-text-tertiary">By Daniel Avila</div>
+          </div> */}
           </div>
         ) : (
           <h2 className="mb-5 max-w-[75vh] px-12 text-center text-lg font-medium dark:text-white md:px-0 md:text-2xl">
             {getWelcomeMessage()}
           </h2>
-        )}
-        {currentModelRates && (
-          <div className="mt-2 text-center text-sm text-gray-600 dark:text-gray-300">
-            <div className="mb-1 font-semibold">Model: {model}</div>
-            <div>Input: {currentModelRates.promptRate}</div>
-            <div>Output: {currentModelRates.completionRate}</div>
-          </div>
         )}
         <div className="mt-8 flex flex-wrap justify-center gap-3 px-4">
           {conversation_starters.length > 0 &&

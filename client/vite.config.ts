@@ -4,6 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 import { defineConfig, createLogger, loadEnv } from 'vite';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import compression from 'vite-plugin-compression';
 import type { Plugin } from 'vite';
 
 function htmlPlugin(env: ReturnType<typeof loadEnv>) {
@@ -84,6 +85,7 @@ export default defineConfig(({ mode }) => {
         devOptions: {
           enabled: false, // enable/disable registering SW in development mode
         },
+        useCredentials: true,
         workbox: {
           globPatterns: ['assets/**/*.{png,jpg,svg,ico}', '**/*.{js,css,html,ico,woff2}'],
           maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
@@ -141,32 +143,58 @@ export default defineConfig(({ mode }) => {
         org: 'gpt-global',
         project: 'gpt',
       }),
+      compression({
+        verbose: true,
+        disable: false,
+        threshold: 10240, // compress files larger than 10KB
+        algorithm: 'gzip',
+        ext: '.gz',
+      }),
     ],
     publicDir: './public',
     build: {
       sourcemap: process.env.NODE_ENV === 'development',
       outDir: './dist',
+      minify: 'terser',
       rollupOptions: {
         output: {
-          manualChunks: (id) => {
+          manualChunks: (id: string) => {
+            // Group Radix UI libraries together
+            if (id.includes('@radix-ui')) {
+              return 'radix-ui';
+            }
+            // Group framer-motion separately
+            if (id.includes('framer-motion')) {
+              return 'framer-motion';
+            }
             if (id.includes('node_modules/highlight.js')) {
               return 'markdown_highlight';
             }
-            if (id.includes('node_modules/hast-util-raw')) {
+            if (id.includes('node_modules/hast-util-raw') || id.includes('node_modules/katex')) {
               return 'markdown_large';
             }
-            if (id.includes('node_modules/katex')) {
-              return 'markdown_large';
+            // Group TanStack libraries together
+            if (id.includes('@tanstack')) {
+              return 'tanstack-vendor';
+            }
+            // Additional grouping for other node_modules
+            if (id.includes('@headlessui')) {
+              return 'headlessui';
             }
             if (id.includes('node_modules')) {
               return 'vendor';
             }
+            // Create a separate chunk for all locale files under src/locales
+            if (id.includes(path.join('src', 'locales'))) {
+              return 'locales';
+            }
+            return null;
           },
           entryFileNames: 'assets/[name].[hash].js',
           chunkFileNames: 'assets/[name].[hash].js',
           assetFileNames: (assetInfo) => {
             if (assetInfo.name && /\.(woff|woff2|eot|ttf|otf)$/.test(assetInfo.name)) {
-              return 'assets/[name][extname]';
+              return 'assets/fonts/[name][extname]';
             }
             return 'assets/[name].[hash][extname]';
           },
@@ -178,6 +206,7 @@ export default defineConfig(({ mode }) => {
           warn(warning);
         },
       },
+      chunkSizeWarningLimit: 1200,
     },
     resolve: {
       alias: {

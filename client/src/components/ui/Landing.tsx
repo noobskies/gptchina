@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useGetStartupConfig } from 'librechat-data-provider/react-query';
+import { useGetStartupConfig } from '~/data-provider';
 import LightningIcon from '~/components/svg/LightningIcon';
 import useDocumentTitle from '~/hooks/useDocumentTitle';
 import CautionIcon from '~/components/svg/CautionIcon';

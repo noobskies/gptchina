@@ -75,8 +75,9 @@ const createAbortController = (req, res, getAbortData, getReqData) => {
 
     const abortKey = userMessage?.conversationId ?? req.user.id;
     const prevRequest = abortControllers.get(abortKey);
+    const { overrideUserMessageId } = req?.body ?? {};
 
-    if (prevRequest && prevRequest?.abortController) {
+    if (overrideUserMessageId != null && prevRequest && prevRequest?.abortController) {
       const data = prevRequest.abortController.getAbortData();
       getReqData({ userMessage: data?.userMessage });
       const addedAbortKey = `${abortKey}:${responseMessageId}`;
@@ -173,7 +174,7 @@ const handleAbortError = async (res, req, error, data) => {
     errorText = `{"type":"${ErrorTypes.INVALID_REQUEST}"}`;
   }
 
-  if (error?.message?.includes('does not support \'system\'')) {
+  if (error?.message?.includes("does not support 'system'")) {
     errorText = `{"type":"${ErrorTypes.NO_SYSTEM_MESSAGES}"}`;
   }
 

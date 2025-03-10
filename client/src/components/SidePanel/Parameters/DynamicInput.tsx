@@ -1,6 +1,6 @@
 import { OptionTypes } from 'librechat-data-provider';
 import type { DynamicSettingProps } from 'librechat-data-provider';
-import { useLocalize, useDebouncedInput, useParameterEffects } from '~/hooks';
+import { useLocalize, useDebouncedInput, useParameterEffects, TranslationKeys } from '~/hooks';
 import { Label, Input, HoverCard, HoverCardTrigger } from '~/components/ui';
 import { useChatContext } from '~/Providers';
 import OptionHover from './OptionHover';
@@ -70,7 +70,7 @@ function DynamicInput({
               htmlFor={`${settingKey}-dynamic-input`}
               className="text-left text-sm font-medium"
             >
-              {labelCode ? localize(label) || label : label || settingKey}{' '}
+              {labelCode ? localize(label as TranslationKeys) || label : label || settingKey}{' '}
               {showDefault && (
                 <small className="opacity-40">
                   (
@@ -87,7 +87,11 @@ function DynamicInput({
             disabled={readonly}
             value={inputValue ?? defaultValue ?? ''}
             onChange={handleInputChange}
-            placeholder={placeholderCode ? localize(placeholder) || placeholder : placeholder}
+            placeholder={
+              placeholderCode
+                ? localize(placeholder as TranslationKeys) || placeholder
+                : placeholder
+            }
             className={cn(
               'flex h-10 max-h-10 w-full resize-none border-none bg-surface-secondary px-3 py-2',
             )}
@@ -95,7 +99,11 @@ function DynamicInput({
         </HoverCardTrigger>
         {description && (
           <OptionHover
-            description={descriptionCode ? localize(description) || description : description}
+            description={
+              descriptionCode
+                ? localize(description as TranslationKeys) || description
+                : description
+            }
             side={ESide.Left}
           />
         )}

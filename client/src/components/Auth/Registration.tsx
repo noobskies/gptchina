@@ -93,10 +93,7 @@ const Registration: React.FC = () => {
             validation,
           )}
           aria-invalid={!!errors[id]}
-          className="
-          webkit-dark-styles transition-color peer w-full rounded-2xl border border-border-light
-          bg-surface-primary px-3.5 pb-2.5 pt-3 text-text-primary duration-200 
-          focus:border-blue-500 focus:outline-none"
+          className="webkit-dark-styles transition-color peer w-full rounded-2xl border border-border-light bg-surface-primary px-3.5 pb-2.5 pt-3 text-text-primary duration-200 focus:border-blue-500 focus:outline-none"
           placeholder=" "
           data-testid={id}
         />
@@ -203,12 +200,7 @@ const Registration: React.FC = () => {
                 disabled={Object.keys(errors).length > 0}
                 type="submit"
                 aria-label="Submit registration"
-                className="
-            w-full rounded-2xl bg-blue-600 px-4 py-3 text-sm font-medium text-white
-            transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2
-            focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50
-            disabled:hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700
-          "
+                className="w-full rounded-2xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
               >
                 {isSubmitting ? <Spinner /> : localize('com_auth_continue')}
               </button>

@@ -84,7 +84,9 @@ export const OpenNodePaymentForm: React.FC<OpenNodePaymentFormProps> = ({
         <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Cost</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {localize('com_ui_payment_cost')}
+              </span>
               <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 ${(amount / 100).toFixed(2)}
               </span>
@@ -104,13 +106,15 @@ export const OpenNodePaymentForm: React.FC<OpenNodePaymentFormProps> = ({
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {bitcoinAddress && (
               <div className="flex flex-col items-center space-y-4">
-                <h3 className="text-lg font-semibold">Bitcoin Address</h3>
+                <h3 className="text-lg font-semibold">
+                  {localize('com_ui_payment_bitcoin_address')}
+                </h3>
                 <div className="rounded-lg bg-white p-4 dark:bg-gray-700">
                   <QRCodeSVG value={bitcoinAddress} size={200} />
                 </div>
                 <div className="w-full text-center">
                   <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">
-                    Send Bitcoin to this address
+                    {localize('com_ui_payment_bitcoin_instructions')}
                   </p>
                   <div className="group relative">
                     <code className="block w-full break-all rounded bg-gray-100 p-2 text-xs dark:bg-gray-800">
@@ -118,11 +122,9 @@ export const OpenNodePaymentForm: React.FC<OpenNodePaymentFormProps> = ({
                     </code>
                     <button
                       onClick={() => navigator.clipboard.writeText(bitcoinAddress)}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md bg-gray-200 px-2 py-1 text-xs 
-                               text-gray-700 opacity-0 transition-opacity hover:bg-gray-300 group-hover:opacity-100 
-                               dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md bg-gray-200 px-2 py-1 text-xs text-gray-700 opacity-0 transition-opacity hover:bg-gray-300 group-hover:opacity-100 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                     >
-                      Copy
+                      {localize('com_ui_payment_copy')}
                     </button>
                   </div>
                 </div>
@@ -131,13 +133,13 @@ export const OpenNodePaymentForm: React.FC<OpenNodePaymentFormProps> = ({
 
             {lightningInvoice && (
               <div className="flex flex-col items-center space-y-4">
-                <h3 className="text-lg font-semibold">Lightning Payment</h3>
+                <h3 className="text-lg font-semibold">{localize('com_ui_payment_lightning')}</h3>
                 <div className="rounded-lg bg-white p-4 dark:bg-gray-700">
                   <QRCodeSVG value={lightningInvoice} size={200} />
                 </div>
                 <div className="w-full text-center">
                   <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">
-                    Or pay with Lightning
+                    {localize('com_ui_payment_lightning_instructions')}
                   </p>
                   <div className="group relative">
                     <code className="block w-full break-all rounded bg-gray-100 p-2 text-xs dark:bg-gray-800">
@@ -145,11 +147,9 @@ export const OpenNodePaymentForm: React.FC<OpenNodePaymentFormProps> = ({
                     </code>
                     <button
                       onClick={() => navigator.clipboard.writeText(lightningInvoice)}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md bg-gray-200 px-2 py-1 text-xs 
-                               text-gray-700 opacity-0 transition-opacity hover:bg-gray-300 group-hover:opacity-100 
-                               dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md bg-gray-200 px-2 py-1 text-xs text-gray-700 opacity-0 transition-opacity hover:bg-gray-300 group-hover:opacity-100 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                     >
-                      Copy
+                      {localize('com_ui_payment_copy')}
                     </button>
                   </div>
                 </div>

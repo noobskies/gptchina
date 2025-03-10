@@ -7,9 +7,12 @@ const { logger } = require('~/config');
 const DEFAULT_AVATAR = '/assets/logo-novlisky-small.png';
 
 const socialLogin =
-  (provider, getProfileDetails) => async (accessToken, refreshToken, profile, cb) => {
+  (provider, getProfileDetails) => async (accessToken, refreshToken, idToken, profile, cb) => {
     try {
-      const { email, id, avatarUrl, username, name, emailVerified } = getProfileDetails(profile);
+      const { email, id, avatarUrl, username, name, emailVerified } = getProfileDetails({
+        idToken,
+        profile,
+      });
 
       // For Apple login, use your local logo
       const finalAvatarUrl = provider === 'apple' ? DEFAULT_AVATAR : avatarUrl;

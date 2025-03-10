@@ -44,17 +44,9 @@ const configureSocialLogins = (app) => {
   if (process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET) {
     passport.use(discordLogin());
   }
-
-  // Add Apple OAuth Configuration
-  if (
-    process.env.APPLE_CLIENT_ID &&
-    process.env.APPLE_TEAM_ID &&
-    process.env.APPLE_KEY_ID &&
-    process.env.APPLE_PRIVATE_KEY
-  ) {
+  if (process.env.APPLE_CLIENT_ID && process.env.APPLE_PRIVATE_KEY_PATH) {
     passport.use(appleLogin());
   }
-
   if (
     process.env.OPENID_CLIENT_ID &&
     process.env.OPENID_CLIENT_SECRET &&

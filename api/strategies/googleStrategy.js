@@ -2,21 +2,14 @@ const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
 const { OAuth2Client } = require('google-auth-library');
 const socialLogin = require('./socialLogin');
 
-const getProfileDetails = (profile) => {
-  console.log('Raw profile from Google:', JSON.stringify(profile, null, 2));
-
-  const details = {
-    email: profile.emails[0].value,
-    id: profile.id,
-    avatarUrl: profile.photos[0].value,
-    username: profile.name.givenName,
-    name: `${profile.name.givenName} ${profile.name.familyName}`,
-    emailVerified: profile.emails[0].verified,
-  };
-
-  console.log('Processed profile details:', details);
-  return details;
-};
+const getProfileDetails = ({ profile }) => ({
+  email: profile.emails[0].value,
+  id: profile.id,
+  avatarUrl: profile.photos[0].value,
+  username: profile.name.givenName,
+  name: `${profile.name.givenName}${profile.name.familyName ? ` ${profile.name.familyName}` : ''}`,
+  emailVerified: profile.emails[0].verified,
+});
 
 const googleLogin = socialLogin('google', getProfileDetails);
 

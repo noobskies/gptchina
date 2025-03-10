@@ -50,11 +50,24 @@ const ContentParts = memo(
       [attachments, messageAttachmentsMap, messageId],
     );
 
-    const hasReasoningParts = useMemo(
-      () => content?.some((part) => part?.type === ContentTypes.THINK && part.think) ?? false,
-      [content],
-    );
+    const hasReasoningParts = useMemo(() => {
+      const hasThinkPart = content?.some((part) => part?.type === ContentTypes.THINK) ?? false;
+      const allThinkPartsHaveContent =
+        content?.every((part) => {
+          if (part?.type !== ContentTypes.THINK) {
+            return true;
+          }
 
+          if (typeof part.think === 'string') {
+            const cleanedContent = part.think.replace(/<\/?think>/g, '').trim();
+            return cleanedContent.length > 0;
+          }
+
+          return false;
+        }) ?? false;
+
+      return hasThinkPart && allThinkPartsHaveContent;
+    }, [content]);
     if (!content) {
       return null;
     }
@@ -96,7 +109,9 @@ const ContentParts = memo(
                   return val;
                 })
               }
-              label={isSubmitting ? localize('com_ui_thinking') : localize('com_ui_thoughts')}
+              label={
+                isSubmitting && isLast ? localize('com_ui_thinking') : localize('com_ui_thoughts')
+              }
             />
           </div>
         )}

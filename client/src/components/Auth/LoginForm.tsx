@@ -1,9 +1,8 @@
 import { useForm } from 'react-hook-form';
 import React, { useState, useEffect } from 'react';
-import { useGetStartupConfig } from 'librechat-data-provider/react-query';
 import type { TLoginUser, TStartupConfig } from 'librechat-data-provider';
 import type { TAuthContext } from '~/common';
-import { useResendVerificationEmail } from '~/data-provider';
+import { useResendVerificationEmail, useGetStartupConfig } from '~/data-provider';
 import { useLocalize } from '~/hooks';
 
 type TLoginFormProps = {
@@ -62,24 +61,6 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
 
   return (
     <>
-      <style jsx global>{`
-        input:-webkit-autofill,
-        input:-webkit-autofill:hover,
-        input:-webkit-autofill:focus,
-        input:-webkit-autofill:active {
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: #000000;
-          transition: background-color 5000s ease-in-out 0s;
-          box-shadow: inset 0 0 20px 20px #ffffff;
-        }
-        .dark input:-webkit-autofill,
-        .dark input:-webkit-autofill:hover,
-        .dark input:-webkit-autofill:focus,
-        .dark input:-webkit-autofill:active {
-          -webkit-text-fill-color: #ffffff;
-          box-shadow: inset 0 0 20px 20px #000000;
-        }
-      `}</style>
       {showResendLink && (
         <div className="mt-2 rounded-md border border-blue-500 bg-blue-500/10 px-3 py-2 text-sm text-gray-600 dark:text-gray-200">
           {localize('com_auth_email_verification_resend_prompt')}
@@ -115,21 +96,12 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
                 },
               })}
               aria-invalid={!!errors.email}
-              className="
-                webkit-dark-styles transition-color peer w-full rounded-2xl border border-border-light
-                bg-surface-primary px-3.5 pb-2.5 pt-3 text-text-primary duration-200 
-                focus:border-blue-500 focus:outline-none
-              "
+              className="webkit-dark-styles transition-color peer w-full rounded-2xl border border-border-light bg-surface-primary px-3.5 pb-2.5 pt-3 text-text-primary duration-200 focus:border-blue-500 focus:outline-none"
               placeholder=" "
             />
             <label
               htmlFor="email"
-              className="
-                absolute start-3 top-1.5 z-10 origin-[0] -translate-y-4 scale-75 transform bg-surface-primary px-2 text-sm text-text-secondary-alt duration-200
-                peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100
-                peer-focus:top-1.5 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-2 peer-focus:text-blue-600 dark:peer-focus:text-blue-500
-                rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4
-                "
+              className="absolute start-3 top-1.5 z-10 origin-[0] -translate-y-4 scale-75 transform bg-surface-primary px-2 text-sm text-text-secondary-alt duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-1.5 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-2 peer-focus:text-blue-600 dark:peer-focus:text-blue-500 rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4"
             >
               {useUsernameLogin
                 ? localize('com_auth_username').replace(/ \(.*$/, '')
@@ -151,17 +123,12 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
                 maxLength: { value: 128, message: localize('com_auth_password_max_length') },
               })}
               aria-invalid={!!errors.password}
-              className="webkit-dark-styles peer block w-full appearance-none rounded-md border border-gray-300 bg-transparent px-3.5 pb-3.5 pt-4 text-sm text-text-primary focus:border-blue-500 focus:outline-none focus:ring-0 dark:border-gray-600 dark:text-white dark:focus:border-blue-500"
+              className="webkit-dark-styles transition-color peer w-full rounded-2xl border border-border-light bg-surface-primary px-3.5 pb-2.5 pt-3 text-text-primary duration-200 focus:border-blue-500 focus:outline-none"
               placeholder=" "
             />
             <label
               htmlFor="password"
-              className="
-                absolute start-3 top-1.5 z-10 origin-[0] -translate-y-4 scale-75 transform bg-surface-primary px-2 text-sm text-text-secondary-alt duration-200
-                peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100
-                peer-focus:top-1.5 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-2 peer-focus:text-blue-600 dark:peer-focus:text-blue-500
-                rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4
-                "
+              className="absolute start-3 top-1.5 z-10 origin-[0] -translate-y-4 scale-75 transform bg-surface-primary px-2 text-sm text-text-secondary-alt duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-1.5 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-2 peer-focus:text-blue-600 dark:peer-focus:text-blue-500 rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4"
             >
               {localize('com_auth_password')}
             </label>
@@ -181,12 +148,7 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
             aria-label={localize('com_auth_continue')}
             data-testid="login-button"
             type="submit"
-            className="
-            w-full rounded-2xl bg-blue-600 px-4 py-3 text-sm font-medium text-white
-            transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2
-            focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50
-            disabled:hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700
-          "
+            className="w-full rounded-2xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
           >
             {localize('com_auth_continue')}
           </button>

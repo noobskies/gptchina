@@ -103,6 +103,16 @@ describe('getModelMaxTokens', () => {
     );
   });
 
+  test('should return correct tokens for gpt-4.5 matches', () => {
+    expect(getModelMaxTokens('gpt-4.5')).toBe(maxTokensMap[EModelEndpoint.openAI]['gpt-4.5']);
+    expect(getModelMaxTokens('gpt-4.5-preview')).toBe(
+      maxTokensMap[EModelEndpoint.openAI]['gpt-4.5'],
+    );
+    expect(getModelMaxTokens('openai/gpt-4.5-preview')).toBe(
+      maxTokensMap[EModelEndpoint.openAI]['gpt-4.5'],
+    );
+  });
+
   test('should return correct tokens for Anthropic models', () => {
     const models = [
       'claude-2.1',
@@ -155,6 +165,24 @@ describe('getModelMaxTokens', () => {
   });
 
   test('should return correct tokens for partial match - Google models', () => {
+    expect(getModelMaxTokens('gemini-2.0-flash-lite-preview-02-05', EModelEndpoint.google)).toBe(
+      maxTokensMap[EModelEndpoint.google]['gemini-2.0-flash-lite'],
+    );
+    expect(getModelMaxTokens('gemini-2.0-flash-001', EModelEndpoint.google)).toBe(
+      maxTokensMap[EModelEndpoint.google]['gemini-2.0-flash'],
+    );
+    expect(getModelMaxTokens('gemini-2.0-flash-exp', EModelEndpoint.google)).toBe(
+      maxTokensMap[EModelEndpoint.google]['gemini-2.0-flash'],
+    );
+    expect(getModelMaxTokens('gemini-2.0-pro-exp-02-05', EModelEndpoint.google)).toBe(
+      maxTokensMap[EModelEndpoint.google]['gemini-2.0'],
+    );
+    expect(getModelMaxTokens('gemini-1.5-flash-8b', EModelEndpoint.google)).toBe(
+      maxTokensMap[EModelEndpoint.google]['gemini-1.5-flash-8b'],
+    );
+    expect(getModelMaxTokens('gemini-1.5-flash-thinking', EModelEndpoint.google)).toBe(
+      maxTokensMap[EModelEndpoint.google]['gemini-1.5-flash'],
+    );
     expect(getModelMaxTokens('gemini-1.5-pro-latest', EModelEndpoint.google)).toBe(
       maxTokensMap[EModelEndpoint.google]['gemini-1.5'],
     );

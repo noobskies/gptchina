@@ -21,6 +21,12 @@
  */
 
 /**
+ * @exports NextFunction
+ * @typedef {import('express').NextFunction} NextFunction
+ * @memberof typedefs
+ */
+
+/**
  * @exports AgentRun
  * @typedef {import('@librechat/agents').Run} AgentRun
  * @memberof typedefs
@@ -99,6 +105,12 @@
  */
 
 /**
+ * @exports LangChainToolCall
+ * @typedef {import('@langchain/core/messages/tool').ToolCall} LangChainToolCall
+ * @memberof typedefs
+ */
+
+/**
  * @exports GraphRunnableConfig
  * @typedef {import('@langchain/core/runnables').RunnableConfig<{
  *  req: ServerRequest;
@@ -109,7 +121,9 @@
  * agent_index: number;
  * last_agent_index: number;
  * hide_sequential_outputs: boolean;
- * }>} GraphRunnableConfig
+ * }> & {
+ * toolCall?: LangChainToolCall & { stepId?: string };
+ * }} GraphRunnableConfig
  * @memberof typedefs
  */
 
@@ -380,6 +394,12 @@
 /**
  * @exports ToolCallDelta
  * @typedef {import('openai').default.Beta.Threads.Runs.Steps.ToolCallDelta} ToolCallDelta
+ * @memberof typedefs
+ */
+
+/**
+ * @exports AgentToolCallDelta
+ * @typedef {import('librechat-data-provider').Agents.ToolCallDelta} AgentToolCallDelta
  * @memberof typedefs
  */
 
@@ -747,36 +767,6 @@
  */
 
 /**
- * @exports MongoFile
- * @typedef {import('~/models/schema/fileSchema.js').MongoFile} MongoFile
- * @memberof typedefs
- */
-
-/**
- * @exports ToolCallData
- * @typedef {import('~/models/schema/toolCallSchema.js').ToolCallData} ToolCallData
- * @memberof typedefs
- */
-
-/**
- * @exports MongoUser
- * @typedef {import('~/models/schema/userSchema.js').MongoUser} MongoUser
- * @memberof typedefs
- */
-
-/**
- * @exports MongoProject
- * @typedef {import('~/models/schema/projectSchema.js').MongoProject} MongoProject
- * @memberof typedefs
- */
-
-/**
- * @exports MongoPromptGroup
- * @typedef {import('~/models/schema/promptSchema.js').MongoPromptGroup} MongoPromptGroup
- * @memberof typedefs
- */
-
-/**
  * @exports uploadImageBuffer
  * @typedef {import('~/server/services/Files/process').uploadImageBuffer} uploadImageBuffer
  * @memberof typedefs
@@ -948,8 +938,20 @@
  */
 
 /**
+ * @exports Keyv
+ * @typedef {import('keyv')} Keyv
+ * @memberof typedefs
+ */
+
+/**
  * @exports MCPManager
  * @typedef {import('librechat-mcp').MCPManager} MCPManager
+ * @memberof typedefs
+ */
+
+/**
+ * @exports FlowStateManager
+ * @typedef {import('librechat-mcp').FlowStateManager} FlowStateManager
  * @memberof typedefs
  */
 
@@ -1321,8 +1323,7 @@
  * @property {boolean|{userProvide: boolean}} [azureOpenAI] - Flag to indicate if Azure OpenAI endpoint is user provided, or its configuration.
  * @property {boolean|{userProvide: boolean}} [chatGPTBrowser] - Flag to indicate if ChatGPT Browser endpoint is user provided, or its configuration.
  * @property {boolean|{userProvide: boolean}} [anthropic] - Flag to indicate if Anthropic endpoint is user provided, or its configuration.
- * @property {boolean|{userProvide: boolean}} [bingAI] - Flag to indicate if BingAI endpoint is user provided, or its configuration.
- * @property {boolean|{userProvide: boolean}} [google] - Flag to indicate if BingAI endpoint is user provided, or its configuration.
+ * @property {boolean|{userProvide: boolean}} [google] - Flag to indicate if Google endpoint is user provided, or its configuration.
  * @property {boolean|{userProvide: boolean, userProvideURL: boolean, name: string}} [custom] - Custom Endpoint configuration.
  * @memberof typedefs
  */
@@ -1353,7 +1354,6 @@
  * @property {boolean|{userProvide: boolean}} [azureOpenAI] - Flag to indicate if Azure OpenAI endpoint is user provided, or its configuration.
  * @property {boolean|{userProvide: boolean}} [chatGPTBrowser] - Flag to indicate if ChatGPT Browser endpoint is user provided, or its configuration.
  * @property {boolean|{userProvide: boolean}} [anthropic] - Flag to indicate if Anthropic endpoint is user provided, or its configuration.
- * @property {boolean|{userProvide: boolean}} [bingAI] - Flag to indicate if BingAI endpoint is user provided, or its configuration.
  * @property {boolean|{userProvide: boolean}} [google] - Flag to indicate if Google endpoint is user provided, or its configuration.
  * @property {boolean|{userProvide: boolean, userProvideURL: boolean, name: string}} [custom] - Custom Endpoint configuration.
  * @property {boolean|GptPlugins} [gptPlugins] - Configuration for GPT plugins.

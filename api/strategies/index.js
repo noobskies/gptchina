@@ -1,7 +1,6 @@
-// api/strategies/index.js
+const appleLogin = require('./appleStrategy');
 const passportLogin = require('./localStrategy');
 const { strategy: googleLogin, handleAndroidToken } = require('./googleStrategy');
-const appleLogin = require('./appleStrategy');
 const githubLogin = require('./githubStrategy');
 const discordLogin = require('./discordStrategy');
 const facebookLogin = require('./facebookStrategy');
@@ -10,6 +9,7 @@ const jwtLogin = require('./jwtStrategy');
 const ldapLogin = require('./ldapStrategy');
 
 module.exports = {
+  appleLogin,
   passportLogin,
   googleLogin,
   handleAndroidToken,

@@ -132,3 +132,4 @@ store_icon.png
 
 bubble/
 client/.env.sentry-build-plugin
+!/client/src/@types/i18next.d.ts

@@ -1,7 +1,8 @@
 import { memo } from 'react';
 import { useParams } from 'react-router-dom';
-import { useGetSharedMessages, useGetStartupConfig } from 'librechat-data-provider/react-query';
+import { useGetSharedMessages } from 'librechat-data-provider/react-query';
 import { useLocalize, useDocumentTitle } from '~/hooks';
+import { useGetStartupConfig } from '~/data-provider';
 import { ShareContext } from '~/Providers';
 import { Spinner } from '~/components/svg';
 import MessagesView from './MessagesView';
@@ -14,7 +15,7 @@ function SharedView() {
   const { shareId } = useParams();
   const { data, isLoading } = useGetSharedMessages(shareId ?? '');
   const dataTree = data && buildTree({ messages: data.messages });
-  const messagesTree = dataTree?.length === 0 ? null : dataTree ?? null;
+  const messagesTree = dataTree?.length === 0 ? null : (dataTree ?? null);
 
   // configure document title
   let docTitle = '';
@@ -52,7 +53,7 @@ function SharedView() {
     );
   } else {
     content = (
-      <div className="flex h-screen items-center justify-center ">
+      <div className="flex h-screen items-center justify-center">
         {localize('com_ui_shared_link_not_found')}
       </div>
     );

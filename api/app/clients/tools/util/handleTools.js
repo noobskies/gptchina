@@ -5,16 +5,19 @@ const { createCodeExecutionTool, EnvVar } = require('@librechat/agents');
 const { getUserPluginAuthValue } = require('~/server/services/PluginService');
 const {
   availableTools,
+  manifestToolMap,
   // Basic Tools
   GoogleSearchAPI,
   // Structured Tools
   DALLE3,
+  FluxAPI,
+  OpenWeather,
   StructuredSD,
   StructuredACS,
   TraversaalSearch,
   StructuredWolfram,
+  createYouTubeTools,
   TavilySearchResults,
-  OpenWeather,
 } = require('../');
 const { primeFiles: primeCodeFiles } = require('~/server/services/Files/Code/process');
 const { createFileSearchTool, primeFiles: primeSearchFiles } = require('./fileSearch');
@@ -147,6 +150,14 @@ const loadToolWithAuth = (userId, authFields, ToolConstructor, options = {}) => 
 };
 
 /**
+ * @param {string} toolKey
+ * @returns {Array<string>}
+ */
+const getAuthFields = (toolKey) => {
+  return manifestToolMap[toolKey]?.authConfig.map((auth) => auth.authField) ?? [];
+};
+
+/**
  *
  * @param {object} object
  * @param {string} object.user
@@ -172,27 +183,35 @@ const loadTools = async ({
   returnMap = false,
 }) => {
   const toolConstructors = {
+    flux: FluxAPI,
     calculator: Calculator,
     google: GoogleSearchAPI,
+    open_weather: OpenWeather,
     wolfram: StructuredWolfram,
     'stable-diffusion': StructuredSD,
     'azure-ai-search': StructuredACS,
     traversaal_search: TraversaalSearch,
     tavily_search_results_json: TavilySearchResults,
-    open_weather: OpenWeather,
   };
 
   const customConstructors = {
     serpapi: async () => {
-      let apiKey = process.env.SERPAPI_API_KEY;
+      const authFields = getAuthFields('serpapi');
+      let envVar = authFields[0] ?? '';
+      let apiKey = process.env[envVar];
       if (!apiKey) {
-        apiKey = await getUserPluginAuthValue(user, 'SERPAPI_API_KEY');
+        apiKey = await getUserPluginAuthValue(user, envVar);
       }
       return new SerpAPI(apiKey, {
         location: 'Austin,Texas,United States',
         hl: 'en',
         gl: 'us',
       });
+    },
+    youtube: async () => {
+      const authFields = getAuthFields('youtube');
+      const authValues = await loadAuthValues({ userId: user, authFields });
+      return createYouTubeTools(authValues);
     },
   };
 
@@ -213,20 +232,11 @@ const loadTools = async ({
   };
 
   const toolOptions = {
-    serpapi: { location: 'Austin,Texas,United States', hl: 'en', gl: 'us' },
+    flux: imageGenOptions,
     dalle: imageGenOptions,
     'stable-diffusion': imageGenOptions,
+    serpapi: { location: 'Austin,Texas,United States', hl: 'en', gl: 'us' },
   };
-
-  const toolAuthFields = {};
-
-  availableTools.forEach((tool) => {
-    if (customConstructors[tool.pluginKey]) {
-      return;
-    }
-
-    toolAuthFields[tool.pluginKey] = tool.authConfig.map((auth) => auth.authField);
-  });
 
   const toolContextMap = {};
   const remainingTools = [];
@@ -282,7 +292,7 @@ const loadTools = async ({
       const options = toolOptions[tool] || {};
       const toolInstance = loadToolWithAuth(
         user,
-        toolAuthFields[tool],
+        getAuthFields(tool),
         toolConstructors[tool],
         options,
       );

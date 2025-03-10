@@ -84,7 +84,7 @@ function RequestPasswordReset() {
       </h1>
       {countdown > 0 && (
         <p className="text-center text-lg text-gray-600 dark:text-gray-400">
-          {localize('com_auth_email_verification_redirecting', countdown.toString())}
+          {localize('com_auth_email_verification_redirecting', { 0: countdown.toString() })}
         </p>
       )}
       {showResendLink && countdown === 0 && (
@@ -108,7 +108,7 @@ function RequestPasswordReset() {
         {localize('com_auth_email_verification_in_progress')}
       </h1>
       <div className="mt-4 flex justify-center">
-        <Spinner className="h-8 w-8 text-green-500" />
+        <Spinner className="h-8 w-8 text-blue-500" />
       </div>
     </div>
   );

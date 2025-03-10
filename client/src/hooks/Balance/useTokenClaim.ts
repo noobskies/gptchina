@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useGetUserBalance, useGetStartupConfig } from 'librechat-data-provider/react-query';
+import { useGetUserBalance, useGetStartupConfig } from '~/data-provider';
 import { useAuthContext } from '~/hooks/AuthContext';
 import { useToastContext } from '~/Providers';
 import { useQueryClient } from '@tanstack/react-query';

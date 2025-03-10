@@ -23,7 +23,7 @@ export default function useChatHelpers(index = 0, paramId?: string) {
   const { conversation, setConversation } = useCreateConversationAtom(index);
   const { conversationId } = conversation ?? {};
 
-  const queryParam = paramId === 'new' ? paramId : conversationId ?? paramId ?? '';
+  const queryParam = paramId === 'new' ? paramId : (conversationId ?? paramId ?? '');
 
   /* Messages: here simply to fetch, don't export and use `getMessages()` instead */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -130,9 +130,6 @@ export default function useChatHelpers(index = 0, paramId?: string) {
     setSiblingIdx(0);
   };
 
-  const [showBingToneSetting, setShowBingToneSetting] = useRecoilState(
-    store.showBingToneSettingFamily(index),
-  );
   const [showPopover, setShowPopover] = useRecoilState(store.showPopoverFamily(index));
   const [abortScroll, setAbortScroll] = useRecoilState(store.abortScrollFamily(index));
   const [preset, setPreset] = useRecoilState(store.presetByIndex(index));
@@ -166,8 +163,6 @@ export default function useChatHelpers(index = 0, paramId?: string) {
     setShowPopover,
     abortScroll,
     setAbortScroll,
-    showBingToneSetting,
-    setShowBingToneSetting,
     preset,
     setPreset,
     optionSettings,

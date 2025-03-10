@@ -1,10 +1,9 @@
+// file deepcode ignore NoRateLimitingForLogin: Rate limiting is handled by the `loginLimiter` middleware
 const express = require('express');
 const passport = require('passport');
 const { loginLimiter, checkBan, checkDomainAllowed } = require('~/server/middleware');
 const { setAuthTokens } = require('~/server/services/AuthService');
 const { logger } = require('~/config');
-const { handleMobileToken: handleGoogleMobileToken } = require('~/strategies/googleStrategy');
-const { handleMobileToken: handleAppleMobileToken } = require('~/strategies/appleStrategy');
 
 const router = express.Router();
 
@@ -35,72 +34,6 @@ router.get('/error', (req, res) => {
   res.redirect(`${domains.client}/login`);
 });
 
-router.post('/google/mobile', async (req, res) => {
-  try {
-    const { token } = req.body;
-    if (!token) {
-      return res.status(400).json({ error: 'Token is required' });
-    }
-    try {
-      const { user } = await handleGoogleMobileToken(token);
-      req.user = user;
-
-      // Do the same checks but return JSON instead of redirecting
-      await checkDomainAllowed(req, res);
-      await checkBan(req, res);
-      if (req.banned) {
-        return res.status(403).json({ error: 'User is banned' });
-      }
-      await setAuthTokens(req.user._id, res);
-      return res.json({ success: true });
-    } catch (error) {
-      logger.error('Error in mobile token verification:', error);
-      return res.status(401).json({ error: 'Invalid token' });
-    }
-  } catch (err) {
-    logger.error('Error in mobile authentication:', err);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-router.post('/apple/mobile', async (req, res) => {
-  try {
-    const { token, profile } = req.body;
-    logger.info('Apple mobile login request body:', {
-      token,
-      profile: JSON.stringify(profile, null, 2),
-    });
-
-    if (!token) {
-      logger.error('No token provided in request');
-      return res.status(400).json({ error: 'Token is required' });
-    }
-
-    try {
-      const result = await handleAppleMobileToken(token, profile);
-      logger.info('Apple login successful:', result);
-
-      req.user = result.user;
-
-      // Do the same checks but return JSON instead of redirecting
-      await checkDomainAllowed(req, res);
-      await checkBan(req, res);
-      if (req.banned) {
-        return res.status(403).json({ error: 'User is banned' });
-      }
-
-      await setAuthTokens(req.user._id, res);
-      return res.json({ success: true });
-    } catch (error) {
-      logger.error('Error in Apple mobile token verification:', error);
-      return res.status(401).json({ error: 'Invalid token' });
-    }
-  } catch (err) {
-    logger.error('Error in Apple mobile authentication:', err);
-    return res.status(500).json({ error: 'Server error' });
-  }
-});
-
 /**
  * Google Routes
  */
@@ -123,6 +56,9 @@ router.get(
   oauthHandler,
 );
 
+/**
+ * Facebook Routes
+ */
 router.get(
   '/facebook',
   passport.authenticate('facebook', {
@@ -144,6 +80,9 @@ router.get(
   oauthHandler,
 );
 
+/**
+ * OpenID Routes
+ */
 router.get(
   '/openid',
   passport.authenticate('openid', {
@@ -161,6 +100,9 @@ router.get(
   oauthHandler,
 );
 
+/**
+ * GitHub Routes
+ */
 router.get(
   '/github',
   passport.authenticate('github', {
@@ -181,28 +123,8 @@ router.get(
 );
 
 /**
- * Apple Routes
+ * Discord Routes
  */
-router.get(
-  '/apple',
-  passport.authenticate('apple', {
-    scope: ['name', 'email'],
-    session: false,
-  }),
-);
-
-router.post(
-  // Note: Apple uses POST for callback
-  '/apple/callback',
-  passport.authenticate('apple', {
-    failureRedirect: `${domains.client}/login`,
-    failureMessage: true,
-    session: false,
-    scope: ['name', 'email'],
-  }),
-  oauthHandler,
-);
-
 router.get(
   '/discord',
   passport.authenticate('discord', {
@@ -218,6 +140,26 @@ router.get(
     failureMessage: true,
     session: false,
     scope: ['identify', 'email'],
+  }),
+  oauthHandler,
+);
+
+/**
+ * Apple Routes
+ */
+router.get(
+  '/apple',
+  passport.authenticate('apple', {
+    session: false,
+  }),
+);
+
+router.post(
+  '/apple/callback',
+  passport.authenticate('apple', {
+    failureRedirect: `${domains.client}/oauth/error`,
+    failureMessage: true,
+    session: false,
   }),
   oauthHandler,
 );

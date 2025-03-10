@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useLocalize } from '~/hooks';
 // import ErrorDialog from '~/components/Messages/Content/ErrorDialog';
-import { useGetUserBalance, useGetStartupConfig } from 'librechat-data-provider/react-query';
+import { useGetUserBalance, useGetStartupConfig } from '~/data-provider';
 import { useAuthContext } from '~/hooks/AuthContext';
 import numeral from 'numeral';
 
