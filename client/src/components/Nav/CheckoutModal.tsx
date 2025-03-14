@@ -187,7 +187,7 @@ const ReceiptView = ({ paymentIntent, selectedPackage, onClose, localize }) => {
       <div className="p-4 sm:p-6">
         <div className="rounded-lg border border-border-light bg-surface-tertiary p-4">
           <h3 className="mb-2 text-lg font-medium text-text-primary">
-            {localize('com_checkout_purchase')}
+            {localize('com_checkout_receipt')}
           </h3>
 
           <div className="space-y-2 text-sm">
@@ -457,7 +457,7 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
               {/* Payment Methods */}
               <div className="mt-6">
                 <h3 className="mb-3 text-sm font-medium text-text-secondary">
-                  {localize('com_checkout_select_payment')}
+                  {localize('com_checkout_payment_methods')}
                 </h3>
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {paymentMethods.map((method) => (

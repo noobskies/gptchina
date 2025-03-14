@@ -847,5 +847,16 @@
   "com_checkout_select_package": "Select a token package and payment method",
   "com_checkout_select_payment": "Select Payment Option",
   "com_checkout_purchase": "Purchase",
-  "com_checkout_tokens": "Tokens"
+  "com_checkout_tokens": "Tokens",
+  "com_checkout_amount": "Amount",
+  "com_checkout_payment_id": "Payment ID",
+  "com_checkout_date": "Date",
+  "com_ui_processing": "Processing...",
+  "com_ui_back": "Back",
+  "com_checkout_payment_methods": "Payment Methods",
+  "com_checkout_card_details": "Card Details",
+  "com_checkout_billing_address": "Billing Address",
+  "com_checkout_receipt": "Receipt",
+  "com_checkout_payment_success": "Payment Successful",
+  "com_checkout_payment_error": "Payment Error"
 }
