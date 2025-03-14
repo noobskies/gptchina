@@ -48,6 +48,26 @@ const startServer = async () => {
   /* Middleware */
   app.use(noIndex);
   app.use(errorController);
+
+  // Special route for Stripe webhooks - needs raw body before JSON parsing
+  app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+    let event;
+    try {
+      event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+    } catch (err) {
+      console.error(`Webhook Error: ${err.message}`);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    // Pass the event to the route handler
+    req.stripeEvent = event;
+    routes.stripe.handleWebhook(req, res);
+  });
+
   app.use(express.json({ limit: '3mb' }));
   app.use(mongoSanitize());
   app.use(express.urlencoded({ extended: true, limit: '3mb' }));
@@ -111,6 +131,7 @@ const startServer = async () => {
   app.use('/api/agents', routes.agents);
   app.use('/api/banner', routes.banner);
   app.use('/api/bedrock', routes.bedrock);
+  app.use('/api/stripe', routes.stripe);
 
   app.use('/api/tags', routes.tags);
 
