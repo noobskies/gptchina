@@ -32,7 +32,20 @@ router.post('/create-payment-intent', requireJwtAuth, async (req, res) => {
       return res.status(400).json({ error: 'Invalid package ID' });
     }
 
-    // Create a payment intent
+    // Map our payment method IDs to Stripe payment method types
+    const paymentMethodMap = {
+      card: 'card',
+      google: 'google_pay',
+      apple: 'apple_pay',
+      wechat: 'wechat_pay',
+      alipay: 'alipay',
+      bitcoin: 'bitcoin',
+    };
+
+    // Get the payment method type from our internal ID
+    const paymentMethodType = paymentMethodMap[paymentMethod] || 'card';
+
+    // Create a payment intent with the specified payment method
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Convert to cents
       currency: 'usd',
@@ -41,9 +54,7 @@ router.post('/create-payment-intent', requireJwtAuth, async (req, res) => {
         packageId,
         tokenAmount,
       },
-      automatic_payment_methods: {
-        enabled: true,
-      },
+      payment_method_types: [paymentMethodType],
     });
 
     res.json({

@@ -63,7 +63,7 @@ const paymentMethods = [
 ];
 
 // Payment form component
-const CheckoutForm = ({ selectedPackage, onSuccess, onBack, localize }) => {
+const CheckoutForm = ({ selectedPackage, selectedPayment, onSuccess, onBack, localize }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -118,7 +118,13 @@ const CheckoutForm = ({ selectedPackage, onSuccess, onBack, localize }) => {
         </div>
 
         <div className="mb-6">
-          <PaymentElement />
+          <PaymentElement
+            options={{
+              defaultValues: {
+                billingDetails: {},
+              },
+            }}
+          />
         </div>
 
         <div className="mb-6">
@@ -317,6 +323,7 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
           >
             <CheckoutForm
               selectedPackage={selectedPackage}
+              selectedPayment={selectedPayment}
               onSuccess={handlePaymentSuccess}
               onBack={() => setStep('select')}
               localize={localize}
