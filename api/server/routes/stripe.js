@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const requireJwtAuth = require('../middleware/requireJwtAuth');
 const { Transaction } = require('../../models/Transaction');
-const { Balance } = require('../../models/Balance');
+const Balance = require('../../models/Balance');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 /**
@@ -33,29 +33,44 @@ router.post('/create-payment-intent', requireJwtAuth, async (req, res) => {
     }
 
     // Map our payment method IDs to Stripe payment method types
+    // For Google Pay, Apple Pay, and Bitcoin, we use 'card' as the payment method type
+    // This is because these are essentially just different ways to access a credit card
     const paymentMethodMap = {
       card: 'card',
-      google: 'google_pay',
-      apple: 'apple_pay',
+      google: 'card', // Use 'card' for Google Pay
+      apple: 'card', // Use 'card' for Apple Pay
       wechat: 'wechat_pay',
       alipay: 'alipay',
-      bitcoin: 'bitcoin',
+      bitcoin: 'card', // Use 'card' for Bitcoin
     };
 
     // Get the payment method type from our internal ID
     const paymentMethodType = paymentMethodMap[paymentMethod] || 'card';
 
-    // Create a payment intent with the specified payment method
-    const paymentIntent = await stripe.paymentIntents.create({
+    // Store the original payment method in metadata for the frontend to use
+    const paymentIntentOptions = {
       amount: Math.round(amount * 100), // Convert to cents
       currency: 'usd',
       metadata: {
         userId,
         packageId,
         tokenAmount,
+        originalPaymentMethod: paymentMethod, // Store the original payment method
       },
       payment_method_types: [paymentMethodType],
-    });
+    };
+
+    // Add payment method options for specific payment methods
+    if (paymentMethod === 'wechat') {
+      paymentIntentOptions.payment_method_options = {
+        wechat_pay: {
+          client: 'web',
+        },
+      };
+    }
+
+    // Create a payment intent with the specified payment method
+    const paymentIntent = await stripe.paymentIntents.create(paymentIntentOptions);
 
     res.json({
       clientSecret: paymentIntent.client_secret,
@@ -82,6 +97,18 @@ const handleWebhook = async (req, res) => {
       await handleSuccessfulPayment(paymentIntent);
       break;
     }
+    case 'payment_intent.created': {
+      console.log('Payment intent created:', event.data.object.id);
+      break;
+    }
+    case 'charge.succeeded': {
+      console.log('Charge succeeded:', event.data.object.id);
+      break;
+    }
+    case 'charge.updated': {
+      console.log('Charge updated:', event.data.object.id);
+      break;
+    }
     default:
       console.log(`Unhandled event type ${event.type}`);
   }
@@ -103,37 +130,36 @@ async function handleSuccessfulPayment(paymentIntent) {
       return;
     }
 
-    // Create a transaction
+    // Parse tokenAmount to ensure it's a number
+    const tokenAmountNum = parseInt(tokenAmount, 10);
+
+    // Create a transaction with tokenValue set directly
     const transaction = new Transaction({
       user: userId,
       type: 'purchase',
       source: 'stripe',
       sourceId: paymentIntent.id,
-      rawAmount: tokenAmount,
-      tokenType: 'token',
-      valueKey: 'tokenCredits',
+      rawAmount: tokenAmountNum,
+      tokenValue: tokenAmountNum, // Set tokenValue directly instead of calculating
+      tokenType: 'credits', // Use 'credits' like in ClaimTokens.js
+      valueKey: 'tokenCredits', // Specify the field to update in the Balance model
       rate: 1,
-      model: 'token-purchase',
       context: `Purchase of ${packageId} tokens`,
     });
 
-    // Calculate token value and save the transaction
-    transaction.calculateTokenValue();
+    // Save the transaction without calculating token value
     await transaction.save();
 
     // Update the user's balance
-    let balance = await Balance.findOne({ user: userId }).lean();
-    if (!balance) {
-      balance = new Balance({ user: userId, tokenCredits: 0 });
-    }
-
     await Balance.findOneAndUpdate(
       { user: userId },
-      { $inc: { tokenCredits: transaction.tokenValue } },
-      { new: true, upsert: true },
+      { $inc: { tokenCredits: tokenAmountNum } },
+      { upsert: true, new: true },
     );
 
-    console.log(`Successfully processed payment for user ${userId}, added ${tokenAmount} tokens`);
+    console.log(
+      `Successfully processed payment for user ${userId}, added ${tokenAmountNum} tokens`,
+    );
   } catch (error) {
     console.error('Error handling successful payment:', error);
   }

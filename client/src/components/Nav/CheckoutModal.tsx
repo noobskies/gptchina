@@ -123,6 +123,24 @@ const CheckoutForm = ({ selectedPackage, selectedPayment, onSuccess, onBack, loc
               defaultValues: {
                 billingDetails: {},
               },
+              // Set payment method options based on the selected payment method
+              paymentMethodOrder: (() => {
+                // Map payment method to Stripe payment method type
+                let primaryMethod = 'card';
+                if (selectedPayment === 'google') {
+                  primaryMethod = 'google_pay';
+                } else if (selectedPayment === 'apple') {
+                  primaryMethod = 'apple_pay';
+                } else if (selectedPayment === 'wechat') {
+                  primaryMethod = 'wechat_pay';
+                } else if (selectedPayment === 'alipay') {
+                  primaryMethod = 'alipay';
+                } else if (selectedPayment === 'bitcoin') {
+                  primaryMethod = 'card'; // Bitcoin uses card payment method
+                }
+                // Return array with primary method first, then card as fallback
+                return [primaryMethod, 'card'];
+              })(),
             }}
           />
         </div>
