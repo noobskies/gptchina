@@ -5,6 +5,9 @@ import { Button } from '~/components/ui/Button';
 import { cn } from '~/utils';
 import { useLocalize } from '~/hooks';
 import { loadStripe } from '@stripe/stripe-js';
+import { useGetUserBalance } from '~/data-provider';
+import { useQueryClient } from '@tanstack/react-query';
+import { QueryKeys } from 'librechat-data-provider';
 import {
   Elements,
   PaymentElement,
@@ -234,6 +237,12 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
   const [clientSecret, setClientSecret] = useState('');
   const localize = useLocalize();
 
+  // Get query client for refetching balance
+  const queryClient = useQueryClient();
+
+  // Get user balance and ability to refetch it
+  const { refetch: refetchBalance } = useGetUserBalance();
+
   // Reset state when modal is closed
   useEffect(() => {
     if (!open) {
@@ -275,7 +284,49 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
   const handlePaymentSuccess = (paymentIntentResult) => {
     setPaymentIntent(paymentIntentResult);
     setStep('receipt');
+
+    // First immediate refresh attempt
+    refetchBalance();
+    queryClient.invalidateQueries([QueryKeys.balance]);
+
+    // Second attempt after 1 second
+    setTimeout(() => {
+      refetchBalance();
+      queryClient.invalidateQueries([QueryKeys.balance]);
+    }, 1000);
+
+    // Third attempt after 3 seconds
+    setTimeout(() => {
+      refetchBalance();
+      queryClient.invalidateQueries([QueryKeys.balance]);
+    }, 3000);
   };
+
+  // Refresh balance when receipt is shown with multiple attempts
+  useEffect(() => {
+    if (step === 'receipt') {
+      // Initial refresh
+      refetchBalance();
+      queryClient.invalidateQueries([QueryKeys.balance]);
+
+      // Set up delayed refreshes
+      const timer1 = setTimeout(() => {
+        refetchBalance();
+        queryClient.invalidateQueries([QueryKeys.balance]);
+      }, 1500);
+
+      const timer2 = setTimeout(() => {
+        refetchBalance();
+        queryClient.invalidateQueries([QueryKeys.balance]);
+      }, 3500);
+
+      // Cleanup function to clear timeouts if component unmounts
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+      };
+    }
+  }, [step, refetchBalance, queryClient]);
 
   const handleClose = () => {
     onOpenChange(false);
