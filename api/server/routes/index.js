@@ -7,6 +7,7 @@ const messages = require('./messages');
 const presets = require('./presets');
 const prompts = require('./prompts');
 const balance = require('./balance');
+const claimTokens = require('./claimTokens');
 const plugins = require('./plugins');
 const bedrock = require('./bedrock');
 const actions = require('./actions');
@@ -49,6 +50,7 @@ module.exports = {
   actions,
   presets,
   balance,
+  claimTokens,
   messages,
   endpoints,
   tokenizer,

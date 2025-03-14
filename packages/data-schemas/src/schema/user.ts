@@ -30,6 +30,7 @@ export interface IUser extends Document {
   }>;
   expiresAt?: Date;
   termsAccepted?: boolean;
+  lastTokenClaim?: Date;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -155,6 +156,10 @@ const User = new Schema<IUser>(
     termsAccepted: {
       type: Boolean,
       default: false,
+    },
+    lastTokenClaim: {
+      type: Date,
+      default: null,
     },
   },
   { timestamps: true },

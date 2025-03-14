@@ -841,6 +841,8 @@
   "com_user_message": "You",
   "com_warning_resubmit_unsupported": "Resubmitting the AI message is not supported for this endpoint.",
   "com_ui_buy_tokens": "Buy Tokens",
+  "com_ui_claim_tokens": "Claim Tokens",
+  "com_ui_claim_in": "Claim in",
   "com_checkout_buy_tokens": "Buy Tokens",
   "com_checkout_select_package": "Select a token package and payment method",
   "com_checkout_select_payment": "Select Payment Option",

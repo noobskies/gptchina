@@ -15,6 +15,7 @@ import { Conversations } from '~/components/Conversations';
 import BookmarkNav from './Bookmarks/BookmarkNav';
 import AccountSettings from './AccountSettings';
 import BuyTokensButton from './BuyTokensButton';
+import ClaimTokensButton from './ClaimTokensButton';
 import { useSearchContext } from '~/Providers';
 import { Spinner } from '~/components/svg';
 import SearchBar from './SearchBar';
@@ -81,7 +82,6 @@ const Nav = ({
   useEffect(() => {
     // When a tag is selected, refetch the list of conversations related to that tag
     refetch();
-
   }, [tags]);
   const { containerRef, moveToTop } = useNavScrolling<ConversationListResponse>({
     setShowLoading,
@@ -189,6 +189,7 @@ const Nav = ({
                       <Spinner className={cn('m-1 mx-auto mb-4 h-4 w-4 text-text-primary')} />
                     )}
                   </div>
+                  <ClaimTokensButton />
                   <BuyTokensButton />
                   <AccountSettings />
                 </nav>
