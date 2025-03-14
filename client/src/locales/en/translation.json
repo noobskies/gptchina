@@ -839,5 +839,11 @@
   "com_ui_yes": "Yes",
   "com_ui_zoom": "Zoom",
   "com_user_message": "You",
-  "com_warning_resubmit_unsupported": "Resubmitting the AI message is not supported for this endpoint."
+  "com_warning_resubmit_unsupported": "Resubmitting the AI message is not supported for this endpoint.",
+  "com_ui_buy_tokens": "Buy Tokens",
+  "com_checkout_buy_tokens": "Buy Tokens",
+  "com_checkout_select_package": "Select a token package and payment method",
+  "com_checkout_select_payment": "Select Payment Option",
+  "com_checkout_purchase": "Purchase",
+  "com_checkout_tokens": "Tokens"
 }
