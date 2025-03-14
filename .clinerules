@@ -1,0 +1,97 @@
+# LibreChat Project Guidelines
+
+## Merge Conflict Prevention
+
+- Make small, focused changes rather than large, sweeping modifications
+- Isolate feature development to specific components when possible
+- Avoid modifying core files unless absolutely necessary
+- When modifying core files, make minimal changes and document thoroughly
+- Use feature flags for experimental features to avoid conflicts with parallel development
+- Coordinate with other contributors when working on frequently modified files
+
+## Code Organization
+
+- Maintain the existing project structure:
+  - `/api` for backend code
+  - `/client` for frontend code
+  - `/packages` for shared modules
+- Place new components in appropriate directories based on their function
+- Create new files rather than heavily modifying existing ones when adding substantial functionality
+- Keep related code changes grouped in the same PR
+
+## File Modification Best Practices
+
+- When modifying files, focus on isolated sections rather than widespread changes
+- Add new functions/methods at the end of files when possible to reduce conflicts
+- Use clear, descriptive names for functions, variables, and components to avoid naming collisions
+- When modifying CSS/styling, use specific class names to avoid style conflicts
+- For configuration files, add new entries at the end of objects/arrays when possible
+
+## Commit and Branch Management
+
+- Create branches from the latest `main` branch
+- Use descriptive branch names prefixed with the type of change:
+  - `feature/` for new features
+  - `fix/` for bug fixes
+  - `refactor/` for code improvements
+  - `docs/` for documentation changes
+- Rebase frequently to incorporate upstream changes
+- Resolve conflicts in your branch before submitting PRs
+- Keep PRs focused on a single issue or feature
+
+## Documentation Requirements
+
+- Update relevant documentation when modifying features
+- Add JSDoc comments to new functions and components
+- Keep README.md in sync with new capabilities
+- Document any non-obvious code with clear comments
+- For significant changes, update CHANGELOG.md
+
+## Translation/i18n Guidelines
+
+- Use translation keys instead of hardcoded strings
+- Follow the established pattern for translation keys
+- Do not modify multiple language files in the same PR unless necessary
+- When adding new text, add the English version first, then create separate PRs for translations
+- Use the i18next framework consistently
+
+## Code Style and Patterns
+
+- Follow the project's established code style (defined in .prettierrc and eslint.config.mjs)
+- Run linting and formatting before committing changes
+- Use TypeScript for new code when possible
+- Prefer functional components over class components in React
+- Follow established patterns for state management
+- Use consistent error handling patterns
+
+## Testing Standards
+
+- Write tests for new functionality
+- Update tests when modifying existing functionality
+- Ensure all tests pass before submitting PRs
+- Follow the established testing patterns in the project
+- Include both unit tests and integration tests where appropriate
+
+## Component Development
+
+- Create modular, reusable components
+- Use props for component configuration rather than global state when possible
+- Follow the established component structure in the project
+- Keep components focused on a single responsibility
+- Use consistent naming conventions for components and their files
+
+## API Development
+
+- Maintain backward compatibility when modifying existing endpoints
+- Version new API endpoints appropriately
+- Document API changes thoroughly
+- Follow RESTful principles for API design
+- Use consistent error response formats
+
+## Performance Considerations
+
+- Consider performance implications of changes, especially for frequently used components
+- Avoid unnecessary re-renders in React components
+- Use appropriate data structures and algorithms
+- Be mindful of bundle size when adding new dependencies
+- Consider lazy loading for large components or features
