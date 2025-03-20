@@ -28,6 +28,7 @@ const user = require('./user');
 const ask = require('./ask');
 const banner = require('./banner');
 const stripe = require('./stripe');
+const opennode = require('./opennode');
 
 module.exports = {
   ask,
@@ -60,4 +61,5 @@ module.exports = {
   staticRoute,
   banner,
   stripe,
+  opennode,
 };

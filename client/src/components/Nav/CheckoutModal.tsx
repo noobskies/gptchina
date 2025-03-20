@@ -267,7 +267,20 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
       // Import the request module
       const { request } = await import('librechat-data-provider');
 
-      // Create a payment intent on the server
+      // If Bitcoin is selected, use OpenNode
+      if (selectedPayment === 'bitcoin') {
+        // Create a charge with OpenNode
+        const data = await request.post('/api/opennode/create-charge', {
+          packageId: selectedPackage,
+          amount: parseFloat(packageDetails.price.replace('$', '')),
+        });
+
+        // Redirect to OpenNode hosted checkout
+        window.location.href = data.hosted_checkout_url;
+        return;
+      }
+
+      // For other payment methods, use Stripe
       const data = await request.post('/api/stripe/create-payment-intent', {
         packageId: selectedPackage,
         amount: parseFloat(packageDetails.price.replace('$', '')),
@@ -276,7 +289,7 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
       setClientSecret(data.clientSecret);
       setStep('payment');
     } catch (error) {
-      console.error('Error creating payment intent:', error);
+      console.error('Error creating payment:', error);
       // Show error message to user
     }
   };

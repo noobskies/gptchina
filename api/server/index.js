@@ -68,6 +68,12 @@ const startServer = async () => {
     routes.stripe.handleWebhook(req, res);
   });
 
+  // Special route for OpenNode webhooks
+  app.post('/api/opennode/webhook', express.json(), (req, res) => {
+    // Pass the request directly to the OpenNode webhook handler
+    routes.opennode.handleWebhook(req, res);
+  });
+
   app.use(express.json({ limit: '3mb' }));
   app.use(mongoSanitize());
   app.use(express.urlencoded({ extended: true, limit: '3mb' }));
@@ -132,6 +138,7 @@ const startServer = async () => {
   app.use('/api/banner', routes.banner);
   app.use('/api/bedrock', routes.bedrock);
   app.use('/api/stripe', routes.stripe);
+  app.use('/api/opennode', routes.opennode);
 
   app.use('/api/tags', routes.tags);
 
