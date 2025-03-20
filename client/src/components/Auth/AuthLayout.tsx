@@ -58,40 +58,125 @@ function AuthLayout({
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col bg-white dark:bg-gray-900">
+    <div className="relative flex min-h-screen bg-white dark:bg-gray-900">
       <Banner />
-      <BlinkAnimation active={isFetching}>
-        <div className="mt-6 h-10 w-full bg-cover">
-          <img
-            src="/assets/logo.svg"
-            className="h-full w-full object-contain"
-            alt={localize('com_ui_logo', { 0: startupConfig?.appTitle ?? 'Novlisky' })}
-          />
+      {/* Left Column - Site Information */}
+      <div className="hidden flex-col items-center justify-center bg-gradient-to-br from-blue-500 to-blue-600 p-8 dark:from-blue-700 dark:to-blue-800 md:flex md:w-1/2">
+        <BlinkAnimation active={isFetching}>
+          <div className="mb-8 h-16 w-full bg-cover">
+            <img
+              src="/assets/logo.svg"
+              className="h-full w-full object-contain"
+              alt={localize('com_ui_logo', { 0: startupConfig?.appTitle ?? 'Novlisky' })}
+            />
+          </div>
+        </BlinkAnimation>
+        {!isFetching && (
+          <div className="max-w-md text-center">
+            <h2 className="mb-6 text-3xl font-bold text-white">
+              {startupConfig?.appTitle ?? localize('com_auth_welcome_title')}
+            </h2>
+            <p className="mb-8 text-lg text-white text-opacity-90">
+              {localize('com_auth_platform_description')}
+            </p>
+            <div className="space-y-4 text-left">
+              <div className="flex items-start">
+                <div className="h-6 w-6 flex-shrink-0 text-white">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </div>
+                <p className="ml-3 text-white text-opacity-90">
+                  {localize('com_auth_feature_privacy')}
+                </p>
+              </div>
+              <div className="flex items-start">
+                <div className="h-6 w-6 flex-shrink-0 text-white">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </div>
+                <p className="ml-3 text-white text-opacity-90">
+                  {localize('com_auth_feature_models')}
+                </p>
+              </div>
+              <div className="flex items-start">
+                <div className="h-6 w-6 flex-shrink-0 text-white">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </div>
+                <p className="ml-3 text-white text-opacity-90">
+                  {localize('com_auth_feature_security')}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+        <div className="absolute bottom-0 left-0 m-4">
+          <ThemeSelector />
         </div>
-      </BlinkAnimation>
-      <DisplayError />
-      <div className="absolute bottom-0 left-0 md:m-4">
-        <ThemeSelector />
       </div>
-
-      <div className="flex flex-grow items-center justify-center">
-        <div className="w-authPageWidth overflow-hidden bg-white px-6 py-4 dark:bg-gray-900 sm:max-w-md sm:rounded-lg">
-          {!hasStartupConfigError && !isFetching && (
-            <h1
-              className="mb-4 text-center text-3xl font-semibold text-black dark:text-white"
-              style={{ userSelect: 'none' }}
-            >
-              {header}
-            </h1>
-          )}
-          {children}
-          {!pathname.includes('2fa') &&
-            (pathname.includes('login') || pathname.includes('register')) && (
-            <SocialLoginRender startupConfig={startupConfig} />
-          )}
+      {/* Right Column - Auth Form */}
+      <div className="flex w-full flex-col md:w-1/2">
+        <DisplayError />
+        <div className="flex flex-grow items-center justify-center p-4">
+          <div className="w-full max-w-md overflow-hidden bg-white px-6 py-4 dark:bg-gray-900 sm:rounded-lg">
+            {/* Mobile Logo (visible only on small screens) */}
+            <div className="mb-8 mt-6 h-10 w-full bg-cover md:hidden">
+              <img
+                src="/assets/logo.svg"
+                className="h-full w-full object-contain"
+                alt={localize('com_ui_logo', { 0: startupConfig?.appTitle ?? 'Novlisky' })}
+              />
+            </div>
+            {!hasStartupConfigError && !isFetching && (
+              <h1
+                className="mb-4 text-center text-3xl font-semibold text-black dark:text-white"
+                style={{ userSelect: 'none' }}
+              >
+                {header}
+              </h1>
+            )}
+            {children}
+            {!pathname.includes('2fa') &&
+              (pathname.includes('login') || pathname.includes('register')) && (
+              <SocialLoginRender startupConfig={startupConfig} />
+            )}
+          </div>
         </div>
+        <Footer startupConfig={startupConfig} />
       </div>
-      <Footer startupConfig={startupConfig} />
     </div>
   );
 }

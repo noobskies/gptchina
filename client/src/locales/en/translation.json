@@ -858,5 +858,10 @@
   "com_checkout_billing_address": "Billing Address",
   "com_checkout_receipt": "Receipt",
   "com_checkout_payment_success": "Payment Successful",
-  "com_checkout_payment_error": "Payment Error"
+  "com_checkout_payment_error": "Payment Error",
+  "com_auth_welcome_title": "Welcome to LibreChat",
+  "com_auth_platform_description": "Your open-source AI chat platform with a focus on privacy and customization.",
+  "com_auth_feature_privacy": "Open-source and privacy-focused AI conversations",
+  "com_auth_feature_models": "Multiple AI models and customization options",
+  "com_auth_feature_security": "Secure and private conversations with advanced features"
 }
