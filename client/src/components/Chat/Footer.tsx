@@ -37,9 +37,9 @@ export default function Footer({ className }: { className?: string }) {
   const mainContentParts = (
     typeof config?.customFooter === 'string'
       ? config.customFooter
-      : '[LibreChat ' +
+      : '[Novlisky ' +
         Constants.VERSION +
-        '](https://librechat.ai) - ' +
+        '](https://novlisky.io) - ' +
         localize('com_ui_latest_footer')
   ).split('|');
 
@@ -56,7 +56,7 @@ export default function Footer({ className }: { className?: string }) {
     <React.Fragment key={`main-content-part-${index}`}>
       <ReactMarkdown
         components={{
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
           a: ({ node: _n, href, children, ...otherProps }) => {
             return (
               <a
@@ -70,7 +70,7 @@ export default function Footer({ className }: { className?: string }) {
               </a>
             );
           },
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
           p: ({ node: _n, ...props }) => <span {...props} />,
         }}
       >
