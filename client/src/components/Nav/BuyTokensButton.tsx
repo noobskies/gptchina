@@ -12,7 +12,7 @@ const BuyTokensButton = () => {
     <>
       <Button
         variant="submit"
-        className="mb-2 flex w-full items-center justify-center"
+        className="mb-2 flex w-full items-center justify-center bg-blue-600 hover:bg-blue-700"
         onClick={() => setIsOpen(true)}
       >
         <Coins className="mr-2 h-4 w-4" />

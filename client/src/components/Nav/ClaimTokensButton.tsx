@@ -96,7 +96,9 @@ const ClaimTokensButton = () => {
   return (
     <Button
       variant={canClaim ? 'submit' : 'outline'}
-      className="mb-2 flex w-full items-center justify-center"
+      className={`mb-2 flex w-full items-center justify-center ${
+        canClaim ? 'bg-blue-600 hover:bg-blue-700' : ''
+      }`}
       onClick={handleClaim}
       disabled={(!canClaim && !isError) || isLoading || isStatusLoading}
     >
