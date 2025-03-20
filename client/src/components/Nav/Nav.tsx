@@ -16,6 +16,7 @@ import BookmarkNav from './Bookmarks/BookmarkNav';
 import AccountSettings from './AccountSettings';
 import BuyTokensButton from './BuyTokensButton';
 import ClaimTokensButton from './ClaimTokensButton';
+import BalanceDisplay from './BalanceDisplay';
 import { useSearchContext } from '~/Providers';
 import { Spinner } from '~/components/svg';
 import SearchBar from './SearchBar';
@@ -189,6 +190,7 @@ const Nav = ({
                       <Spinner className={cn('m-1 mx-auto mb-4 h-4 w-4 text-text-primary')} />
                     )}
                   </div>
+                  <BalanceDisplay />
                   <ClaimTokensButton />
                   <BuyTokensButton />
                   <AccountSettings />

@@ -11,6 +11,7 @@ import { UserIcon } from '~/components/svg';
 import { useLocalize } from '~/hooks';
 import Settings from './Settings';
 import store from '~/store';
+import numeral from 'numeral';
 
 function AccountSettings() {
   const localize = useLocalize();
@@ -80,7 +81,10 @@ function AccountSettings() {
           !isNaN(parseFloat(balanceQuery.data)) && (
           <>
             <div className="text-token-text-secondary ml-3 mr-2 py-2 text-sm" role="note">
-              {localize('com_nav_balance')}: {parseFloat(balanceQuery.data).toFixed(2)}
+              {localize('com_nav_balance')}:{' '}
+              <span title={numeral(parseFloat(balanceQuery.data)).format('0,0.00')}>
+                {numeral(parseFloat(balanceQuery.data)).format('0.0a')}
+              </span>
             </div>
             <DropdownMenuSeparator />
           </>
