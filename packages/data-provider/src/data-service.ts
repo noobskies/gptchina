@@ -194,6 +194,12 @@ export const getModels = async (): Promise<t.TModelsConfig> => {
   return request.get(endpoints.models());
 };
 
+export const getModelPricing = async (): Promise<
+  Record<string, { input: number; output: number }>
+> => {
+  return request.get(endpoints.modelPricing());
+};
+
 export const getEndpointsConfigOverride = (): Promise<unknown | boolean> => {
   return request.get(endpoints.endpointsConfigOverride());
 };
@@ -779,15 +785,11 @@ export function enableTwoFactor(): Promise<t.TEnable2FAResponse> {
   return request.get(endpoints.enableTwoFactor());
 }
 
-export function verifyTwoFactor(
-  payload: t.TVerify2FARequest,
-): Promise<t.TVerify2FAResponse> {
+export function verifyTwoFactor(payload: t.TVerify2FARequest): Promise<t.TVerify2FAResponse> {
   return request.post(endpoints.verifyTwoFactor(), payload);
 }
 
-export function confirmTwoFactor(
-  payload: t.TVerify2FARequest,
-): Promise<t.TVerify2FAResponse> {
+export function confirmTwoFactor(payload: t.TVerify2FARequest): Promise<t.TVerify2FAResponse> {
   return request.post(endpoints.confirmTwoFactor(), payload);
 }
 

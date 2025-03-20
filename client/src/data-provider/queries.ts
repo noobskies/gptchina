@@ -530,3 +530,19 @@ export const useUserTermsQuery = (
     ...config,
   });
 };
+
+export const useGetModelPricingQuery = <TData = Record<string, { input: number; output: number }>>(
+  config?: UseQueryOptions<Record<string, { input: number; output: number }>, unknown, TData>,
+): QueryObserverResult<TData> => {
+  return useQuery<Record<string, { input: number; output: number }>, unknown, TData>(
+    [QueryKeys.modelPricing],
+    () => dataService.getModelPricing(),
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
+      staleTime: Infinity,
+      ...config,
+    },
+  );
+};

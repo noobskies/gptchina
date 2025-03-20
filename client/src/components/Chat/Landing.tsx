@@ -7,6 +7,7 @@ import {
   useGetAssistantDocsQuery,
   useGetEndpointsQuery,
   useGetStartupConfig,
+  useGetModelPricingQuery,
 } from '~/data-provider';
 import ConvoIcon from '~/components/Endpoints/ConvoIcon';
 import { getIconEndpoint, getEntity, cn } from '~/utils';
@@ -21,6 +22,7 @@ export default function Landing({ Header }: { Header?: ReactNode }) {
   const assistantMap = useAssistantsMapContext();
   const { data: startupConfig } = useGetStartupConfig();
   const { data: endpointsConfig } = useGetEndpointsQuery();
+  const { data: modelPricing } = useGetModelPricingQuery();
 
   const localize = useLocalize();
 
@@ -50,9 +52,10 @@ export default function Landing({ Header }: { Header?: ReactNode }) {
 
   const name = entity?.name ?? '';
   const description = entity?.description ?? '';
+  const model = conversation?.model ?? '';
   const avatar = isAgent
-    ? (entity as t.Agent | undefined)?.avatar?.filepath ?? ''
-    : ((entity as t.Assistant | undefined)?.metadata?.avatar as string | undefined) ?? '';
+    ? ((entity as t.Agent | undefined)?.avatar?.filepath ?? '')
+    : (((entity as t.Assistant | undefined)?.metadata?.avatar as string | undefined) ?? '');
   const conversation_starters = useMemo(() => {
     /* The user made updates, use client-side cache, or they exist in an Agent */
     if (entity && (entity.conversation_starters?.length ?? 0) > 0) {
@@ -119,7 +122,7 @@ export default function Landing({ Header }: { Header?: ReactNode }) {
         {name ? (
           <div className="flex flex-col items-center gap-0 p-2">
             <div className="text-center text-2xl font-medium dark:text-white">{name}</div>
-            <div className="max-w-md text-center text-sm font-normal text-text-primary ">
+            <div className="max-w-md text-center text-sm font-normal text-text-primary">
               {description ||
                 (typeof startupConfig?.interface?.customWelcome === 'string'
                   ? startupConfig?.interface?.customWelcome
@@ -134,7 +137,20 @@ export default function Landing({ Header }: { Header?: ReactNode }) {
             {getWelcomeMessage()}
           </h2>
         )}
-        <div className="mt-8 flex flex-wrap justify-center gap-3 px-4">
+        {model && modelPricing && (modelPricing[model] || modelPricing.default) && (
+          <div className="text-token-text-secondary mt-2 text-center text-sm">
+            <div className="font-medium">
+              {localize('com_ui_model')}: {model}
+            </div>
+            <div>
+              {localize('com_ui_input')}:{' '}
+              {(modelPricing[model] || modelPricing.default).input.toFixed(2)} |{' '}
+              {localize('com_ui_output')}:{' '}
+              {(modelPricing[model] || modelPricing.default).output.toFixed(2)}
+            </div>
+          </div>
+        )}
+        <div className="mt-4 flex flex-wrap justify-center gap-3 px-4">
           {conversation_starters.length > 0 &&
             conversation_starters
               .slice(0, Constants.MAX_CONVO_STARTERS)
