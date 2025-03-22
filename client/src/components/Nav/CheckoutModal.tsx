@@ -167,7 +167,12 @@ const CheckoutForm = ({ selectedPackage, selectedPayment, onSuccess, onBack, loc
       </div>
 
       <div className="flex justify-end gap-2 border-t border-border-light px-4 py-3 sm:px-6 sm:py-4">
-        <Button type="submit" variant="submit" className="px-4" disabled={!stripe || loading}>
+        <Button
+          type="submit"
+          variant="submit"
+          className="bg-blue-600 px-4 hover:bg-blue-700"
+          disabled={!stripe || loading}
+        >
           {loading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -223,7 +228,7 @@ const ReceiptView = ({ paymentIntent, selectedPackage, onClose, localize }) => {
       </div>
 
       <div className="flex justify-end gap-2 border-t border-border-light px-4 py-3 sm:px-6 sm:py-4">
-        <Button variant="submit" onClick={onClose} className="px-4">
+        <Button variant="submit" onClick={onClose} className="bg-blue-600 px-4 hover:bg-blue-700">
           {localize('com_ui_close')}
         </Button>
       </div>
@@ -242,6 +247,9 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
   const [step, setStep] = useState('select'); // 'select', 'payment', 'receipt'
   const [paymentIntent, setPaymentIntent] = useState(null);
   const [clientSecret, setClientSecret] = useState('');
+  const [isPurchaseLoading, setIsPurchaseLoading] = useState(false);
+  const [isElementsLoading, setIsElementsLoading] = useState(true);
+  const [purchaseError, setPurchaseError] = useState('');
   const localize = useLocalize();
 
   // Get query client for refetching balance
@@ -375,11 +383,25 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
     }
   }, [open]);
 
+  // Set a timer to hide the loading state for Stripe Elements
+  useEffect(() => {
+    if (step === 'payment' && clientSecret) {
+      // Give Stripe Elements time to load (typically takes 1-2 seconds)
+      const timer = setTimeout(() => {
+        setIsElementsLoading(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [step, clientSecret]);
+
   const handlePurchase = async () => {
+    setIsPurchaseLoading(true);
+    setPurchaseError('');
     try {
       // Get the selected package details
       const packageDetails = tokenPackages.find((pkg) => pkg.id === selectedPackage);
       if (!packageDetails) {
+        setPurchaseError('Package details not found');
         return;
       }
 
@@ -406,10 +428,17 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
         paymentMethod: selectedPayment,
       });
       setClientSecret(data.clientSecret);
+      setIsElementsLoading(true); // Reset elements loading state
       setStep('payment');
     } catch (error) {
       console.error('Error creating payment:', error);
-      // Show error message to user
+      setPurchaseError(
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while processing your payment. Please try again.',
+      );
+    } finally {
+      setIsPurchaseLoading(false);
     }
   };
 
@@ -471,6 +500,7 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
           return (
             <div className="p-4 text-center">
               <Loader2 className="mx-auto h-8 w-8 animate-spin" />
+              <p className="mt-4 text-text-secondary">Preparing payment...</p>
             </div>
           );
         }
@@ -497,13 +527,26 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
               // but we'll rely on the Stripe Elements UI to handle this
             }}
           >
-            <CheckoutForm
-              selectedPackage={selectedPackage}
-              selectedPayment={selectedPayment}
-              onSuccess={handlePaymentSuccess}
-              onBack={() => setStep('select')}
-              localize={localize}
-            />
+            {isElementsLoading && (
+              <div className="space-y-4 p-6">
+                <div className="mb-4 flex items-center justify-center">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                  <span className="ml-2 text-text-secondary">Loading payment form...</span>
+                </div>
+                <div className="h-12 animate-pulse rounded-md bg-surface-tertiary"></div>
+                <div className="h-12 animate-pulse rounded-md bg-surface-tertiary"></div>
+                <div className="h-12 animate-pulse rounded-md bg-surface-tertiary"></div>
+              </div>
+            )}
+            <div className={isElementsLoading ? 'hidden' : 'block'}>
+              <CheckoutForm
+                selectedPackage={selectedPackage}
+                selectedPayment={selectedPayment}
+                onSuccess={handlePaymentSuccess}
+                onBack={() => setStep('select')}
+                localize={localize}
+              />
+            </div>
           </Elements>
         );
       }
@@ -595,9 +638,28 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
               <Button variant="outline" onClick={handleClose} className="px-4">
                 {localize('com_ui_cancel')}
               </Button>
-              <Button variant="submit" onClick={handlePurchase} className="px-4">
-                <CreditCard className="mr-2 h-4 w-4" />
-                {localize('com_checkout_purchase')}
+              {purchaseError && (
+                <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-500 dark:bg-red-900/20 dark:text-red-400">
+                  {purchaseError}
+                </div>
+              )}
+              <Button
+                variant="submit"
+                onClick={handlePurchase}
+                className="bg-blue-600 px-4 hover:bg-blue-700"
+                disabled={isPurchaseLoading}
+              >
+                {isPurchaseLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {localize('com_ui_processing')}
+                  </>
+                ) : (
+                  <>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    {localize('com_checkout_purchase')}
+                  </>
+                )}
               </Button>
             </div>
           </>
