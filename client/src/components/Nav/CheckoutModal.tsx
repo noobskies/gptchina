@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback, useContext } from 'react';
 import { Check, CreditCard, X, ArrowLeft, Loader2 } from 'lucide-react';
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
 import { Button } from '~/components/ui/Button';
 import { cn } from '~/utils';
 import { useLocalize } from '~/hooks';
+import { ThemeContext, isDark } from '~/hooks/ThemeContext';
 import { loadStripe } from '@stripe/stripe-js';
 import { useGetUserBalance } from '~/data-provider';
 import { useQueryClient } from '@tanstack/react-query';
@@ -249,6 +250,118 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
   // Get user balance and ability to refetch it
   const { refetch: refetchBalance } = useGetUserBalance();
 
+  // Get theme from ThemeContext
+  const { theme } = useContext(ThemeContext);
+
+  // Determine if dark mode is active using the isDark helper from ThemeContext
+  const isDarkMode = useMemo(() => {
+    return isDark(theme);
+  }, [theme]);
+
+  // Configure Stripe appearance based on current theme - moved outside of conditional rendering
+  const stripeAppearance = useMemo(() => {
+    return {
+      theme: (isDarkMode ? 'night' : 'stripe') as 'night' | 'stripe',
+      labels: 'floating' as const, // Use floating labels for a more modern look
+      variables: {
+        colorPrimary: '#0066FF',
+        colorBackground: isDarkMode ? '#1F2937' : '#F9FAFB',
+        colorText: isDarkMode ? '#F9FAFB' : '#1F2937',
+        colorDanger: '#EF4444',
+        colorSuccess: '#10B981',
+        colorWarning: '#F59E0B',
+        fontFamily:
+          'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+        fontSizeBase: '16px', // Ensure at least 16px for mobile input fields
+        spacingUnit: '4px',
+        borderRadius: '8px',
+        // Accessible colors for text on different backgrounds
+        accessibleColorOnColorPrimary: '#FFFFFF',
+        accessibleColorOnColorBackground: isDarkMode ? '#F9FAFB' : '#1F2937',
+        accessibleColorOnColorSuccess: '#FFFFFF',
+        accessibleColorOnColorDanger: '#FFFFFF',
+        accessibleColorOnColorWarning: isDarkMode ? '#1F2937' : '#FFFFFF',
+      },
+      rules: {
+        // Input fields
+        '.Input': {
+          color: isDarkMode ? '#F9FAFB' : '#1F2937',
+          backgroundColor: isDarkMode ? '#374151' : '#F9FAFB',
+          borderColor: isDarkMode ? '#4B5563' : '#E5E7EB',
+          fontSize: '16px', // Ensure readability on mobile
+          padding: '10px 14px',
+          boxShadow: isDarkMode
+            ? '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
+            : '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+        },
+        '.Input:hover': {
+          borderColor: isDarkMode ? '#6B7280' : '#D1D5DB',
+        },
+        '.Input:focus': {
+          borderColor: '#0066FF',
+          boxShadow: '0 0 0 1px #0066FF',
+        },
+        '.Input--invalid': {
+          borderColor: '#EF4444',
+          boxShadow: '0 0 0 1px #EF4444',
+        },
+        '.Input::placeholder': {
+          color: isDarkMode ? '#9CA3AF' : '#9CA3AF',
+        },
+        // Labels
+        '.Label': {
+          color: isDarkMode ? '#D1D5DB' : '#6B7280',
+          fontSize: '14px',
+          fontWeight: '500',
+        },
+        '.Label--floating': {
+          color: isDarkMode ? '#D1D5DB' : '#6B7280',
+        },
+        '.Label--invalid': {
+          color: '#EF4444',
+        },
+        // Tabs
+        '.Tab': {
+          borderColor: isDarkMode ? '#4B5563' : '#E5E7EB',
+          color: isDarkMode ? '#D1D5DB' : '#6B7280',
+          backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
+          padding: '10px 16px',
+          borderRadius: '6px',
+          fontWeight: '500',
+        },
+        '.Tab:hover': {
+          color: isDarkMode ? '#F9FAFB' : '#1F2937',
+          borderColor: isDarkMode ? '#6B7280' : '#9CA3AF',
+        },
+        '.Tab--selected': {
+          borderColor: '#0066FF',
+          color: isDarkMode ? '#F9FAFB' : '#1F2937',
+          boxShadow: '0 0 0 1px #0066FF',
+        },
+        '.TabIcon': {
+          color: isDarkMode ? '#9CA3AF' : '#6B7280',
+        },
+        '.TabIcon--selected': {
+          color: '#0066FF',
+        },
+        // Error messages
+        '.Error': {
+          color: '#EF4444',
+          fontSize: '14px',
+          fontWeight: '500',
+          marginTop: '4px',
+        },
+        // Block elements
+        '.Block': {
+          backgroundColor: isDarkMode ? '#374151' : '#F9FAFB',
+          borderColor: isDarkMode ? '#4B5563' : '#E5E7EB',
+          borderRadius: '8px',
+          padding: '12px',
+        },
+      },
+    };
+  }, [isDarkMode]);
+
   // Reset state when modal is closed
   useEffect(() => {
     if (!open) {
@@ -379,32 +492,7 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
             stripe={stripePromise}
             options={{
               clientSecret,
-              appearance: {
-                theme: 'night' as const,
-                variables: {
-                  colorPrimary: '#0066FF',
-                  colorBackground: '#1F2937',
-                  colorText: '#F9FAFB',
-                  colorDanger: '#EF4444',
-                  fontFamily:
-                    'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                  spacingUnit: '4px',
-                  borderRadius: '8px',
-                },
-                rules: {
-                  '.Input': {
-                    color: '#F9FAFB',
-                    backgroundColor: '#374151',
-                    borderColor: '#4B5563',
-                  },
-                  '.Input:focus': {
-                    borderColor: '#0066FF',
-                  },
-                  '.Label': {
-                    color: '#D1D5DB',
-                  },
-                },
-              },
+              appearance: stripeAppearance,
               // Note: We would ideally set the default payment method here,
               // but we'll rely on the Stripe Elements UI to handle this
             }}
