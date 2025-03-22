@@ -8,13 +8,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { useGetUserBalance } from '~/data-provider';
 import { useQueryClient } from '@tanstack/react-query';
 import { QueryKeys } from 'librechat-data-provider';
-import {
-  Elements,
-  PaymentElement,
-  useStripe,
-  useElements,
-  AddressElement,
-} from '@stripe/react-stripe-js';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 // Payment method icons
 import { FaCreditCard, FaWeixin, FaAlipay, FaBitcoin, FaGoogle, FaApple } from 'react-icons/fa';
@@ -126,6 +120,22 @@ const CheckoutForm = ({ selectedPackage, selectedPayment, onSuccess, onBack, loc
               defaultValues: {
                 billingDetails: {},
               },
+              fields: {
+                billingDetails: {
+                  // Only collect postal code, which is often required for fraud prevention
+                  address: {
+                    country: 'never',
+                    line1: 'never',
+                    line2: 'never',
+                    city: 'never',
+                    state: 'never',
+                    postalCode: 'auto',
+                  },
+                  name: 'never',
+                  email: 'never',
+                  phone: 'never',
+                },
+              },
               // Set payment method options based on the selected payment method
               paymentMethodOrder: (() => {
                 // Map payment method to Stripe payment method type
@@ -146,10 +156,6 @@ const CheckoutForm = ({ selectedPackage, selectedPayment, onSuccess, onBack, loc
               })(),
             }}
           />
-        </div>
-
-        <div className="mb-6">
-          <AddressElement options={{ mode: 'billing' }} />
         </div>
 
         {errorMessage && (
