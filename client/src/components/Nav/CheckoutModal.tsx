@@ -82,6 +82,21 @@ const CheckoutForm = ({ selectedPackage, selectedPayment, onSuccess, onBack, loc
         elements,
         confirmParams: {
           return_url: window.location.href,
+          payment_method_data: {
+            billing_details: {
+              name: 'Anonymous User', // Provide a default name since we opted out of collecting it
+              email: 'anonymous@example.com', // Provide a default email
+              phone: '', // Empty string for phone
+              address: {
+                line1: '',
+                line2: '',
+                city: '',
+                state: '',
+                country: 'US', // Default to US
+                postal_code: '00000', // Default postal code
+              },
+            },
+          },
         },
         redirect: 'if_required',
       });
