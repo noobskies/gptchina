@@ -97,7 +97,7 @@ function AuthLayout({
                   </svg>
                 </div>
                 <p className="ml-3 text-white text-opacity-90">
-                  {localize('com_auth_feature_privacy')}
+                  {localize('com_auth_feature_no_subscriptions')}
                 </p>
               </div>
               <div className="flex items-start">
@@ -117,7 +117,7 @@ function AuthLayout({
                   </svg>
                 </div>
                 <p className="ml-3 text-white text-opacity-90">
-                  {localize('com_auth_feature_models')}
+                  {localize('com_auth_feature_free_tokens')}
                 </p>
               </div>
               <div className="flex items-start">
@@ -137,7 +137,67 @@ function AuthLayout({
                   </svg>
                 </div>
                 <p className="ml-3 text-white text-opacity-90">
-                  {localize('com_auth_feature_security')}
+                  {localize('com_auth_feature_top_models')}
+                </p>
+              </div>
+              <div className="flex items-start">
+                <div className="h-6 w-6 flex-shrink-0 text-white">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </div>
+                <p className="ml-3 text-white text-opacity-90">
+                  {localize('com_auth_feature_all_models')}
+                </p>
+              </div>
+              <div className="flex items-start">
+                <div className="h-6 w-6 flex-shrink-0 text-white">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </div>
+                <p className="ml-3 text-white text-opacity-90">
+                  {localize('com_auth_feature_purchase_tokens')}
+                </p>
+              </div>
+              <div className="flex items-start">
+                <div className="h-6 w-6 flex-shrink-0 text-white">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </div>
+                <p className="ml-3 text-white text-opacity-90">
+                  {localize('com_auth_feature_user_friendly')}
                 </p>
               </div>
             </div>

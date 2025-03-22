@@ -872,5 +872,11 @@
   "com_auth_feature_privacy": "Open-source and privacy-focused AI conversations",
   "com_auth_feature_models": "Multiple AI models and customization options",
   "com_auth_feature_security": "Secure and private conversations with advanced features",
+  "com_auth_feature_no_subscriptions": "No monthly subscriptions or upfront costs",
+  "com_auth_feature_free_tokens": "Free daily tokens for all registered users",
+  "com_auth_feature_top_models": "Access to top-tier AI models like DeepSeek, Claude, o1, GPT-4o, Mistral, Llama 3, Perplexity, Gemini and much more.",
+  "com_auth_feature_all_models": "All your favorite AI models under one roof",
+  "com_auth_feature_purchase_tokens": "Flexibility to purchase additional tokens as needed",
+  "com_auth_feature_user_friendly": "User-friendly experience tailored to your requirements",
   "com_ui_output": "Output"
 }
