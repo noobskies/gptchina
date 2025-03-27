@@ -75,11 +75,11 @@ const errorMessages = {
   token_balance: (json: TTokenBalance) => {
     const { balance, tokenCost, promptTokens, generations } = json;
 
-    // Round numbers to 2 decimal places
-    const formattedBalance = balance.toFixed(2);
-    const formattedCost = tokenCost.toFixed(2);
+    // Round numbers to 2 decimal places with null checks
+    const formattedBalance = balance !== null ? balance.toFixed(2) : '0.00';
+    const formattedCost = tokenCost !== null ? tokenCost.toFixed(2) : '0.00';
     // Prompt tokens should be whole numbers
-    const formattedPromptTokens = Math.round(promptTokens);
+    const formattedPromptTokens = promptTokens !== null ? Math.round(promptTokens) : 0;
 
     return (
       <>
