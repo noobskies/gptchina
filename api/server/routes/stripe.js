@@ -12,7 +12,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
  */
 router.post('/create-payment-intent', requireJwtAuth, async (req, res) => {
   try {
-    const { packageId, amount, paymentMethod } = req.body;
+    const { packageId, amount, paymentMethod, currency = 'usd' } = req.body;
     const userId = req.user.id;
 
     if (!packageId || !amount) {
@@ -50,12 +50,13 @@ router.post('/create-payment-intent', requireJwtAuth, async (req, res) => {
     // Store the original payment method in metadata for the frontend to use
     const paymentIntentOptions = {
       amount: Math.round(amount * 100), // Convert to cents
-      currency: 'usd',
+      currency: currency.toLowerCase(), // Use the currency from the request
       metadata: {
         userId,
         packageId,
         tokenAmount,
         originalPaymentMethod: paymentMethod, // Store the original payment method
+        currency: currency.toLowerCase(), // Store the currency in metadata
       },
       payment_method_types: [paymentMethodType],
     };
@@ -123,7 +124,7 @@ const handleWebhook = async (req, res) => {
  */
 async function handleSuccessfulPayment(paymentIntent) {
   try {
-    const { userId, packageId, tokenAmount } = paymentIntent.metadata;
+    const { userId, packageId, tokenAmount, currency = 'usd' } = paymentIntent.metadata;
 
     if (!userId || !tokenAmount) {
       console.error('Missing metadata in payment intent:', paymentIntent.id);
@@ -144,7 +145,8 @@ async function handleSuccessfulPayment(paymentIntent) {
       tokenType: 'credits', // Use 'credits' like in ClaimTokens.js
       valueKey: 'tokenCredits', // Specify the field to update in the Balance model
       rate: 1,
-      context: `Purchase of ${packageId} tokens`,
+      currency: currency, // Record the currency used for the transaction
+      context: `Purchase of ${packageId} tokens (${currency.toUpperCase()})`,
     });
 
     // Save the transaction without calculating token value

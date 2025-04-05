@@ -10,6 +10,7 @@ import { useGetUserBalance } from '~/data-provider';
 import { useQueryClient } from '@tanstack/react-query';
 import { QueryKeys } from 'librechat-data-provider';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { getSiteConfig } from '~/utils/siteConfig';
 
 // Payment method icons
 import { FaCreditCard, FaWeixin, FaAlipay, FaBitcoin, FaGoogle, FaApple } from 'react-icons/fa';
@@ -20,33 +21,45 @@ const stripePromise = loadStripe(
     'pk_test_51MwvEEHKD0byXXClhlIY96bsuIIIcdGgTenVqBnktRp8fzoUHlcI29yTj9ktyqumu2Xk1uz7KptFryWfTZz5Sdj200f3cPZSa3',
 );
 
-const tokenPackages = [
+// Define interfaces for token packages
+interface TokenPackage {
+  id: string;
+  tokens: string;
+  price: number;
+  originalPrice: number | null;
+  discount: string | null;
+  priceDisplay?: string;
+  originalPriceDisplay?: string | null;
+}
+
+// Default token packages if site configuration is not available
+const defaultTokenPackages: TokenPackage[] = [
   {
     id: '100k',
     tokens: '100k',
-    price: '$1.50',
+    price: 1.5,
     originalPrice: null,
     discount: null,
   },
   {
     id: '500k',
     tokens: '500k',
-    price: '$5.00',
-    originalPrice: '$7.50',
+    price: 5.0,
+    originalPrice: 7.5,
     discount: '30% off',
   },
   {
     id: '1m',
     tokens: '1 Million',
-    price: '$7.50',
-    originalPrice: '$15.00',
+    price: 7.5,
+    originalPrice: 15.0,
     discount: '50% off',
   },
   {
     id: '10m',
     tokens: '10 Million',
-    price: '$40.00',
-    originalPrice: '$150.00',
+    price: 40.0,
+    originalPrice: 150.0,
     discount: '75% off',
   },
 ];
@@ -205,8 +218,25 @@ const CheckoutForm = ({ selectedPackage, selectedPayment, onSuccess, onBack, loc
   );
 };
 
+// Receipt component props interface
+interface ReceiptViewProps {
+  paymentIntent: any;
+  selectedPackage: string;
+  onClose: () => void;
+  localize: any;
+  currencySymbol: string;
+  tokenPackages: TokenPackage[];
+}
+
 // Receipt component
-const ReceiptView = ({ paymentIntent, selectedPackage, onClose, localize }) => {
+const ReceiptView = ({
+  paymentIntent,
+  selectedPackage,
+  onClose,
+  localize,
+  currencySymbol,
+  tokenPackages,
+}: ReceiptViewProps) => {
   const packageDetails = tokenPackages.find((pkg) => pkg.id === selectedPackage);
 
   return (
@@ -220,7 +250,7 @@ const ReceiptView = ({ paymentIntent, selectedPackage, onClose, localize }) => {
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-text-secondary">{localize('com_checkout_amount')}:</span>
-              <span className="font-medium text-text-primary">{packageDetails?.price}</span>
+              <span className="font-medium text-text-primary">{packageDetails?.priceDisplay}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-text-secondary">{localize('com_checkout_tokens')}:</span>
@@ -257,7 +287,15 @@ interface CheckoutModalProps {
 }
 
 const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
-  const [selectedPackage, setSelectedPackage] = useState(tokenPackages[3].id); // Default to 10 Million
+  // Get domain-specific pricing configuration
+  const [domainConfig, setDomainConfig] = useState({
+    tokenPackages: defaultTokenPackages,
+    currencySymbol: '$',
+    currency: 'USD',
+    availablePaymentMethods: ['card', 'google', 'apple', 'bitcoin', 'wechat', 'alipay'],
+  });
+
+  const [selectedPackage, setSelectedPackage] = useState('10m'); // Default to 10 Million
   const [selectedPayment, setSelectedPayment] = useState('card'); // Default to Credit Card
   const [step, setStep] = useState('select'); // 'select', 'payment', 'receipt'
   const [paymentIntent, setPaymentIntent] = useState(null);
@@ -266,6 +304,52 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
   const [isElementsLoading, setIsElementsLoading] = useState(true);
   const [purchaseError, setPurchaseError] = useState('');
   const localize = useLocalize();
+
+  // Load the domain-specific configuration
+  useEffect(() => {
+    const hostname = window.location.hostname;
+    const siteConfig = getSiteConfig(hostname);
+
+    if (siteConfig.pricing) {
+      const { pricing } = siteConfig;
+
+      // Format prices for display
+      const formattedPackages = pricing.tokenPackages.map((pkg) => ({
+        ...pkg,
+        priceDisplay: `${pricing.currencySymbol}${pkg.price.toFixed(2)}`,
+        originalPriceDisplay: pkg.originalPrice
+          ? `${pricing.currencySymbol}${pkg.originalPrice.toFixed(2)}`
+          : null,
+      }));
+
+      // Set the domain config
+      setDomainConfig({
+        tokenPackages: formattedPackages,
+        currencySymbol: pricing.currencySymbol,
+        currency: pricing.currency,
+        availablePaymentMethods: pricing.paymentMethods || [
+          'card',
+          'google',
+          'apple',
+          'bitcoin',
+          'wechat',
+          'alipay',
+        ],
+      });
+
+      // Set default selected package (use the last one, typically the best value)
+      if (formattedPackages.length > 0) {
+        setSelectedPackage(formattedPackages[formattedPackages.length - 1].id);
+      }
+    }
+  }, []);
+
+  // Filter payment methods based on domain configuration
+  const availablePaymentMethods = useMemo(() => {
+    return paymentMethods.filter((method) =>
+      domainConfig.availablePaymentMethods.includes(method.id),
+    );
+  }, [domainConfig.availablePaymentMethods]);
 
   // Get query client for refetching balance
   const queryClient = useQueryClient();
@@ -414,7 +498,7 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
     setPurchaseError('');
     try {
       // Get the selected package details
-      const packageDetails = tokenPackages.find((pkg) => pkg.id === selectedPackage);
+      const packageDetails = domainConfig.tokenPackages.find((pkg) => pkg.id === selectedPackage);
       if (!packageDetails) {
         setPurchaseError('Package details not found');
         return;
@@ -428,7 +512,7 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
         // Create a charge with OpenNode
         const data = await request.post('/api/opennode/create-charge', {
           packageId: selectedPackage,
-          amount: parseFloat(packageDetails.price.replace('$', '')),
+          amount: packageDetails.price, // Now using numeric price directly
         });
 
         // Redirect to OpenNode hosted checkout
@@ -439,8 +523,9 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
       // For other payment methods, use Stripe
       const data = await request.post('/api/stripe/create-payment-intent', {
         packageId: selectedPackage,
-        amount: parseFloat(packageDetails.price.replace('$', '')),
+        amount: packageDetails.price, // Now using numeric price directly
         paymentMethod: selectedPayment,
+        currency: domainConfig.currency.toLowerCase(), // Add currency from domain config
       });
       setClientSecret(data.clientSecret);
       setIsElementsLoading(true); // Reset elements loading state
@@ -573,6 +658,8 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
             selectedPackage={selectedPackage}
             onClose={handleClose}
             localize={localize}
+            currencySymbol={domainConfig.currencySymbol}
+            tokenPackages={domainConfig.tokenPackages}
           />
         );
       }
@@ -584,7 +671,7 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
             <div className="p-4 sm:p-6">
               {/* Token Packages */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {tokenPackages.map((pkg) => (
+                {domainConfig.tokenPackages.map((pkg) => (
                   <div
                     key={pkg.id}
                     className={cn(
@@ -604,11 +691,13 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
                     <div className="text-sm text-text-secondary">
                       {localize('com_checkout_tokens')}
                     </div>
-                    <div className="mt-2 text-lg font-bold text-text-primary">{pkg.price}</div>
+                    <div className="mt-2 text-lg font-bold text-text-primary">
+                      {pkg.priceDisplay}
+                    </div>
                     {pkg.originalPrice && (
                       <div className="flex items-center gap-2">
                         <span className="text-sm text-text-tertiary line-through">
-                          {pkg.originalPrice}
+                          {pkg.originalPriceDisplay}
                         </span>
                         <span className="rounded bg-blue-800 px-1.5 py-0.5 text-xs text-white">
                           {pkg.discount}
@@ -625,7 +714,7 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
                   {localize('com_checkout_payment_methods')}
                 </h3>
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  {paymentMethods.map((method) => (
+                  {availablePaymentMethods.map((method) => (
                     <div
                       key={method.id}
                       className={cn(
