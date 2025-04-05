@@ -10,6 +10,7 @@ import { ToastProvider } from './Providers';
 import Toast from './components/ui/Toast';
 import { LiveAnnouncer } from '~/a11y';
 import { router } from './routes';
+import SiteMetadata from './components/SiteMetadata';
 
 const App = () => {
   const { setError } = useApiErrorBoundary();
@@ -48,6 +49,7 @@ const App = () => {
 
 export default () => (
   <ScreenshotProvider>
+    <SiteMetadata />
     <App />
     <iframe
       src="/assets/silence.mp3"

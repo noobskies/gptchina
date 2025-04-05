@@ -3,6 +3,7 @@ import { BlinkAnimation } from './BlinkAnimation';
 import { TStartupConfig } from 'librechat-data-provider';
 import SocialLoginRender from './SocialLoginRender';
 import { ThemeSelector } from '~/components/ui';
+import DynamicLogo from '~/components/ui/DynamicLogo';
 import { Banner } from '../Banners';
 import Footer from './Footer';
 
@@ -64,10 +65,9 @@ function AuthLayout({
       <div className="hidden flex-col items-center justify-center bg-gradient-to-br from-blue-500 to-blue-600 p-8 dark:from-blue-700 dark:to-blue-800 md:flex md:w-1/2">
         <BlinkAnimation active={isFetching}>
           <div className="mb-8 h-16 w-full bg-cover">
-            <img
-              src="/assets/logo.svg"
-              className="h-full w-full object-contain"
+            <DynamicLogo
               alt={localize('com_ui_logo', { 0: startupConfig?.appTitle ?? 'Novlisky' })}
+              className="h-full w-full object-contain"
             />
           </div>
         </BlinkAnimation>
@@ -214,10 +214,9 @@ function AuthLayout({
           <div className="w-full max-w-md overflow-hidden bg-white px-6 py-4 dark:bg-gray-900 sm:rounded-lg">
             {/* Mobile Logo (visible only on small screens) */}
             <div className="mb-8 mt-6 h-10 w-full bg-cover md:hidden">
-              <img
-                src="/assets/logo.svg"
-                className="h-full w-full object-contain"
+              <DynamicLogo
                 alt={localize('com_ui_logo', { 0: startupConfig?.appTitle ?? 'Novlisky' })}
+                className="h-full w-full object-contain"
               />
             </div>
             {!hasStartupConfigError && !isFetching && (

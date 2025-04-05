@@ -5,6 +5,7 @@ import { LocalStorageKeys } from 'librechat-data-provider';
 import { useAvailablePluginsQuery } from 'librechat-data-provider/react-query';
 import type { TStartupConfig, TPlugin, TUser } from 'librechat-data-provider';
 import { mapPlugins, selectPlugins, processPlugins } from '~/utils';
+import { getSiteConfig } from '~/utils/siteConfig';
 import store from '~/store';
 
 const pluginStore: TPlugin = {
@@ -33,7 +34,12 @@ export default function useAppStartup({
 
   /** Set the app title */
   useEffect(() => {
-    const appTitle = startupConfig?.appTitle ?? '';
+    // Get the current hostname and domain-specific config
+    const hostname = window.location.hostname;
+    const siteConfig = getSiteConfig(hostname);
+
+    // Use domain-specific title or fall back to startupConfig app title
+    const appTitle = siteConfig.title || startupConfig?.appTitle || '';
     if (!appTitle) {
       return;
     }
