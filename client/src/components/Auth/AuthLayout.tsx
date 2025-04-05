@@ -73,9 +73,6 @@ function AuthLayout({
         </BlinkAnimation>
         {!isFetching && (
           <div className="max-w-md text-center">
-            <h2 className="mb-6 text-3xl font-bold text-white">
-              {startupConfig?.appTitle ?? localize('com_auth_welcome_title')}
-            </h2>
             <p className="mb-8 text-lg text-white text-opacity-90">
               {localize('com_auth_platform_description')}
             </p>
