@@ -12,15 +12,15 @@
 export const siteConfigs = {
   'gptafrica.io': {
     title: 'GPT Africa',
-    description: 'An open source chat application optimized for Africa',
+    description: 'All AI conversations in one place. Pay per call and not per month',
     favicon16: '/assets/favicon-africa-16x16.png',
     favicon32: '/assets/favicon-africa-32x32.png',
     logo: '/assets/logo-africa.png',
     appleIcon: '/assets/apple-touch-icon-180x180.png',
   },
   'gptchina.io': {
-    title: 'GPT China',
-    description: 'An open source chat application optimized for China',
+    title: 'GPT China | 人工智能领域的前沿解决方案',
+    description: '人工智能领域的前沿解决方案',
     favicon16: '/assets/favicon-china-16x16.png',
     favicon32: '/assets/favicon-china-32x32.png',
     logo: '/assets/logo-china.png',
@@ -28,7 +28,7 @@ export const siteConfigs = {
   },
   'novlisky.io': {
     title: 'Novlisky',
-    description: 'An open source chat application with support for multiple AI models',
+    description: 'All AI conversations in one place. Pay per call and not per month',
     favicon16: '/assets/favicon-novlisky-16x16.png',
     favicon32: '/assets/favicon-novlisky-32x32.png',
     logo: '/assets/logo-novlisky.png',
@@ -37,7 +37,7 @@ export const siteConfigs = {
   // Default fallback config if domain doesn't match
   default: {
     title: 'Novlisky',
-    description: 'An open source chat application with support for multiple AI models',
+    description: 'All AI conversations in one place. Pay per call and not per month',
     favicon16: '/assets/favicon-16x16.png',
     favicon32: '/assets/favicon-32x32.png',
     logo: '/assets/logo-novlisky.png',
