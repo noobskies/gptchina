@@ -2,8 +2,8 @@
   "apps": [
     {
       "appId": "02c98b92",
-      "webBuildCommand": "npm run build:data-provider && npm run build:mcp && npm run build:data-schemas && cd client && npm run build && cd .. && find client/dist -name '*.gz' -delete 2>/dev/null || true",
-      "androidPath": "client/android"
+      "root": ".",
+      "dependencyInstallCommand": "npm install && npm run frontend"
     }
   ]
 }
