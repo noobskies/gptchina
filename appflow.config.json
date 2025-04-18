@@ -4,8 +4,7 @@
       "appId": "02c98b92",
       "root": ".",
       "dependencyInstallCommand": "npm install && npm run frontend",
-      "webBuildCommand": "npx cap sync android",
-      "androidPath": "client/android"
+      "webBuildCommand": "npx cap sync android && mkdir -p android && cp -R client/android/* android/"
     }
   ]
 }
