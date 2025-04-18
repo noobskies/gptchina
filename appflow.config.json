@@ -1,10 +1,8 @@
 {
-  "name": "Novlisky",
-  "version": "1.0.0",
-  "dependencies": {},
-  "build": {
-    "android": {
-      "before_build": "npm run build:data-provider && npm run build:mcp && npm run build:data-schemas && cd client && npm run build && cd .. && find client/dist -name '*.gz' -delete 2>/dev/null || true"
+  "apps": [
+    {
+      "appId": "twa.novlisky.io",
+      "webBuildCommand": "npm run build:data-provider && npm run build:mcp && npm run build:data-schemas && cd client && npm run build && cd .. && find client/dist -name '*.gz' -delete 2>/dev/null || true"
     }
-  }
+  ]
 }
