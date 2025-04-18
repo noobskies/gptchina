@@ -94,6 +94,8 @@ const tokenValues = Object.assign(
     'gpt-4.1-nano': { prompt: 0.1, completion: 0.4 },
     'gpt-4.1-mini': { prompt: 0.4, completion: 1.6 },
     'gpt-4.1': { prompt: 2, completion: 8 },
+    'o4-mini': { prompt: 1.1, completion: 4.4 },
+    o3: { prompt: 10, completion: 40 },
     'o1-mini': { prompt: 2.36, completion: 9.2 },
 
     // Google models
