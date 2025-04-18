@@ -1,15 +1,35 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '~/components/ui/Button';
 import { Gift } from 'lucide-react';
 import { useLocalize } from '~/hooks';
 import { useClaimTokensMutation, useClaimStatusQuery, useGetUserBalance } from '~/data-provider';
 import { QueryKeys } from 'librechat-data-provider';
 import { useQueryClient } from '@tanstack/react-query';
+import './TokenAnimations.css';
 
-const ClaimTokensButton = () => {
+// Animation component to show token gain
+const TokenGainAnimation: React.FC<{ amount: number; onComplete: () => void }> = ({
+  amount,
+  onComplete,
+}) => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onComplete();
+    }, 2000); // Animation duration
+
+    return () => clearTimeout(timer);
+  }, [onComplete]);
+
+  return <div className="token-gain-animation">+{amount}</div>;
+};
+
+const ClaimTokensButton: React.FC = () => {
   const [timeRemaining, setTimeRemaining] = useState<string | null>(null);
   const [canClaim, setCanClaim] = useState(true);
   const [nextClaimTime, setNextClaimTime] = useState<Date | null>(null);
+  const [showTokenGain, setShowTokenGain] = useState(false);
+  const [tokenAmount, setTokenAmount] = useState(0);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const localize = useLocalize();
 
   // Query to check if user can claim tokens
@@ -34,6 +54,9 @@ const ClaimTokensButton = () => {
   // Mutation to claim tokens
   const { mutate: claimTokens, isLoading } = useClaimTokensMutation({
     onSuccess: (data) => {
+      // Show 100,000 tokens in the animation as requested, regardless of actual tokens gained
+      setTokenAmount(100000);
+      setShowTokenGain(true);
       setCanClaim(false);
       setNextClaimTime(new Date(data.nextClaimTime));
       refetchClaimStatus();
@@ -45,6 +68,10 @@ const ClaimTokensButton = () => {
       queryClient.invalidateQueries([QueryKeys.balance]);
     },
   });
+  // Handle animation completion
+  const handleAnimationComplete = () => {
+    setShowTokenGain(false);
+  };
 
   // Update claim status from query
   useEffect(() => {
@@ -94,21 +121,28 @@ const ClaimTokensButton = () => {
   };
 
   return (
-    <Button
-      variant={canClaim ? 'submit' : 'outline'}
-      className={`mb-2 flex w-full items-center justify-center ${
-        canClaim ? 'bg-blue-600 hover:bg-blue-700' : ''
-      }`}
-      onClick={handleClaim}
-      disabled={(!canClaim && !isError) || isLoading || isStatusLoading}
-    >
-      <Gift className="mr-2 h-4 w-4" />
-      {canClaim
-        ? localize('com_ui_claim_tokens')
-        : timeRemaining
-          ? `${localize('com_ui_claim_in')} ${timeRemaining}`
-          : localize('com_ui_claim_tokens')}
-    </Button>
+    <div className="relative">
+      {showTokenGain && (
+        <TokenGainAnimation amount={tokenAmount} onComplete={handleAnimationComplete} />
+      )}
+      <Button
+        ref={buttonRef}
+        variant={canClaim ? 'submit' : 'outline'}
+        className={`mb-2 flex w-full items-center justify-center ${
+          canClaim ? 'bg-blue-600 hover:bg-blue-700' : ''
+        } relative`}
+        onClick={handleClaim}
+        disabled={(!canClaim && !isError) || isLoading || isStatusLoading}
+      >
+        {canClaim && <div className="pulsating-circle"></div>}
+        <Gift className="mr-2 h-4 w-4" />
+        {canClaim
+          ? localize('com_ui_claim_tokens')
+          : timeRemaining
+            ? `${localize('com_ui_claim_in')} ${timeRemaining}`
+            : localize('com_ui_claim_tokens')}
+      </Button>
+    </div>
   );
 };
 

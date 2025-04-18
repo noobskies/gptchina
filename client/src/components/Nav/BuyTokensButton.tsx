@@ -1,3 +1,4 @@
+import React from 'react';
 import { useRecoilState } from 'recoil';
 import { Button } from '~/components/ui/Button';
 import { Coins } from 'lucide-react';
@@ -5,7 +6,7 @@ import CheckoutModal from './CheckoutModal';
 import { useLocalize } from '~/hooks';
 import store from '~/store';
 
-const BuyTokensButton = () => {
+const BuyTokensButton: React.FC = () => {
   const [checkoutState, setCheckoutState] = useRecoilState(store.checkoutState);
   const localize = useLocalize();
 
