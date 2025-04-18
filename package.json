@@ -8,6 +8,11 @@
     "packages/*"
   ],
   "scripts": {
+    "cap:init": "cd client && npx cap init Novlisky twa.novlisky.io",
+    "cap:add:android": "cd client && npx cap add android",
+    "cap:sync": "cd client && find dist -name '*.gz' -delete 2>/dev/null || true && npx cap sync",
+    "cap:open:android": "cd client && npx cap open android",
+    "cap:build:android": "npm run frontend && cd client && find dist -name '*.gz' -delete && npx cap sync android",
     "update": "node config/update.js",
     "add-balance": "node config/add-balance.js",
     "set-balance": "node config/set-balance.js",
