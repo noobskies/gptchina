@@ -17,11 +17,13 @@ const {
 } = require('~/server/controllers/TwoFactorController');
 const {
   checkBan,
+  logHeaders,
   loginLimiter,
   requireJwtAuth,
   checkInviteUser,
   registerLimiter,
   requireLdapAuth,
+  setBalanceConfig,
   requireLocalAuth,
   resetPasswordLimiter,
   validateRegistration,
@@ -35,9 +37,11 @@ const ldapAuth = !!process.env.LDAP_URL && !!process.env.LDAP_USER_SEARCH_BASE;
 router.post('/logout', requireJwtAuth, logoutController);
 router.post(
   '/login',
+  logHeaders,
   loginLimiter,
   checkBan,
   ldapAuth ? requireLdapAuth : requireLocalAuth,
+  setBalanceConfig,
   loginController,
 );
 router.post('/refresh', refreshController);

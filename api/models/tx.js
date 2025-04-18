@@ -91,6 +91,9 @@ const tokenValues = Object.assign(
     'gpt-3.5-turbo': { prompt: 2.56, completion: 5.1 },
     'gpt-3.5-turbo-0301': { prompt: 2.56, completion: 5.1 },
     'gpt-3.5-turbo-16k': { prompt: 2.56, completion: 5.1 },
+    'gpt-4.1-nano': { prompt: 0.1, completion: 0.4 },
+    'gpt-4.1-mini': { prompt: 0.4, completion: 1.6 },
+    'gpt-4.1': { prompt: 2, completion: 8 },
     'o1-mini': { prompt: 2.36, completion: 9.2 },
 
     // Google models
@@ -744,6 +747,12 @@ const getValueKey = (model, endpoint) => {
     return 'o1';
   } else if (modelName.includes('gpt-4.5')) {
     return 'gpt-4.5';
+  } else if (modelName.includes('gpt-4.1-nano')) {
+    return 'gpt-4.1-nano';
+  } else if (modelName.includes('gpt-4.1-mini')) {
+    return 'gpt-4.1-mini';
+  } else if (modelName.includes('gpt-4.1')) {
+    return 'gpt-4.1';
   } else if (modelName.includes('gpt-4o-2024-05-13')) {
     return 'gpt-4o-2024-05-13';
   } else if (modelName.includes('gpt-4o-mini')) {

@@ -11,6 +11,7 @@ const claimTokens = require('./claimTokens');
 const plugins = require('./plugins');
 const bedrock = require('./bedrock');
 const actions = require('./actions');
+const banner = require('./banner');
 const search = require('./search');
 const models = require('./models');
 const convos = require('./convos');
@@ -26,7 +27,6 @@ const edit = require('./edit');
 const keys = require('./keys');
 const user = require('./user');
 const ask = require('./ask');
-const banner = require('./banner');
 const stripe = require('./stripe');
 const opennode = require('./opennode');
 
@@ -41,13 +41,14 @@ module.exports = {
   oauth,
   files,
   share,
+  banner,
   agents,
-  bedrock,
   convos,
   search,
-  prompts,
   config,
   models,
+  bedrock,
+  prompts,
   plugins,
   actions,
   presets,
@@ -59,7 +60,6 @@ module.exports = {
   assistants,
   categories,
   staticRoute,
-  banner,
   stripe,
   opennode,
 };
