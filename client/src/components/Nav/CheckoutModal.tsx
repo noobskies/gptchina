@@ -17,8 +17,8 @@ import { FaCreditCard, FaWeixin, FaAlipay, FaBitcoin, FaGoogle, FaApple } from '
 
 // Initialize Stripe
 const stripePromise = loadStripe(
-  import.meta.env.VITE_APP_STRIPE_PUBLIC_KEY ||
-    'pk_test_51MwvEEHKD0byXXClhlIY96bsuIIIcdGgTenVqBnktRp8fzoUHlcI29yTj9ktyqumu2Xk1uz7KptFryWfTZz5Sdj200f3cPZSa3',
+  import.meta.env.REACT_APP_STRIPE_PUBLIC_KEY ||
+    'pk_live_51MwvEEHKD0byXXCl8IzAvUl0oZ7RE6vIz72lWUVYl5rW3zy0u3FiGtIAgsbmqSHbhkTJeZjs5VEbQMNStaaQL9xQ001pwxI3RP',
 );
 
 // Define interfaces for token packages
