@@ -1,0 +1,58 @@
+{
+  "project_info": {
+    "project_number": "397122273433",
+    "project_id": "globalgpt",
+    "storage_bucket": "globalgpt.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397122273433:android:a2b58e130f4439cafa3808",
+        "android_client_info": {
+          "package_name": "twa.novlisky.io"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "397122273433-d4tjq5l65rr8552b1t2km42lpd6nolin.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "twa.novlisky.io",
+            "certificate_hash": "a0f14ec789c02650ad00aaac1dca15cc7ea8e8ef"
+          }
+        },
+        {
+          "client_id": "397122273433-vh06gkk90ai18bj90nmfapm80udnrpso.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "twa.novlisky.io",
+            "certificate_hash": "92d4be3c863c0e4c4dc574e8a5dffb5e6f347b57"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWhSGdlqLHo8q99R41pZw-9gGZc2n_bqw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.novlisky.twa"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
