@@ -91,7 +91,9 @@ const Nav = memo(
     const computedHasNextPage = useMemo(() => {
       if (data?.pages && data.pages.length > 0) {
         const lastPage: ConversationListResponse = data.pages[data.pages.length - 1];
-        return lastPage !== null;
+        // Check for nextCursor to determine if there are more pages
+        // If nextCursor is null or undefined, there are no more pages
+        return !!lastPage?.nextCursor;
       }
       return false;
     }, [data?.pages]);

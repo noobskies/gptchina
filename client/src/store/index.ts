@@ -12,6 +12,7 @@ import lang from './language';
 import settings from './settings';
 import misc from './misc';
 import isTemporary from './temporary';
+import checkout from './checkout';
 export * from './agents';
 
 export default {
@@ -29,4 +30,5 @@ export default {
   ...settings,
   ...misc,
   ...isTemporary,
+  ...checkout,
 };

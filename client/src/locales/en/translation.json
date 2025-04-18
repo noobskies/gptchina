@@ -888,5 +888,8 @@
   "com_auth_feature_all_models": "All your favorite AI models under one roof",
   "com_auth_feature_purchase_tokens": "Flexibility to purchase additional tokens as needed",
   "com_auth_feature_user_friendly": "User-friendly experience tailored to your requirements",
-  "com_ui_output": "Output"
+  "com_ui_output": "Output",
+  "com_ui_insufficient_funds": "You've Run Out of Tokens",
+  "com_checkout_insufficient_funds_message": "Looks like you need more tokens! You have {{balance}} tokens, but this conversation requires {{cost}} tokens to continue.",
+  "com_checkout_buy_more_tokens": "Add some tokens to keep the conversation going!"
 }

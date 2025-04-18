@@ -284,9 +284,15 @@ const ReceiptView = ({
 interface CheckoutModalProps {
   open: boolean;
   onOpenChange: (isOpen: boolean) => void;
+  reason?: 'insufficient_funds' | 'manual' | null;
+  details?: {
+    balance?: number;
+    requiredTokens?: number;
+    cost?: number;
+  } | null;
 }
 
-const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
+const CheckoutModal = ({ open, onOpenChange, reason, details }: CheckoutModalProps) => {
   // Get domain-specific pricing configuration
   const [domainConfig, setDomainConfig] = useState({
     tokenPackages: defaultTokenPackages,
@@ -669,6 +675,24 @@ const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
         return (
           <>
             <div className="p-4 sm:p-6">
+              {/* Show reason for modal opening if it's due to insufficient funds */}
+              {reason === 'insufficient_funds' && details && (
+                <div className="mb-6 rounded-md border border-amber-300 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-900/30">
+                  <h3 className="text-base font-medium text-amber-800 dark:text-amber-400">
+                    {localize('com_ui_insufficient_funds' as any)}
+                  </h3>
+                  <div className="mt-2 text-sm text-amber-700 dark:text-amber-300">
+                    <p>
+                      {localize('com_checkout_insufficient_funds_message' as any, {
+                        balance: details.balance?.toLocaleString() || '0',
+                        cost: details.cost?.toLocaleString() || '0',
+                      })}
+                    </p>
+                    <p className="mt-1">{localize('com_checkout_buy_more_tokens' as any)}</p>
+                  </div>
+                </div>
+              )}
+
               {/* Token Packages */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {domainConfig.tokenPackages.map((pkg) => (

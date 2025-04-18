@@ -1,9 +1,12 @@
 // file deepcode ignore HardcodedNonCryptoSecret: No hardcoded secrets
+import React, { useEffect } from 'react';
 import { ViolationTypes, ErrorTypes, alternateName } from 'librechat-data-provider';
 import type { TOpenAIMessage } from 'librechat-data-provider';
 import type { LocalizeFunction } from '~/common';
 import { formatJSON, extractJson, isJson } from '~/utils/json';
 import useLocalize from '~/hooks/useLocalize';
+import { useSetRecoilState } from 'recoil';
+import store from '~/store';
 import CodeBlock from './CodeBlock';
 
 const localizedErrorPrefix = 'com_error';
@@ -83,6 +86,20 @@ const errorMessages = {
   token_balance: (json: TTokenBalance) => {
     const { balance, tokenCost, promptTokens, generations } = json;
     const message = `Insufficient Funds! Balance: ${balance}. Prompt tokens: ${promptTokens}. Cost: ${tokenCost}.`;
+
+    // Trigger the checkout modal to open automatically when user runs out of funds
+    window.setTimeout(() => {
+      window.dispatchEvent(
+        new CustomEvent('openCheckoutModal', {
+          detail: {
+            reason: 'insufficient_funds',
+            balance: balance,
+            requiredTokens: promptTokens,
+            cost: tokenCost,
+          },
+        }),
+      );
+    }, 300);
     return (
       <>
         {message}
@@ -106,6 +123,40 @@ const errorMessages = {
 
 const Error = ({ text }: { text: string }) => {
   const localize = useLocalize();
+  const setCheckoutState = useSetRecoilState(store.checkoutState);
+  const setIsCheckoutModalOpen = useSetRecoilState(store.isCheckoutModalOpen);
+
+  // Listen for the openCheckoutModal event
+  useEffect(() => {
+    const handleOpenCheckoutModal = (event: Event) => {
+      const customEvent = event as CustomEvent;
+
+      // Update both state atoms for compatibility
+      setIsCheckoutModalOpen(true);
+      // Update the checkout state with details if they exist
+      if (customEvent.detail) {
+        setCheckoutState({
+          isOpen: true,
+          reason: customEvent.detail.reason || null,
+          details: {
+            balance: customEvent.detail.balance,
+            requiredTokens: customEvent.detail.requiredTokens,
+            cost: customEvent.detail.cost,
+          },
+        });
+      } else {
+        setCheckoutState({
+          isOpen: true,
+          reason: null,
+          details: null,
+        });
+      }
+    };
+    window.addEventListener('openCheckoutModal', handleOpenCheckoutModal);
+    return () => {
+      window.removeEventListener('openCheckoutModal', handleOpenCheckoutModal);
+    };
+  }, [setIsCheckoutModalOpen, setCheckoutState]);
   const jsonString = extractJson(text);
   const errorMessage = text.length > 512 && !jsonString ? text.slice(0, 512) + '...' : text;
   const defaultResponse = `Something went wrong. Here's the specific error message we encountered: ${errorMessage}`;

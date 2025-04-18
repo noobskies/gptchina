@@ -1,4 +1,4 @@
-import { useMemo, memo, type FC, useCallback } from 'react';
+import { useMemo, memo, type FC, useCallback, useEffect } from 'react';
 import throttle from 'lodash/throttle';
 import { parseISO, isToday } from 'date-fns';
 import { List, AutoSizer, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
@@ -85,6 +85,12 @@ const Conversations: FC<ConversationsProps> = ({
   isLoading,
   isSearchLoading,
 }) => {
+  // Debug component mount and props
+  useEffect(() => {
+    console.log('[Conversations] Component mounted or updated');
+    console.log('[Conversations] isLoading:', isLoading);
+    console.log('[Conversations] rawConversations count:', rawConversations.length);
+  }, [rawConversations, isLoading]);
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
   const convoHeight = isSmallScreen ? 44 : 34;
 
@@ -106,6 +112,9 @@ const Conversations: FC<ConversationsProps> = ({
   );
 
   const flattenedItems = useMemo(() => {
+    console.log('[Conversations] Rebuilding flattenedItems');
+    console.log('[Conversations] Grouped conversations count:', groupedConversations.length);
+
     const items: FlattenedItem[] = [];
     groupedConversations.forEach(([groupName, convos]) => {
       items.push({ type: 'header', groupName });
@@ -113,8 +122,11 @@ const Conversations: FC<ConversationsProps> = ({
     });
 
     if (isLoading) {
+      console.log('[Conversations] Adding loading item because isLoading is true');
       items.push({ type: 'loading' } as any);
     }
+
+    console.log('[Conversations] Final flattenedItems count:', items.length);
     return items;
   }, [groupedConversations, isLoading]);
 
@@ -182,13 +194,24 @@ const Conversations: FC<ConversationsProps> = ({
   );
 
   const throttledLoadMore = useMemo(
-    () => throttle(loadMoreConversations, 300),
+    () =>
+      throttle(() => {
+        console.log('[Conversations] Throttled loadMoreConversations called');
+        loadMoreConversations();
+      }, 300),
     [loadMoreConversations],
   );
 
   const handleRowsRendered = useCallback(
     ({ stopIndex }: { stopIndex: number }) => {
+      console.log(
+        '[Conversations] handleRowsRendered - stopIndex:',
+        stopIndex,
+        'total items:',
+        flattenedItems.length,
+      );
       if (stopIndex >= flattenedItems.length - 8) {
+        console.log('[Conversations] Near end of list, triggering loadMoreConversations');
         throttledLoadMore();
       }
     },
