@@ -1,0 +1,39 @@
+{
+  "name": "Novlisky",
+  "builds": {
+    "android": {
+      "prebuild": [
+        "npm run build:data-provider",
+        "npm run build:mcp",
+        "npm run build:data-schemas",
+        "cd client && npm run build && cd ..",
+        "find client/dist -name '*.gz' -delete 2>/dev/null || true",
+        "npx cap copy android"
+      ],
+      "environmentVariables": {
+        "NODE_ENV": "production"
+      }
+    },
+    "ios": {
+      "prebuild": [
+        "npm run build:data-provider",
+        "npm run build:mcp",
+        "npm run build:data-schemas",
+        "cd client && npm run build && cd ..",
+        "find client/dist -name '*.gz' -delete 2>/dev/null || true",
+        "npx cap copy ios"
+      ],
+      "environmentVariables": {
+        "NODE_ENV": "production"
+      }
+    }
+  },
+  "hooks": {
+    "prebuild": "echo 'Starting build process for Novlisky app'"
+  },
+  "plugins": {
+    "capacitor": {
+      "androidScheme": "https"
+    }
+  }
+}
