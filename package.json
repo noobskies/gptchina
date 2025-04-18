@@ -150,8 +150,10 @@
     ]
   },
   "dependencies": {
+    "@capgo/capacitor-social-login": "^7.5.3",
     "@stripe/react-stripe-js": "^3.4.0",
     "@stripe/stripe-js": "^6.0.0",
+    "jwt-decode": "^4.0.0",
     "opennode": "^1.5.0",
     "react-icons": "^5.5.0",
     "stripe": "^17.7.0"

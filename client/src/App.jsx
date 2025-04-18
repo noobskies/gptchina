@@ -11,6 +11,7 @@ import Toast from './components/ui/Toast';
 import { LiveAnnouncer } from '~/a11y';
 import { router } from './routes';
 import SiteMetadata from './components/SiteMetadata';
+import CapacitorInit from './components/CapacitorInit';
 
 const App = () => {
   const { setError } = useApiErrorBoundary();
@@ -50,6 +51,7 @@ const App = () => {
 export default () => (
   <ScreenshotProvider>
     <SiteMetadata />
+    <CapacitorInit />
     <App />
     <iframe
       src="/assets/silence.mp3"
