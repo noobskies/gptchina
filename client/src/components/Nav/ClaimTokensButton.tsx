@@ -54,8 +54,8 @@ const ClaimTokensButton: React.FC = () => {
   // Mutation to claim tokens
   const { mutate: claimTokens, isLoading } = useClaimTokensMutation({
     onSuccess: (data) => {
-      // Show 100,000 tokens in the animation as requested, regardless of actual tokens gained
-      setTokenAmount(100000);
+      // Show 20000 tokens in the animation as requested, regardless of actual tokens gained
+      setTokenAmount(20000);
       setShowTokenGain(true);
       setCanClaim(false);
       setNextClaimTime(new Date(data.nextClaimTime));
