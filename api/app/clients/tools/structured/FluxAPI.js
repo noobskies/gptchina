@@ -111,7 +111,7 @@ class FluxAPI extends Tool {
           '/v1/flux-pro-1.1-ultra-finetuned',
         ])
         .optional()
-        .default('/v1/flux-pro-1.1')
+        .default('/v1/flux-pro-1.1-ultra') // Changed from '/v1/flux-pro-1.1' to '/v1/flux-pro-1.1-ultra'
         .describe('Endpoint to use for image generation.'),
       raw: z
         .boolean()
