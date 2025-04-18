@@ -3,12 +3,13 @@
   "builds": {
     "android": {
       "prebuild": [
+        "mkdir -p client/dist",
         "npm run build:data-provider",
         "npm run build:mcp",
         "npm run build:data-schemas",
         "cd client && npm run build && cd ..",
         "find client/dist -name '*.gz' -delete 2>/dev/null || true",
-        "npx cap copy android"
+        "npx cap sync android"
       ],
       "environmentVariables": {
         "NODE_ENV": "production"
@@ -16,12 +17,13 @@
     },
     "ios": {
       "prebuild": [
+        "mkdir -p client/dist",
         "npm run build:data-provider",
         "npm run build:mcp",
         "npm run build:data-schemas",
         "cd client && npm run build && cd ..",
         "find client/dist -name '*.gz' -delete 2>/dev/null || true",
-        "npx cap copy ios"
+        "npx cap sync ios"
       ],
       "environmentVariables": {
         "NODE_ENV": "production"
@@ -29,11 +31,7 @@
     }
   },
   "hooks": {
-    "prebuild": "echo 'Starting build process for Novlisky app'"
-  },
-  "plugins": {
-    "capacitor": {
-      "androidScheme": "https"
-    }
+    "prebuild": "echo 'Starting build process for Novlisky app'",
+    "postbuild": "echo 'Build process completed successfully'"
   }
 }
