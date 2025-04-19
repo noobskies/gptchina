@@ -4,7 +4,7 @@
       "appId": "02c98b92",
       "root": ".",
       "dependencyInstallCommand": "npm install && npm run frontend",
-      "webBuildCommand": "npx cap sync android && mkdir -p android && cp -R client/android/* android/"
+      "webBuildCommand": "find client/dist -name '*.gz' -delete && npx cap sync android && mkdir -p android && cp -R client/android/* android/"
     }
   ]
 }
