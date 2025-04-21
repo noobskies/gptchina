@@ -29,6 +29,7 @@ const user = require('./user');
 const ask = require('./ask');
 const stripe = require('./stripe');
 const opennode = require('./opennode');
+const revenuecat = require('./revenuecat');
 
 module.exports = {
   ask,
@@ -62,4 +63,5 @@ module.exports = {
   staticRoute,
   stripe,
   opennode,
+  revenuecat,
 };

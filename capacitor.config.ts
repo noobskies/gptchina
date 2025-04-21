@@ -11,6 +11,14 @@ const config: CapacitorConfig = {
       backgroundColor: '#eeeeee',
       overlays: false,
     },
+    PurchasesPlugin: {
+      apiKey: {
+        android: 'goog_PRNqHNeHMCYERXtfbPLhprIEoKd',
+        ios: 'appl_vuZAeLssHCVGtsEstmTrYnWKEey',
+      },
+      observerMode: false,
+      usesStoreKit2IfAvailable: true,
+    },
     SplashScreen: {
       launchShowDuration: 3000,
       launchAutoHide: true,

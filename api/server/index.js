@@ -139,6 +139,7 @@ const startServer = async () => {
   app.use('/api/bedrock', routes.bedrock);
   app.use('/api/stripe', routes.stripe);
   app.use('/api/opennode', routes.opennode);
+  app.use('/api/revenuecat', routes.revenuecat);
 
   app.use('/api/tags', routes.tags);
 
