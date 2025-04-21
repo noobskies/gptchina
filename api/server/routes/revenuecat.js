@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { requireJwtAuth } = require('../middleware/auth');
-const { validateUUID } = require('../middleware/validate');
+const requireJwtAuth = require('../middleware/requireJwtAuth');
 const { updateUserBalance } = require('../../models/spendTokens');
 const { logger } = require('../../config');
 const Transaction = require('../../models/Transaction');
