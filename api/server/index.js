@@ -14,6 +14,7 @@ const { connectDb, indexSync } = require('~/lib/db');
 const { isEnabled } = require('~/server/utils');
 const { ldapLogin } = require('~/strategies');
 const { logger } = require('~/config');
+const { cronJobs } = require('~/cron');
 const validateImageRequest = require('./middleware/validateImageRequest');
 const errorController = require('./controllers/ErrorController');
 const configureSocialLogins = require('./socialLogins');
@@ -35,6 +36,11 @@ const startServer = async () => {
   await connectDb();
   logger.info('Connected to MongoDB');
   await indexSync();
+
+  // Initialize cron jobs
+  logger.info('Initializing cron jobs');
+  cronJobs;
+  logger.info('Cron jobs initialized');
 
   const app = express();
   app.disable('x-powered-by');

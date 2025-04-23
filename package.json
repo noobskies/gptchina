@@ -13,6 +13,7 @@
     "set-balance": "node config/set-balance.js",
     "list-balances": "node config/list-balances.js",
     "user-stats": "node config/user-stats.js",
+    "discord-user-stats": "node api/cron/userStats.js --manual",
     "rebuild:package-lock": "node config/packages",
     "reinstall": "node config/update.js -l -g",
     "b:reinstall": "bun config/update.js -b -l -g",
@@ -147,6 +148,7 @@
   "dependencies": {
     "@stripe/react-stripe-js": "^3.4.0",
     "@stripe/stripe-js": "^6.0.0",
+    "node-cron": "^3.0.3",
     "opennode": "^1.5.0",
     "react-icons": "^5.5.0",
     "stripe": "^17.7.0"
