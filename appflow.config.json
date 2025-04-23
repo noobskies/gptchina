@@ -3,8 +3,8 @@
     {
       "appId": "02c98b92",
       "root": "client",
-      "dependencyInstallCommand": "npm install && npm run frontend",
-      "webBuildCommand": "find dist -name '*.gz' -delete && npx cap sync android && mkdir -p ../android && cp -R android/* ../android/"
+      "dependencyInstallCommand": "cd .. && npm install && npm run frontend",
+      "webBuildCommand": "find dist -name '*.gz' -delete 2>/dev/null || true && npx cap sync android && mkdir -p ../android && cp -R android/* ../android/"
     }
   ]
 }
