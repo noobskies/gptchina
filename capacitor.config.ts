@@ -9,7 +9,11 @@ const config: CapacitorConfig = {
     StatusBar: {
       style: 'dark',
       backgroundColor: '#eeeeee',
-      overlaysWebView: true,
+      overlaysWebView: false,
+    },
+    Keyboard: {
+      resize: 'body',
+      resizeOnFullScreen: true,
     },
     PurchasesPlugin: {
       apiKey: {
@@ -42,11 +46,11 @@ const config: CapacitorConfig = {
     backgroundColor: '#eeeeee',
   },
   server: {
-    androidScheme: 'https',
-    url: 'https://novlisky.io',
-    // androidScheme: 'http',
-    // cleartext: true,
-    // url: 'http://192.168.0.167:3090',
+    // androidScheme: 'https',
+    // url: 'https://novlisky.io',
+    androidScheme: 'http',
+    cleartext: true,
+    url: 'http://192.168.0.167:3090',
   },
 };
 
