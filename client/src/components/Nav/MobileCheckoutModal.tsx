@@ -84,22 +84,10 @@ const MobileCheckoutModal = ({ open, onOpenChange, reason, details }: MobileChec
   const queryClient = useQueryClient();
   const localize = useLocalize();
 
-  // Initialize RevenueCat when the modal opens
+  // Load offerings when the modal opens
   useEffect(() => {
     if (open && user?.id) {
-      const initializeRevenueCat = async () => {
-        try {
-          const initialized = await revenueCatService.initialize(user.id);
-          if (initialized) {
-            loadOfferings();
-          }
-        } catch (err) {
-          console.error('Failed to initialize RevenueCat', err);
-          setError('Failed to initialize payment system');
-        }
-      };
-
-      initializeRevenueCat();
+      loadOfferings();
     }
   }, [open, user?.id]);
 

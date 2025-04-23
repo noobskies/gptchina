@@ -3,6 +3,7 @@ import { initializeCapacitorAuth } from '~/utils/capacitorAuth';
 
 /**
  * Component that initializes Capacitor functionality on app start
+ * that doesn't require authentication
  */
 const CapacitorInit = () => {
   useEffect(() => {

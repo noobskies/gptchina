@@ -11,6 +11,14 @@ const config: CapacitorConfig = {
       backgroundColor: '#eeeeee',
       overlays: false,
     },
+    PurchasesPlugin: {
+      apiKey: {
+        android: 'goog_PRNqHNeHMCYERXtfbPLhprIEoKd',
+        ios: 'appl_vuZAeLssHCVGtsEstmTrYnWKEey',
+      },
+      observerMode: false,
+      usesStoreKit2IfAvailable: true,
+    },
     SplashScreen: {
       launchShowDuration: 3000,
       launchAutoHide: true,
@@ -34,11 +42,11 @@ const config: CapacitorConfig = {
     backgroundColor: '#eeeeee',
   },
   server: {
-    androidScheme: 'https',
-    url: 'https://novlisky.io',
-    // androidScheme: 'http',
-    // cleartext: true,
-    // url: 'http://192.168.0.167:3090',
+    // androidScheme: 'https',
+    // url: 'https://novlisky.io',
+    androidScheme: 'http',
+    cleartext: true,
+    url: 'http://192.168.0.167:3090',
   },
 };
 

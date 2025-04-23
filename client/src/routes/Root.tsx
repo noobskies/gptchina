@@ -8,6 +8,7 @@ import {
   useFileMap,
   useSearchEnabled,
 } from '~/hooks';
+import AuthenticatedCapacitorInit from '~/components/AuthenticatedCapacitorInit';
 import {
   AgentsMapContext,
   AssistantsMapContext,
@@ -63,6 +64,7 @@ export default function Root() {
       <FileMapContext.Provider value={fileMap}>
         <AssistantsMapContext.Provider value={assistantsMap}>
           <AgentsMapContext.Provider value={agentsMap}>
+            <AuthenticatedCapacitorInit />
             <Banner onHeightChange={setBannerHeight} />
             <div className="flex" style={{ height: `calc(100dvh - ${bannerHeight}px)` }}>
               <div className="relative z-0 flex h-full w-full overflow-hidden">
