@@ -1,11 +1,35 @@
 const cron = require('node-cron');
 const axios = require('axios');
+const mongoose = require('mongoose');
 const { logger } = require('../config');
 const User = require('../models/User');
 const Balance = require('../models/Balance');
 
 // Ensure environment variables are loaded
 require('dotenv').config();
+
+/**
+ * Ensures database is connected before running queries
+ * @returns {Promise<void>}
+ */
+async function ensureDbConnection() {
+  // Check mongoose connection state before proceeding
+  if (mongoose.connection.readyState !== 1) {
+    logger.warn('[cron] Database not connected, waiting for connection...');
+    // Wait for connection or timeout
+    await new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error('Database connection timeout after 30 seconds'));
+      }, 30000);
+
+      mongoose.connection.once('connected', () => {
+        clearTimeout(timeout);
+        resolve();
+      });
+    });
+    logger.info('[cron] Database connection established');
+  }
+}
 
 /**
  * Gets user overview statistics
@@ -122,62 +146,92 @@ async function runUserOverviewJob() {
   const appAuthor = process.env.VITE_APP_AUTHOR || 'LibreChat';
   try {
     logger.info(`[cron] Starting ${appAuthor}'s daily verified user overview job`);
+    // Ensure database is connected before proceeding
+    await ensureDbConnection();
+
     const overview = await getUserOverview();
     await sendUserOverviewToDiscord(overview);
     logger.info(`[cron] ${appAuthor}'s daily verified user overview job completed`);
   } catch (err) {
     logger.error(`[cron] Error in ${appAuthor}'s daily verified user overview job:`, err);
+    // Provide more detailed error information
+    if (err.name === 'MongooseError' || err.name === 'MongoError') {
+      logger.error(`[cron] MongoDB error details: ${err.message}`);
+    }
   }
 }
 
-// Schedule the job to run every day at 9 AM Chicago time
-const job = cron.schedule('0 9 * * *', runUserOverviewJob, {
-  scheduled: true,
-  timezone: 'America/Chicago',
-});
+// Variable to hold the job instance
+let job = null;
+
+/**
+ * Initializes and schedules the job
+ * @returns {Object} The scheduled job
+ */
+function initJob() {
+  // Only create the job if it doesn't exist
+  if (!job) {
+    // Schedule the job to run every day at 9 AM Chicago time
+    job = cron.schedule('0 9 * * *', runUserOverviewJob, {
+      scheduled: true,
+      timezone: 'America/Chicago',
+    });
+
+    // Log when the cron job is initialized
+    logger.info(
+      `[cron] ${
+        process.env.VITE_APP_AUTHOR || 'LibreChat'
+      }'s daily verified user overview cron job initialized and scheduled to run every day at 9 AM Chicago time`,
+    );
+
+    // Log the cron job status once a day
+    cron.schedule('0 0 * * *', () => {
+      const appAuthor = process.env.VITE_APP_AUTHOR || 'LibreChat';
+      logger.info(
+        `[cron] ${appAuthor}'s daily verified user overview cron job status: ${
+          isCronJobRunning() ? 'running' : 'stopped'
+        }`,
+      );
+    });
+  }
+
+  return job;
+}
 
 /**
  * Checks if the cron job is running
  * @returns {boolean} True if job is running
  */
 function isCronJobRunning() {
-  return job.getStatus() === 'scheduled';
+  return job ? job.getStatus() === 'scheduled' : false;
 }
-
-// Log when the cron job is initialized
-logger.info(
-  `[cron] ${
-    process.env.VITE_APP_AUTHOR || 'LibreChat'
-  }'s daily verified user overview cron job initialized and scheduled to run every day at 9 AM Chicago time`,
-);
-
-// Log the cron job status once a day
-cron.schedule('0 0 * * *', () => {
-  const appAuthor = process.env.VITE_APP_AUTHOR || 'LibreChat';
-  logger.info(
-    `[cron] ${appAuthor}'s daily verified user overview cron job status: ${
-      isCronJobRunning() ? 'running' : 'stopped'
-    }`,
-  );
-});
 
 // Check for manual execution flag
 if (process.argv.includes('--manual')) {
   logger.info('[cron] Manual execution of user overview job triggered');
-  runUserOverviewJob()
-    .then(() => {
+
+  // Make sure mongoose is connected for manual execution
+  (async () => {
+    try {
+      // Ensure database connection first
+      await ensureDbConnection();
+
+      // Then run the job
+      await runUserOverviewJob();
       logger.info('[cron] Manual execution completed');
-      // Use a slight delay to ensure all logs are printed before exit
-      setTimeout(() => process.exit(0), 1000);
-    })
-    .catch((err) => {
+
+      // Use a longer delay to ensure all database operations and logs are completed
+      setTimeout(() => process.exit(0), 3000);
+    } catch (err) {
       logger.error('[cron] Error in manual execution:', err);
+      logger.error(err.stack || err);
       process.exit(1);
-    });
+    }
+  })();
 }
 
 module.exports = {
-  job,
+  initJob,
   isCronJobRunning,
   runUserOverviewJob, // Exported for manual execution if needed
 };

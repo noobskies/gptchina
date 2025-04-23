@@ -3,8 +3,11 @@
  * Centralizes initialization and management of all cron jobs
  */
 
-const { job, isCronJobRunning, runUserOverviewJob } = require('./userStats');
 const { logger } = require('../config');
+let userStatsModule = null;
+
+// Job instances
+let userStatsJob = null;
 
 /**
  * Initialize all cron jobs
@@ -13,25 +16,42 @@ const { logger } = require('../config');
 function initCronJobs() {
   logger.info('[cron] Initializing cron jobs');
 
-  // The userStats job is automatically initialized on import
-  // Add initialization for any additional cron jobs here
+  // Only load modules when explicitly initializing
+  if (!userStatsModule) {
+    userStatsModule = require('./userStats');
+  }
+
+  // Initialize user stats job if not already running
+  if (!userStatsJob) {
+    userStatsJob = userStatsModule.initJob();
+  }
 
   logger.info('[cron] All cron jobs initialized');
 
   return {
     userStatsJob: {
-      job,
-      isRunning: isCronJobRunning,
-      runManually: runUserOverviewJob,
+      job: userStatsJob,
+      isRunning: userStatsModule.isCronJobRunning,
+      runManually: userStatsModule.runUserOverviewJob,
     },
     // Add other jobs here
   };
 }
 
-// Object containing status check functions for all jobs
-const cronJobs = initCronJobs();
-
 module.exports = {
-  cronJobs,
+  // Only export the initialization function, not the initialized jobs
   initCronJobs,
+
+  // Getter for initialized jobs - will return null if not initialized
+  get jobs() {
+    return userStatsJob
+      ? {
+        userStatsJob: {
+          job: userStatsJob,
+          isRunning: userStatsModule?.isCronJobRunning || (() => false),
+          runManually: userStatsModule?.runUserOverviewJob,
+        },
+      }
+      : null;
+  },
 };
