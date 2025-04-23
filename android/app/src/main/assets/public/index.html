@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="theme-color" content="#171717" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="description" content="Novlisky - An open source chat application with support for multiple AI models" />
+    <title>Novlisky</title>
+    <link rel="shortcut icon" href="#" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png" />
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon-180x180.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
+    <style>
+      :root {
+        --sat: env(safe-area-inset-top);
+        --sar: env(safe-area-inset-right);
+        --sab: env(safe-area-inset-bottom);
+        --sal: env(safe-area-inset-left);
+      }
+      
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        height: -webkit-fill-available;
+        /* Prevent content from being cut off at the bottom */
+        width: 100%;
+        position: fixed;
+        overflow: hidden;
+      }
+      
+      #root {
+        height: 100%;
+        width: 100%;
+        overflow: auto;
+        /* Apply safe area insets */
+        padding-top: env(safe-area-inset-top);
+        padding-top: var(--sat, 0);
+        padding-right: env(safe-area-inset-right);
+        padding-right: var(--sar, 0);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-bottom: var(--sab, 0);
+        padding-left: env(safe-area-inset-left);
+        padding-left: var(--sal, 0);
+      }
+    </style>
+    <script>
+      const theme = localStorage.getItem('color-theme');
+      const loadingContainerStyle = document.createElement('style');
+      let backgroundColor;
+
+      if (theme === 'dark') {
+        backgroundColor = '#0d0d0d';
+      } else if (theme === 'light') {
+        backgroundColor = '#ffffff';
+      } else if (theme === 'system') {
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        backgroundColor = prefersDarkScheme ? '#0d0d0d' : '#ffffff';
+      } else {
+        backgroundColor = '#ffffff';
+      }
+
+      loadingContainerStyle.innerHTML = `
+        #loading-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100vh;
+          background-color: ${backgroundColor};
+        }
+      `;
+      document.head.appendChild(loadingContainerStyle);
+    </script>
+    <script type="module" crossorigin src="/assets/markdown_highlight.YFvJ8PVJ.js"></script>
+    <script type="module" crossorigin src="/assets/markdown_large.DH79QO1b.js"></script>
+    <script type="module" crossorigin src="/assets/vendor.BwD-2nqP.js"></script>
+    <script type="module" crossorigin src="/assets/locales.jmfv_Ou6.js"></script>
+    <script type="module" crossorigin src="/assets/radix-ui.DSTsapDl.js"></script>
+    <script type="module" crossorigin src="/assets/tanstack-vendor.Ch3frAMy.js"></script>
+    <script type="module" crossorigin src="/assets/framer-motion.SCV6xeNI.js"></script>
+    <script type="module" crossorigin src="/assets/headlessui.D8Bp046-.js"></script>
+    <script type="module" crossorigin src="/assets/index.NNROY4DI.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index.DV8eI4CG.css">
+  <link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
+  <body>
+    <div id="root">
+      <div id="loading-container"></div>
+    </div>
+  </body>
+</html>
