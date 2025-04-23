@@ -18,7 +18,9 @@ class RevenueCatService {
   };
 
   async initialize(userId: string): Promise<boolean> {
-    if (this.initialized) {return true;}
+    if (this.initialized) {
+      return true;
+    }
 
     // Only initialize on mobile platforms
     if (
@@ -30,9 +32,22 @@ class RevenueCatService {
     }
 
     try {
-      await Purchases.setLogLevel({ level: LOG_LEVEL.DEBUG }); // For development
+      // Set debug log level for development
+      await Purchases.setLogLevel({ level: LOG_LEVEL.DEBUG });
 
-      // Set user ID for identifying the current user
+      // Get API key based on platform
+      const apiKey =
+        Capacitor.getPlatform() === 'ios'
+          ? 'appl_vuZAeLssHCVGtsEstmTrYnWKEey' // iOS API key from capacitor.config.ts
+          : 'goog_PRNqHNeHMCYERXtfbPLhprIEoKd'; // Android API key from capacitor.config.ts
+
+      // Configure the RevenueCat SDK - THIS IS THE CRITICAL STEP THAT WAS MISSING
+      await Purchases.configure({
+        apiKey,
+        appUserID: userId,
+      });
+
+      // Set user ID for identifying the current user (if different from initial configure)
       if (userId) {
         await Purchases.logIn({ appUserID: userId });
       }
