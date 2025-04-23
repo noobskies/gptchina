@@ -3,7 +3,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'twa.novlisky.io',
   appName: 'Novlisky',
-  webDir: 'dist',
+  webDir: 'client/dist',
   plugins: {
     App: {},
     StatusBar: {
