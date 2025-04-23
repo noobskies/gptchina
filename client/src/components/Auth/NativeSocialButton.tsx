@@ -52,7 +52,7 @@ const NativeSocialButton: React.FC<NativeSocialButtonProps> = ({
 
           if (backendResponse.ok) {
             // Refresh the authentication state
-            window.location.href = '/chat';
+            window.location.href = '/c/new';
           } else {
             console.error('Backend validation failed:', await backendResponse.text());
           }
