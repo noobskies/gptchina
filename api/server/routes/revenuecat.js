@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const requireJwtAuth = require('../middleware/requireJwtAuth');
-const { updateUserBalance } = require('../../models/spendTokens');
 const { logger } = require('../../config');
 const Transaction = require('../../models/Transaction');
+const Balance = require('../../models/Balance');
 
 /**
  * POST /api/revenuecat/verify-purchase
@@ -34,17 +34,29 @@ router.post('/verify-purchase', requireJwtAuth, async (req, res) => {
       });
     }
 
-    // Add tokens to user's balance (negative spend means adding tokens)
-    await updateUserBalance({ userId, amount: -tokensToAdd, force: true });
-
-    // Log the transaction
-    await Transaction.create({
-      userId,
-      tokens: tokensToAdd,
+    // Create a transaction to record the purchase
+    const transaction = new Transaction({
+      user: userId,
       type: 'purchase',
-      description: `Purchased ${tokensToAdd} tokens via mobile app`,
+      source: 'revenuecat',
+      rawAmount: tokensToAdd,
+      tokenValue: tokensToAdd,
+      tokenType: 'credits',
+      valueKey: 'tokenCredits',
+      rate: 1,
+      context: `Purchased ${tokensToAdd} tokens via mobile app (${platform})`,
       metadata: { packageId, platform },
     });
+
+    // Save the transaction
+    await transaction.save();
+
+    // Update the user's balance directly
+    await Balance.findOneAndUpdate(
+      { user: userId },
+      { $inc: { tokenCredits: tokensToAdd } },
+      { upsert: true, new: true },
+    );
 
     logger.info(`Successfully added ${tokensToAdd} tokens to user ${userId}`);
 
