@@ -37,6 +37,7 @@
     "@capacitor/splash-screen": "^7.0.1",
     "@capacitor/status-bar": "^7.0.1",
     "@capgo/capacitor-social-login": "^7.5.3",
+    "@revenuecat/purchases-capacitor": "^10.2.3",
     "@codesandbox/sandpack-react": "^2.19.10",
     "@dicebear/collection": "^9.2.2",
     "@dicebear/core": "^9.2.2",

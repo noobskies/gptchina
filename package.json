@@ -151,7 +151,6 @@
   },
   "dependencies": {
     "@capgo/capacitor-social-login": "^7.5.3",
-    "@revenuecat/purchases-capacitor": "^10.2.3",
     "@stripe/react-stripe-js": "^3.4.0",
     "@stripe/stripe-js": "^6.0.0",
     "jwt-decode": "^4.0.0",

@@ -9,7 +9,7 @@ const config: CapacitorConfig = {
     StatusBar: {
       style: 'dark',
       backgroundColor: '#eeeeee',
-      overlays: false,
+      overlaysWebView: true,
     },
     PurchasesPlugin: {
       apiKey: {

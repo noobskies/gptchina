@@ -66,7 +66,12 @@ export default function Root() {
           <AgentsMapContext.Provider value={agentsMap}>
             <AuthenticatedCapacitorInit />
             <Banner onHeightChange={setBannerHeight} />
-            <div className="flex" style={{ height: `calc(100dvh - ${bannerHeight}px)` }}>
+            <div
+              className="flex"
+              style={{
+                height: `calc(100dvh - ${bannerHeight}px)`,
+              }}
+            >
               <div className="relative z-0 flex h-full w-full overflow-hidden">
                 <Nav navVisible={navVisible} setNavVisible={setNavVisible} />
                 <div className="relative flex h-full max-w-full flex-1 flex-col overflow-hidden">
