@@ -213,8 +213,22 @@ if (process.argv.includes('--manual')) {
   // Make sure mongoose is connected for manual execution
   (async () => {
     try {
-      // Ensure database connection first
-      await ensureDbConnection();
+      // For manual execution, directly connect to MongoDB
+      if (mongoose.connection.readyState !== 1) {
+        const mongoUri = process.env.MONGO_URI;
+
+        if (!mongoUri) {
+          throw new Error('MONGO_URI environment variable is not set');
+        }
+
+        logger.info('[cron] Establishing direct database connection for manual execution');
+        await mongoose.connect(mongoUri, {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+        });
+
+        logger.info('[cron] Successfully connected to MongoDB directly');
+      }
 
       // Then run the job
       await runUserOverviewJob();
