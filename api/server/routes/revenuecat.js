@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const requireJwtAuth = require('../middleware/requireJwtAuth');
 const { logger } = require('../../config');
-const Transaction = require('../../models/Transaction');
+const { Transaction } = require('../../models/Transaction');
 const Balance = require('../../models/Balance');
 
 /**
