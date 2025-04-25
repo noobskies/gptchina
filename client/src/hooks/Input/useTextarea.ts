@@ -3,6 +3,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import type { TEndpointOption } from 'librechat-data-provider';
 import type { KeyboardEvent } from 'react';
+import { Capacitor } from '@capacitor/core';
 import {
   forceResize,
   insertTextAtCursor,
@@ -96,13 +97,14 @@ export default function useTextarea({
         return localize('com_endpoint_message_not_appendable');
       }
 
-      const sender = isAssistant || isAgent
-        ? getEntityName({ name: entityName, isAgent, localize })
-        : getSender(conversation as TEndpointOption);
+      const sender =
+        isAssistant || isAgent
+          ? getEntityName({ name: entityName, isAgent, localize })
+          : getSender(conversation as TEndpointOption);
 
-      return `${localize(
-        'com_endpoint_message_new', { 0: sender ? sender : localize('com_endpoint_ai') },
-      )}`;
+      return `${localize('com_endpoint_message_new', {
+        0: sender ? sender : localize('com_endpoint_ai'),
+      })}`;
     };
 
     const placeholder = getPlaceholderText();
@@ -153,6 +155,7 @@ export default function useTextarea({
 
       const isNonShiftEnter = e.key === 'Enter' && !e.shiftKey;
       const isCtrlEnter = e.key === 'Enter' && (e.ctrlKey || e.metaKey);
+      const isMobileApp = Capacitor.isNativePlatform();
 
       // NOTE: isComposing and e.key behave differently in Safari compared to other browsers, forcing us to use e.keyCode instead
       const isComposingInput = isComposing.current || e.key === 'Process' || e.keyCode === 229;
@@ -165,9 +168,10 @@ export default function useTextarea({
         e.preventDefault();
       }
 
+      // For mobile app, always insert a new line on Enter, regardless of enterToSend setting
       if (
         e.key === 'Enter' &&
-        !enterToSend &&
+        (isMobileApp || !enterToSend) &&
         !isCtrlEnter &&
         textAreaRef.current &&
         !isComposingInput
@@ -178,7 +182,8 @@ export default function useTextarea({
         return;
       }
 
-      if ((isNonShiftEnter || isCtrlEnter) && !isComposingInput) {
+      // Only send message on Enter for desktop (not mobile app) based on enterToSend setting
+      if ((isNonShiftEnter || isCtrlEnter) && !isComposingInput && !isMobileApp) {
         const globalAudio = document.getElementById(globalAudioId) as HTMLAudioElement | undefined;
         if (globalAudio) {
           console.log('Unmuting global audio');
