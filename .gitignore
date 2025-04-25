@@ -114,3 +114,15 @@ uploads/
 # owner
 release/
 !/client/src/@types/i18next.d.ts
+
+# Capacitor
+capacitor.config.json
+client/ios/
+client/android/build/
+client/android/.idea/
+client/android/variables.gradle
+client/android/app/release/
+client/ios/App/Podfile.lock
+client/ios/App/Pods/
+client/ios/App/App/public/
+client/ios/App/App/capacitor.config.json

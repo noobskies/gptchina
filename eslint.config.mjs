@@ -40,6 +40,8 @@ export default [
       'data-node/**/*',
       'meili_data/**/*',
       '**/node_modules/**/*',
+      'android/**/*',
+      'client/android/**/*',
     ],
   },
   ...fixupConfigRules(

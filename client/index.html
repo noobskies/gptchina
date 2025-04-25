@@ -12,13 +12,36 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png" />
     <link rel="apple-touch-icon" href="/assets/apple-touch-icon-180x180.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content" />
+    <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0">
     <style>
+      :root {
+        --sat: env(safe-area-inset-top);
+        --sar: env(safe-area-inset-right);
+        --sab: env(safe-area-inset-bottom);
+        --sal: env(safe-area-inset-left);
+      }
+      
       html,
       body {
         margin: 0;
         padding: 0;
         height: 100%;
+        height: -webkit-fill-available;
+        /* Prevent content from being cut off at the bottom */
+        width: 100%;
+        position: fixed;
+        overflow: hidden;
+      }
+      
+      #root {
+        height: 100%;
+        width: 100%;
+        overflow: auto;
+        /* Apply safe area insets */
+        padding-top: var(--sat, 0);
+        padding-right: var(--sar, 0);
+        padding-bottom: var(--sab, 0);
+        padding-left: var(--sal, 0);
       }
     </style>
     <script>

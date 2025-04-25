@@ -8,6 +8,7 @@ const {
 const { loginController } = require('~/server/controllers/auth/LoginController');
 const { logoutController } = require('~/server/controllers/auth/LogoutController');
 const { verify2FAWithTempToken } = require('~/server/controllers/auth/TwoFactorAuthController');
+const { mobileGoogleAuthController } = require('~/server/controllers/auth/MobileAuthController');
 const {
   enable2FA,
   verify2FA,
@@ -61,6 +62,9 @@ router.post(
   resetPasswordRequestController,
 );
 router.post('/resetPassword', checkBan, validatePasswordReset, resetPasswordController);
+
+// Mobile authentication routes
+router.post('/google/mobile', checkBan, mobileGoogleAuthController);
 
 router.get('/2fa/enable', requireJwtAuth, enable2FA);
 router.post('/2fa/verify', requireJwtAuth, verify2FA);

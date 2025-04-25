@@ -150,6 +150,7 @@ const SidePanel = ({
         style={{
           overflowY: 'auto',
           transition: 'width 0.2s ease, visibility 0s linear 0.2s',
+          paddingTop: 'env(safe-area-inset-top)',
         }}
         onExpand={() => {
           setIsCollapsed(false);

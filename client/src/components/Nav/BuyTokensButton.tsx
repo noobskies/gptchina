@@ -2,7 +2,7 @@ import React from 'react';
 import { useRecoilState } from 'recoil';
 import { Button } from '~/components/ui/Button';
 import { Coins } from 'lucide-react';
-import CheckoutModal from './CheckoutModal';
+import { CheckoutRouter } from './';
 import { useLocalize } from '~/hooks';
 import store from '~/store';
 
@@ -36,7 +36,7 @@ const BuyTokensButton: React.FC = () => {
         <Coins className="mr-2 h-4 w-4" />
         {localize('com_ui_buy_tokens')}
       </Button>
-      <CheckoutModal
+      <CheckoutRouter
         open={checkoutState.isOpen}
         onOpenChange={handleCloseModal}
         reason={checkoutState.reason}
