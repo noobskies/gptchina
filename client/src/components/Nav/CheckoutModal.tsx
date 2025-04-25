@@ -131,7 +131,7 @@ const CheckoutForm = ({ selectedPackage, selectedPayment, onSuccess, onBack, loc
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="p-4 sm:p-6">
+      <div className="p-3 sm:p-6">
         <div className="mb-4">
           <button
             type="button"
@@ -241,7 +241,7 @@ const ReceiptView = ({
 
   return (
     <>
-      <div className="p-4 sm:p-6">
+      <div className="p-3 sm:p-6">
         <div className="rounded-lg border border-border-light bg-surface-tertiary p-4">
           <h3 className="mb-2 text-lg font-medium text-text-primary">
             {localize('com_checkout_receipt')}
@@ -272,8 +272,12 @@ const ReceiptView = ({
         </div>
       </div>
 
-      <div className="flex justify-end gap-2 border-t border-border-light px-4 py-3 sm:px-6 sm:py-4">
-        <Button variant="submit" onClick={onClose} className="bg-blue-600 px-4 hover:bg-blue-700">
+      <div className="flex justify-center border-t border-border-light bg-background px-4 py-3 sm:justify-end sm:px-6 sm:py-4">
+        <Button
+          variant="submit"
+          onClick={onClose}
+          className="w-full bg-blue-600 px-4 hover:bg-blue-700 sm:w-auto"
+        >
           {localize('com_ui_close')}
         </Button>
       </div>
@@ -674,7 +678,7 @@ const CheckoutModal = ({ open, onOpenChange, reason, details }: CheckoutModalPro
       default: {
         return (
           <>
-            <div className="p-4 sm:p-6">
+            <div className="p-3 sm:p-6">
               {/* Show reason for modal opening if it's due to insufficient funds */}
               {reason === 'insufficient_funds' && details && (
                 <div className="mb-6 rounded-md border border-amber-300 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-900/30">
@@ -694,12 +698,12 @@ const CheckoutModal = ({ open, onOpenChange, reason, details }: CheckoutModalPro
               )}
 
               {/* Token Packages */}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4">
                 {domainConfig.tokenPackages.map((pkg) => (
                   <div
                     key={pkg.id}
                     className={cn(
-                      'relative cursor-pointer rounded-lg p-4 transition-all',
+                      'relative cursor-pointer rounded-lg p-3 transition-all sm:p-4',
                       selectedPackage === pkg.id
                         ? 'border border-border-light bg-surface-tertiary'
                         : 'border border-border-light hover:border-border-medium',
@@ -711,19 +715,21 @@ const CheckoutModal = ({ open, onOpenChange, reason, details }: CheckoutModalPro
                         <Check size={16} />
                       </div>
                     )}
-                    <div className="text-lg font-bold text-text-primary">{pkg.tokens}</div>
-                    <div className="text-sm text-text-secondary">
+                    <div className="text-base font-bold text-text-primary sm:text-lg">
+                      {pkg.tokens}
+                    </div>
+                    <div className="text-xs text-text-secondary sm:text-sm">
                       {localize('com_checkout_tokens')}
                     </div>
-                    <div className="mt-2 text-lg font-bold text-text-primary">
+                    <div className="mt-1 text-base font-bold text-text-primary sm:mt-2 sm:text-lg">
                       {pkg.priceDisplay}
                     </div>
                     {pkg.originalPrice && (
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-text-tertiary line-through">
+                      <div className="flex items-center gap-1 sm:gap-2">
+                        <span className="text-xs text-text-tertiary line-through sm:text-sm">
                           {pkg.originalPriceDisplay}
                         </span>
-                        <span className="rounded bg-blue-800 px-1.5 py-0.5 text-xs text-white">
+                        <span className="rounded bg-blue-800 px-1 py-0.5 text-xs text-white sm:px-1.5 sm:py-0.5">
                           {pkg.discount}
                         </span>
                       </div>
@@ -737,7 +743,7 @@ const CheckoutModal = ({ open, onOpenChange, reason, details }: CheckoutModalPro
                 <h3 className="mb-3 text-sm font-medium text-text-secondary">
                   {localize('com_checkout_payment_methods')}
                 </h3>
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <div className="grid grid-cols-2 gap-2">
                   {availablePaymentMethods.map((method) => (
                     <div
                       key={method.id}
@@ -762,8 +768,8 @@ const CheckoutModal = ({ open, onOpenChange, reason, details }: CheckoutModalPro
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 border-t border-border-light px-4 py-3 sm:px-6 sm:py-4">
-              <Button variant="outline" onClick={handleClose} className="px-4">
+            <div className="flex justify-between border-t border-border-light bg-background px-4 py-3 sm:justify-end sm:gap-2 sm:px-6 sm:py-4">
+              <Button variant="outline" onClick={handleClose} className="w-1/3 sm:w-auto sm:px-4">
                 {localize('com_ui_cancel')}
               </Button>
               {purchaseError && (
@@ -774,7 +780,7 @@ const CheckoutModal = ({ open, onOpenChange, reason, details }: CheckoutModalPro
               <Button
                 variant="submit"
                 onClick={handlePurchase}
-                className="bg-blue-600 px-4 hover:bg-blue-700"
+                className="ml-2 w-2/3 bg-blue-600 hover:bg-blue-700 sm:w-auto sm:px-4"
                 disabled={isPurchaseLoading}
               >
                 {isPurchaseLoading ? (
@@ -822,10 +828,10 @@ const CheckoutModal = ({ open, onOpenChange, reason, details }: CheckoutModalPro
           leaveFrom="opacity-100 scale-100"
           leaveTo="opacity-0 scale-95"
         >
-          <div className="fixed inset-0 flex w-screen items-center justify-center p-2 sm:p-4">
-            <DialogPanel className="max-h-[90vh] w-full overflow-auto rounded-xl bg-background shadow-2xl backdrop-blur-2xl animate-in sm:max-w-lg sm:rounded-2xl md:max-h-fit md:max-w-xl">
+          <div className="fixed inset-0 flex w-screen items-start justify-center sm:items-center sm:p-4">
+            <DialogPanel className="h-full w-full overflow-auto bg-background shadow-2xl backdrop-blur-2xl animate-in sm:h-auto sm:max-h-[90vh] sm:max-w-lg sm:rounded-2xl md:max-h-fit md:max-w-xl">
               <DialogTitle
-                className="mb-1 flex items-center justify-between p-4 pb-0 text-left sm:p-6"
+                className="sticky top-0 z-10 flex items-center justify-between border-b border-border-light bg-background p-4 text-left sm:mb-1 sm:border-b-0 sm:p-6 sm:pb-0"
                 as="div"
               >
                 <div>
