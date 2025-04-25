@@ -1,5 +1,5 @@
 import debounce from 'lodash/debounce';
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import type { TEndpointOption } from 'librechat-data-provider';
 import type { KeyboardEvent } from 'react';
@@ -17,6 +17,7 @@ import useGetSender from '~/hooks/Conversations/useGetSender';
 import useFileHandling from '~/hooks/Files/useFileHandling';
 import { useInteractionHealthCheck } from '~/data-provider';
 import { useChatContext } from '~/Providers/ChatContext';
+import { useChatFormContext } from '~/Providers';
 import useLocalize from '~/hooks/useLocalize';
 import { globalAudioId } from '~/common';
 import store from '~/store';
@@ -141,6 +142,30 @@ export default function useTextarea({
     isNotAppendable,
   ]);
 
+  // Store text that is entered while AI is responding
+  const [textDuringSubmission, setTextDuringSubmission] = useState<string | null>(null);
+
+  const { setValue } = useChatFormContext();
+
+  // Watch for isSubmitting transitions from true to false
+  useEffect(() => {
+    if (!isSubmitting && textDuringSubmission !== null && textAreaRef.current) {
+      // AI response has finished and we have captured text
+
+      // Update the form value through React Hook Form to ensure proper state sync
+      setValue('text', textDuringSubmission, { shouldValidate: true });
+
+      // Also update the DOM element directly
+      textAreaRef.current.value = textDuringSubmission;
+
+      // Force resize to adjust textarea height
+      forceResize(textAreaRef.current);
+
+      // Clear the captured text
+      setTextDuringSubmission(null);
+    }
+  }, [isSubmitting, textDuringSubmission, setValue]);
+
   const handleKeyDown = useCallback(
     (e: KeyEvent) => {
       if (textAreaRef.current && checkIfScrollable(textAreaRef.current)) {
@@ -149,6 +174,11 @@ export default function useTextarea({
       }
       if (e.key === 'Enter' && isSubmitting) {
         return;
+      }
+
+      // If the AI is responding, store the current textarea value when user types
+      if (isSubmitting && textAreaRef.current) {
+        setTextDuringSubmission(textAreaRef.current.value);
       }
 
       checkHealth();
