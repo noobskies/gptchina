@@ -3,13 +3,13 @@ import { useEffect, useRef, useCallback } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import type { TEndpointOption } from 'librechat-data-provider';
 import type { KeyboardEvent } from 'react';
-import { Capacitor } from '@capacitor/core';
 import {
   forceResize,
   insertTextAtCursor,
   getEntityName,
   getEntity,
   checkIfScrollable,
+  isMobileDevice,
 } from '~/utils';
 import { useAssistantsMapContext } from '~/Providers/AssistantsMapContext';
 import { useAgentsMapContext } from '~/Providers/AgentsMapContext';
@@ -155,7 +155,7 @@ export default function useTextarea({
 
       const isNonShiftEnter = e.key === 'Enter' && !e.shiftKey;
       const isCtrlEnter = e.key === 'Enter' && (e.ctrlKey || e.metaKey);
-      const isMobileApp = Capacitor.isNativePlatform();
+      const isMobile = isMobileDevice();
 
       // NOTE: isComposing and e.key behave differently in Safari compared to other browsers, forcing us to use e.keyCode instead
       const isComposingInput = isComposing.current || e.key === 'Process' || e.keyCode === 229;
@@ -168,10 +168,10 @@ export default function useTextarea({
         e.preventDefault();
       }
 
-      // For mobile app, always insert a new line on Enter, regardless of enterToSend setting
+      // For all mobile devices (app or web), always insert a new line on Enter
       if (
         e.key === 'Enter' &&
-        (isMobileApp || !enterToSend) &&
+        (isMobile || !enterToSend) &&
         !isCtrlEnter &&
         textAreaRef.current &&
         !isComposingInput
@@ -182,8 +182,8 @@ export default function useTextarea({
         return;
       }
 
-      // Only send message on Enter for desktop (not mobile app) based on enterToSend setting
-      if ((isNonShiftEnter || isCtrlEnter) && !isComposingInput && !isMobileApp) {
+      // Only send message on Enter for desktop devices based on enterToSend setting
+      if ((isNonShiftEnter || isCtrlEnter) && !isComposingInput && !isMobile) {
         const globalAudio = document.getElementById(globalAudioId) as HTMLAudioElement | undefined;
         if (globalAudio) {
           console.log('Unmuting global audio');

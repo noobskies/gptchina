@@ -7,6 +7,7 @@ export * from './latex';
 export * from './theme';
 export * from './forms';
 export * from './convos';
+export * from './device';
 export * from './presets';
 export * from './prompts';
 export * from './textarea';
