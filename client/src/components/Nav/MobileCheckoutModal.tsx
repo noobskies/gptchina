@@ -134,27 +134,6 @@ const MobileCheckoutModal = ({ open, onOpenChange, reason, details }: MobileChec
     }
   };
 
-  const handleRestore = async () => {
-    setIsLoading(true);
-    setError('');
-
-    try {
-      await revenueCatService.restorePurchases();
-
-      // Verify restoration on backend
-      const { request } = await import('librechat-data-provider');
-      await request.post('/api/revenuecat/restore-purchases');
-      // Refresh user balance
-      refetchBalance();
-      queryClient.invalidateQueries([QueryKeys.balance]);
-    } catch (err) {
-      console.error('Restore failed', err);
-      setError('Failed to restore purchases');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleClose = () => {
     onOpenChange(false);
     // Reset state for next time
@@ -190,14 +169,14 @@ const MobileCheckoutModal = ({ open, onOpenChange, reason, details }: MobileChec
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <div className="fixed inset-0 flex w-screen items-center justify-center p-2 sm:p-4">
-              <DialogPanel className="max-h-[90vh] w-full overflow-auto rounded-xl bg-background shadow-2xl backdrop-blur-2xl animate-in sm:max-w-lg sm:rounded-2xl md:max-h-fit md:max-w-xl">
+            <div className="fixed inset-0 flex w-screen items-start justify-center">
+              <DialogPanel className="h-full w-full overflow-auto bg-background shadow-2xl backdrop-blur-2xl animate-in">
                 <DialogTitle
-                  className="mb-1 flex items-center justify-between p-4 pb-0 text-left sm:p-6"
+                  className="sticky top-0 z-10 flex items-center justify-between border-b border-border-light bg-background p-4 text-left"
                   as="div"
                 >
                   <div>
-                    <h2 className="text-lg font-medium leading-6 text-text-primary">
+                    <h2 className="pt-6 text-lg font-medium leading-6 text-text-primary">
                       {localize('com_checkout_receipt')}
                     </h2>
                   </div>
@@ -211,7 +190,7 @@ const MobileCheckoutModal = ({ open, onOpenChange, reason, details }: MobileChec
                   </button>
                 </DialogTitle>
 
-                <div className="p-4 sm:p-6">
+                <div className="p-3 pb-20">
                   <div className="rounded-lg border border-border-light bg-surface-tertiary p-4">
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
@@ -234,11 +213,11 @@ const MobileCheckoutModal = ({ open, onOpenChange, reason, details }: MobileChec
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-2 border-t border-border-light px-4 py-3 sm:px-6 sm:py-4">
+                <div className="fixed bottom-0 left-0 right-0 flex justify-between border-t border-border-light bg-background px-4 py-3 sm:px-6 sm:py-4">
                   <Button
                     variant="submit"
                     onClick={handleClose}
-                    className="bg-blue-600 px-4 hover:bg-blue-700"
+                    className="w-full bg-blue-600 hover:bg-blue-700"
                   >
                     {localize('com_ui_close')}
                   </Button>
@@ -274,14 +253,14 @@ const MobileCheckoutModal = ({ open, onOpenChange, reason, details }: MobileChec
           leaveFrom="opacity-100 scale-100"
           leaveTo="opacity-0 scale-95"
         >
-          <div className="fixed inset-0 flex w-screen items-center justify-center p-2 sm:p-4">
-            <DialogPanel className="max-h-[90vh] w-full overflow-auto rounded-xl bg-background shadow-2xl backdrop-blur-2xl animate-in sm:max-w-lg sm:rounded-2xl md:max-h-fit md:max-w-xl">
+          <div className="fixed inset-0 flex w-screen items-start justify-center">
+            <DialogPanel className="h-full w-full overflow-auto bg-background shadow-2xl backdrop-blur-2xl animate-in">
               <DialogTitle
-                className="mb-1 flex items-center justify-between p-4 pb-0 text-left sm:p-6"
+                className="sticky top-0 z-10 flex items-center justify-between border-b border-border-light bg-background p-4 text-left"
                 as="div"
               >
                 <div>
-                  <h2 className="text-lg font-medium leading-6 text-text-primary">
+                  <h2 className="pt-6 text-lg font-medium leading-6 text-text-primary">
                     {localize('com_checkout_buy_tokens')}
                   </h2>
                   <p className="mt-1 text-sm text-text-secondary">
@@ -314,13 +293,13 @@ const MobileCheckoutModal = ({ open, onOpenChange, reason, details }: MobileChec
               )}
 
               {/* Token packages */}
-              <div className="p-4 sm:p-6">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="p-3 pb-20">
+                <div className="grid grid-cols-2 gap-3">
                   {tokenPackages.map((pkg) => (
                     <div
                       key={pkg.id}
                       className={cn(
-                        'relative cursor-pointer rounded-lg border p-4 transition-all',
+                        'relative cursor-pointer rounded-lg border p-3 transition-all',
                         selectedPackage === pkg.id
                           ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/20'
                           : 'border-gray-200 hover:border-blue-300 dark:border-gray-700',
@@ -329,22 +308,22 @@ const MobileCheckoutModal = ({ open, onOpenChange, reason, details }: MobileChec
                     >
                       {selectedPackage === pkg.id && (
                         <div className="absolute right-2 top-2 text-blue-600 dark:text-blue-400">
-                          <Check size={16} />
+                          <Check size={14} />
                         </div>
                       )}
-                      <div className="text-lg font-bold text-text-primary">{pkg.tokens}</div>
-                      <div className="text-sm text-text-secondary">
+                      <div className="text-base font-bold text-text-primary">{pkg.tokens}</div>
+                      <div className="text-xs text-text-secondary">
                         {localize('com_checkout_tokens')}
                       </div>
-                      <div className="mt-2 text-lg font-bold text-text-primary">
+                      <div className="mt-1 text-base font-bold text-text-primary">
                         {pkg.priceDisplay}
                       </div>
                       {pkg.originalPrice && (
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-text-tertiary line-through">
+                        <div className="flex items-center gap-1">
+                          <span className="text-xs text-text-tertiary line-through">
                             {pkg.originalPriceDisplay}
                           </span>
-                          <span className="rounded bg-blue-800 px-1.5 py-0.5 text-xs text-white">
+                          <span className="rounded bg-blue-800 px-1 py-0.5 text-xs text-white">
                             {pkg.discount}
                           </span>
                         </div>
@@ -361,14 +340,14 @@ const MobileCheckoutModal = ({ open, onOpenChange, reason, details }: MobileChec
               </div>
 
               {/* Action buttons */}
-              <div className="flex justify-between border-t border-border-light px-4 py-3 sm:px-6 sm:py-4">
-                <Button variant="outline" onClick={handleRestore} disabled={isLoading}>
-                  {localize('com_ui_restore')}
+              <div className="fixed bottom-0 left-0 right-0 flex justify-between border-t border-border-light bg-background px-4 py-3 sm:px-6 sm:py-4">
+                <Button variant="outline" onClick={handleClose} className="w-1/3">
+                  {localize('com_ui_cancel')}
                 </Button>
                 <Button
                   variant="submit"
                   onClick={handlePurchase}
-                  className="bg-blue-600 px-4 hover:bg-blue-700"
+                  className="ml-2 w-2/3 bg-blue-600 hover:bg-blue-700"
                   disabled={isLoading}
                 >
                   {isLoading ? (
