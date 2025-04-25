@@ -92,7 +92,7 @@ async function getUserOverview() {
  */
 async function sendUserOverviewToDiscord(overview) {
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
-  const appAuthor = process.env.VITE_APP_AUTHOR || 'LibreChat';
+  const appAuthor = process.env.EMAIL_FROM_NAME || 'LibreChat';
 
   // Return early if webhook URL is not configured
   if (!webhookUrl) {
