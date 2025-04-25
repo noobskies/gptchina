@@ -84,6 +84,11 @@ export type FormattedContent =
       };
     };
 
+export type FormattedContentResult = [
+  string | FormattedContent[],
+  undefined | { content: FormattedContent[] },
+];
+
 export type ImageFormatter = (item: ImageContent) => FormattedContent;
 
 export type FormattedToolResponse = [
