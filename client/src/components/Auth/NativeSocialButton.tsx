@@ -1,6 +1,5 @@
 import React from 'react';
 import { isNativeMobile, nativeGoogleLogin } from '~/utils/capacitorAuth';
-import { useAuthContext } from '~/hooks/AuthContext';
 
 type NativeSocialButtonProps = {
   id: string;
@@ -25,8 +24,6 @@ const NativeSocialButton: React.FC<NativeSocialButtonProps> = ({
   serverDomain,
   oauthPath,
 }) => {
-  const { login } = useAuthContext();
-
   if (!enabled) {
     return null;
   }
