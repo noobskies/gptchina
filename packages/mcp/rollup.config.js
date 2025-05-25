@@ -1,5 +1,6 @@
 // rollup.config.js
 import { readFileSync } from 'fs';
+import json from '@rollup/plugin-json';
 import terser from '@rollup/plugin-terser';
 import replace from '@rollup/plugin-replace';
 import commonjs from '@rollup/plugin-commonjs';
@@ -11,6 +12,7 @@ const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 
 
 const plugins = [
   peerDepsExternal(),
+  json(),
   resolve({
     preferBuiltins: true,
   }),

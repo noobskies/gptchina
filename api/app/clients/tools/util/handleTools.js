@@ -1,7 +1,13 @@
-const { Tools, Constants } = require('librechat-data-provider');
 const { SerpAPI } = require('@langchain/community/tools/serpapi');
 const { Calculator } = require('@langchain/community/tools/calculator');
-const { createCodeExecutionTool, EnvVar } = require('@librechat/agents');
+const { EnvVar, createCodeExecutionTool, createSearchTool } = require('@librechat/agents');
+const {
+  Tools,
+  Constants,
+  EToolResources,
+  loadWebSearchAuth,
+  replaceSpecialVars,
+} = require('librechat-data-provider');
 const { getUserPluginAuthValue } = require('~/server/services/PluginService');
 const {
   availableTools,
@@ -18,12 +24,12 @@ const {
   StructuredWolfram,
   createYouTubeTools,
   TavilySearchResults,
+  createOpenAIImageTools,
 } = require('../');
 const { primeFiles: primeCodeFiles } = require('~/server/services/Files/Code/process');
 const { createFileSearchTool, primeFiles: primeSearchFiles } = require('./fileSearch');
 const { loadAuthValues } = require('~/server/services/Tools/credentials');
 const { createMCPTool } = require('~/server/services/MCP');
-const { loadSpecs } = require('./loadSpecs');
 const { logger } = require('~/config');
 
 const mcpToolPattern = new RegExp(`^.+${Constants.mcp_delimiter}.+$`);
@@ -138,7 +144,6 @@ const loadTools = async ({
   agent,
   model,
   endpoint,
-  useSpecs,
   tools = [],
   options = {},
   functions = true,
@@ -157,7 +162,7 @@ const loadTools = async ({
   };
 
   const customConstructors = {
-    serpapi: async () => {
+    serpapi: async (_toolContextMap) => {
       const authFields = getAuthFields('serpapi');
       let envVar = authFields[0] ?? '';
       let apiKey = process.env[envVar];
@@ -170,10 +175,39 @@ const loadTools = async ({
         gl: 'us',
       });
     },
-    youtube: async () => {
+    youtube: async (_toolContextMap) => {
       const authFields = getAuthFields('youtube');
       const authValues = await loadAuthValues({ userId: user, authFields });
       return createYouTubeTools(authValues);
+    },
+    image_gen_oai: async (toolContextMap) => {
+      const authFields = getAuthFields('image_gen_oai');
+      const authValues = await loadAuthValues({ userId: user, authFields });
+      const imageFiles = options.tool_resources?.[EToolResources.image_edit]?.files ?? [];
+      let toolContext = '';
+      for (let i = 0; i < imageFiles.length; i++) {
+        const file = imageFiles[i];
+        if (!file) {
+          continue;
+        }
+        if (i === 0) {
+          toolContext =
+            'Image files provided in this request (their image IDs listed in order of appearance) available for image editing:';
+        }
+        toolContext += `\n\t- ${file.file_id}`;
+        if (i === imageFiles.length - 1) {
+          toolContext += `\n\nInclude any you need in the \`image_ids\` array when calling \`${EToolResources.image_edit}_oai\`. You may also include previously referenced or generated image IDs.`;
+        }
+      }
+      if (toolContext) {
+        toolContextMap.image_edit_oai = toolContext;
+      }
+      return createOpenAIImageTools({
+        ...authValues,
+        isAgent: !!agent,
+        req: options.req,
+        imageFiles,
+      });
     },
   };
 
@@ -200,8 +234,8 @@ const loadTools = async ({
     serpapi: { location: 'Austin,Texas,United States', hl: 'en', gl: 'us' },
   };
 
+  /** @type {Record<string, string>} */
   const toolContextMap = {};
-  const remainingTools = [];
   const appTools = options.req?.app?.locals?.availableTools ?? {};
 
   for (const tool of tools) {
@@ -234,6 +268,33 @@ const loadTools = async ({
         return createFileSearchTool({ req: options.req, files, entity_id: agent?.id });
       };
       continue;
+    } else if (tool === Tools.web_search) {
+      const webSearchConfig = options?.req?.app?.locals?.webSearch;
+      const result = await loadWebSearchAuth({
+        userId: user,
+        loadAuthValues,
+        webSearchConfig,
+      });
+      const { onSearchResults, onGetHighlights } = options?.[Tools.web_search] ?? {};
+      requestedTools[tool] = async () => {
+        toolContextMap[tool] = `# \`${tool}\`:
+Current Date & Time: ${replaceSpecialVars({ text: '{{iso_datetime}}' })}
+1. **Execute immediately without preface** when using \`${tool}\`.
+2. **After the search, begin with a brief summary** that directly addresses the query without headers or explaining your process.
+3. **Structure your response clearly** using Markdown formatting (Level 2 headers for sections, lists for multiple points, tables for comparisons).
+4. **Cite sources properly** according to the citation anchor format, utilizing group anchors when appropriate.
+5. **Tailor your approach to the query type** (academic, news, coding, etc.) while maintaining an expert, journalistic, unbiased tone.
+6. **Provide comprehensive information** with specific details, examples, and as much relevant context as possible from search results.
+7. **Avoid moralizing language.**
+`.trim();
+        return createSearchTool({
+          ...result.authResult,
+          onSearchResults,
+          onGetHighlights,
+          logger,
+        });
+      };
+      continue;
     } else if (tool && appTools[tool] && mcpToolPattern.test(tool)) {
       requestedTools[tool] = async () =>
         createMCPTool({
@@ -246,7 +307,7 @@ const loadTools = async ({
     }
 
     if (customConstructors[tool]) {
-      requestedTools[tool] = customConstructors[tool];
+      requestedTools[tool] = async () => customConstructors[tool](toolContextMap);
       continue;
     }
 
@@ -260,30 +321,6 @@ const loadTools = async ({
       );
       requestedTools[tool] = toolInstance;
       continue;
-    }
-
-    if (functions === true) {
-      remainingTools.push(tool);
-    }
-  }
-
-  let specs = null;
-  if (useSpecs === true && functions === true && remainingTools.length > 0) {
-    specs = await loadSpecs({
-      llm: model,
-      user,
-      message: options.message,
-      memory: options.memory,
-      signal: options.signal,
-      tools: remainingTools,
-      map: true,
-      verbose: false,
-    });
-  }
-
-  for (const tool of remainingTools) {
-    if (specs && specs[tool]) {
-      requestedTools[tool] = specs[tool];
     }
   }
 

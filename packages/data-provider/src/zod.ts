@@ -358,12 +358,15 @@ export function convertJsonSchemaToZod(
       const partial = Object.fromEntries(
         Object.entries(shape).map(([key, value]) => [
           key,
-          schema.required?.includes(key) === true ? value : value.optional(),
+          schema.required?.includes(key) === true ? value : value.optional().nullable(),
         ]),
       );
       objectSchema = z.object(partial);
     } else {
-      objectSchema = objectSchema.partial();
+      const partialNullable = Object.fromEntries(
+        Object.entries(shape).map(([key, value]) => [key, value.optional().nullable()]),
+      );
+      objectSchema = z.object(partialNullable);
     }
 
     // Handle additionalProperties for open-ended objects

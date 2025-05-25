@@ -718,6 +718,8 @@ const cacheTokenValues = {
   'claude-3.5-haiku': { write: 1, read: 0.08 },
   'claude-3-5-haiku': { write: 1, read: 0.08 },
   'claude-3-haiku': { write: 0.3, read: 0.03 },
+  'claude-sonnet-4': { write: 3.75, read: 0.3 },
+  'claude-opus-4': { write: 18.75, read: 1.5 },
 };
 
 /**

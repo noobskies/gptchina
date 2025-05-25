@@ -4,6 +4,7 @@ import { useWatch, useForm, FormProvider } from 'react-hook-form';
 import { useGetModelsQuery } from 'librechat-data-provider/react-query';
 import {
   Tools,
+  Constants,
   SystemRoles,
   EModelEndpoint,
   isAssistantsEndpoint,
@@ -45,7 +46,7 @@ export default function AgentPanel({
 
   const modelsQuery = useGetModelsQuery();
   const agentQuery = useGetAgentByIdQuery(current_agent_id ?? '', {
-    enabled: !!(current_agent_id ?? ''),
+    enabled: !!(current_agent_id ?? '') && current_agent_id !== Constants.EPHEMERAL_AGENT_ID,
   });
 
   const models = useMemo(() => modelsQuery.data ?? {}, [modelsQuery.data]);
@@ -86,7 +87,42 @@ export default function AgentPanel({
       });
     },
     onError: (err) => {
-      const error = err as Error;
+      const error = err as Error & {
+        statusCode?: number;
+        details?: { duplicateVersion?: any; versionIndex?: number };
+        response?: { status?: number; data?: any };
+      };
+
+      const isDuplicateVersionError =
+        (error.statusCode === 409 && error.details?.duplicateVersion) ||
+        (error.response?.status === 409 && error.response?.data?.details?.duplicateVersion);
+
+      if (isDuplicateVersionError) {
+        let versionIndex: number | undefined = undefined;
+
+        if (error.details?.versionIndex !== undefined) {
+          versionIndex = error.details.versionIndex;
+        } else if (error.response?.data?.details?.versionIndex !== undefined) {
+          versionIndex = error.response.data.details.versionIndex;
+        }
+
+        if (versionIndex === undefined || versionIndex < 0) {
+          showToast({
+            message: localize('com_agents_update_error'),
+            status: 'error',
+            duration: 5000,
+          });
+        } else {
+          showToast({
+            message: localize('com_ui_agent_version_duplicate', { versionIndex: versionIndex + 1 }),
+            status: 'error',
+            duration: 10000,
+          });
+        }
+
+        return;
+      }
+
       showToast({
         message: `${localize('com_agents_update_error')}${
           error.message ? ` ${localize('com_ui_error')}: ${error.message}` : ''
@@ -125,6 +161,9 @@ export default function AgentPanel({
       }
       if (data.file_search === true) {
         tools.push(Tools.file_search);
+      }
+      if (data.web_search === true) {
+        tools.push(Tools.web_search);
       }
 
       const {
@@ -219,7 +258,7 @@ export default function AgentPanel({
         className="scrollbar-gutter-stable h-auto w-full flex-shrink-0 overflow-x-hidden"
         aria-label="Agent configuration form"
       >
-        <div className="mx-1 mt-2 flex w-full flex-wrap gap-2">
+        <div className="mt-2 flex w-full flex-wrap gap-2">
           <div className="w-full">
             <AgentSelect
               createMutation={create}

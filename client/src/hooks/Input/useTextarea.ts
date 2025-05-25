@@ -242,7 +242,8 @@ export default function useTextarea({
     textAreaRef,
     handlePaste,
     handleKeyDown,
-    handleCompositionStart,
+    isNotAppendable,
     handleCompositionEnd,
+    handleCompositionStart,
   };
 }

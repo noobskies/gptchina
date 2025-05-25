@@ -18,6 +18,7 @@ import {
 import TermsAndConditionsModal from '~/components/ui/TermsAndConditionsModal';
 import { useUserTermsQuery, useGetStartupConfig } from '~/data-provider';
 import { Nav, MobileNav } from '~/components/Nav';
+import { useHealthCheck } from '~/data-provider';
 import { Banner } from '~/components/Banners';
 
 export default function Root() {
@@ -29,6 +30,10 @@ export default function Root() {
   });
 
   const { isAuthenticated, logout } = useAuthContext();
+
+  // Global health check - runs once per authenticated session
+  useHealthCheck(isAuthenticated);
+
   const assistantsMap = useAssistantsMap({ isAuthenticated });
   const agentsMap = useAgentsMap({ isAuthenticated });
   const fileMap = useFileMap({ isAuthenticated });
