@@ -136,20 +136,6 @@ export default defineConfig({
             if (id.includes('qrcode.react') || id.includes('@marsidev/react-turnstile')) {
               return 'security-ui';
             }
-
-            if (id.includes('@codemirror/view')) {
-              return 'codemirror-view';
-            }
-            if (id.includes('@codemirror/state')) {
-              return 'codemirror-state';
-            }
-            if (id.includes('@codemirror/language')) {
-              return 'codemirror-language';
-            }
-            if (id.includes('@codemirror')) {
-              return 'codemirror-core';
-            }
-
             if (id.includes('react-markdown') || id.includes('remark-') || id.includes('rehype-')) {
               return 'markdown-processing';
             }
