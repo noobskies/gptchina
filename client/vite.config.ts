@@ -38,12 +38,20 @@ export default defineConfig({
       },
       useCredentials: true,
       workbox: {
-        globPatterns: ['**/*'],
-        globIgnores: ['images/**/*', '**/*.map'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2,eot,ttf,otf}'],
+        globIgnores: [
+          'images/**/*',
+          '**/*.map',
+          '**/node_modules/**/*',
+          '**/*.{tsx,ts,jsx}',
+          'src/**/*',
+        ],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
         navigateFallbackDenylist: [/^\/oauth/],
+        skipWaiting: true,
+        clientsClaim: true,
       },
-      includeAssets: ['**/*'],
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
         name: 'Novlisky',
         short_name: 'Novlisky',
@@ -106,9 +114,7 @@ export default defineConfig({
         manualChunks(id: string) {
           if (id.includes('node_modules')) {
             // High-impact chunking for large libraries
-            if (id.includes('@codesandbox/sandpack')) {
-              return 'sandpack';
-            }
+            // Removed sandpack chunk to fix dependency resolution issues
             if (id.includes('react-virtualized')) {
               return 'virtualization';
             }
@@ -124,9 +130,7 @@ export default defineConfig({
             if (id.includes('@dicebear')) {
               return 'avatars';
             }
-            if (id.includes('react-dnd') || id.includes('react-flip-toolkit')) {
-              return 'react-interactions';
-            }
+            // Removed react-interactions chunk to fix React context access issues
             if (id.includes('react-hook-form')) {
               return 'forms';
             }
