@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 import { useQueryClient } from '@tanstack/react-query';
+import { Capacitor } from '@capacitor/core';
 import { QueryKeys, Constants } from 'librechat-data-provider';
 import type { TMessage } from 'librechat-data-provider';
 import type { Dispatch, SetStateAction } from 'react';
@@ -18,10 +19,16 @@ export default function MobileNav({
   const conversation = useRecoilValue(store.conversationByIndex(0));
   const { title = 'New Chat' } = conversation || {};
 
+  // Platform-specific padding to fix iOS white space issue
+  const isIOS = Capacitor.getPlatform() === 'ios';
+  const headerStyle = isIOS
+    ? { paddingTop: '8px' } // Minimal padding for iOS
+    : { paddingTop: 'env(safe-area-inset-top)' }; // Keep safe area for Android/Web
+
   return (
     <div
       className="bg-token-main-surface-primary sticky top-0 z-10 flex min-h-[40px] items-center justify-center bg-white pl-1 dark:bg-gray-800 dark:text-white md:hidden"
-      style={{ paddingTop: 'env(safe-area-inset-top)' }}
+      style={headerStyle}
     >
       <button
         type="button"
