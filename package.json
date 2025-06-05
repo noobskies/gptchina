@@ -16,6 +16,7 @@
     "cap:add:ios": "cd client && npx cap add ios",
     "cap:open:ios": "cd client && npx cap open ios",
     "cap:build:ios": "npm run frontend && cd client && find dist -name '*.gz' -delete && npx cap sync ios",
+    "cap:build:ios:bun": "npm run b:client && cd client && find dist -name '*.gz' -delete && npx cap sync ios",
     "cap:sync:ios": "cd client && find dist -name '*.gz' -delete && npx cap sync ios",
     "update": "node config/update.js",
     "add-balance": "node config/add-balance.js",
