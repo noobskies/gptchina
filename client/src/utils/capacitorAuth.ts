@@ -8,14 +8,30 @@ import { jwtDecode } from 'jwt-decode';
 export const initializeCapacitorAuth = async () => {
   if (Capacitor.isNativePlatform()) {
     try {
+      // Get platform-specific client IDs
+      const platform = Capacitor.getPlatform();
+      let webClientId;
+
+      if (platform === 'ios') {
+        // iOS client ID from GoogleService-Info.plist
+        webClientId = '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com';
+      } else if (platform === 'android') {
+        // Android client ID from google-services.json
+        webClientId = '397122273433-d4tjq5l65rr8552b1t2km42lpd6nolin.apps.googleusercontent.com';
+      } else {
+        // Fallback to web client ID
+        webClientId = '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com';
+      }
+
       // For Google login
       await SocialLogin.initialize({
         google: {
-          webClientId: '397122273433-dkp13np8tm8e5llur593tmupu05764rs.apps.googleusercontent.com',
-          // This is the web client ID from the google-services.json file
+          webClientId: webClientId,
         },
       });
-      console.log('Capacitor Social Login initialized');
+      console.log(
+        `Capacitor Social Login initialized for ${platform} with client ID: ${webClientId}`,
+      );
     } catch (error) {
       console.error('Failed to initialize Capacitor Social Login:', error);
     }
