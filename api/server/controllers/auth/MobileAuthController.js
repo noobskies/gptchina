@@ -21,9 +21,17 @@ const mobileGoogleAuthController = async (req, res) => {
 
     // Verify the ID token with Google
     const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+    // Accept tokens from all valid client IDs (iOS, Android, Web)
+    const validAudiences = [
+      process.env.GOOGLE_CLIENT_ID, // Web client ID
+      '397122273433-r5aed9p71h30699rtp2qjgcp9gdta8mb.apps.googleusercontent.com', // iOS client ID
+      '397122273433-d4tjq5l65rr8552b1t2km42lpd6nolin.apps.googleusercontent.com', // Android client ID
+    ];
+
     const ticket = await client.verifyIdToken({
       idToken,
-      audience: process.env.GOOGLE_CLIENT_ID,
+      audience: validAudiences,
     });
 
     const payload = ticket.getPayload();
