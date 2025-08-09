@@ -97,7 +97,7 @@ const tokenValues = Object.assign(
     'o4-mini': { prompt: 1.1, completion: 4.4 },
     o3: { prompt: 10, completion: 40 },
     'o1-mini': { prompt: 2.36, completion: 9.2 },
-    'gpt-5': { prompt: 1.97, completion: 7.23 },
+    'gpt-5': { prompt: 1.25, completion: 10.0 },
     'gpt-5-mini': { prompt: 0.25, completion: 2 },
     'gpt-5-nano': { prompt: 0.05, completion: 0.4 },
 
