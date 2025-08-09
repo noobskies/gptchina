@@ -97,6 +97,9 @@ const tokenValues = Object.assign(
     'o4-mini': { prompt: 1.1, completion: 4.4 },
     o3: { prompt: 10, completion: 40 },
     'o1-mini': { prompt: 2.36, completion: 9.2 },
+    'gpt-5': { prompt: 1.97, completion: 7.23 },
+    'gpt-5-mini': { prompt: 0.25, completion: 2 },
+    'gpt-5-nano': { prompt: 0.05, completion: 0.4 },
 
     // Google models
     gemini: { prompt: 0.43, completion: 1.28 },
@@ -771,6 +774,12 @@ const getValueKey = (model, endpoint) => {
     return 'gpt-4.1';
   } else if (modelName.includes('gpt-4o-2024-05-13')) {
     return 'gpt-4o-2024-05-13';
+  } else if (modelName.includes('gpt-5-nano')) {
+    return 'gpt-5-nano';
+  } else if (modelName.includes('gpt-5-mini')) {
+    return 'gpt-5-mini';
+  } else if (modelName.includes('gpt-5')) {
+    return 'gpt-5';
   } else if (modelName.includes('gpt-4o-mini')) {
     return 'gpt-4o-mini';
   } else if (modelName.includes('gpt-4o')) {
