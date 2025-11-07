@@ -1,11 +1,10 @@
 import { useMemo, memo, type FC, useCallback, useEffect } from 'react';
 import throttle from 'lodash/throttle';
-import { parseISO, isToday } from 'date-fns';
+import { Spinner, useMediaQuery } from '@librechat/client';
 import { List, AutoSizer, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
-import { useLocalize, TranslationKeys, useMediaQuery } from '~/hooks';
 import { TConversation } from 'librechat-data-provider';
+import { useLocalize, TranslationKeys } from '~/hooks';
 import { groupConversationsByDate } from '~/utils';
-import { Spinner } from '~/components/svg';
 import Convo from './Convo';
 
 interface ConversationsProps {
@@ -29,6 +28,8 @@ const LoadingSpinner = memo(() => {
   );
 });
 
+LoadingSpinner.displayName = 'LoadingSpinner';
+
 const DateLabel: FC<{ groupName: string }> = memo(({ groupName }) => {
   const localize = useLocalize();
   return (
@@ -50,27 +51,17 @@ const MemoizedConvo = memo(
     conversation,
     retainView,
     toggleNav,
-    isLatestConvo,
   }: {
     conversation: TConversation;
     retainView: () => void;
     toggleNav: () => void;
-    isLatestConvo: boolean;
   }) => {
-    return (
-      <Convo
-        conversation={conversation}
-        retainView={retainView}
-        toggleNav={toggleNav}
-        isLatestConvo={isLatestConvo}
-      />
-    );
+    return <Convo conversation={conversation} retainView={retainView} toggleNav={toggleNav} />;
   },
   (prevProps, nextProps) => {
     return (
       prevProps.conversation.conversationId === nextProps.conversation.conversationId &&
       prevProps.conversation.title === nextProps.conversation.title &&
-      prevProps.isLatestConvo === nextProps.isLatestConvo &&
       prevProps.conversation.endpoint === nextProps.conversation.endpoint
     );
   },
@@ -85,12 +76,7 @@ const Conversations: FC<ConversationsProps> = ({
   isLoading,
   isSearchLoading,
 }) => {
-  // Debug component mount and props
-  useEffect(() => {
-    console.log('[Conversations] Component mounted or updated');
-    console.log('[Conversations] isLoading:', isLoading);
-    console.log('[Conversations] rawConversations count:', rawConversations.length);
-  }, [rawConversations, isLoading]);
+  const localize = useLocalize();
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
   const convoHeight = isSmallScreen ? 44 : 34;
 
@@ -104,17 +90,7 @@ const Conversations: FC<ConversationsProps> = ({
     [filteredConversations],
   );
 
-  const firstTodayConvoId = useMemo(
-    () =>
-      filteredConversations.find((convo) => convo.updatedAt && isToday(parseISO(convo.updatedAt)))
-        ?.conversationId ?? undefined,
-    [filteredConversations],
-  );
-
   const flattenedItems = useMemo(() => {
-    console.log('[Conversations] Rebuilding flattenedItems');
-    console.log('[Conversations] Grouped conversations count:', groupedConversations.length);
-
     const items: FlattenedItem[] = [];
     groupedConversations.forEach(([groupName, convos]) => {
       items.push({ type: 'header', groupName });
@@ -122,11 +98,9 @@ const Conversations: FC<ConversationsProps> = ({
     });
 
     if (isLoading) {
-      console.log('[Conversations] Adding loading item because isLoading is true');
       items.push({ type: 'loading' } as any);
     }
 
-    console.log('[Conversations] Final flattenedItems count:', items.length);
     return items;
   }, [groupedConversations, isLoading]);
 
@@ -166,26 +140,25 @@ const Conversations: FC<ConversationsProps> = ({
           </CellMeasurer>
         );
       }
+      let rendering: JSX.Element;
+      if (item.type === 'header') {
+        rendering = <DateLabel groupName={item.groupName} />;
+      } else if (item.type === 'convo') {
+        rendering = (
+          <MemoizedConvo conversation={item.convo} retainView={moveToTop} toggleNav={toggleNav} />
+        );
+      }
       return (
         <CellMeasurer cache={cache} columnIndex={0} key={key} parent={parent} rowIndex={index}>
           {({ registerChild }) => (
             <div ref={registerChild} style={style}>
-              {item.type === 'header' ? (
-                <DateLabel groupName={item.groupName} />
-              ) : item.type === 'convo' ? (
-                <MemoizedConvo
-                  conversation={item.convo}
-                  retainView={moveToTop}
-                  toggleNav={toggleNav}
-                  isLatestConvo={item.convo.conversationId === firstTodayConvoId}
-                />
-              ) : null}
+              {rendering}
             </div>
           )}
         </CellMeasurer>
       );
     },
-    [cache, flattenedItems, firstTodayConvoId, moveToTop, toggleNav],
+    [cache, flattenedItems, moveToTop, toggleNav],
   );
 
   const getRowHeight = useCallback(
@@ -196,7 +169,6 @@ const Conversations: FC<ConversationsProps> = ({
   const throttledLoadMore = useMemo(
     () =>
       throttle(() => {
-        console.log('[Conversations] Throttled loadMoreConversations called');
         loadMoreConversations();
       }, 300),
     [loadMoreConversations],
@@ -204,14 +176,7 @@ const Conversations: FC<ConversationsProps> = ({
 
   const handleRowsRendered = useCallback(
     ({ stopIndex }: { stopIndex: number }) => {
-      console.log(
-        '[Conversations] handleRowsRendered - stopIndex:',
-        stopIndex,
-        'total items:',
-        flattenedItems.length,
-      );
       if (stopIndex >= flattenedItems.length - 8) {
-        console.log('[Conversations] Near end of list, triggering loadMoreConversations');
         throttledLoadMore();
       }
     },
@@ -223,7 +188,7 @@ const Conversations: FC<ConversationsProps> = ({
       {isSearchLoading ? (
         <div className="flex flex-1 items-center justify-center">
           <Spinner className="text-text-primary" />
-          <span className="ml-2 text-text-primary">Loading...</span>
+          <span className="ml-2 text-text-primary">{localize('com_ui_loading')}</span>
         </div>
       ) : (
         <div className="flex-1">
@@ -240,7 +205,6 @@ const Conversations: FC<ConversationsProps> = ({
                 overscanRowCount={10}
                 className="outline-none"
                 style={{ outline: 'none' }}
-                role="list"
                 aria-label="Conversations"
                 onRowsRendered={handleRowsRendered}
                 tabIndex={-1}

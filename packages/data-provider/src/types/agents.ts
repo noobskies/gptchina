@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { StepTypes, ContentTypes, ToolCallTypes } from './runs';
+import type { TAttachment, TPlugin } from 'src/schemas';
 import type { FunctionToolCall } from './assistants';
-import type { TAttachment } from 'src/schemas';
 
 export namespace Agents {
   export type MessageType = 'human' | 'ai' | 'generic' | 'system' | 'function' | 'tool' | 'remove';
@@ -278,4 +278,122 @@ export type ToolCallResult = {
   blockIndex?: number;
   conversationId: string;
   attachments?: TAttachment[];
+};
+
+export enum AuthTypeEnum {
+  ServiceHttp = 'service_http',
+  OAuth = 'oauth',
+  None = 'none',
+}
+
+export enum AuthorizationTypeEnum {
+  Bearer = 'bearer',
+  Basic = 'basic',
+  Custom = 'custom',
+}
+
+export enum TokenExchangeMethodEnum {
+  DefaultPost = 'default_post',
+  BasicAuthHeader = 'basic_auth_header',
+}
+
+export type Action = {
+  action_id: string;
+  type?: string;
+  settings?: Record<string, unknown>;
+  metadata: ActionMetadata;
+  version: number | string;
+} & ({ assistant_id: string; agent_id?: never } | { assistant_id?: never; agent_id: string });
+
+export type ActionMetadata = {
+  api_key?: string;
+  auth?: ActionAuth;
+  domain?: string;
+  privacy_policy_url?: string;
+  raw_spec?: string;
+  oauth_client_id?: string;
+  oauth_client_secret?: string;
+};
+
+export type ActionAuth = {
+  authorization_type?: AuthorizationTypeEnum;
+  custom_auth_header?: string;
+  type?: AuthTypeEnum;
+  authorization_content_type?: string;
+  authorization_url?: string;
+  client_url?: string;
+  scope?: string;
+  token_exchange_method?: TokenExchangeMethodEnum;
+};
+
+export type ActionMetadataRuntime = ActionMetadata & {
+  oauth_access_token?: string;
+  oauth_refresh_token?: string;
+  oauth_token_expires_at?: Date;
+};
+
+export type MCP = {
+  mcp_id: string;
+  metadata: MCPMetadata;
+} & ({ assistant_id: string; agent_id?: never } | { assistant_id?: never; agent_id?: string });
+
+export type MCPMetadata = Omit<ActionMetadata, 'auth'> & {
+  name?: string;
+  description?: string;
+  url?: string;
+  tools?: string[];
+  auth?: MCPAuth;
+  icon?: string;
+  trust?: boolean;
+};
+
+export type MCPAuth = ActionAuth;
+
+export type AgentToolType = {
+  tool_id: string;
+  metadata: ToolMetadata;
+} & ({ assistant_id: string; agent_id?: never } | { assistant_id?: never; agent_id?: string });
+
+export type ToolMetadata = TPlugin;
+
+export interface BaseMessage {
+  content: string;
+  role?: string;
+  [key: string]: unknown;
+}
+
+export interface BaseGraphState {
+  [key: string]: unknown;
+}
+
+export type GraphEdge = {
+  /** Agent ID, use a list for multiple sources */
+  from: string | string[];
+  /** Agent ID, use a list for multiple destinations */
+  to: string | string[];
+  description?: string;
+  /** Can return boolean or specific destination(s) */
+  condition?: (state: BaseGraphState) => boolean | string | string[];
+  /** 'handoff' creates tools for dynamic routing, 'direct' creates direct edges, which also allow parallel execution */
+  edgeType?: 'handoff' | 'direct';
+  /**
+   * For direct edges: Optional prompt to add when transitioning through this edge.
+   * String prompts can include variables like {results} which will be replaced with
+   * messages from startIndex onwards. When {results} is used, excludeResults defaults to true.
+   *
+   * For handoff edges: Description for the input parameter that the handoff tool accepts,
+   * allowing the supervisor to pass specific instructions/context to the transferred agent.
+   */
+  prompt?: string | ((messages: BaseMessage[], runStartIndex: number) => string | undefined);
+  /**
+   * When true, excludes messages from startIndex when adding prompt.
+   * Automatically set to true when {results} variable is used in prompt.
+   */
+  excludeResults?: boolean;
+  /**
+   * For handoff edges: Customizes the parameter name for the handoff input.
+   * Defaults to "instructions" if not specified.
+   * Only applies when prompt is provided for handoff edges.
+   */
+  promptKey?: string;
 };

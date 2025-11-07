@@ -1,25 +1,33 @@
-import path from 'path';
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { VitePWA } from 'vite-plugin-pwa';
-import { visualizer } from 'rollup-plugin-visualizer';
+// @ts-ignore
+import path from 'path';
+import type { Plugin } from 'vite';
+import { defineConfig } from 'vite';
 import { compression } from 'vite-plugin-compression2';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
-import type { Plugin } from 'vite';
+import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vitejs.dev/config/
-export default defineConfig({
+const backendPort = (process.env.BACKEND_PORT && Number(process.env.BACKEND_PORT)) || 3080;
+const backendURL = process.env.HOST
+  ? `http://${process.env.HOST}:${backendPort}`
+  : `http://localhost:${backendPort}`;
+
+export default defineConfig(({ command }) => ({
+  base: '',
   server: {
-    host: '0.0.0.0', // Changed from 'localhost' to allow connections from other devices
-    port: 3090,
+    allowedHosts:
+      (process.env.VITE_ALLOWED_HOSTS && process.env.VITE_ALLOWED_HOSTS.split(',')) || [],
+    host: '0.0.0.0', // Keep your mobile-friendly host
+    port: (process.env.PORT && Number(process.env.PORT)) || 3090,
     strictPort: false,
     proxy: {
       '/api': {
-        target: 'http://localhost:3080',
+        target: backendURL,
         changeOrigin: true,
       },
       '/oauth': {
-        target: 'http://localhost:3080',
+        target: backendURL,
         changeOrigin: true,
       },
     },
@@ -37,51 +45,50 @@ export default defineConfig({
         enabled: false, // disable service worker registration in development mode
       },
       useCredentials: true,
+      includeManifestIcons: false,
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2,eot,ttf,otf}'],
-        globIgnores: [
-          'images/**/*',
-          '**/*.map',
-          '**/node_modules/**/*',
-          '**/*.{tsx,ts,jsx}',
-          'src/**/*',
+        globPatterns: [
+          '**/*.{js,css,html}',
+          'assets/favicon*.png',
+          'assets/icon-*.png',
+          'assets/apple-touch-icon*.png',
+          'assets/maskable-icon.png',
+          'manifest.webmanifest',
         ],
+        globIgnores: ['images/**/*', '**/*.map', 'index.html'],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
-        navigateFallbackDenylist: [/^\/oauth/],
-        skipWaiting: true,
-        clientsClaim: true,
+        navigateFallbackDenylist: [/^\/oauth/, /^\/api/],
       },
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      includeAssets: [],
       manifest: {
         name: 'Novlisky',
         short_name: 'Novlisky',
-        start_url: '/',
         display: 'standalone',
         background_color: '#000000',
         theme_color: '#009688',
         icons: [
           {
-            src: '/assets/favicon-32x32.png',
+            src: 'assets/favicon-32x32.png',
             sizes: '32x32',
             type: 'image/png',
           },
           {
-            src: '/assets/favicon-16x16.png',
+            src: 'assets/favicon-16x16.png',
             sizes: '16x16',
             type: 'image/png',
           },
           {
-            src: '/assets/apple-touch-icon-180x180.png',
+            src: 'assets/apple-touch-icon-180x180.png',
             sizes: '180x180',
             type: 'image/png',
           },
           {
-            src: '/assets/icon-192x192.png',
+            src: 'assets/icon-192x192.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: '/assets/maskable-icon.png',
+            src: 'assets/maskable-icon.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable',
@@ -93,95 +100,123 @@ export default defineConfig({
     compression({
       threshold: 10240,
     }),
-    process.env.VITE_BUNDLE_ANALYSIS === 'true' &&
-      visualizer({
-        filename: 'dist/bundle-analysis.html',
-        open: true,
-        gzipSize: true,
-        brotliSize: true,
-        template: 'treemap', // 'treemap' | 'sunburst' | 'network'
-      }),
-  ].filter(Boolean),
-  publicDir: './public',
+  ],
+  publicDir: command === 'serve' ? './public' : false,
   build: {
     sourcemap: process.env.NODE_ENV === 'development',
     outDir: './dist',
     minify: 'terser',
     rollupOptions: {
       preserveEntrySignatures: 'strict',
-      // external: ['uuid'],
       output: {
         manualChunks(id: string) {
-          if (id.includes('node_modules')) {
+          const normalizedId = id.replace(/\\/g, '/');
+          if (normalizedId.includes('node_modules')) {
             // High-impact chunking for large libraries
-            // Removed sandpack chunk to fix dependency resolution issues
-            if (id.includes('react-virtualized')) {
+            // Removed sandpack chunk per your optimization
+            if (normalizedId.includes('react-virtualized')) {
               return 'virtualization';
             }
-            if (id.includes('i18next') || id.includes('react-i18next')) {
+            if (normalizedId.includes('i18next') || normalizedId.includes('react-i18next')) {
               return 'i18n';
             }
-            if (id.includes('lodash')) {
+            if (normalizedId.includes('lodash')) {
               return 'utilities';
             }
-            if (id.includes('date-fns')) {
+            if (normalizedId.includes('date-fns')) {
               return 'date-utils';
             }
-            if (id.includes('@dicebear')) {
+            if (normalizedId.includes('@dicebear')) {
               return 'avatars';
             }
-            // Removed react-interactions chunk to fix React context access issues
-            if (id.includes('react-hook-form')) {
+            // Removed react-interactions chunk per your optimization
+            if (normalizedId.includes('react-hook-form')) {
               return 'forms';
             }
-            if (id.includes('react-router-dom')) {
+            if (normalizedId.includes('react-router-dom')) {
               return 'routing';
             }
-            if (id.includes('qrcode.react') || id.includes('@marsidev/react-turnstile')) {
+            if (
+              normalizedId.includes('qrcode.react') ||
+              normalizedId.includes('@marsidev/react-turnstile')
+            ) {
               return 'security-ui';
             }
-            if (id.includes('react-markdown') || id.includes('remark-') || id.includes('rehype-')) {
+
+            // New CodeMirror chunks from upstream
+            if (normalizedId.includes('@codemirror/view')) {
+              return 'codemirror-view';
+            }
+            if (normalizedId.includes('@codemirror/state')) {
+              return 'codemirror-state';
+            }
+            if (normalizedId.includes('@codemirror/language')) {
+              return 'codemirror-language';
+            }
+            if (normalizedId.includes('@codemirror')) {
+              return 'codemirror-core';
+            }
+
+            if (
+              normalizedId.includes('react-markdown') ||
+              normalizedId.includes('remark-') ||
+              normalizedId.includes('rehype-')
+            ) {
               return 'markdown-processing';
             }
-            if (id.includes('monaco-editor') || id.includes('@monaco-editor')) {
+            if (normalizedId.includes('monaco-editor') || normalizedId.includes('@monaco-editor')) {
               return 'code-editor';
             }
-            if (id.includes('react-window') || id.includes('react-virtual')) {
+            if (normalizedId.includes('react-window') || normalizedId.includes('react-virtual')) {
               return 'virtualization';
             }
-            if (id.includes('zod') || id.includes('yup') || id.includes('joi')) {
+            if (
+              normalizedId.includes('zod') ||
+              normalizedId.includes('yup') ||
+              normalizedId.includes('joi')
+            ) {
               return 'validation';
             }
-            if (id.includes('axios') || id.includes('ky') || id.includes('fetch')) {
+            if (
+              normalizedId.includes('axios') ||
+              normalizedId.includes('ky') ||
+              normalizedId.includes('fetch')
+            ) {
               return 'http-client';
             }
-            if (id.includes('react-spring') || id.includes('react-transition-group')) {
+            if (
+              normalizedId.includes('react-spring') ||
+              normalizedId.includes('react-transition-group')
+            ) {
               return 'animations';
             }
-            if (id.includes('react-select') || id.includes('downshift')) {
+            if (normalizedId.includes('react-select') || normalizedId.includes('downshift')) {
               return 'advanced-inputs';
+            }
+            if (normalizedId.includes('heic-to')) {
+              return 'heic-converter';
             }
 
             // Existing chunks
-            if (id.includes('@radix-ui')) {
+            if (normalizedId.includes('@radix-ui')) {
               return 'radix-ui';
             }
-            if (id.includes('framer-motion')) {
+            if (normalizedId.includes('framer-motion')) {
               return 'framer-motion';
             }
-            if (id.includes('node_modules/highlight.js')) {
+            if (normalizedId.includes('node_modules/highlight.js')) {
               return 'markdown_highlight';
             }
-            if (id.includes('katex') || id.includes('node_modules/katex')) {
+            if (normalizedId.includes('katex') || normalizedId.includes('node_modules/katex')) {
               return 'math-katex';
             }
-            if (id.includes('node_modules/hast-util-raw')) {
+            if (normalizedId.includes('node_modules/hast-util-raw')) {
               return 'markdown_large';
             }
-            if (id.includes('@tanstack')) {
+            if (normalizedId.includes('@tanstack')) {
               return 'tanstack-vendor';
             }
-            if (id.includes('@headlessui')) {
+            if (normalizedId.includes('@headlessui')) {
               return 'headlessui';
             }
 
@@ -189,7 +224,7 @@ export default defineConfig({
             return 'vendor';
           }
           // Create a separate chunk for all locale files under src/locales.
-          if (id.includes(path.join('src', 'locales'))) {
+          if (normalizedId.includes('/src/locales/')) {
             return 'locales';
           }
           // Let Rollup decide automatically for any other files.
@@ -220,14 +255,16 @@ export default defineConfig({
   resolve: {
     alias: {
       '~': path.join(__dirname, 'src/'),
-      $fonts: '/fonts',
+      $fonts: path.resolve(__dirname, 'public/fonts'),
+      'micromark-extension-math': 'micromark-extension-llm-math',
     },
   },
-});
+}));
 
 interface SourcemapExclude {
   excludeNodeModules?: boolean;
 }
+
 export function sourcemapExclude(opts?: SourcemapExclude): Plugin {
   return {
     name: 'sourcemap-exclude',

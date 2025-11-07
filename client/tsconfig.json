@@ -36,6 +36,8 @@
     "env.d.ts",
     "../config/translations/**/*.ts",
     "capacitor.config.ts",
-    "../capacitor.config.ts"
+    "../capacitor.config.ts",
+    "../packages/client/src/hooks/useDelayedRender.tsx",
+    "../packages/client/src/components/InfoHoverCard.tsx"
   ]
 }

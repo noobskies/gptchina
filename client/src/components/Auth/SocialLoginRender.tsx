@@ -5,7 +5,8 @@ import {
   GithubIcon,
   DiscordIcon,
   AppleIcon,
-} from '~/components';
+  SamlIcon,
+} from '@librechat/client';
 
 import SocialButton from './SocialButton';
 import NativeSocialButton from './NativeSocialButton';
@@ -97,6 +98,23 @@ function SocialLoginRender({
         }
         label={startupConfig.openidLabel}
         id="openid"
+      />
+    ),
+    saml: startupConfig.samlLoginEnabled && (
+      <SocialButton
+        key="saml"
+        enabled={startupConfig.samlLoginEnabled}
+        serverDomain={startupConfig.serverDomain}
+        oauthPath="saml"
+        Icon={() =>
+          startupConfig.samlImageUrl ? (
+            <img src={startupConfig.samlImageUrl} alt="SAML Logo" className="h-5 w-5" />
+          ) : (
+            <SamlIcon />
+          )
+        }
+        label={startupConfig.samlLabel ? startupConfig.samlLabel : localize('com_auth_saml_login')}
+        id="saml"
       />
     ),
   };

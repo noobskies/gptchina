@@ -14,6 +14,7 @@ import misc from './misc';
 import isTemporary from './temporary';
 import checkout from './checkout';
 export * from './agents';
+export * from './mcp';
 
 export default {
   ...artifacts,

@@ -3,15 +3,11 @@ import _axios from 'axios';
 import { URL } from 'url';
 import crypto from 'crypto';
 import { load } from 'js-yaml';
-import type {
-  FunctionTool,
-  Schema,
-  Reference,
-  ActionMetadata,
-  ActionMetadataRuntime,
-} from './types/assistants';
+import type { ActionMetadata, ActionMetadataRuntime } from './types/agents';
+import type { FunctionTool, Schema, Reference } from './types/assistants';
+import { AuthTypeEnum, AuthorizationTypeEnum } from './types/agents';
 import type { OpenAPIV3 } from 'openapi-types';
-import { Tools, AuthTypeEnum, AuthorizationTypeEnum } from './types/assistants';
+import { Tools } from './types/assistants';
 
 export type ParametersSchema = {
   type: string;
@@ -504,10 +500,11 @@ export function openapiToFunction(
         }
       }
 
+      let contentType = '';
       if (operationObj.requestBody) {
         const requestBody = operationObj.requestBody as RequestBodyObject;
         const content = requestBody.content;
-        const contentType = Object.keys(content ?? {})[0];
+        contentType = Object.keys(content ?? {})[0];
         const schema = content?.[contentType]?.schema;
         const resolvedSchema = resolveRef(
           schema as OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject,
@@ -526,6 +523,8 @@ export function openapiToFunction(
             paramLocations[key] = 'body';
           }
         }
+
+        contentType = contentType ?? 'application/json';
       }
 
       const functionSignature = new FunctionSignature(
@@ -542,7 +541,7 @@ export function openapiToFunction(
         method,
         operationId,
         !!(operationObj['x-openai-isConsequential'] ?? false),
-        operationObj.requestBody ? 'application/json' : '',
+        contentType,
         paramLocations,
       );
 

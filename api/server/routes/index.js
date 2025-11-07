@@ -1,15 +1,16 @@
+const accessPermissions = require('./accessPermissions');
 const assistants = require('./assistants');
 const categories = require('./categories');
 const tokenizer = require('./tokenizer');
 const endpoints = require('./endpoints');
 const staticRoute = require('./static');
 const messages = require('./messages');
+const memories = require('./memories');
 const presets = require('./presets');
 const prompts = require('./prompts');
 const balance = require('./balance');
 const claimTokens = require('./claimTokens');
 const plugins = require('./plugins');
-const bedrock = require('./bedrock');
 const actions = require('./actions');
 const banner = require('./banner');
 const search = require('./search');
@@ -26,13 +27,13 @@ const auth = require('./auth');
 const edit = require('./edit');
 const keys = require('./keys');
 const user = require('./user');
-const ask = require('./ask');
+const mcp = require('./mcp');
 const stripe = require('./stripe');
 const opennode = require('./opennode');
 const revenuecat = require('./revenuecat');
 
 module.exports = {
-  ask,
+  mcp,
   edit,
   auth,
   keys,
@@ -48,7 +49,6 @@ module.exports = {
   search,
   config,
   models,
-  bedrock,
   prompts,
   plugins,
   actions,
@@ -56,11 +56,13 @@ module.exports = {
   balance,
   claimTokens,
   messages,
+  memories,
   endpoints,
   tokenizer,
   assistants,
   categories,
   staticRoute,
+  accessPermissions,
   stripe,
   opennode,
   revenuecat,

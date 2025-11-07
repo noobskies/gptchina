@@ -1,61 +1,22 @@
-import type { Agent, TAgentsEndpoint } from 'librechat-data-provider';
 import { ChevronLeft } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
-import type { AgentPanelProps } from '~/common';
-import { Panel } from '~/common';
+import { useToastContext } from '@librechat/client';
 import { useGetAgentByIdQuery, useRevertAgentVersionMutation } from '~/data-provider';
-import { useLocalize, useToast } from '~/hooks';
-import VersionContent from './VersionContent';
+import type { AgentWithVersions, VersionContext } from './types';
 import { isActiveVersion } from './isActiveVersion';
+import { useAgentPanelContext } from '~/Providers';
+import VersionContent from './VersionContent';
+import { useLocalize } from '~/hooks';
+import { Panel } from '~/common';
 
-export type VersionRecord = Record<string, any>;
-
-export type AgentState = {
-  name: string | null;
-  description: string | null;
-  instructions: string | null;
-  artifacts?: string | null;
-  capabilities?: string[];
-  tools?: string[];
-} | null;
-
-export type VersionWithId = {
-  id: number;
-  originalIndex: number;
-  version: VersionRecord;
-  isActive: boolean;
-};
-
-export type VersionContext = {
-  versions: VersionRecord[];
-  versionIds: VersionWithId[];
-  currentAgent: AgentState;
-  selectedAgentId: string;
-  activeVersion: VersionRecord | null;
-};
-
-export interface AgentWithVersions extends Agent {
-  capabilities?: string[];
-  versions?: Array<VersionRecord>;
-}
-
-export type VersionPanelProps = {
-  agentsConfig: TAgentsEndpoint | null;
-  setActivePanel: AgentPanelProps['setActivePanel'];
-  selectedAgentId?: string;
-};
-
-export default function VersionPanel({ setActivePanel, selectedAgentId = '' }: VersionPanelProps) {
+export default function VersionPanel() {
   const localize = useLocalize();
-  const { showToast } = useToast();
-  const {
-    data: agent,
-    isLoading,
-    error,
-    refetch,
-  } = useGetAgentByIdQuery(selectedAgentId, {
-    enabled: !!selectedAgentId && selectedAgentId !== '',
-  });
+  const { showToast } = useToastContext();
+  const { agent_id, setActivePanel } = useAgentPanelContext();
+
+  const selectedAgentId = agent_id ?? '';
+
+  const { data: agent, isLoading, error, refetch } = useGetAgentByIdQuery(selectedAgentId);
 
   const revertAgentVersion = useRevertAgentVersionMutation({
     onSuccess: () => {

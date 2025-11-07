@@ -1,4 +1,6 @@
 const { nanoid } = require('nanoid');
+const { sendEvent } = require('@librechat/api');
+const { logger } = require('@librechat/data-schemas');
 const { Tools, StepTypes, FileContext } = require('librechat-data-provider');
 const {
   EnvVar,
@@ -9,10 +11,10 @@ const {
   handleToolCalls,
   ChatModelStreamHandler,
 } = require('@librechat/agents');
+const { processFileCitations } = require('~/server/services/Files/Citations');
 const { processCodeOutput } = require('~/server/services/Files/Code/process');
 const { loadAuthValues } = require('~/server/services/Tools/credentials');
 const { saveBase64Image } = require('~/server/services/Files/process');
-const { logger, sendEvent } = require('~/config');
 
 class ModelEndHandler {
   /**
@@ -94,6 +96,19 @@ class ModelEndHandler {
 }
 
 /**
+ * @deprecated Agent Chain helper
+ * @param {string | undefined} [last_agent_id]
+ * @param {string | undefined} [langgraph_node]
+ * @returns {boolean}
+ */
+function checkIfLastAgent(last_agent_id, langgraph_node) {
+  if (!last_agent_id || !langgraph_node) {
+    return false;
+  }
+  return langgraph_node?.endsWith(last_agent_id);
+}
+
+/**
  * Get default handlers for stream events.
  * @param {Object} options - The options object.
  * @param {ServerResponse} options.res - The options object.
@@ -123,7 +138,7 @@ function getDefaultHandlers({ res, aggregateContent, toolEndCallback, collectedU
       handle: (event, data, metadata) => {
         if (data?.stepDetails.type === StepTypes.TOOL_CALLS) {
           sendEvent(res, { event, data });
-        } else if (metadata?.last_agent_index === metadata?.agent_index) {
+        } else if (checkIfLastAgent(metadata?.last_agent_id, metadata?.langgraph_node)) {
           sendEvent(res, { event, data });
         } else if (!metadata?.hide_sequential_outputs) {
           sendEvent(res, { event, data });
@@ -152,7 +167,7 @@ function getDefaultHandlers({ res, aggregateContent, toolEndCallback, collectedU
       handle: (event, data, metadata) => {
         if (data?.delta.type === StepTypes.TOOL_CALLS) {
           sendEvent(res, { event, data });
-        } else if (metadata?.last_agent_index === metadata?.agent_index) {
+        } else if (checkIfLastAgent(metadata?.last_agent_id, metadata?.langgraph_node)) {
           sendEvent(res, { event, data });
         } else if (!metadata?.hide_sequential_outputs) {
           sendEvent(res, { event, data });
@@ -170,7 +185,7 @@ function getDefaultHandlers({ res, aggregateContent, toolEndCallback, collectedU
       handle: (event, data, metadata) => {
         if (data?.result != null) {
           sendEvent(res, { event, data });
-        } else if (metadata?.last_agent_index === metadata?.agent_index) {
+        } else if (checkIfLastAgent(metadata?.last_agent_id, metadata?.langgraph_node)) {
           sendEvent(res, { event, data });
         } else if (!metadata?.hide_sequential_outputs) {
           sendEvent(res, { event, data });
@@ -186,7 +201,7 @@ function getDefaultHandlers({ res, aggregateContent, toolEndCallback, collectedU
        * @param {GraphRunnableConfig['configurable']} [metadata] The runnable metadata.
        */
       handle: (event, data, metadata) => {
-        if (metadata?.last_agent_index === metadata?.agent_index) {
+        if (checkIfLastAgent(metadata?.last_agent_id, metadata?.langgraph_node)) {
           sendEvent(res, { event, data });
         } else if (!metadata?.hide_sequential_outputs) {
           sendEvent(res, { event, data });
@@ -202,7 +217,7 @@ function getDefaultHandlers({ res, aggregateContent, toolEndCallback, collectedU
        * @param {GraphRunnableConfig['configurable']} [metadata] The runnable metadata.
        */
       handle: (event, data, metadata) => {
-        if (metadata?.last_agent_index === metadata?.agent_index) {
+        if (checkIfLastAgent(metadata?.last_agent_id, metadata?.langgraph_node)) {
           sendEvent(res, { event, data });
         } else if (!metadata?.hide_sequential_outputs) {
           sendEvent(res, { event, data });
@@ -237,12 +252,60 @@ function createToolEndCallback({ req, res, artifactPromises }) {
       return;
     }
 
+    if (output.artifact[Tools.file_search]) {
+      artifactPromises.push(
+        (async () => {
+          const user = req.user;
+          const attachment = await processFileCitations({
+            user,
+            metadata,
+            appConfig: req.config,
+            toolArtifact: output.artifact,
+            toolCallId: output.tool_call_id,
+          });
+          if (!attachment) {
+            return null;
+          }
+          if (!res.headersSent) {
+            return attachment;
+          }
+          res.write(`event: attachment\ndata: ${JSON.stringify(attachment)}\n\n`);
+          return attachment;
+        })().catch((error) => {
+          logger.error('Error processing file citations:', error);
+          return null;
+        }),
+      );
+    }
+
+    // TODO: a lot of duplicated code in createToolEndCallback
+    // we should refactor this to use a helper function in a follow-up PR
+    if (output.artifact[Tools.ui_resources]) {
+      artifactPromises.push(
+        (async () => {
+          const attachment = {
+            type: Tools.ui_resources,
+            messageId: metadata.run_id,
+            toolCallId: output.tool_call_id,
+            conversationId: metadata.thread_id,
+            [Tools.ui_resources]: output.artifact[Tools.ui_resources].data,
+          };
+          if (!res.headersSent) {
+            return attachment;
+          }
+          res.write(`event: attachment\ndata: ${JSON.stringify(attachment)}\n\n`);
+          return attachment;
+        })().catch((error) => {
+          logger.error('Error processing artifact content:', error);
+          return null;
+        }),
+      );
+    }
+
     if (output.artifact[Tools.web_search]) {
       artifactPromises.push(
         (async () => {
-          const name = `${output.name}_${output.tool_call_id}_${nanoid()}`;
           const attachment = {
-            name,
             type: Tools.web_search,
             messageId: metadata.run_id,
             toolCallId: output.tool_call_id,
