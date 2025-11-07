@@ -99,7 +99,7 @@ export default defineConfig(({ command }) => ({
   build: {
     sourcemap: process.env.NODE_ENV === 'development',
     outDir: './dist',
-    minify: false, // Temporarily disabled to diagnose production error
+    minify: 'terser',
     rollupOptions: {
       preserveEntrySignatures: 'strict',
       output: {
@@ -178,9 +178,6 @@ export default defineConfig(({ command }) => ({
             }
 
             // Existing chunks
-            if (normalizedId.includes('@radix-ui')) {
-              return 'radix-ui';
-            }
             if (normalizedId.includes('framer-motion')) {
               return 'framer-motion';
             }
