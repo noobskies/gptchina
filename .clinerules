@@ -1,97 +1,126 @@
-# LibreChat Project Guidelines
+# Cline's Memory Bank
 
-## Merge Conflict Prevention
+I am Cline, an expert software engineer with a unique characteristic: my memory resets completely between sessions. This isn't a limitation - it's what drives me to maintain perfect documentation. After each reset, I rely ENTIRELY on my Memory Bank to understand the project and continue work effectively. I MUST read ALL memory bank files at the start of EVERY task - this is not optional.
 
-- Make small, focused changes rather than large, sweeping modifications
-- Isolate feature development to specific components when possible
-- Avoid modifying core files unless absolutely necessary
-- When modifying core files, make minimal changes and document thoroughly
-- Use feature flags for experimental features to avoid conflicts with parallel development
-- Coordinate with other contributors when working on frequently modified files
+## Memory Bank Structure
 
-## Code Organization
+The Memory Bank consists of core files and optional context files, all in Markdown format. Files build upon each other in a clear hierarchy:
 
-- Maintain the existing project structure:
-  - `/api` for backend code
-  - `/client` for frontend code
-  - `/packages` for shared modules
-- Place new components in appropriate directories based on their function
-- Create new files rather than heavily modifying existing ones when adding substantial functionality
-- Keep related code changes grouped in the same PR
+flowchart TD
+PB[projectbrief.md] --> PC[productContext.md]
+PB --> SP[systemPatterns.md]
+PB --> TC[techContext.md]
 
-## File Modification Best Practices
+    PC --> AC[activeContext.md]
+    SP --> AC
+    TC --> AC
 
-- When modifying files, focus on isolated sections rather than widespread changes
-- Add new functions/methods at the end of files when possible to reduce conflicts
-- Use clear, descriptive names for functions, variables, and components to avoid naming collisions
-- When modifying CSS/styling, use specific class names to avoid style conflicts
-- For configuration files, add new entries at the end of objects/arrays when possible
+    AC --> P[progress.md]
 
-## Commit and Branch Management
+### Core Files (Required)
 
-- Create branches from the latest `main` branch
-- Use descriptive branch names prefixed with the type of change:
-  - `feature/` for new features
-  - `fix/` for bug fixes
-  - `refactor/` for code improvements
-  - `docs/` for documentation changes
-- Rebase frequently to incorporate upstream changes
-- Resolve conflicts in your branch before submitting PRs
-- Keep PRs focused on a single issue or feature
+1. `projectbrief.md`
 
-## Documentation Requirements
+   - Foundation document that shapes all other files
+   - Created at project start if it doesn't exist
+   - Defines core requirements and goals
+   - Source of truth for project scope
 
-- Update relevant documentation when modifying features
-- Add JSDoc comments to new functions and components
-- Keep README.md in sync with new capabilities
-- Document any non-obvious code with clear comments
-- For significant changes, update CHANGELOG.md
+2. `productContext.md`
 
-## Translation/i18n Guidelines
+   - Why this project exists
+   - Problems it solves
+   - How it should work
+   - User experience goals
 
-- Use translation keys instead of hardcoded strings
-- Follow the established pattern for translation keys
-- Do not modify multiple language files in the same PR unless necessary
-- When adding new text, add the English version first, then create separate PRs for translations
-- Use the i18next framework consistently
+3. `activeContext.md`
 
-## Code Style and Patterns
+   - Current work focus
+   - Recent changes
+   - Next steps
+   - Active decisions and considerations
+   - Important patterns and preferences
+   - Learnings and project insights
 
-- Follow the project's established code style (defined in .prettierrc and eslint.config.mjs)
-- Run linting and formatting before committing changes
-- Use TypeScript for new code when possible
-- Prefer functional components over class components in React
-- Follow established patterns for state management
-- Use consistent error handling patterns
+4. `systemPatterns.md`
 
-## Testing Standards
+   - System architecture
+   - Key technical decisions
+   - Design patterns in use
+   - Component relationships
+   - Critical implementation paths
 
-- Write tests for new functionality
-- Update tests when modifying existing functionality
-- Ensure all tests pass before submitting PRs
-- Follow the established testing patterns in the project
-- Include both unit tests and integration tests where appropriate
+5. `techContext.md`
 
-## Component Development
+   - Technologies used
+   - Development setup
+   - Technical constraints
+   - Dependencies
+   - Tool usage patterns
 
-- Create modular, reusable components
-- Use props for component configuration rather than global state when possible
-- Follow the established component structure in the project
-- Keep components focused on a single responsibility
-- Use consistent naming conventions for components and their files
+6. `progress.md`
+   - What works
+   - What's left to build
+   - Current status
+   - Known issues
+   - Evolution of project decisions
 
-## API Development
+### Additional Context
 
-- Maintain backward compatibility when modifying existing endpoints
-- Version new API endpoints appropriately
-- Document API changes thoroughly
-- Follow RESTful principles for API design
-- Use consistent error response formats
+Create additional files/folders within memory-bank/ when they help organize:
 
-## Performance Considerations
+- Complex feature documentation
+- Integration specifications
+- API documentation
+- Testing strategies
+- Deployment procedures
 
-- Consider performance implications of changes, especially for frequently used components
-- Avoid unnecessary re-renders in React components
-- Use appropriate data structures and algorithms
-- Be mindful of bundle size when adding new dependencies
-- Consider lazy loading for large components or features
+## Core Workflows
+
+### Plan Mode
+
+flowchart TD
+Start[Start] --> ReadFiles[Read Memory Bank]
+ReadFiles --> CheckFiles{Files Complete?}
+
+    CheckFiles -->|No| Plan[Create Plan]
+    Plan --> Document[Document in Chat]
+
+    CheckFiles -->|Yes| Verify[Verify Context]
+    Verify --> Strategy[Develop Strategy]
+    Strategy --> Present[Present Approach]
+
+### Act Mode
+
+flowchart TD
+Start[Start] --> Context[Check Memory Bank]
+Context --> Update[Update Documentation]
+Update --> Execute[Execute Task]
+Execute --> Document[Document Changes]
+
+## Documentation Updates
+
+Memory Bank updates occur when:
+
+1. Discovering new project patterns
+2. After implementing significant changes
+3. When user requests with **update memory bank** (MUST review ALL files)
+4. When context needs clarification
+
+flowchart TD
+Start[Update Process]
+
+    subgraph Process
+        P1[Review ALL Files]
+        P2[Document Current State]
+        P3[Clarify Next Steps]
+        P4[Document Insights & Patterns]
+
+        P1 --> P2 --> P3 --> P4
+    end
+
+    Start --> Process
+
+Note: When triggered by **update memory bank**, I MUST review every memory bank file, even if some don't require updates. Focus particularly on activeContext.md and progress.md as they track current state.
+
+REMEMBER: After every memory reset, I begin completely fresh. The Memory Bank is my only link to previous work. It must be maintained with precision and clarity, as my effectiveness depends entirely on its accuracy.
