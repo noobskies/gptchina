@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const requireJwtAuth = require('../middleware/requireJwtAuth');
-const { Transaction } = require('../../models/Transaction');
-const Balance = require('../../models/Balance');
+const { Transaction, Balance } = require('~/db/models');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 /**

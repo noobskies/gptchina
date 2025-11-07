@@ -2,7 +2,6 @@ const { OAuth2Client } = require('google-auth-library');
 const { User } = require('~/models');
 const { logger } = require('~/config');
 const { setAuthTokens } = require('~/server/services/AuthService');
-const setBalanceConfig = require('~/server/middleware/setBalanceConfig');
 
 /**
  * Handles authentication from mobile devices using Google Sign-In
@@ -73,14 +72,6 @@ const mobileGoogleAuthController = async (req, res) => {
 
     // Set authentication tokens
     await setAuthTokens(user._id, res);
-
-    // Set up request for balance configuration middleware
-    req.user = user;
-
-    // Apply balance configuration
-    await new Promise((resolve) => {
-      setBalanceConfig(req, res, resolve);
-    });
 
     // Return user info
     return res.status(200).json({

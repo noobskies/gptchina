@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const requireJwtAuth = require('../middleware/requireJwtAuth');
-const { logger } = require('../../config');
-const { Transaction } = require('../../models/Transaction');
-const Balance = require('../../models/Balance');
+const { logger } = require('~/config');
+const { Transaction, Balance } = require('~/db/models');
 
 /**
  * POST /api/revenuecat/verify-purchase

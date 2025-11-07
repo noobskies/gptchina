@@ -75,9 +75,11 @@
 - Regenerated `package-lock.json` (3291 packages)
 - Zero unmerged files remaining
 
-**Post-Merge Build Fixes - COMPLETE** ✅ (November 7, 2025)
+**Post-Merge Build & Runtime Fixes - COMPLETE** ✅ (November 7, 2025)
 
-After merge completion, fixed workspace package build issues:
+After merge completion, fixed workspace package build issues and runtime errors:
+
+**Build Fixes:**
 
 1. **Fixed Payment Feature Integration** - Added missing `QueryKeys.modelPricing` and `getModelPricing()` function to complete fork's payment system integration
 2. **Fixed @librechat/api Build** - Added `dotenv` to external dependencies in rollup config
@@ -86,13 +88,27 @@ After merge completion, fixed workspace package build issues:
    - ✅ packages/data-schemas
    - ✅ packages/api (with acceptable warnings)
    - ✅ packages/client
-4. **Verified Backend Startup** - Backend starts successfully, requires .env configuration
+
+**Runtime Fixes:**
+
+4. **Fixed Payment Controller Model Imports** - Updated 4 payment files to use new `~/db/models` architecture:
+   - ✅ api/server/controllers/ClaimTokens.js
+   - ✅ api/server/routes/stripe.js
+   - ✅ api/server/routes/opennode.js
+   - ✅ api/server/routes/revenuecat.js
+5. **Fixed Mobile Auth Controller** - Removed non-existent `setBalanceConfig` middleware from MobileAuthController.js
+6. **Verified Backend Startup** - Backend starts successfully without module errors
 
 Files modified:
 
 - `packages/data-provider/src/keys.ts` - Added modelPricing to QueryKeys
 - `packages/data-provider/src/data-service.ts` - Added getModelPricing function
 - `packages/api/rollup.config.js` - Added dotenv to external array
+- `api/server/controllers/ClaimTokens.js` - Updated model imports to ~/db/models
+- `api/server/routes/stripe.js` - Updated model imports to ~/db/models
+- `api/server/routes/opennode.js` - Updated model imports to ~/db/models
+- `api/server/routes/revenuecat.js` - Updated model imports to ~/db/models
+- `api/server/controllers/auth/MobileAuthController.js` - Removed setBalanceConfig middleware
 
 ### Key Achievements ✅
 
