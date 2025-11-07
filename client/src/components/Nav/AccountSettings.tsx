@@ -2,7 +2,7 @@ import { useState, memo } from 'react';
 import { useRecoilState } from 'recoil';
 import * as Select from '@ariakit/react/select';
 import { FileText, LogOut } from 'lucide-react';
-import { LinkIcon, GearIcon, DropdownMenuSeparator, Avatar } from '@librechat/client';
+import { LinkIcon, GearIcon, Avatar } from '@librechat/client';
 import { useGetStartupConfig, useGetUserBalance } from '~/data-provider';
 import FilesView from '~/components/Chat/Input/Files/FilesView';
 import { useAuthContext } from '~/hooks/AuthContext';
@@ -51,7 +51,7 @@ function AccountSettings() {
         <div className="text-token-text-secondary ml-3 mr-2 py-2 text-sm" role="note">
           {user?.email ?? localize('com_nav_user')}
         </div>
-        <DropdownMenuSeparator />
+        <Select.SelectSeparator className="my-1 h-px bg-surface-hover" />
         {startupConfig?.balance?.enabled === true && balanceQuery.data != null && (
           <>
             <div className="text-token-text-secondary ml-3 mr-2 py-2 text-sm" role="note">
@@ -60,7 +60,7 @@ function AccountSettings() {
                 {numeral(parseFloat(balanceQuery.data)).format('0.0a')}
               </span>
             </div>
-            <DropdownMenuSeparator />
+            <Select.SelectSeparator className="my-1 h-px bg-surface-hover" />
           </>
         )}
         <Select.SelectItem
@@ -89,7 +89,7 @@ function AccountSettings() {
           <GearIcon className="icon-md" aria-hidden="true" />
           {localize('com_nav_settings')}
         </Select.SelectItem>
-        <DropdownMenuSeparator />
+        <Select.SelectSeparator className="my-1 h-px bg-surface-hover" />
         <Select.SelectItem
           aria-selected={true}
           onClick={() => logout()}
