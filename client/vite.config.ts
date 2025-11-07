@@ -99,7 +99,7 @@ export default defineConfig(({ command }) => ({
   build: {
     sourcemap: process.env.NODE_ENV === 'development',
     outDir: './dist',
-    minify: 'terser',
+    minify: false, // Temporarily disabled to diagnose production error
     rollupOptions: {
       preserveEntrySignatures: 'strict',
       output: {
