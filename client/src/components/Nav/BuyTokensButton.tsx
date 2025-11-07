@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRecoilState } from 'recoil';
-import { Button } from '~/components/ui/Button';
+import { Button } from '@librechat/client';
 import { Coins } from 'lucide-react';
 import { CheckoutRouter } from './';
 import { useLocalize } from '~/hooks';

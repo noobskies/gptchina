@@ -110,6 +110,22 @@ Files modified:
 - `api/server/routes/revenuecat.js` - Updated model imports to ~/db/models
 - `api/server/controllers/auth/MobileAuthController.js` - Removed setBalanceConfig middleware
 
+**Frontend Import Path Fixes:**
+
+7. **Fixed Frontend Import Paths** - Updated 4 payment component files to use new `@librechat/client` imports:
+   - ✅ client/src/components/Nav/MobileCheckoutModal.tsx - Updated Button import
+   - ✅ client/src/components/Nav/BuyTokensButton.tsx - Updated Button import
+   - ✅ client/src/components/Nav/CheckoutModal.tsx - Updated ThemeContext/isDark imports
+   - ✅ client/src/components/Nav/ClaimTokensButton.tsx - Updated Button import
+8. **Verified Frontend Build** - Frontend builds successfully without import errors
+
+Files modified (frontend):
+
+- `client/src/components/Nav/MobileCheckoutModal.tsx` - Changed Button import to @librechat/client
+- `client/src/components/Nav/BuyTokensButton.tsx` - Changed Button import to @librechat/client
+- `client/src/components/Nav/CheckoutModal.tsx` - Changed ThemeContext/isDark imports to @librechat/client
+- `client/src/components/Nav/ClaimTokensButton.tsx` - Changed Button import to @librechat/client
+
 ### Key Achievements ✅
 
 **ALL Fork Customizations Preserved (100%):**

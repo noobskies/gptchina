@@ -190,6 +190,58 @@ Successfully completed a major merge from upstream LibreChat, upgrading from sta
 
 **Status**: All import issues resolved, backend fully operational
 
+---
+
+**Issue 3**: Frontend import errors in fork-specific payment components after merge.
+
+**Problems Identified:**
+
+1. **Architectural Change in v0.8.1-rc1**: UI components (Button) and theme utilities (ThemeContext, isDark) moved from local paths to shared `@librechat/client` package
+2. **Fork Files Not Updated**: Fork's custom payment files (MobileCheckoutModal, BuyTokensButton, CheckoutModal, ClaimTokensButton) still using old import paths
+3. **Vite Build Errors**: Frontend failing to build due to unresolved imports
+
+**Old Import Paths (No Longer Valid):**
+
+- `import { Button } from '~/components/ui/Button'`
+- `import { ThemeContext, isDark } from '~/hooks/ThemeContext'`
+
+**New Architecture in v0.8.1-rc1:**
+
+- Button component: `packages/client/src/components/Button.tsx`
+- Theme utilities: `packages/client/src/theme/context/ThemeProvider.tsx`
+- Both exported from `@librechat/client` barrel
+
+**Solutions Applied:**
+
+1. **Fixed MobileCheckoutModal.tsx** (`client/src/components/Nav/MobileCheckoutModal.tsx`):
+
+   - Changed: `import { Button } from '~/components/ui/Button'`
+   - To: `import { Button } from '@librechat/client'`
+
+2. **Fixed BuyTokensButton.tsx** (`client/src/components/Nav/BuyTokensButton.tsx`):
+
+   - Changed: `import { Button } from '~/components/ui/Button'`
+   - To: `import { Button } from '@librechat/client'`
+
+3. **Fixed CheckoutModal.tsx** (`client/src/components/Nav/CheckoutModal.tsx`):
+
+   - Changed: `import { ThemeContext, isDark } from '~/hooks/ThemeContext'`
+   - To: `import { ThemeContext, isDark } from '@librechat/client'`
+   - (Button import was already correct)
+
+4. **Fixed ClaimTokensButton.tsx** (`client/src/components/Nav/ClaimTokensButton.tsx`):
+   - Changed: `import { Button } from '~/components/ui/Button'`
+   - To: `import { Button } from '@librechat/client'`
+
+**Frontend Results:**
+
+- ✅ All Vite import errors resolved
+- ✅ Frontend builds successfully
+- ✅ All fork-specific payment features preserved
+- ✅ Compatible with new upstream architecture
+
+**Status**: All import path issues resolved, frontend fully operational
+
 ## Next Steps
 
 **Immediate Actions Required:**

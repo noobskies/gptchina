@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button } from '~/components/ui/Button';
+import { Button } from '@librechat/client';
 import { Gift } from 'lucide-react';
 import { useLocalize } from '~/hooks';
 import { useClaimTokensMutation, useClaimStatusQuery, useGetUserBalance } from '~/data-provider';

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
 import { Capacitor } from '@capacitor/core';
 import { CreditCard, Loader2, Check, X, ArrowLeft } from 'lucide-react';
-import { Button } from '~/components/ui/Button';
+import { Button } from '@librechat/client';
 import { cn } from '~/utils';
 import { useLocalize } from '~/hooks';
 import { useGetUserBalance } from '~/data-provider';
