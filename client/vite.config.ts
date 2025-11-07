@@ -137,11 +137,6 @@ export default defineConfig(({ command }) => ({
               return 'security-ui';
             }
 
-            // Consolidated CodeMirror chunk to avoid circular dependencies
-            if (normalizedId.includes('@codemirror')) {
-              return 'codemirror';
-            }
-
             if (
               normalizedId.includes('react-markdown') ||
               normalizedId.includes('remark-') ||
