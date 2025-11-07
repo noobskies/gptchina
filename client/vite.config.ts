@@ -47,16 +47,10 @@ export default defineConfig(({ command }) => ({
       useCredentials: true,
       includeManifestIcons: false,
       workbox: {
-        globPatterns: [
-          '**/*.{js,css,html}',
-          'assets/favicon*.png',
-          'assets/icon-*.png',
-          'assets/apple-touch-icon*.png',
-          'assets/maskable-icon.png',
-          'manifest.webmanifest',
-        ],
-        globIgnores: ['images/**/*', '**/*.map', 'index.html'],
+        globPatterns: ['**/*.{js,css,html,png}', 'manifest.webmanifest'],
+        globIgnores: ['images/**/*', '**/*.map'],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+        navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/oauth/, /^\/api/],
       },
       includeAssets: [],
@@ -143,18 +137,9 @@ export default defineConfig(({ command }) => ({
               return 'security-ui';
             }
 
-            // New CodeMirror chunks from upstream
-            if (normalizedId.includes('@codemirror/view')) {
-              return 'codemirror-view';
-            }
-            if (normalizedId.includes('@codemirror/state')) {
-              return 'codemirror-state';
-            }
-            if (normalizedId.includes('@codemirror/language')) {
-              return 'codemirror-language';
-            }
+            // Consolidated CodeMirror chunk to avoid circular dependencies
             if (normalizedId.includes('@codemirror')) {
-              return 'codemirror-core';
+              return 'codemirror';
             }
 
             if (
