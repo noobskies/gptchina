@@ -75,6 +75,25 @@
 - Regenerated `package-lock.json` (3291 packages)
 - Zero unmerged files remaining
 
+**Post-Merge Build Fixes - COMPLETE** ✅ (November 7, 2025)
+
+After merge completion, fixed workspace package build issues:
+
+1. **Fixed Payment Feature Integration** - Added missing `QueryKeys.modelPricing` and `getModelPricing()` function to complete fork's payment system integration
+2. **Fixed @librechat/api Build** - Added `dotenv` to external dependencies in rollup config
+3. **Built All Packages Successfully**:
+   - ✅ packages/data-provider
+   - ✅ packages/data-schemas
+   - ✅ packages/api (with acceptable warnings)
+   - ✅ packages/client
+4. **Verified Backend Startup** - Backend starts successfully, requires .env configuration
+
+Files modified:
+
+- `packages/data-provider/src/keys.ts` - Added modelPricing to QueryKeys
+- `packages/data-provider/src/data-service.ts` - Added getModelPricing function
+- `packages/api/rollup.config.js` - Added dotenv to external array
+
 ### Key Achievements ✅
 
 **ALL Fork Customizations Preserved (100%):**

@@ -124,15 +124,53 @@ Successfully completed a major merge from upstream LibreChat, upgrading from sta
 - ✅ PromptGroupsProvider context
 - ✅ 367 new translation keys across all languages
 
+### Post-Merge Build Fixes ✅ (November 7, 2025)
+
+**Issue**: After merge completion, workspace packages failed to build, preventing backend startup.
+
+**Problems Identified:**
+
+1. **Missing Package Builds**: Workspace packages not compiled, causing `Cannot find module '@librechat/api/dist/index.js'` error
+2. **TypeScript Errors in data-provider**: Fork-specific payment features not properly integrated:
+   - `QueryKeys.modelPricing` missing from keys enum
+   - `getModelPricing()` function missing from data-service
+3. **Rollup Build Error in @librechat/api**: Attempted to bundle `dotenv` as dependency instead of treating as external
+
+**Solutions Applied:**
+
+1. **Added Missing Payment Query Key** (`packages/data-provider/src/keys.ts`):
+
+   - Added `modelPricing = 'modelPricing'` to QueryKeys enum
+   - Enables frontend to query model pricing data
+
+2. **Added Payment Service Function** (`packages/data-provider/src/data-service.ts`):
+
+   - Added `getModelPricing()` function that calls `/api/models/pricing` endpoint
+   - Returns pricing data as `Record<string, { input: number; output: number }>`
+
+3. **Fixed Rollup External Dependencies** (`packages/api/rollup.config.js`):
+   - Added `'dotenv'` and `'dotenv/config'` to external array
+   - Prevents bundling Node.js-specific modules
+
+**Build Results:**
+
+- ✅ `packages/data-provider` - Built successfully
+- ✅ `packages/data-schemas` - Built successfully
+- ✅ `packages/api` - Built successfully (with acceptable type warnings)
+- ✅ `packages/client` - Built successfully
+- ✅ Backend starts successfully (requires .env configuration)
+
+**Status**: System fully operational, ready for testing
+
 ## Next Steps
 
 **Immediate Actions Required:**
 
-1. **Commit the merge:**
+1. **Configure environment:**
 
-   ```bash
-   git commit -m "Merge upstream v0.8.1-rc1: Agent Handoffs, Langfuse, SAML, Agent Marketplace, MCP enhancements"
-   ```
+   - Copy `.env.example` to `.env`
+   - Set `MONGO_URI` and other required variables
+   - Configure AI provider API keys
 
 2. **Test the application:**
 
@@ -147,7 +185,16 @@ Successfully completed a major merge from upstream LibreChat, upgrading from sta
    - 6 vulnerabilities detected (3 low, 3 critical)
    - Run `npm audit fix` after testing
 
-4. **Push to repository:**
+4. **Commit all changes:**
+
+   ```bash
+   git add packages/data-provider/src/keys.ts
+   git add packages/data-provider/src/data-service.ts
+   git add packages/api/rollup.config.js
+   git commit -m "Merge upstream v0.8.1-rc1 + build fixes: Agent Handoffs, Langfuse, SAML, Agent Marketplace, MCP enhancements"
+   ```
+
+5. **Push to repository:**
    ```bash
    git push origin gpt-5
    ```

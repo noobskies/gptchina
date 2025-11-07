@@ -58,7 +58,12 @@ const cjsBuild = {
      */
     sourcemapExcludeSources: false,
   },
-  external: [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.devDependencies || {})],
+  external: [
+    ...Object.keys(pkg.dependencies || {}),
+    ...Object.keys(pkg.devDependencies || {}),
+    'dotenv',
+    'dotenv/config',
+  ],
   preserveSymlinks: true,
   plugins,
 };

@@ -185,6 +185,12 @@ export const getModels = async (): Promise<t.TModelsConfig> => {
   return request.get(endpoints.models());
 };
 
+export const getModelPricing = async (): Promise<
+  Record<string, { input: number; output: number }>
+> => {
+  return request.get(endpoints.modelPricing());
+};
+
 /* Assistants */
 
 export const createAssistant = ({
