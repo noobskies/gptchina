@@ -3,7 +3,7 @@
 ## Overview
 
 **Project Name:** LibreChat  
-**Current Version:** v0.7.8  
+**Current Version:** v0.8.1-rc1 ✨  
 **Repository:** https://github.com/danny-avila/LibreChat  
 **Repository (this fork):** git@github.com:noobskies/gptchina.git  
 **Official Website:** https://librechat.ai  
