@@ -41,17 +41,25 @@ const DropdownPopup: React.FC<DropdownProps> = ({
   ...props
 }) => {
   const menu = Ariakit.useMenuStore({ open: isOpen, setOpen: setIsOpen, focusLoop });
+
+  // Wrap the trigger in MenuButton if it's not already one
+  const menuTrigger = React.isValidElement(trigger) ? (
+    <Ariakit.MenuButton store={menu} render={trigger} />
+  ) : (
+    trigger
+  );
+
   if (mountByState) {
     return (
       <Ariakit.MenuProvider store={menu}>
-        {trigger}
+        {menuTrigger}
         {isOpen && <Menu {...props} />}
       </Ariakit.MenuProvider>
     );
   }
   return (
     <Ariakit.MenuProvider store={menu}>
-      {trigger}
+      {menuTrigger}
       <Menu {...props} />
     </Ariakit.MenuProvider>
   );
@@ -73,7 +81,6 @@ const Menu: React.FC<MenuProps> = ({
   preserveTabOrder,
   ...props
 }) => {
-  const menuStore = Ariakit.useMenuStore();
   const menu = Ariakit.useMenuContext();
   return (
     <Ariakit.Menu
@@ -97,10 +104,7 @@ const Menu: React.FC<MenuProps> = ({
           }
           if (subItems && subItems.length > 0) {
             return (
-              <Ariakit.MenuProvider
-                store={menuStore}
-                key={`${keyPrefix ?? ''}${index}-${item.id ?? ''}-provider`}
-              >
+              <Ariakit.MenuProvider key={`${keyPrefix ?? ''}${index}-${item.id ?? ''}-provider`}>
                 <Ariakit.MenuButton
                   className={cn(
                     'group flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg px-3 py-3.5 text-sm text-text-primary outline-none transition-colors duration-200 hover:bg-surface-hover focus:bg-surface-hover md:px-2.5 md:py-2',

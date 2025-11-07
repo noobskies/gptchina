@@ -1,5 +1,4 @@
 import { useState, useId, useRef, memo, useCallback, useMemo } from 'react';
-import * as Menu from '@ariakit/react/menu';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DropdownPopup, Spinner, useToastContext } from '@librechat/client';
 import { Ellipsis, Share2, Copy, Archive, Pen, Trash } from 'lucide-react';
@@ -198,10 +197,9 @@ function ConvoOptions({
         isOpen={isPopoverActive}
         setIsOpen={setIsPopoverActive}
         trigger={
-          <Menu.MenuButton
+          <button
             id={`conversation-menu-${conversationId}`}
             aria-label={localize('com_nav_convo_menu_options')}
-            aria-readonly={undefined}
             className={cn(
               'inline-flex h-7 w-7 items-center justify-center gap-2 rounded-md border-none p-0 text-sm font-medium ring-ring-primary transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50',
               isActiveConvo === true || isPopoverActive
@@ -218,7 +216,7 @@ function ConvoOptions({
             }}
           >
             <Ellipsis className="icon-md text-text-secondary" aria-hidden={true} />
-          </Menu.MenuButton>
+          </button>
         }
         items={dropdownItems}
         menuId={menuId}
