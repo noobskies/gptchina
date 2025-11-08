@@ -78,7 +78,7 @@ export default function ExportAndShareMenu({
           <TooltipAnchor
             description={localize('com_endpoint_export_share')}
             render={
-              <Ariakit.MenuButton
+              <button
                 id="export-menu-button"
                 aria-label="Export options"
                 className="inline-flex size-10 flex-shrink-0 items-center justify-center rounded-xl border border-border-light bg-transparent text-text-primary transition-all ease-in-out hover:bg-surface-tertiary disabled:pointer-events-none disabled:opacity-50 radix-state-open:bg-surface-tertiary"
@@ -88,7 +88,7 @@ export default function ExportAndShareMenu({
                   aria-hidden="true"
                   focusable="false"
                 />
-              </Ariakit.MenuButton>
+              </button>
             }
           />
         }

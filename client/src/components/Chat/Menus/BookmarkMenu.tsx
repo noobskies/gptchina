@@ -166,7 +166,7 @@ const BookmarkMenu: FC = () => {
           <TooltipAnchor
             description={localize('com_ui_bookmarks_add')}
             render={
-              <Ariakit.MenuButton
+              <button
                 id="bookmark-menu-button"
                 aria-label={localize('com_ui_bookmarks_add')}
                 className={cn(
@@ -176,7 +176,7 @@ const BookmarkMenu: FC = () => {
                 data-testid="bookmark-menu"
               >
                 {renderButtonContent()}
-              </Ariakit.MenuButton>
+              </button>
             }
           />
         }
