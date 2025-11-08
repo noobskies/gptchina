@@ -112,114 +112,13 @@ export default defineConfig(({ command }) => ({
       output: {
         manualChunks(id: string) {
           const normalizedId = id.replace(/\\/g, '/');
-          if (normalizedId.includes('node_modules')) {
-            // High-impact chunking for large libraries
-            if (normalizedId.includes('@codesandbox/sandpack')) {
-              return 'sandpack';
-            }
-            if (normalizedId.includes('react-virtualized')) {
-              return 'virtualization';
-            }
-            if (normalizedId.includes('i18next') || normalizedId.includes('react-i18next')) {
-              return 'i18n';
-            }
-            if (normalizedId.includes('lodash')) {
-              return 'utilities';
-            }
-            if (normalizedId.includes('date-fns')) {
-              return 'date-utils';
-            }
-            if (normalizedId.includes('@dicebear')) {
-              return 'avatars';
-            }
-            if (normalizedId.includes('react-dnd') || normalizedId.includes('react-flip-toolkit')) {
-              return 'react-interactions';
-            }
-            if (normalizedId.includes('react-hook-form')) {
-              return 'forms';
-            }
-            if (normalizedId.includes('react-router-dom')) {
-              return 'routing';
-            }
-            if (
-              normalizedId.includes('qrcode.react') ||
-              normalizedId.includes('@marsidev/react-turnstile')
-            ) {
-              return 'security-ui';
-            }
-
-            if (
-              normalizedId.includes('react-markdown') ||
-              normalizedId.includes('remark-') ||
-              normalizedId.includes('rehype-')
-            ) {
-              return 'markdown-processing';
-            }
-            if (normalizedId.includes('monaco-editor') || normalizedId.includes('@monaco-editor')) {
-              return 'code-editor';
-            }
-            if (normalizedId.includes('react-window') || normalizedId.includes('react-virtual')) {
-              return 'virtualization';
-            }
-            if (
-              normalizedId.includes('zod') ||
-              normalizedId.includes('yup') ||
-              normalizedId.includes('joi')
-            ) {
-              return 'validation';
-            }
-            if (
-              normalizedId.includes('axios') ||
-              normalizedId.includes('ky') ||
-              normalizedId.includes('fetch')
-            ) {
-              return 'http-client';
-            }
-            if (
-              normalizedId.includes('react-spring') ||
-              normalizedId.includes('react-transition-group')
-            ) {
-              return 'animations';
-            }
-            if (normalizedId.includes('react-select') || normalizedId.includes('downshift')) {
-              return 'advanced-inputs';
-            }
-            if (normalizedId.includes('heic-to')) {
-              return 'heic-converter';
-            }
-
-            // Existing chunks
-            if (normalizedId.includes('@radix-ui')) {
-              return 'radix-ui';
-            }
-            if (normalizedId.includes('framer-motion')) {
-              return 'framer-motion';
-            }
-            if (normalizedId.includes('node_modules/highlight.js')) {
-              return 'markdown_highlight';
-            }
-            if (normalizedId.includes('katex') || normalizedId.includes('node_modules/katex')) {
-              return 'math-katex';
-            }
-            if (normalizedId.includes('node_modules/hast-util-raw')) {
-              return 'markdown_large';
-            }
-            if (normalizedId.includes('@tanstack')) {
-              return 'tanstack-vendor';
-            }
-            if (normalizedId.includes('@headlessui')) {
-              return 'headlessui';
-            }
-
-            // Everything else falls into a generic vendor chunk.
-            return 'vendor';
-          }
-          // Create a separate chunk for all locale files under src/locales.
+          // Only keep locale files separation - let Vite handle node_modules automatically
+          // This prevents circular dependency issues with complex libraries (CodeMirror, Sandpack, etc.)
           if (normalizedId.includes('/src/locales/')) {
             return 'locales';
           }
-          // Let Rollup decide automatically for any other files.
-          return null;
+          // Let Vite's automatic chunking handle everything else
+          return undefined;
         },
         entryFileNames: 'assets/[name].[hash].js',
         chunkFileNames: 'assets/[name].[hash].js',

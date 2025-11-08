@@ -242,9 +242,186 @@ Successfully completed a major merge from upstream LibreChat, upgrading from sta
 
 **Status**: All import path issues resolved, frontend fully operational
 
+## Current Production Deployment Issue 🔴 (November 7, 2025 - 6:30 PM)
+
+**Status**: Production builds but fails at runtime with JavaScript initialization errors  
+**Branch**: development-nov-7  
+**Environment**: Works locally in development, fails in production build
+
+### Problem Summary
+
+After successfully merging v0.8.1-rc1, the application builds successfully but encounters runtime JavaScript errors in production that do NOT occur in local development.
+
+### Errors Encountered (In Order)
+
+**1. Initial CodeMirror Error** ✅ Attempted Fix
+
+```
+codemirror-language.Cs0lPlVZ.js:1 Uncaught ReferenceError: Cannot access 't' before initialization
+```
+
+- **Attempted Fix**: Consolidated 4 CodeMirror chunks into single 'codemirror' chunk
+- **Result**: Error moved to vendor chunk
+
+**2. CodeMirror in Vendor Chunk** ✅ Attempted Fix
+
+```
+vendor.BGr6RMuF.js:150 Uncaught ReferenceError: Cannot access 'Decoration' before initialization
+```
+
+- **Attempted Fix**: Removed CodeMirror from manual chunking entirely
+- **Result**: New error appeared (Radix UI)
+
+**3. Radix UI Menu Error** ✅ Attempted Fix
+
+```
+vendor.CNCBbDxJ.js:150 Uncaught ReferenceError: Cannot access 'Decoration' before initialization
+Error: Invariant failed at useMenuButton22
+```
+
+- **Diagnosis**: With minification disabled, revealed Radix UI Menu.Button invariant violation
+- **Attempted Fix**: Removed Radix UI from manual chunking
+- **Result**: Same error persisted
+
+**4. AccountSettings.tsx Migration** ✅ Completed
+
+```
+Error: Invariant failed at useMenuButton22 (still with Radix UI)
+```
+
+- **Root Cause**: AccountSettings.tsx using `DropdownMenuSeparator` from old Radix UI-based DropdownMenu
+- **Fix Applied**: Migrated to `Select.SelectSeparator` from Ariakit
+- **Result**: Error persisted (other components still using old DropdownMenu)
+
+**5. Attempted Full Migration** ❌ Reverted
+
+- **Approach**: Remove DropdownMenu export from @librechat/client
+- **Discovered**: 5 files still using old DropdownMenu:
+  - `client/src/routes/Layouts/DashBreadcrumb.tsx`
+  - `client/src/components/Prompts/Groups/ChatGroupItem.tsx`
+  - `client/src/components/Chat/Input/Files/Table/SortFilterHeader.tsx`
+  - `client/src/components/Chat/Input/Files/Table/DataTable.tsx`
+  - `client/src/components/Files/FileList/DataTableFile.tsx`
+- **User Feedback**: "Why does it work upstream but not on our branch?"
+- **Decision**: Reverted migration approach
+
+**6. Config Comparison with Upstream** ✅ Critical Discovery
+
+- **Finding**: Upstream INCLUDES the manual chunks we removed (CodeMirror, Radix UI, sandpack, react-interactions)
+- **Hypothesis**: Upstream's chunking configuration is intentional and works for them
+- **Action**: Restored upstream's complete vite.config.ts as baseline
+
+**7. Current State - CodeMirror Error Returns** 🔴 ACTIVE ISSUE
+
+```
+Uncaught ReferenceError: Cannot access 'StyleModule' before initialization
+at codemirror-view.2BZ-GBqR.js:5788:37
+```
+
+- **Configuration**: Upstream vite.config.ts with fork customizations (host, branding, PWA, minify off)
+- **Problem**: Same CodeMirror circular dependency error as #1
+- **Current Status**: ⚠️ BROKEN - white screen in production
+
+### What We've Learned
+
+**Key Insights:**
+
+1. **Manual Chunking Causes Issues**: Splitting CodeMirror into 4 chunks (view, state, language, core) creates circular dependencies that break in production but work in development
+2. **Works Upstream**: Upstream uses the SAME chunking config but doesn't hit this error, suggesting:
+   - Different usage patterns
+   - Different import sequences
+   - Possibly fork-specific components trigger the issue
+3. **Not Minification**: Disabling minification doesn't fix it - it's a bundling/initialization order issue
+4. **Not Caching**: Service worker cache clearing doesn't fix it - it's real code breakage
+5. **Production-Specific**: Works in `npm run frontend:dev` but fails in production build
+
+### Current Configuration (vite.config.ts)
+
+**What's Working:**
+
+- ✅ PWA service worker configuration (navigateFallback, proper globIgnores)
+- ✅ Fork branding (Novlisky)
+- ✅ Mobile host (0.0.0.0)
+- ✅ Minification disabled for debugging
+
+**What's Broken:**
+
+- ❌ CodeMirror manual chunking causing initialization errors
+- ❌ Possibly Radix UI chunking (not yet confirmed if this is also problematic)
+
+### Files Modified This Session
+
+**Backend (Post-Merge Fixes):**
+
+1. `packages/data-provider/src/keys.ts` - Added modelPricing
+2. `packages/data-provider/src/data-service.ts` - Added getModelPricing()
+3. `packages/api/rollup.config.js` - Fixed dotenv external
+4. `api/server/controllers/ClaimTokens.js` - Updated model imports
+5. `api/server/routes/stripe.js` - Updated model imports
+6. `api/server/routes/opennode.js` - Updated model imports
+7. `api/server/routes/revenuecat.js` - Updated model imports
+8. `api/server/controllers/auth/MobileAuthController.js` - Removed missing middleware
+
+**Frontend (Post-Merge Fixes):** 9. `client/src/components/Nav/MobileCheckoutModal.tsx` - Updated Button import 10. `client/src/components/Nav/BuyTokensButton.tsx` - Updated Button import 11. `client/src/components/Nav/CheckoutModal.tsx` - Updated ThemeContext/isDark imports 12. `client/src/components/Nav/ClaimTokensButton.tsx` - Updated Button import
+
+**Production Debugging (This Session):** 13. `client/vite.config.ts` - Multiple iterations: - Removed CodeMirror chunks → didn't fix - Removed Radix UI chunks → didn't fix - Restored upstream config → CodeMirror error returned - **Current**: Upstream config with CodeMirror chunks removed + minify off 14. `client/src/components/Nav/AccountSettings.tsx` - Migrated DropdownMenuSeparator to Ariakit 15. `packages/client/src/components/index.ts` - Attempted to remove DropdownMenu export (reverted)
+
+### Next Steps to Fix Production
+
+**Option 1: Remove ALL Manual Node Modules Chunking**
+
+- Remove ALL manual chunks (CodeMirror, Radix UI, everything)
+- Let Vite automatically determine optimal chunking
+- Trade-off: Larger initial bundle, but guaranteed to work
+
+**Option 2: Investigate Fork-Specific Usage**
+
+- Find where/how we use CodeMirror differently than upstream
+- Adjust imports or usage to avoid circular dependency
+- Requires: Deep dive into CodeMirror imports across codebase
+
+**Option 3: Different Build Tool**
+
+- Consider using esbuild instead of Rollup for production
+- CodeMirror might bundle better with different tool
+- Requires: Major build configuration changes
+
+**Option 4: Ask Upstream Community**
+
+- Report issue to LibreChat maintainers
+- They may have encountered this with specific configurations
+- Might be a known issue with solution
+
+### Current Priority
+
+🔴 **CRITICAL**: Fix production deployment - application is broken
+
+- Site loads but white screens on login due to CodeMirror initialization error
+- Local development works fine
+- All backend functionality works
+- Only frontend JavaScript bundling is broken
+
 ## Next Steps
 
 **Immediate Actions Required:**
+
+## Next Steps
+
+**URGENT - Production Deployment Fix Required:**
+
+1. **Resolve CodeMirror circular dependency** (current blocker)
+
+   - Test removing ALL manual chunks vs. just CodeMirror
+   - Investigate fork-specific CodeMirror usage patterns
+   - Consider alternative bundling approaches
+
+2. **Once working in production:**
+   - Re-enable minification (currently off for debugging)
+   - Test all features work correctly
+   - Verify payment system
+   - Test new v0.8.1-rc1 features
+
+**After Production is Stable:**
 
 1. **Configure environment:**
 
