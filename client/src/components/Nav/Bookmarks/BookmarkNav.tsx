@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import type { FC } from 'react';
-import { TooltipAnchor } from '@librechat/client';
 import { Menu, MenuButton, MenuItems } from '@headlessui/react';
 import { BookmarkFilledIcon, BookmarkIcon } from '@radix-ui/react-icons';
 import { BookmarkContext } from '~/Providers/BookmarkContext';
@@ -27,28 +26,24 @@ const BookmarkNav: FC<BookmarkNavProps> = ({ tags, setTags, isSmallScreen }: Boo
     <Menu as="div" className="group relative">
       {({ open }) => (
         <>
-          <TooltipAnchor
-            description={label}
-            render={
-              <MenuButton
-                id="bookmark-menu-button"
-                aria-label={localize('com_ui_bookmarks')}
-                className={cn(
-                  'flex items-center justify-center',
-                  'size-10 border-none text-text-primary hover:bg-accent hover:text-accent-foreground',
-                  'rounded-full border-none p-2 hover:bg-surface-hover md:rounded-xl',
-                  open ? 'bg-surface-hover' : '',
-                )}
-                data-testid="bookmark-menu"
-              >
-                {tags.length > 0 ? (
-                  <BookmarkFilledIcon className="icon-lg text-text-primary" aria-hidden="true" />
-                ) : (
-                  <BookmarkIcon className="icon-lg text-text-primary" aria-hidden="true" />
-                )}
-              </MenuButton>
-            }
-          />
+          <MenuButton
+            id="bookmark-menu-button"
+            aria-label={localize('com_ui_bookmarks')}
+            title={label}
+            className={cn(
+              'flex items-center justify-center',
+              'size-10 border-none text-text-primary hover:bg-accent hover:text-accent-foreground',
+              'rounded-full border-none p-2 hover:bg-surface-hover md:rounded-xl',
+              open ? 'bg-surface-hover' : '',
+            )}
+            data-testid="bookmark-menu"
+          >
+            {tags.length > 0 ? (
+              <BookmarkFilledIcon className="icon-lg text-text-primary" aria-hidden="true" />
+            ) : (
+              <BookmarkIcon className="icon-lg text-text-primary" aria-hidden="true" />
+            )}
+          </MenuButton>
           <MenuItems
             anchor="bottom"
             className="absolute left-0 top-full z-[100] mt-1 w-60 translate-y-0 overflow-hidden rounded-lg bg-surface-secondary p-1.5 shadow-lg outline-none"
