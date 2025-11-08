@@ -42,6 +42,28 @@ const DropdownPopup: React.FC<DropdownProps> = ({
 }) => {
   const menu = Ariakit.useMenuStore({ open: isOpen, setOpen: setIsOpen, focusLoop });
 
+  // PRODUCTION DEBUGGING: Detect nested MenuButton
+  if (React.isValidElement(trigger)) {
+    const triggerType = trigger.type as React.ComponentType<unknown> | string;
+    const typeName =
+      typeof triggerType === 'string'
+        ? triggerType
+        : (triggerType as { displayName?: string; name?: string }).displayName ||
+          (triggerType as { displayName?: string; name?: string }).name ||
+          '';
+
+    // Check if trigger is already a MenuButton
+    if (typeName.includes('MenuButton') || typeName.includes('Menu.Button')) {
+      console.error('🔴 NESTED MENUBUTTON DETECTED in DropdownPopup!', {
+        menuId: props.menuId,
+        triggerId: (trigger.props as { id?: string })?.id,
+        triggerType: typeName,
+        triggerProps: trigger.props,
+        stack: new Error().stack,
+      });
+    }
+  }
+
   // Wrap the trigger in MenuButton if it's not already one
   const menuTrigger = React.isValidElement(trigger) ? (
     <Ariakit.MenuButton store={menu} render={trigger} />
