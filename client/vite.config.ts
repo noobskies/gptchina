@@ -18,7 +18,7 @@ export default defineConfig(({ command }) => ({
   server: {
     allowedHosts:
       (process.env.VITE_ALLOWED_HOSTS && process.env.VITE_ALLOWED_HOSTS.split(',')) || [],
-    host: '0.0.0.0', // Keep your mobile-friendly host
+    host: '0.0.0.0', // Mobile-friendly host for Capacitor
     port: (process.env.PORT && Number(process.env.PORT)) || 3090,
     strictPort: false,
     proxy: {
@@ -47,7 +47,14 @@ export default defineConfig(({ command }) => ({
       useCredentials: true,
       includeManifestIcons: false,
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png}', 'manifest.webmanifest'],
+        globPatterns: [
+          '**/*.{js,css,html}',
+          'assets/favicon*.png',
+          'assets/icon-*.png',
+          'assets/apple-touch-icon*.png',
+          'assets/maskable-icon.png',
+          'manifest.webmanifest',
+        ],
         globIgnores: ['images/**/*', '**/*.map'],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
         navigateFallback: '/index.html',
@@ -99,7 +106,7 @@ export default defineConfig(({ command }) => ({
   build: {
     sourcemap: process.env.NODE_ENV === 'development',
     outDir: './dist',
-    minify: 'terser',
+    minify: false, // Disabled for production debugging
     rollupOptions: {
       preserveEntrySignatures: 'strict',
       output: {
@@ -107,7 +114,9 @@ export default defineConfig(({ command }) => ({
           const normalizedId = id.replace(/\\/g, '/');
           if (normalizedId.includes('node_modules')) {
             // High-impact chunking for large libraries
-            // Removed sandpack chunk per your optimization
+            if (normalizedId.includes('@codesandbox/sandpack')) {
+              return 'sandpack';
+            }
             if (normalizedId.includes('react-virtualized')) {
               return 'virtualization';
             }
@@ -123,7 +132,9 @@ export default defineConfig(({ command }) => ({
             if (normalizedId.includes('@dicebear')) {
               return 'avatars';
             }
-            // Removed react-interactions chunk per your optimization
+            if (normalizedId.includes('react-dnd') || normalizedId.includes('react-flip-toolkit')) {
+              return 'react-interactions';
+            }
             if (normalizedId.includes('react-hook-form')) {
               return 'forms';
             }
@@ -135,6 +146,19 @@ export default defineConfig(({ command }) => ({
               normalizedId.includes('@marsidev/react-turnstile')
             ) {
               return 'security-ui';
+            }
+
+            if (normalizedId.includes('@codemirror/view')) {
+              return 'codemirror-view';
+            }
+            if (normalizedId.includes('@codemirror/state')) {
+              return 'codemirror-state';
+            }
+            if (normalizedId.includes('@codemirror/language')) {
+              return 'codemirror-language';
+            }
+            if (normalizedId.includes('@codemirror')) {
+              return 'codemirror-core';
             }
 
             if (
@@ -178,6 +202,9 @@ export default defineConfig(({ command }) => ({
             }
 
             // Existing chunks
+            if (normalizedId.includes('@radix-ui')) {
+              return 'radix-ui';
+            }
             if (normalizedId.includes('framer-motion')) {
               return 'framer-motion';
             }
