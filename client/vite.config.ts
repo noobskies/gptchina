@@ -56,7 +56,7 @@ export default defineConfig(({ command }) => ({
           'manifest.webmanifest',
         ],
         globIgnores: ['images/**/*', '**/*.map'],
-        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+        maximumFileSizeToCacheInBytes: 20 * 1024 * 1024, // Increased to 20 MB for larger bundle without manual chunking
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/oauth/, /^\/api/],
       },
