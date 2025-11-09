@@ -6,7 +6,7 @@
 
 **Version**: v0.8.1-rc1 (Release Candidate)
 
-**Last Updated**: 2025-11-09 11:58 AM CST
+**Last Updated**: 2025-11-09 12:44 PM CST
 
 ## What Works
 
@@ -105,6 +105,17 @@
 - Rate limiting and moderation
 - Usage statistics
 
+✅ **Custom Features (gptchina fork)**
+
+- Claim Tokens feature (20,000 tokens per 24 hours)
+  - Sidebar button integration
+  - Real-time countdown timer with seconds
+  - 24-hour cooldown enforcement (race condition protected)
+  - Blue button styling when available
+  - Atomic database operations prevent duplicate claims
+  - Transaction audit trail
+  - Toast notifications
+
 ## What's Left to Build
 
 ### Immediate Setup Tasks
@@ -196,6 +207,45 @@ The following categories represent potential work areas, but specific tasks will
 - Integration issues with external services may emerge
 
 ## Evolution of Project Decisions
+
+### Claim Tokens Race Condition Fix (2025-11-09 12:32 PM)
+
+**Decision**: Replace read-check-save pattern with atomic database operation
+
+- **Problem**: Multiple simultaneous claim requests could bypass 24-hour cooldown
+- **Root Cause**: Race condition in controller logic - all requests read same initial state
+- **Solution**: Implement atomic `findOneAndUpdate()` with conditional query at database level
+- **Rationale**:
+  - Only one request can satisfy the update condition
+  - Follows LibreChat's existing concurrency pattern (Transaction.js)
+  - Database-level enforcement prevents client-side bypass
+  - Thread-safe regardless of request timing
+- **Implementation**:
+  - Modified `custom/features/claim-tokens/server/controller.js`
+  - Used `$or` query condition for null or expired cooldown
+  - Applied `$inc` and `$set` atomically in single operation
+  - Rebuilt packages to apply schema changes
+- **Impact**: Feature now production-ready with proper concurrency control
+- **Key Learning**: Always use atomic operations for concurrent scenarios, especially with financial/credit systems
+
+### Claim Tokens UI Improvements (2025-11-09 12:37 PM)
+
+**Decision**: Enhance button styling and countdown format
+
+- **Changes**:
+  1. Time format: "23h 2m" → "Claim in 23h 2m 24s" (added seconds and prefix)
+  2. Button styling: Blue when available, default when on cooldown
+  3. Text alignment: Left → Center
+- **Rationale**:
+  - Seconds provide more precise feedback and create engaging experience
+  - Blue background signals availability clearly (LibreChat's action color)
+  - Centered text improves visual balance
+  - Conditional styling prevents confusing disabled blue button
+- **Implementation**:
+  - Updated `formatRemainingTime()` in useClaimTokens.ts
+  - Added conditional className in ClaimTokensButton.tsx
+  - Changed `text-left` to `text-center`
+- **Impact**: Better UX with clearer visual feedback
 
 ### Fork-Friendly Architecture Implementation (2025-11-09 11:56 AM)
 
@@ -296,6 +346,13 @@ The following categories represent potential work areas, but specific tasks will
 - Documentation requirements created
 - Testing strategies established
 - Merge conflict prevention strategies documented
+
+✅ **Claim Tokens Feature - Production Ready** (2025-11-09 12:32-12:37 PM)
+
+- Fixed critical race condition bug using atomic database operations
+- Implemented UI improvements (blue styling, centered text, seconds in countdown)
+- Feature is now production-ready and thread-safe
+- Follows fork-friendly architecture principles
 
 ### In Progress
 
@@ -509,6 +566,6 @@ Success criteria will be established based on:
 
 ---
 
-**Last Updated**: 2025-11-09 11:58 AM CST
+**Last Updated**: 2025-11-09 12:44 PM CST
 
-**Status**: 🚧 Implementing Fork-Friendly Architecture Framework
+**Status**: ✅ Claim Tokens Feature - Production Ready

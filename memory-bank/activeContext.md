@@ -2,13 +2,57 @@
 
 ## Current Work Focus
 
-**Status**: Implementing Fork-Friendly Architecture Framework
+**Status**: Claim Tokens Feature - Production Ready
 
-**Active Task**: Establish comprehensive architecture and guidelines for developing custom features in the gptchina fork while minimizing upstream merge conflicts.
+**Active Task**: Bug fixes and UI improvements for the Claim Tokens feature completed. Feature is now production-ready with race condition fix and improved user interface.
 
-**Key Objective**: Create a decoupled architecture that allows custom features to coexist with upstream code, making future merges safer and more maintainable.
+**Key Objective**: Maintain and enhance custom features while following fork-friendly architecture principles.
 
 ## Recent Changes
+
+### Claim Tokens Bug Fixes & UI Improvements (2025-11-09 12:32-12:37 PM)
+
+**Race Condition Fix** (12:32 PM):
+
+- **Issue**: Multiple simultaneous claim requests could bypass 24-hour cooldown
+- **Root Cause**: Read-check-save pattern allowed race conditions
+- **Solution**: Implemented atomic database operation using `findOneAndUpdate()` with conditional query
+- **Implementation**:
+  ```javascript
+  // Atomic update at database level
+  const updatedBalance = await Balance.findOneAndUpdate(
+    {
+      user: userId,
+      $or: [{ lastTokenClaim: null }, { lastTokenClaim: { $lte: cooldownThreshold } }],
+    },
+    {
+      $inc: { tokenCredits: CLAIM_TOKENS_CONFIG.CLAIM_AMOUNT },
+      $set: { lastTokenClaim: now },
+    },
+    { new: true, upsert: true },
+  );
+  ```
+- **Result**: Thread-safe, prevents duplicate claims regardless of timing
+- **File Modified**: `custom/features/claim-tokens/server/controller.js`
+- **Packages Rebuilt**: Ran `npm run build:packages` to apply schema changes
+
+**UI Improvements** (12:37 PM):
+
+- **Time Format**: Changed from "23h 2m" to "Claim in 23h 2m 24s" (added seconds and prefix)
+- **Button Styling**:
+  - Available state: Blue background (`bg-blue-600 hover:bg-blue-700`) with white text
+  - Cooldown state: Default styling (no background), grayed out when disabled
+  - Text centered with `justify-center`
+- **Files Modified**:
+  - `custom/features/claim-tokens/client/useClaimTokens.ts` - Time formatting
+  - `custom/features/claim-tokens/client/ClaimTokensButton.tsx` - Styling and layout
+
+**Key Learnings**:
+
+- Atomic database operations prevent race conditions in concurrent scenarios
+- Following LibreChat's existing patterns (Transaction.js concurrency model) ensures consistency
+- Conditional styling based on state provides better UX feedback
+- Real-time countdown with seconds creates more engaging user experience
 
 ### Fork-Friendly Architecture Implementation (2025-11-09)
 

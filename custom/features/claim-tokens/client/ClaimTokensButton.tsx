@@ -42,18 +42,23 @@ export const ClaimTokensButton: React.FC = () => {
   const buttonText = canClaim ? 'Claim 20,000 Tokens' : formattedTime || 'Loading...';
   const isDisabled = !canClaim || isLoading;
 
+  // Conditional styling: blue background when available to claim, default when on cooldown
+  const buttonClassName = canClaim
+    ? 'flex w-full items-center justify-center gap-2 rounded-xl p-2 text-sm transition-all duration-200 ease-in-out bg-blue-600 hover:bg-blue-700 text-white disabled:cursor-not-allowed disabled:opacity-50'
+    : 'flex w-full items-center justify-center gap-2 rounded-xl p-2 text-sm transition-all duration-200 ease-in-out hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50';
+
   return (
-    <div className="px-3 py-2">
+    <div className="px-2 py-2">
       <Button
         onClick={handleClaim}
         disabled={isDisabled}
         variant="outline"
-        className="flex w-full items-center gap-2 rounded-xl p-2 text-sm transition-all duration-200 ease-in-out hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50"
+        className={buttonClassName}
         data-testid="claim-tokens-button"
         aria-label={canClaim ? 'Claim 20,000 tokens' : `Next claim available in ${formattedTime}`}
       >
         <ClaimTokensIcon className="h-5 w-5" />
-        <span className="flex-1 text-left">{buttonText}</span>
+        <span className="flex-1 text-center">{buttonText}</span>
         {isClaiming && (
           <svg
             className="h-4 w-4 animate-spin"

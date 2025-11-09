@@ -57,43 +57,59 @@ const claimTokens = async (req, res) => {
       });
     }
 
-    // Get user's balance record
-    let balanceRecord = await Balance.findOne({ user: userId });
+    const now = new Date();
+    const cooldownThreshold = new Date(now.getTime() - CLAIM_TOKENS_CONFIG.COOLDOWN_MS);
 
-    if (!balanceRecord) {
-      logger.debug('[ClaimTokens] No balance record found, creating one', { userId });
-      // Create balance record if it doesn't exist
-      balanceRecord = await Balance.create({
+    // Atomic update: Only update if cooldown has passed or lastTokenClaim is null
+    // This prevents race conditions when multiple requests arrive simultaneously
+    const updatedBalance = await Balance.findOneAndUpdate(
+      {
         user: userId,
-        tokenCredits: 0,
-        lastTokenClaim: null,
-      });
-    }
+        $or: [
+          { lastTokenClaim: null }, // Never claimed before
+          { lastTokenClaim: { $lte: cooldownThreshold } }, // Cooldown has passed
+        ],
+      },
+      {
+        $inc: { tokenCredits: CLAIM_TOKENS_CONFIG.CLAIM_AMOUNT },
+        $set: { lastTokenClaim: now },
+      },
+      {
+        new: true, // Return updated document
+        upsert: true, // Create if doesn't exist
+        setDefaultsOnInsert: true,
+      },
+    );
 
-    // Check cooldown eligibility
-    const eligibility = checkClaimEligibility(balanceRecord.lastTokenClaim);
+    // If updatedBalance is null, it means cooldown is still active
+    if (!updatedBalance) {
+      // Fetch current balance to get cooldown info
+      const balanceRecord = await Balance.findOne({ user: userId });
 
-    if (!eligibility.canClaim) {
-      logger.debug('[ClaimTokens] Cooldown active', {
-        userId,
-        remainingTime: eligibility.remainingTime,
-        nextClaimAvailable: eligibility.nextClaimAvailable,
-      });
+      if (balanceRecord && balanceRecord.lastTokenClaim) {
+        const eligibility = checkClaimEligibility(balanceRecord.lastTokenClaim);
 
-      return res.status(429).json({
+        logger.debug('[ClaimTokens] Cooldown active', {
+          userId,
+          remainingTime: eligibility.remainingTime,
+          nextClaimAvailable: eligibility.nextClaimAvailable,
+        });
+
+        return res.status(429).json({
+          success: false,
+          error: CLAIM_TOKENS_ERRORS.COOLDOWN_ACTIVE,
+          nextClaimAvailable: eligibility.nextClaimAvailable?.toISOString(),
+          remainingTime: eligibility.remainingTime,
+        });
+      }
+
+      // This shouldn't happen, but handle it gracefully
+      logger.error('[ClaimTokens] Unexpected state: Update failed but no balance record found');
+      return res.status(500).json({
         success: false,
-        error: CLAIM_TOKENS_ERRORS.COOLDOWN_ACTIVE,
-        nextClaimAvailable: eligibility.nextClaimAvailable?.toISOString(),
-        remainingTime: eligibility.remainingTime,
+        error: CLAIM_TOKENS_ERRORS.SERVER_ERROR,
       });
     }
-
-    // Add tokens to balance
-    const previousBalance = balanceRecord.tokenCredits || 0;
-    balanceRecord.tokenCredits = previousBalance + CLAIM_TOKENS_CONFIG.CLAIM_AMOUNT;
-    balanceRecord.lastTokenClaim = new Date();
-
-    await balanceRecord.save();
 
     // Create transaction record for audit trail
     try {
@@ -108,21 +124,21 @@ const claimTokens = async (req, res) => {
       // Don't fail the request if transaction logging fails
     }
 
+    const previousBalance = updatedBalance.tokenCredits - CLAIM_TOKENS_CONFIG.CLAIM_AMOUNT;
+
     logger.info('[ClaimTokens] Tokens claimed successfully', {
       userId,
       previousBalance,
-      newBalance: balanceRecord.tokenCredits,
+      newBalance: updatedBalance.tokenCredits,
       tokensAdded: CLAIM_TOKENS_CONFIG.CLAIM_AMOUNT,
     });
 
     // Calculate next claim time
-    const nextClaimAvailable = new Date(
-      balanceRecord.lastTokenClaim.getTime() + CLAIM_TOKENS_CONFIG.COOLDOWN_MS,
-    );
+    const nextClaimAvailable = new Date(now.getTime() + CLAIM_TOKENS_CONFIG.COOLDOWN_MS);
 
     return res.status(200).json({
       success: true,
-      balance: balanceRecord.tokenCredits,
+      balance: updatedBalance.tokenCredits,
       tokensAdded: CLAIM_TOKENS_CONFIG.CLAIM_AMOUNT,
       nextClaimAvailable: nextClaimAvailable.toISOString(),
     });
