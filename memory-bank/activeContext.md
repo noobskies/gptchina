@@ -2,13 +2,197 @@
 
 ## Current Work Focus
 
-**Status**: Buy Tokens Feature - REFACTORED & PRODUCTION READY ✅
+**Status**: Buy Tokens Feature - FULLY DEPLOYED & WORKING IN PRODUCTION ✅✅✅
 
-**Active Task**: Buy Tokens feature completely refactored into modular components, all code cleaned up, ready for testing.
+**Active Task**: Buy Tokens feature successfully deployed to production with full Stripe integration working. Webhooks configured, payment flow tested, tokens being added correctly.
 
-**Key Objective**: Feature fully refactored following best practices with 6 modular components, all 6 payment methods properly implemented, atomic transactions, and no duplicate code. Production-ready and maintainable.
+**Key Objective**: Feature is live and operational on production (https://gptafrica.io). Users can purchase tokens using multiple payment methods. Complete end-to-end integration working flawlessly.
 
 ## Recent Changes
+
+### Buy Tokens Feature - Production Deployment Success (2025-11-09 3:46-4:44 PM)
+
+**Overview**: Successfully debugged webhook issues, fixed production environment variable configuration, and deployed Buy Tokens feature to production. Complete end-to-end payment flow now working on https://gptafrica.io.
+
+**Problems Solved**:
+
+1. **Webhook Not Firing (3:46-4:07 PM)**
+
+   - **Problem**: Payment succeeded on frontend, but webhooks never reached local backend
+   - **Root Cause #1**: Dashboard webhook endpoint configured in Stripe Dashboard
+     - User had webhook pointing to production (https://gptafrica.io)
+     - Even in test mode, dashboard webhooks bypass Stripe CLI
+     - Webhooks went to production server, not localhost
+   - **Solution**: Deleted dashboard webhook endpoint
+   - **Result**: Stripe CLI now intercepts test webhooks correctly
+
+2. **Middleware Order Issue (3:54-4:07 PM)**
+
+   - **Problem**: Even with CLI setup, webhook signature verification was failing silently
+   - **Root Cause #2**: Global `express.json()` middleware parsing body before webhook handler
+     - Stripe requires RAW body (Buffer) for signature verification
+     - Body was converted to Object by JSON parser before reaching webhook route
+     - Signature verification requires Buffer, got Object → Failed
+   - **Solution**: Moved webhook route registration BEFORE `express.json()`
+   - **File Modified**: `api/server/index.js`
+   - **Implementation**:
+     ```javascript
+     // BEFORE express.json()
+     app.use(
+       '/api/custom/stripe/webhook',
+       express.raw({ type: 'application/json' }),
+       customBuyTokensWebhook,
+     );
+     // THEN express.json()
+     app.use(express.json({ limit: '3mb' }));
+     ```
+   - **File Modified**: `custom/features/buy-tokens/server/routes.js`
+     - Removed duplicate `express.raw()` middleware from router
+   - **Result**: Webhook handler now receives raw Buffer body for signature verification
+
+3. **Comprehensive Debug Logging Added (4:06-4:07 PM)**
+
+   - **File Modified**: `custom/features/buy-tokens/server/controller.js`
+   - **Logs Added**:
+     - Webhook entry with headers and body type
+     - Signature verification status
+     - Event details and metadata
+     - MongoDB transaction progress
+     - Success/failure indicators with emojis (✅/❌)
+     - Error stack traces
+   - **Result**: Complete visibility into webhook processing flow
+
+4. **Production Environment Variable Issue (4:20-4:44 PM)**
+
+   - **Problem**: Stripe initialization error on production: "Please call Stripe() with your publishable key. You used an empty string."
+   - **Root Cause**: Vite environment variables not available in production
+     - `VITE_*` variables are baked into bundle at BUILD time, not runtime
+     - Production used pre-built Docker image without the build arg
+     - Frontend bundle had empty string for `VITE_STRIPE_PUBLIC_KEY`
+   - **Solution**: Multi-step Docker configuration fix
+
+     **Step 1**: Updated Dockerfile to accept build arguments
+
+     - **File Modified**: `Dockerfile`
+     - **Added** (before frontend build):
+
+       ```dockerfile
+       ARG VITE_STRIPE_PUBLIC_KEY
+       ARG VITE_GOOGLE_CLIENT_ID
+       # ... other VITE_ vars
+
+       ENV VITE_STRIPE_PUBLIC_KEY=$VITE_STRIPE_PUBLIC_KEY
+       ENV VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID
+       # ... other ENV declarations
+       ```
+
+     - **Result**: Dockerfile can now accept and use build arguments
+
+     **Step 2**: Created docker-compose.override.yml
+
+     - **File Created**: `docker-compose.override.yml`
+     - **Purpose**: Override deploy-compose.yml to enable local builds with args
+     - **Configuration**:
+       ```yaml
+       services:
+         api:
+           build:
+             context: .
+             dockerfile: Dockerfile
+             target: node
+             args:
+               - VITE_STRIPE_PUBLIC_KEY=pk_live_...
+               - VITE_GOOGLE_CLIENT_ID=...
+       ```
+     - **Result**: Production builds now include Vite environment variables
+
+     **Step 3**: Deployed using existing deploy script
+
+     - User's deploy script already correctly uses override file
+     - Script runs: `docker-compose -f docker-compose.yml -f docker-compose.override.yml build --no-cache`
+     - **Result**: Fresh build with environment variables baked into bundle
+
+   - **Production Deployment**: Successful! ✅
+     - Stripe initializes correctly
+     - No integration errors
+     - Payment flow works end-to-end
+     - Tokens added to user balance
+     - All 4 token packages working
+
+**Files Modified**:
+
+1. `api/server/index.js` - Webhook route before JSON parser + startup log
+2. `custom/features/buy-tokens/server/routes.js` - Removed duplicate middleware
+3. `custom/features/buy-tokens/server/controller.js` - Comprehensive debug logging
+4. `Dockerfile` - Added ARG/ENV for Vite build arguments
+5. `docker-compose.override.yml` - Created with build args for production
+
+**Key Technical Learnings**:
+
+1. **Webhook Routing in Test Mode**:
+
+   - Stripe CLI ONLY works when NO dashboard webhook exists in test mode
+   - Dashboard webhooks always take precedence over CLI
+   - Delete dashboard webhooks for local development
+
+2. **Express Middleware Order**:
+
+   - Stripe webhooks REQUIRE raw body (Buffer)
+   - Must register webhook route BEFORE `express.json()`
+   - Use `express.raw({ type: 'application/json' })` for webhook routes only
+   - All other routes can use JSON parsing normally
+
+3. **Vite Environment Variables in Docker**:
+
+   - `VITE_*` variables are build-time, not runtime
+   - Must be passed as Docker build arguments (ARG)
+   - Must be converted to ENV before `npm run frontend`
+   - Changes require rebuild, not just restart
+   - docker-compose.override.yml pattern for custom builds
+
+4. **Debug Logging Strategy**:
+   - Log entry point, signature verification, each processing step
+   - Use emojis (✅/❌) for easy visual parsing
+   - Include full error stacks for troubleshooting
+   - Log body type to verify middleware order
+
+**Current Status**:
+
+- ✅ Webhook debugging complete
+- ✅ Local development working (CLI intercepting webhooks)
+- ✅ Production environment variables configured
+- ✅ Docker build configuration complete
+- ✅ Deployed to production successfully
+- ✅ Payment flow working end-to-end
+- ✅ Tokens being added correctly
+- ✅ All 4 packages working
+- ✅ Feature fully operational on https://gptafrica.io
+
+**Deployment Configuration Summary**:
+
+```yaml
+# docker-compose.override.yml
+services:
+  api:
+    build:
+      args:
+        - VITE_STRIPE_PUBLIC_KEY=pk_live_xxx # Frontend
+        - VITE_GOOGLE_CLIENT_ID=xxx # Frontend
+    environment:
+      - STRIPE_SECRET_KEY=sk_live_xxx # Backend
+      - STRIPE_WEBHOOK_SECRET=whsec_xxx # Backend
+```
+
+**Production Checklist** ✅:
+
+- [x] Dockerfile accepts Vite build args
+- [x] docker-compose.override.yml configured
+- [x] Stripe keys (test for dev, live for prod)
+- [x] Webhook endpoint configured (CLI for dev, Dashboard for prod)
+- [x] Debug logging in place
+- [x] Payment flow tested
+- [x] Tokens verified in database
+- [x] Feature live and working
 
 ### Buy Tokens Feature - Complete Refactoring (2025-11-09 2:21-2:37 PM)
 

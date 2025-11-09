@@ -2,11 +2,13 @@
 
 ## Project Status
 
-**Current State**: Buy Tokens Feature - Refactored & Production Ready ✅
+**Current State**: Buy Tokens Feature - FULLY DEPLOYED & OPERATIONAL IN PRODUCTION ✅✅✅
 
 **Version**: v0.8.1-rc1 (Release Candidate)
 
-**Last Updated**: 2025-11-09 2:39 PM CST
+**Last Updated**: 2025-11-09 4:47 PM CST
+
+**Production URL**: https://gptafrica.io
 
 ## What Works
 
@@ -115,6 +117,7 @@
   - Atomic database operations prevent duplicate claims
   - Transaction audit trail
   - Toast notifications
+  - **Status**: Production ready & deployed ✅
 - **Buy Tokens** (Stripe Integration)
   - Complete payment flow with Stripe Elements
   - 4 token packages with volume discounts (100K to 10M tokens)
@@ -126,7 +129,11 @@
   - Webhook signature verification
   - Success/error states with animations
   - Dark/light mode compatible UI
-  - Production ready ✅
+  - Docker build configuration with Vite env vars
+  - Comprehensive debug logging
+  - **Status**: LIVE ON PRODUCTION (https://gptafrica.io) ✅✅✅
+  - **Deployment Date**: 2025-11-09
+  - **Production Testing**: All 4 packages working, tokens adding correctly
 
 ## What's Left to Build
 
@@ -425,9 +432,32 @@ The following categories represent potential work areas, but specific tasks will
 - **Files Modified**: TokenPackageCard, PaymentMethodSelector, TokenPurchaseModal
 - **Status**: Clean, professional design with excellent visual clarity
 
-### In Progress
+✅ **Buy Tokens Webhook Debugging** (2025-11-09 3:46-4:07 PM)
 
-🚧 **Buy Tokens Feature - Final Testing** (Next Priority)
+- Identified and fixed webhook routing issues
+- Fixed Express middleware order (webhook route before JSON parser)
+- Added comprehensive debug logging throughout payment flow
+- Deleted conflicting Stripe Dashboard webhook endpoint
+- Configured Stripe CLI for local development
+- **Files Modified**: api/server/index.js, controller.js, routes.js
+- **Result**: Webhooks now working correctly in development
+- **Status**: Local testing fully functional
+
+✅ **Buy Tokens Production Deployment** (2025-11-09 4:20-4:44 PM)
+
+- Fixed Vite environment variable issue in production Docker builds
+- Updated Dockerfile to accept ARG declarations for VITE\_\* variables
+- Created docker-compose.override.yml with build arguments
+- Successfully deployed to production (https://gptafrica.io)
+- Verified end-to-end payment flow working
+- All 4 token packages operational
+- Tokens adding correctly to user balances
+- **Files Modified**: Dockerfile, docker-compose.override.yml
+- **Status**: LIVE & OPERATIONAL IN PRODUCTION ✅✅✅
+
+### Recently Completed
+
+✅ **Buy Tokens Feature - Deployed to Production** (Completed 2025-11-09 4:44 PM)
 
 - [x] Complete code implementation
 - [x] Install Stripe packages
@@ -436,9 +466,18 @@ The following categories represent potential work areas, but specific tasks will
 - [x] Polish UI for dark/light mode
 - [x] Integrate Stripe Elements
 - [x] Fix module resolution
-- [ ] Test with Stripe test cards
-- [ ] Verify webhook processing in Stripe dashboard
-- [ ] End-to-end payment flow testing
+- [x] Debug webhook routing issues
+- [x] Fix middleware order for webhook signature verification
+- [x] Add comprehensive debug logging
+- [x] Fix Vite environment variables in Docker production builds
+- [x] Update Dockerfile with ARG/ENV declarations
+- [x] Create docker-compose.override.yml
+- [x] Deploy to production
+- [x] Test payment flow on production
+- [x] Verify tokens adding correctly
+- [x] **Status**: FULLY OPERATIONAL ✅✅✅
+
+### In Progress
 
 🚧 **Fork-Friendly Architecture Implementation** (Started 2025-11-09)
 
@@ -671,12 +710,42 @@ Success criteria will be established based on:
 - **Impact**: Significantly improved code quality and maintainability
 - **Key Learning**: Large components (>200 lines) should be decomposed into smaller, focused components following single responsibility principle
 
+### Buy Tokens Production Deployment (2025-11-09 3:46-4:44 PM)
+
+**Decision**: Debug and fix webhook integration, then deploy to production
+
+- **Problem**: Webhooks not reaching backend, Vite env vars missing in production
+- **Root Causes**:
+  1. Stripe Dashboard webhook bypassing CLI
+  2. Express middleware order (JSON parser before webhook)
+  3. Dockerfile not accepting Vite build arguments
+- **Solutions**:
+  1. Deleted Stripe Dashboard webhook endpoint (use CLI for dev)
+  2. Moved webhook route before `express.json()` middleware
+  3. Updated Dockerfile with ARG/ENV declarations
+  4. Created docker-compose.override.yml with build args
+- **Implementation**:
+  - Modified `api/server/index.js` - webhook route registration before JSON parser
+  - Modified `custom/features/buy-tokens/server/routes.js` - removed duplicate middleware
+  - Modified `custom/features/buy-tokens/server/controller.js` - added debug logging
+  - Modified `Dockerfile` - added ARG/ENV for all VITE\_\* variables
+  - Created `docker-compose.override.yml` - build args for production
+- **Impact**: Feature fully deployed and operational on production
+- **Key Learnings**:
+  1. Stripe Dashboard webhooks bypass CLI in test mode
+  2. Webhook routes must come before express.json() for signature verification
+  3. Vite env vars must be Docker build arguments, not runtime env vars
+  4. docker-compose.override.yml pattern for production customization
+  5. Always verify raw body (Buffer) reaching webhook handlers
+
 ---
 
-**Last Updated**: 2025-11-09 2:39 PM CST
+**Last Updated**: 2025-11-09 4:47 PM CST
 
 **Status**:
 
 - ✅ Claim Tokens Feature - Production Ready
-- ✅ Buy Tokens Feature - Refactored & Production Ready
-- 🧪 Ready for testing with Stripe test cards
+- ✅ Buy Tokens Feature - DEPLOYED & OPERATIONAL
+- ✅ Production URL: https://gptafrica.io
+- ✅ All payment methods working
+- ✅ Tokens adding correctly
