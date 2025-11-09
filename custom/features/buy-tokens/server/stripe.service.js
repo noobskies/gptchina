@@ -52,23 +52,51 @@ const createPaymentIntent = async (userId, packageId, paymentMethod = 'card') =>
     };
 
     // Configure payment method types based on selection
-    if (paymentMethod === 'card') {
-      paymentIntentConfig.payment_method_types = ['card'];
-    } else if (paymentMethod === 'bitcoin') {
-      paymentIntentConfig.payment_method_types = ['customer_balance'];
-      paymentIntentConfig.payment_method_options = {
-        customer_balance: {
-          funding_type: 'bank_transfer',
-          bank_transfer: {
-            type: 'jp_bank_transfer',
+    switch (paymentMethod) {
+      case 'card':
+        paymentIntentConfig.payment_method_types = ['card'];
+        break;
+
+      case 'wechat':
+        paymentIntentConfig.payment_method_types = ['wechat_pay'];
+        paymentIntentConfig.payment_method_options = {
+          wechat_pay: {
+            client: 'web',
           },
-        },
-      };
-    } else if (paymentMethod === 'google_pay' || paymentMethod === 'apple_pay') {
-      // These are handled via Payment Request API in frontend
-      paymentIntentConfig.payment_method_types = ['card'];
-    } else {
-      paymentIntentConfig.payment_method_types = ['card'];
+        };
+        break;
+
+      case 'alipay':
+        paymentIntentConfig.payment_method_types = ['alipay'];
+        // Alipay uses redirect flow (handled by Stripe)
+        break;
+
+      case 'bitcoin':
+        // For cryptocurrency payments via Stripe
+        paymentIntentConfig.payment_method_types = ['customer_balance'];
+        paymentIntentConfig.payment_method_options = {
+          customer_balance: {
+            funding_type: 'bank_transfer',
+            bank_transfer: {
+              type: 'eu_bank_transfer',
+            },
+          },
+        };
+        break;
+
+      case 'google':
+      case 'apple':
+        // Google Pay and Apple Pay use the card payment method type
+        // They're handled via Payment Request Button API in the frontend
+        paymentIntentConfig.payment_method_types = ['card'];
+        break;
+
+      default:
+        // Default to card if unknown payment method
+        paymentIntentConfig.payment_method_types = ['card'];
+        logger.warn('[BuyTokens] Unknown payment method, defaulting to card', {
+          paymentMethod,
+        });
     }
 
     // Create payment intent with idempotency key
@@ -82,6 +110,7 @@ const createPaymentIntent = async (userId, packageId, paymentMethod = 'card') =>
       packageId,
       paymentIntentId: paymentIntent.id,
       amount: tokenPackage.price,
+      paymentMethod,
     });
 
     return paymentIntent;

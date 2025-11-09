@@ -3,16 +3,19 @@
  *
  * Feature: Buy Tokens (Stripe Integration)
  * Created: 2025-11-09
+ * Updated: 2025-11-09 - Refactored, following claim-tokens pattern
  * Upstream Impact: None (standalone module)
  *
- * Constants for token packages and configuration (CommonJS for backend).
+ * Constants for configuration and errors (CommonJS for backend).
  *
- * NOTE: This file is kept in sync with constants.ts (TypeScript version for frontend).
- * When updating package definitions, update both files.
+ * NOTE: TOKEN_PACKAGES must be kept in sync with types.ts.
+ * types.ts is the source of truth (used by frontend).
+ * This file exports for backend use (CommonJS compatibility).
+ * TODO: Add validation test to ensure both files match.
  */
 
 /**
- * Token package definitions
+ * Token package definitions (must match types.ts)
  * All prices in cents (CNY)
  */
 const TOKEN_PACKAGES = [
@@ -59,9 +62,11 @@ const TOKEN_PACKAGES = [
  */
 const PAYMENT_METHODS = {
   CARD: 'card',
+  WECHAT: 'wechat',
+  ALIPAY: 'alipay',
   BITCOIN: 'bitcoin',
-  GOOGLE_PAY: 'google_pay',
-  APPLE_PAY: 'apple_pay',
+  GOOGLE_PAY: 'google',
+  APPLE_PAY: 'apple',
 };
 
 /**

@@ -3,9 +3,12 @@
  *
  * Feature: Buy Tokens (Stripe Integration)
  * Created: 2025-11-09
+ * Updated: 2025-11-09 - Added payment method types, single source of truth for TOKEN_PACKAGES
  * Upstream Impact: None (standalone module)
  *
- * Shared TypeScript types for the Buy Tokens feature.
+ * Shared TypeScript types and data for the Buy Tokens feature.
+ * This is the SINGLE SOURCE OF TRUTH for TOKEN_PACKAGES.
+ * Backend imports this file using require('../shared/types').
  */
 
 export interface TokenPackage {
@@ -17,6 +20,20 @@ export interface TokenPackage {
   popular: boolean;
   label: string;
 }
+
+/**
+ * Payment method types supported by Stripe
+ */
+export type PaymentMethodType = 'card' | 'wechat' | 'alipay' | 'bitcoin' | 'google' | 'apple';
+
+export const PAYMENT_METHODS = {
+  CARD: 'card' as const,
+  WECHAT: 'wechat' as const,
+  ALIPAY: 'alipay' as const,
+  BITCOIN: 'bitcoin' as const,
+  GOOGLE_PAY: 'google' as const,
+  APPLE_PAY: 'apple' as const,
+};
 
 /**
  * Token package definitions

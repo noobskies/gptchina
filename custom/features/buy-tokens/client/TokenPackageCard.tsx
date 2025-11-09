@@ -10,6 +10,7 @@
 
 import React from 'react';
 import type { TokenPackage } from '../shared/types';
+import { formatPrice, formatTokens } from './utils/currency';
 
 interface TokenPackageCardProps {
   package: TokenPackage;
@@ -22,20 +23,6 @@ export const TokenPackageCard: React.FC<TokenPackageCardProps> = ({
   isSelected,
   onSelect,
 }) => {
-  const formatPrice = (priceInCents: number) => {
-    return `¥${(priceInCents / 100).toFixed(2)}`;
-  };
-
-  const formatTokens = (tokens: number) => {
-    if (tokens >= 1000000) {
-      return `${(tokens / 1000000).toFixed(0)}M`;
-    }
-    if (tokens >= 1000) {
-      return `${(tokens / 1000).toFixed(0)}K`;
-    }
-    return tokens.toString();
-  };
-
   return (
     <button
       onClick={() => onSelect(pkg.id)}

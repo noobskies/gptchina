@@ -82,56 +82,6 @@ const createPaymentIntentHandler = async (req, res) => {
 };
 
 /**
- * Add tokens to user balance atomically
- * @param {string} userId - User ID
- * @param {number} tokens - Number of tokens to add
- * @param {string} paymentIntentId - Stripe payment intent ID (for idempotency)
- * @returns {Promise<Object>} Updated balance record
- */
-const addTokensToBalance = async (userId, tokens, paymentIntentId) => {
-  try {
-    // Atomic update: Use payment intent ID to prevent duplicate processing
-    // If payment intent was already processed, this will return null
-    const updatedBalance = await Balance.findOneAndUpdate(
-      {
-        user: userId,
-        // Ensure this payment hasn't been processed before
-        processedPayments: { $ne: paymentIntentId },
-      },
-      {
-        $inc: { tokenCredits: tokens },
-        $push: { processedPayments: paymentIntentId },
-      },
-      {
-        new: true, // Return updated document
-        upsert: true, // Create if doesn't exist
-        setDefaultsOnInsert: true,
-      },
-    );
-
-    if (!updatedBalance) {
-      logger.warn('[BuyTokens] Payment already processed', {
-        userId,
-        paymentIntentId,
-      });
-      return null;
-    }
-
-    logger.info('[BuyTokens] Tokens added successfully', {
-      userId,
-      tokensAdded: tokens,
-      newBalance: updatedBalance.tokenCredits,
-      paymentIntentId,
-    });
-
-    return updatedBalance;
-  } catch (error) {
-    logger.error('[BuyTokens] Failed to add tokens to balance', error);
-    throw error;
-  }
-};
-
-/**
  * Handle Stripe webhook events
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
@@ -182,37 +132,71 @@ const handleWebhook = async (req, res) => {
 
       const tokensToAdd = parseInt(tokens, 10);
 
-      // Add tokens to user balance atomically
-      const updatedBalance = await addTokensToBalance(userId, tokensToAdd, paymentIntent.id);
+      // Use MongoDB transaction for atomic operation
+      const mongoose = require('mongoose');
+      const session = await mongoose.startSession();
+      session.startTransaction();
 
-      if (updatedBalance) {
-        // Create transaction record for audit trail
-        try {
-          await createTransaction({
+      try {
+        // Add tokens to user balance (with session)
+        const updatedBalance = await Balance.findOneAndUpdate(
+          {
+            user: userId,
+            processedPayments: { $ne: paymentIntent.id },
+          },
+          {
+            $inc: { tokenCredits: tokensToAdd },
+            $push: { processedPayments: paymentIntent.id },
+          },
+          {
+            new: true,
+            upsert: true,
+            setDefaultsOnInsert: true,
+            session,
+          },
+        );
+
+        if (!updatedBalance) {
+          // Payment already processed, abort transaction
+          await session.abortTransaction();
+          logger.info('[BuyTokens] Payment already processed, skipping', {
+            userId,
+            paymentIntentId: paymentIntent.id,
+          });
+          return res.json({ received: true });
+        }
+
+        // Create transaction record (with session)
+        await createTransaction(
+          {
             user: userId,
             conversationId: null,
             model: 'token-purchase',
             context: 'stripe',
             rawAmount: tokensToAdd,
             tokenType: 'credits',
-            rate: paymentIntent.amount / tokensToAdd, // Price per token
+            rate: paymentIntent.amount / tokensToAdd,
             expiresAt: null,
-          });
+          },
+          { session },
+        );
 
-          logger.info('[BuyTokens] Transaction record created', {
-            userId,
-            paymentIntentId: paymentIntent.id,
-            tokensAdded: tokensToAdd,
-          });
-        } catch (txError) {
-          logger.error('[BuyTokens] Failed to create transaction record', txError);
-          // Don't fail the webhook if transaction logging fails
-        }
-      } else {
-        logger.info('[BuyTokens] Payment already processed, skipping', {
+        // Commit both operations atomically
+        await session.commitTransaction();
+
+        logger.info('[BuyTokens] Payment processed successfully', {
           userId,
+          tokensAdded: tokensToAdd,
+          newBalance: updatedBalance.tokenCredits,
           paymentIntentId: paymentIntent.id,
         });
+      } catch (error) {
+        // Rollback on any error
+        await session.abortTransaction();
+        logger.error('[BuyTokens] Transaction failed, rolled back', error);
+        throw error;
+      } finally {
+        session.endSession();
       }
     } else if (event.type === 'payment_intent.payment_failed') {
       const paymentIntent = event.data.object;
@@ -260,5 +244,4 @@ module.exports = {
   createPaymentIntentHandler,
   handleWebhook,
   getPaymentMethodsHandler,
-  addTokensToBalance,
 };
