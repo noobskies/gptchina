@@ -2,15 +2,49 @@
 
 ## Current Work Focus
 
-**Status**: Memory bank initialization complete - Project ready for development
+**Status**: Implementing Fork-Friendly Architecture Framework
 
-This is a fresh initialization of the memory bank for the LibreChat project (fork: "gptchina"). No active development work is currently in progress. The project is at version v0.8.1-rc1 and ready to begin implementing features or fixes based on user requirements.
+**Active Task**: Establish comprehensive architecture and guidelines for developing custom features in the gptchina fork while minimizing upstream merge conflicts.
+
+**Key Objective**: Create a decoupled architecture that allows custom features to coexist with upstream code, making future merges safer and more maintainable.
 
 ## Recent Changes
 
-### Memory Bank Initialization (Current Session)
+### Fork-Friendly Architecture Implementation (2025-11-09)
 
 **What was done**:
+
+1. **Updated systemPatterns.md** - Added comprehensive fork-friendly architecture section including:
+   - Core principles (Isolation First, Clear Boundaries, Merge-Aware Development)
+   - Directory structure for custom code (`custom/` directory)
+   - Five integration patterns (Plugin, Middleware Wrapping, Configuration Extension, Event-Driven, Dependency Injection)
+   - Code marking conventions for custom modifications
+   - Feature toggle system with environment variables
+   - Frontend and backend custom code strategies
+   - Merge conflict prevention strategies
+   - Documentation requirements
+   - Testing strategies
+   - CI/CD considerations
+   - Best practices summary
+
+**Key Architectural Patterns Established**:
+
+- **Plugin Architecture**: Register custom features without modifying upstream
+- **Middleware Wrapping**: Extend behavior by wrapping upstream middleware
+- **Configuration Extension**: Layer custom config over upstream config
+- **Event-Driven Integration**: React to upstream events without code changes
+- **Dependency Injection**: Swap implementations through existing interfaces
+
+**Documentation Standards**:
+
+- All custom code marked with `// CUSTOM: gptchina - [description]`
+- Every custom feature requires `custom/features/[name]/README.md`
+- Track upstream modifications in `custom/MODIFICATIONS.md`
+- Clear branching strategy and commit message format
+
+### Memory Bank Initialization (2025-11-09)
+
+**Completed earlier**:
 
 - Created complete memory bank structure
 - Documented project foundation in `projectbrief.md`
@@ -20,7 +54,7 @@ This is a fresh initialization of the memory bank for the LibreChat project (for
 - Established this active context tracking file
 - Set up progress tracking
 
-**Key Insights Captured**:
+**Project Understanding**:
 
 - LibreChat is a multi-provider AI chat platform (OpenAI, Anthropic, Google, Azure, Bedrock, etc.)
 - Monorepo architecture with React frontend and Express backend

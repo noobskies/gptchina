@@ -1,0 +1,16 @@
+Current Upstream Version: v0.8.1-rc1
+Commit: ba71375982ac287ae81707329b4e95d27988f393
+Repository: https://github.com/danny-avila/LibreChat
+Last Sync: Never (initial fork state)
+Modified Files: 0
+Status: ✅ Clean - No upstream modifications
+
+---
+
+Sync History:
+
+2025-11-09: Initial fork state documented
+- Version: v0.8.1-rc1
+- Commit: ba71375982ac287ae81707329b4e95d27988f393
+- Modified Files: 0
+- Notes: Fresh fork with custom/ directory architecture established

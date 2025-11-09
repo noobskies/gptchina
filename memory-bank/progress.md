@@ -2,11 +2,11 @@
 
 ## Project Status
 
-**Current State**: Memory Bank Initialized - Ready for Development
+**Current State**: Implementing Fork-Friendly Architecture
 
 **Version**: v0.8.1-rc1 (Release Candidate)
 
-**Last Updated**: 2025-11-09
+**Last Updated**: 2025-11-09 11:58 AM CST
 
 ## What Works
 
@@ -197,7 +197,32 @@ The following categories represent potential work areas, but specific tasks will
 
 ## Evolution of Project Decisions
 
-### Memory Bank Initialization (2025-11-09)
+### Fork-Friendly Architecture Implementation (2025-11-09 11:56 AM)
+
+**Decision**: Establish comprehensive fork-friendly architecture framework
+
+- **Rationale**: This is a fork of upstream LibreChat; must minimize merge conflicts and maintain upstream compatibility
+- **Impact**: All future custom features must follow isolation patterns and documentation standards
+- **Implementation**:
+  - Added comprehensive fork architecture section to `systemPatterns.md`
+  - Established five integration patterns (Plugin, Middleware Wrapping, Config Extension, Event-Driven, Dependency Injection)
+  - Created code marking standards for custom modifications
+  - Defined directory structure for custom code (`custom/` directory)
+  - Documented merge conflict prevention strategies
+  - Established documentation requirements for all custom features
+  - Created testing strategies for custom code
+- **Key Principles Established**:
+  1. Isolation First - Custom features in dedicated modules
+  2. Clear Boundaries - Explicit separation between fork and upstream
+  3. Merge-Aware Development - Consider upstream evolution
+  4. Comprehensive Documentation - Mark and track all modifications
+- **Next Steps**:
+  - Create physical `custom/` directory structure
+  - Create template files and documentation
+  - Document any existing custom modifications (if present)
+  - Set up CI/CD checks for fork compliance
+
+### Memory Bank Initialization (2025-11-09 11:38 AM)
 
 **Decision**: Implement comprehensive memory bank structure
 
@@ -257,20 +282,51 @@ The following categories represent potential work areas, but specific tasks will
 
 ### Completed
 
-✅ **Memory Bank Initialization** (2025-11-09)
+✅ **Memory Bank Initialization** (2025-11-09 11:38 AM)
 
 - Comprehensive documentation created
 - Project fully analyzed and understood
 - Ready for active development
 
+✅ **Fork-Friendly Architecture Framework** (2025-11-09 11:56 AM)
+
+- Comprehensive fork architecture guidelines documented
+- Five integration patterns established
+- Code marking standards defined
+- Documentation requirements created
+- Testing strategies established
+- Merge conflict prevention strategies documented
+
+### In Progress
+
+🚧 **Fork-Friendly Architecture Implementation** (Started 2025-11-09)
+
+- [x] Document fork architecture principles in systemPatterns.md
+- [x] Update activeContext.md with current work
+- [x] Update progress.md with implementation status
+- [ ] Create `custom/` directory structure
+- [ ] Create README.md and FEATURES.md templates
+- [ ] Create MODIFICATIONS.md tracking file
+- [ ] Set up example feature structure
+- [ ] Create utility scripts (merge preparation, modification tracking)
+- [ ] Update .gitignore for custom code
+- [ ] Create CI/CD workflow templates
+
 ### Upcoming
 
-🎯 **To Be Defined**
+🎯 **Custom Code Infrastructure**
+
+- Create physical directory structure
+- Set up documentation templates
+- Create example implementations
+- Establish development workflows
+
+🎯 **To Be Defined Based on User Needs**
 
 Future milestones will be established based on:
 
-- User's specific goals and requirements
-- Priority features or fixes needed
+- User's specific feature requirements
+- Priority fixes or enhancements
 - Timeline and resource constraints
 - Integration requirements
 
@@ -453,6 +509,6 @@ Success criteria will be established based on:
 
 ---
 
-**Last Updated**: 2025-11-09 11:38 AM CST
+**Last Updated**: 2025-11-09 11:58 AM CST
 
-**Status**: ✅ Memory Bank Complete - Awaiting Development Direction
+**Status**: 🚧 Implementing Fork-Friendly Architecture Framework
