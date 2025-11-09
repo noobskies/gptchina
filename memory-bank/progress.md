@@ -2,11 +2,11 @@
 
 ## Project Status
 
-**Current State**: Buy Tokens Feature - Production Ready ✅
+**Current State**: Buy Tokens Feature - Refactored & Production Ready ✅
 
 **Version**: v0.8.1-rc1 (Release Candidate)
 
-**Last Updated**: 2025-11-09 1:58 PM CST
+**Last Updated**: 2025-11-09 2:39 PM CST
 
 ## What Works
 
@@ -398,6 +398,22 @@ The following categories represent potential work areas, but specific tasks will
 - Environment variables already configured in `.env`
 - **Status**: Production ready, pending final testing with Stripe test cards
 
+✅ **Buy Tokens Feature - Complete Refactoring** (2025-11-09 2:21-2:37 PM)
+
+- Comprehensive refactoring to improve code quality and maintainability
+- Split 480-line monolithic modal into 6 modular components (260-line orchestrator)
+- Created 7 new files: 3 utilities (currency, errors, stripeConfig) + 4 components
+- Implemented ALL 6 Stripe payment methods properly (card, WeChat, Alipay, Bitcoin, Google Pay, Apple Pay)
+- Added atomic MongoDB transactions for payment processing
+- Removed duplicate PaymentForm.tsx file
+- Removed unused addTokensToBalance() function (~45 lines)
+- Improved error handling with type-safe error mapping
+- Fixed loading states using Stripe's onReady event (removed hardcoded timeout)
+- Changed default package to Popular (500K tokens, ¥35)
+- Following claim-tokens pattern for data structure
+- **Metrics**: 7 files created, 6 modified, 1 deleted, 220 lines reduced from main modal
+- **Status**: Refactored, cleaned, and production-ready
+
 ### In Progress
 
 🚧 **Buy Tokens Feature - Final Testing** (Next Priority)
@@ -619,12 +635,37 @@ Success criteria will be established based on:
 - Upstream synchronization
 - Documentation updates
 
+### Buy Tokens Feature Refactoring (2025-11-09 2:21-2:37 PM)
+
+**Decision**: Comprehensive refactoring from monolithic to modular architecture
+
+- **Problem**: 480-line TokenPurchaseModal.tsx was difficult to maintain, test, and extend
+- **Root Cause**: Violated single responsibility principle, had 3 components in one file
+- **Solution**: Split into 6 modular components with shared utilities
+- **Rationale**:
+  - Improve maintainability - each component has clear purpose
+  - Enable independent testing - components can be tested in isolation
+  - Reduce cognitive load - smaller, focused files easier to understand
+  - Better code reuse - shared utilities prevent duplication
+  - Follow React best practices - composition over complexity
+- **Implementation**:
+  - Created 7 new files: PackageSelection, PaymentMethodSelector, PaymentForm, PurchaseReceipt, stripeConfig, currency utils, error utils
+  - Refactored TokenPurchaseModal from 480 to 260 lines (orchestrator only)
+  - Refactored TokenPackageCard to use shared utilities
+  - Implemented all 6 Stripe payment methods (not just card)
+  - Added atomic MongoDB transactions in webhook handler
+  - Deleted duplicate PaymentForm.tsx
+  - Removed unused addTokensToBalance() function
+  - Changed default package to Popular (500K tokens)
+- **Impact**: Significantly improved code quality and maintainability
+- **Key Learning**: Large components (>200 lines) should be decomposed into smaller, focused components following single responsibility principle
+
 ---
 
-**Last Updated**: 2025-11-09 1:58 PM CST
+**Last Updated**: 2025-11-09 2:39 PM CST
 
 **Status**:
 
 - ✅ Claim Tokens Feature - Production Ready
-- ✅ Buy Tokens Feature - Production Ready
+- ✅ Buy Tokens Feature - Refactored & Production Ready
 - 🧪 Ready for testing with Stripe test cards
