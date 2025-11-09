@@ -6,7 +6,7 @@
 
 **Version**: v0.8.1-rc1 (Release Candidate)
 
-**Last Updated**: 2025-11-09 1:05 PM CST
+**Last Updated**: 2025-11-09 1:34 PM CST
 
 ## What Works
 
@@ -365,6 +365,16 @@ The following categories represent potential work areas, but specific tasks will
 - Comprehensive 450+ line documentation
 - **Status**: Code complete, requires Stripe packages installation and configuration
 
+✅ **Buy Tokens Modal Fixes** (2025-11-09 1:23-1:31 PM)
+
+- Fixed import path error (`~/store` instead of `@librechat/client/store`)
+- Updated TypeScript configuration to include custom directory patterns
+- Restructured state management to follow LibreChat's Settings modal pattern
+- Implemented `@headlessui/react` Dialog component for proper full-screen rendering
+- Modal now opens correctly and renders via Portal at document root
+- Smooth animations and proper backdrop behavior
+- **Status**: Modal working, backend authentication and UI polish needed
+
 ### In Progress
 
 🚧 **Buy Tokens Feature - Setup & Testing** (Started 2025-11-09)
@@ -391,6 +401,47 @@ The following categories represent potential work areas, but specific tasks will
 - [ ] Create CI/CD workflow templates
 
 ### Upcoming
+
+🎯 **Buy Tokens Feature - Completion** (Next Priority)
+
+Remaining work to complete Buy Tokens feature:
+
+1. **Backend Authentication Fix**
+
+   - Error: "Unauthorized" (401) when calling `/api/custom/stripe/create-payment-intent`
+   - Need to verify route registration
+   - Check authentication middleware configuration
+   - Test with authenticated requests
+
+2. **UI/UX Improvements**
+
+   - **Dark/Light Mode Compatibility**
+     - Review all color classes in TokenPurchaseModal
+     - Update TokenPackageCard styling
+     - Use LibreChat design tokens consistently (`text-text-primary`, `bg-background`, etc.)
+     - Test in both dark and light modes
+   - **General Styling Polish**
+     - Improve package card hover states
+     - Add smooth transitions
+     - Better spacing and layout
+     - Success/failure state animations
+     - Loading state improvements
+
+3. **Stripe Elements Integration**
+
+   - Install Stripe frontend packages: `@stripe/stripe-js`, `@stripe/react-stripe-js`
+   - Implement actual payment form with Stripe Elements
+   - Replace placeholder error message
+   - Add payment confirmation UI
+   - Handle payment errors gracefully
+
+4. **Testing & Polish**
+   - End-to-end payment flow testing
+   - Test with Stripe test cards
+   - Verify webhook processing
+   - Test atomic payment operations
+   - Error handling validation
+   - Success feedback to user
 
 🎯 **Custom Code Infrastructure**
 
@@ -587,6 +638,9 @@ Success criteria will be established based on:
 
 ---
 
-**Last Updated**: 2025-11-09 12:44 PM CST
+**Last Updated**: 2025-11-09 1:35 PM CST
 
-**Status**: ✅ Claim Tokens Feature - Production Ready
+**Status**:
+
+- ✅ Claim Tokens Feature - Production Ready
+- 🚧 Buy Tokens Feature - Modal Working (Auth & UI Polish Needed)

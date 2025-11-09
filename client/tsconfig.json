@@ -36,6 +36,10 @@
     "env.d.ts",
     "../config/translations/**/*.ts",
     "../packages/client/src/hooks/useDelayedRender.tsx",
-    "../packages/client/src/components/InfoHoverCard.tsx"
+    "../packages/client/src/components/InfoHoverCard.tsx",
+    "../custom/features/**/client/**/*.ts",
+    "../custom/features/**/client/**/*.tsx",
+    "../custom/features/**/shared/**/*.ts",
+    "../custom/features/**/shared/**/*.tsx"
   ]
 }

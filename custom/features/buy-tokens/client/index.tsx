@@ -8,19 +8,21 @@
  * Barrel export for Buy Tokens feature components.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { BuyTokensButton } from './BuyTokensButton';
 import { TokenPurchaseModal } from './TokenPurchaseModal';
 
 /**
  * Buy Tokens feature wrapper component
- * Combines button and modal for easy integration
+ * Manages modal state and combines button with modal
  */
 const BuyTokens: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <>
-      <BuyTokensButton />
-      <TokenPurchaseModal />
+      <BuyTokensButton onClick={() => setIsModalOpen(true)} />
+      {isModalOpen && <TokenPurchaseModal open={isModalOpen} onOpenChange={setIsModalOpen} />}
     </>
   );
 };

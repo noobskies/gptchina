@@ -2,13 +2,84 @@
 
 ## Current Work Focus
 
-**Status**: Buy Tokens Feature - Implementation Complete
+**Status**: Buy Tokens Feature - Modal Working, Backend Auth & UI Polish Needed
 
-**Active Task**: Stripe payment integration for token purchases completed. Feature includes 4 token packages, multiple payment methods, atomic operations, and comprehensive security measures.
+**Active Task**: Buy Tokens modal now renders full-screen and opens correctly. Need to fix backend authentication, improve UI for dark/light mode compatibility, and complete Stripe Elements integration.
 
-**Key Objective**: Maintain and enhance custom features while following fork-friendly architecture principles.
+**Key Objective**: Complete Buy Tokens feature with proper authentication, polished UI, and full Stripe payment integration.
 
 ## Recent Changes
+
+### Buy Tokens Modal Fixes (2025-11-09 1:23-1:31 PM)
+
+**Overview**: Fixed multiple issues preventing the Buy Tokens modal from working correctly.
+
+**Problems Solved**:
+
+1. **Import Path Error** (1:23 PM)
+
+   - **Issue**: `useBuyTokens.ts` using wrong import: `import store from '@librechat/client/store'`
+   - **Solution**: Changed to `import store from '~/store'` (Vite path alias)
+   - **File Modified**: `custom/features/buy-tokens/client/useBuyTokens.ts`
+
+2. **TypeScript Configuration** (1:24 PM)
+
+   - **Issue**: ESLint couldn't process custom files - not in `client/tsconfig.json`
+   - **Solution**: Added custom directory patterns to include array
+   - **File Modified**: `client/tsconfig.json`
+   - **Patterns Added**:
+     ```json
+     "../custom/features/**/client/**/*.ts",
+     "../custom/features/**/client/**/*.tsx",
+     "../custom/features/**/shared/**/*.ts",
+     "../custom/features/**/shared/**/*.tsx"
+     ```
+
+3. **Modal State Management** (1:27 PM)
+
+   - **Issue**: Button and modal using separate `useBuyTokens()` instances = separate state
+   - **Root Cause**: Each component created own `isModalOpen` state that didn't communicate
+   - **Solution**: Restructured to follow LibreChat's Settings modal pattern:
+     - `index.tsx` now manages state with `useState`
+     - `BuyTokensButton` accepts `onClick` prop
+     - `TokenPurchaseModal` accepts `open` and `onOpenChange` props
+     - `useBuyTokens` hook simplified to API calls only (removed modal state)
+   - **Files Modified**:
+     - `custom/features/buy-tokens/client/index.tsx`
+     - `custom/features/buy-tokens/client/BuyTokensButton.tsx`
+     - `custom/features/buy-tokens/client/TokenPurchaseModal.tsx`
+     - `custom/features/buy-tokens/client/useBuyTokens.ts`
+
+4. **Full-Screen Modal Rendering** (1:30 PM)
+   - **Issue**: Modal constrained to sidebar - rendering as plain `<div>` in sidebar DOM
+   - **Root Cause**: Not using Portal - modal stayed in parent container's tree
+   - **Solution**: Implemented `@headlessui/react` Dialog component (matches Settings):
+     - `Dialog` creates Portal at document root
+     - `DialogPanel` for modal content
+     - `DialogTitle` for accessibility
+     - `Transition` components for smooth animations
+     - Proper backdrop with dark overlay
+   - **File Modified**: `custom/features/buy-tokens/client/TokenPurchaseModal.tsx`
+   - **Imports Added**: `Dialog`, `DialogPanel`, `DialogTitle`, `Transition`, `TransitionChild`, `cn`
+   - **Result**: Modal now renders full-screen, identical to Settings modal behavior
+
+**Key Learnings**:
+
+- LibreChat uses local state in parent components for modals (not Recoil for every modal)
+- `@headlessui/react` Dialog automatically creates Portals for proper rendering
+- Always follow existing patterns - examined Settings modal as reference
+- TypeScript config must include custom directories for proper linting
+- Vite path aliases (`~/`) are configured in base tsconfig, use them consistently
+
+**Current Status**:
+
+- ✅ Modal opens correctly when clicking button
+- ✅ Modal renders full-screen with backdrop
+- ✅ Modal closes on backdrop click or close button
+- ✅ Smooth fade-in/fade-out animations
+- ⚠️ Backend returning 401 "Unauthorized" error
+- ⚠️ UI needs dark/light mode polish
+- ⚠️ Stripe Elements integration incomplete
 
 ### Buy Tokens Feature Implementation (2025-11-09 12:45-1:02 PM)
 

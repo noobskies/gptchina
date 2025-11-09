@@ -5,12 +5,10 @@
  * Created: 2025-11-09
  * Upstream Impact: None (standalone module)
  *
- * React hook for managing token purchase state and API calls.
+ * React hook for managing token purchase API calls.
  */
 
 import { useState, useCallback } from 'react';
-import { useRecoilValue } from 'recoil';
-import store from '@librechat/client/store';
 
 interface CreatePaymentIntentResponse {
   success: boolean;
@@ -22,26 +20,10 @@ interface CreatePaymentIntentResponse {
 }
 
 export const useBuyTokens = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
-
-  // Get user info from Recoil store
-  const user = useRecoilValue(store.user);
-
-  const openModal = useCallback(() => {
-    setIsModalOpen(true);
-    setError(null);
-  }, []);
-
-  const closeModal = useCallback(() => {
-    setIsModalOpen(false);
-    setClientSecret(null);
-    setPaymentIntentId(null);
-    setError(null);
-  }, []);
 
   const createPaymentIntent = useCallback(
     async (packageId: string, paymentMethod: string = 'card') => {
@@ -78,13 +60,10 @@ export const useBuyTokens = () => {
   );
 
   return {
-    isModalOpen,
     isLoading,
     error,
     clientSecret,
     paymentIntentId,
-    openModal,
-    closeModal,
     createPaymentIntent,
     setError,
   };
