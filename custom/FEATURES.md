@@ -15,11 +15,316 @@ This document tracks all custom features implemented in the gptchina fork of Lib
 
 ### Status Summary
 
-- **Total Features**: 0
+- **Total Features**: 3
 - **Planned**: 0
 - **In Progress**: 0
-- **Complete**: 0
+- **Complete**: 3
 - **Needs Maintenance**: 0
+
+---
+
+### Model Pricing Display
+
+**Status**: ✅ Complete
+
+**Category**: Full Stack
+
+**Priority**: Medium
+
+**Created**: 2025-11-09
+
+**Last Updated**: 2025-11-09
+
+**Owner**: Development Team
+
+#### Description
+
+Displays AI model pricing information (input/output token costs) on the landing page below the greeting message. Helps users understand the cost implications of their model selection by showing real-time pricing from the backend's pricing database.
+
+#### Integration Approach
+
+- **Pattern Used**: API Endpoint + React Hook
+- **Upstream Files Modified**:
+  - `api/server/index.js` (route registration - 3 lines)
+  - `client/src/components/Chat/Landing.tsx` (UI display - 15 lines)
+  - `client/tsconfig.json` (@custom alias - 1 line)
+- **Modification Impact**: Low
+
+Uses dedicated API endpoint to fetch pricing data from `api/models/tx.js` and displays it via custom React hook.
+
+#### Configuration
+
+**No configuration needed** - Feature works automatically once routes are registered.
+
+Pricing data is sourced from `api/models/tx.js` which is updated by the LibreChat team as model pricing changes.
+
+#### Location
+
+- **Feature Directory**: `custom/features/model-pricing/`
+- **Documentation**: `custom/features/model-pricing/README.md`
+- **Frontend**: `custom/features/model-pricing/client/`
+- **Backend**: `custom/features/model-pricing/server/`
+- **Tests**: None yet (manual testing only)
+
+#### Dependencies
+
+**Upstream Dependencies**:
+
+- `api/models/tx.js`: Source of truth for model pricing
+- `conversation.model`: Current model selection
+- LibreChat design tokens: For consistent styling
+
+**External Packages**:
+
+- None (uses native fetch API)
+
+**Other Custom Features**:
+
+- None
+
+#### Testing
+
+**Test Coverage**: Manual testing only
+
+**Manual Testing Steps**:
+
+1. Start dev server and log in
+2. Navigate to landing page
+3. Select different models from dropdown
+4. Verify pricing updates correctly (format: "Input: X.XX | Output: X.XX")
+5. Test with model that has no pricing data
+6. Verify dark/light mode compatibility
+
+**Test Cases**:
+
+- ✅ Model with pricing → Shows rates
+- ✅ Model without pricing → No display (graceful)
+- ✅ No model selected → No pricing shown
+- ✅ Model changes → Pricing updates automatically
+- ✅ Dark/light theme → Proper contrast maintained
+
+#### Known Issues
+
+- None currently
+
+#### Maintenance Notes
+
+**Upstream Compatibility**:
+
+- Tested with upstream version: v0.8.1-rc1 (commit: 63ed3a35)
+- Depends on stable `tx.js` structure
+- Minimal modification to Landing.tsx (well-isolated)
+
+**Update Strategy**:
+
+- When `tx.js` updates: No action needed (API automatically serves new pricing)
+- When Landing.tsx updates: Re-apply custom pricing display code
+- When route registration pattern changes: Update server/index.js integration
+
+**Todo**:
+
+- [ ] Add caching to reduce API calls
+- [ ] Show pricing in token purchase modal
+- [ ] Add pricing comparison view
+- [ ] Include estimated costs for conversations
+- [ ] Show cache pricing for Anthropic models
+
+---
+
+### Claim Tokens
+
+**Status**: ✅ Complete
+
+**Category**: Full Stack
+
+**Priority**: High
+
+**Created**: 2025-11-09
+
+**Last Updated**: 2025-11-09
+
+**Owner**: Development Team
+
+#### Description
+
+Allows users to claim 20,000 free tokens every 24 hours. Includes cooldown enforcement with race condition protection, real-time countdown timer, and audit trail via transaction logs.
+
+#### Integration Approach
+
+- **Pattern Used**: Plugin (dedicated feature module)
+- **Upstream Files Modified**:
+  - `api/server/index.js` (route registration)
+  - `client/src/components/Nav/Nav.tsx` (button placement)
+  - `packages/data-schemas/src/schema/balance.ts` (schema addition)
+  - `packages/data-schemas/src/types/balance.ts` (type addition)
+  - `client/vite.config.ts` (@custom alias)
+- **Modification Impact**: Low
+
+#### Configuration
+
+**Constants** (in `custom/features/claim-tokens/shared/constants.js`):
+
+- `CLAIM_AMOUNT`: 20,000 tokens
+- `COOLDOWN_HOURS`: 24 hours
+
+#### Location
+
+- **Feature Directory**: `custom/features/claim-tokens/`
+- **Documentation**: `custom/features/claim-tokens/README.md`
+- **Frontend**: `custom/features/claim-tokens/client/`
+- **Backend**: `custom/features/claim-tokens/server/`
+
+#### Dependencies
+
+**Upstream Dependencies**:
+
+- Balance model (`packages/data-schemas/src/schema/balance.ts`)
+- Transaction model (`api/models/Transaction.js`)
+
+**External Packages**:
+
+- None (uses existing MongoDB and React dependencies)
+
+**Other Custom Features**:
+
+- None
+
+#### Testing
+
+**Test Coverage**: Manual testing
+
+**Known Features**:
+
+- ✅ 24-hour cooldown enforcement
+- ✅ Race condition protection (atomic database operations)
+- ✅ Real-time countdown with seconds
+- ✅ Transaction audit trail
+- ✅ Toast notifications on success/error
+
+#### Known Issues
+
+- None currently
+
+#### Maintenance Notes
+
+**Upstream Compatibility**:
+
+- Tested with upstream version: v0.8.1-rc1
+- Relies on stable Balance schema
+- Minimal upstream modifications
+
+**Update Strategy**:
+
+- Monitor Balance schema changes
+- Update atomic operations if MongoDB version changes
+
+---
+
+### Buy Tokens
+
+**Status**: ✅ Complete
+
+**Category**: Full Stack
+
+**Priority**: High
+
+**Created**: 2025-11-09
+
+**Last Updated**: 2025-11-09
+
+**Owner**: Development Team
+
+#### Description
+
+Stripe-integrated payment system allowing users to purchase tokens with multiple payment methods (Credit Card, Bitcoin, Google Pay, Apple Pay, WeChat Pay, Alipay). Includes 4 token packages with volume discounts, atomic payment processing, and webhook verification.
+
+#### Integration Approach
+
+- **Pattern Used**: Plugin (dedicated feature module)
+- **Upstream Files Modified**:
+  - `api/server/index.js` (route registration - special handling for webhooks)
+  - `client/src/components/Nav/Nav.tsx` (button placement)
+  - `packages/data-schemas/src/schema/balance.ts` (processedPayments field)
+  - `packages/data-schemas/src/types/balance.ts` (type addition)
+  - `Dockerfile` (Vite build args for env vars)
+  - `docker-compose.override.yml` (created for production builds)
+- **Modification Impact**: Low-Medium
+
+#### Configuration
+
+**Environment Variables**:
+
+**Token Packages** (in `shared/constants.js`):
+
+- 100,000 tokens - ¥10.00
+- 500,000 tokens - ¥35.00 (30% off) - Popular
+- 1,000,000 tokens - ¥55.00 (45% off)
+- 10,000,000 tokens - ¥280.00 (72% off)
+
+#### Location
+
+- **Feature Directory**: `custom/features/buy-tokens/`
+- **Documentation**: `custom/features/buy-tokens/README.md`
+- **Frontend**: `custom/features/buy-tokens/client/`
+- **Backend**: `custom/features/buy-tokens/server/`
+
+#### Dependencies
+
+**Upstream Dependencies**:
+
+- Balance model (`packages/data-schemas/src/schema/balance.ts`)
+- Transaction model (`api/models/Transaction.js`)
+
+**External Packages**:
+
+- `stripe`: Stripe SDK (backend)
+- `@stripe/stripe-js`: Stripe JS library (frontend)
+- `@stripe/react-stripe-js`: Stripe React components
+
+**Other Custom Features**:
+
+- None
+
+#### Testing
+
+**Test Coverage**: Manual testing with Stripe test cards
+
+**Test Cards**:
+
+- Success: 4242 4242 4242 4242
+- Declined: 4000 0000 0000 0002
+
+**Verified Features**:
+
+- ✅ All 6 payment methods working
+- ✅ Atomic payment processing (MongoDB transactions)
+- ✅ Webhook signature verification
+- ✅ Idempotency (prevents duplicate processing)
+- ✅ Production deployment successful
+
+#### Known Issues
+
+- None currently
+
+#### Maintenance Notes
+
+**Upstream Compatibility**:
+
+- Tested with upstream version: v0.8.1-rc1 (commit: 63ed3a35)
+- Special handling: Webhook route must be registered BEFORE express.json()
+- Relies on stable Balance schema
+
+**Update Strategy**:
+
+- Monitor Express middleware order if upstream changes server setup
+- Update Stripe SDK if pricing/features change
+- Keep Dockerfile env var handling if upstream changes build process
+
+**Production Status**:
+
+- ✅ Deployed to https://gptafrica.io
+- ✅ All payment methods operational
+- ✅ Tokens adding correctly to user balances
 
 ---
 

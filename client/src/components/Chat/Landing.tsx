@@ -7,6 +7,9 @@ import { useGetEndpointsQuery, useGetStartupConfig } from '~/data-provider';
 import ConvoIcon from '~/components/Endpoints/ConvoIcon';
 import { useLocalize, useAuthContext } from '~/hooks';
 import { getIconEndpoint, getEntity } from '~/utils';
+// CUSTOM: gptchina - Model Pricing Display
+// See: custom/features/model-pricing/README.md
+import { usePricing, formatPricing } from '@custom/features/model-pricing/client';
 
 const containerClassName =
   'shadow-stroke relative flex h-full items-center justify-center rounded-full bg-white dark:bg-presentation dark:text-white text-black dark:after:shadow-none ';
@@ -143,6 +146,9 @@ export default function Landing({ centerFormOnLanding }: { centerFormOnLanding: 
       ? getGreeting()
       : getGreeting() + (user?.name ? ', ' + user.name : '');
 
+  // CUSTOM: gptchina - Fetch pricing for current model
+  const { pricing } = usePricing(conversation?.model, conversation?.endpoint);
+
   return (
     <div
       className={`flex h-full transform-gpu flex-col items-center justify-center pb-16 transition-all duration-200 ${centerFormOnLanding ? 'max-h-full sm:max-h-0' : 'max-h-full'} ${getDynamicMargin}`}
@@ -203,6 +209,15 @@ export default function Landing({ centerFormOnLanding }: { centerFormOnLanding: 
             />
           )}
         </div>
+        {/* CUSTOM: gptchina - Display model pricing */}
+        {conversation?.model && pricing && (
+          <div className="animate-fadeIn mt-4 flex flex-col items-center gap-1 text-center text-sm text-text-secondary">
+            <div className="font-medium">
+              {localize('com_ui_model')}: {conversation.model}
+            </div>
+            <div>{formatPricing(pricing)}</div>
+          </div>
+        )}
         {description && (
           <div className="animate-fadeIn mt-4 max-w-md text-center text-sm font-normal text-text-primary">
             {description}

@@ -168,6 +168,11 @@ const startServer = async () => {
   const customBuyTokensRoutes = require('../../custom/features/buy-tokens/server/routes');
   app.use('/api/custom', customBuyTokensRoutes);
 
+  // CUSTOM: gptchina - Model Pricing feature
+  // See: custom/features/model-pricing/README.md
+  const customModelPricingRoutes = require('../../custom/features/model-pricing/server/routes');
+  app.use('/api/custom/pricing', customModelPricingRoutes);
+
   app.use(ErrorController);
 
   app.use((req, res) => {

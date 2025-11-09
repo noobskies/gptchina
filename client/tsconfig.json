@@ -23,7 +23,8 @@
       "~/*": ["./client/src/*"],
       "test/*": ["./client/test/*"],
       "*": ["./client/*", "../node_modules/*"],
-      "librechat-data-provider/*": ["./packages/data-provider/*"]
+      "librechat-data-provider/*": ["./packages/data-provider/*"],
+      "@custom/*": ["./custom/*"]
     }
   },
   "types": ["node", "jest", "@testing-library/jest-dom"],

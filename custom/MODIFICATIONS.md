@@ -4,6 +4,165 @@ This document tracks all modifications made to upstream LibreChat files to suppo
 
 ## Modified Files
 
+### api/server/index.js
+
+**Status**: 🟢 Stable
+
+**Modified Date**: 2025-11-09
+
+**Last Reviewed**: 2025-11-09
+
+**Upstream Version at Modification**: v0.8.1-rc1 (commit: 63ed3a35)
+
+**Feature**: Model Pricing Display
+
+#### Lines Modified
+
+- **Lines**: After Buy Tokens routes registration (around line 174)
+- **Type**: Addition (4 lines)
+
+#### Reason for Modification
+
+Register custom pricing API routes to provide model pricing information to the frontend.
+
+#### Modification Impact
+
+**Impact Level**: Low
+
+**Explanation**:
+
+- **Functionality**: Adds new API endpoint without affecting existing functionality
+- **Performance**: No performance impact (on-demand API calls)
+- **Security**: Public endpoint, no auth required (pricing is public information)
+- **Compatibility**: Uses existing route registration pattern
+
+#### Code Changes
+
+```javascript
+// CUSTOM: gptchina - Model Pricing feature
+// See: custom/features/model-pricing/README.md
+const customModelPricingRoutes = require('../../custom/features/model-pricing/server/routes');
+app.use('/api/custom/pricing', customModelPricingRoutes);
+```
+
+#### Update Strategy
+
+When upstream updates route registration, re-add these 3 lines after other custom routes.
+
+---
+
+### client/src/components/Chat/Landing.tsx
+
+**Status**: 🟢 Stable
+
+**Modified Date**: 2025-11-09
+
+**Last Reviewed**: 2025-11-09
+
+**Upstream Version at Modification**: v0.8.1-rc1 (commit: 63ed3a35)
+
+**Feature**: Model Pricing Display
+
+#### Lines Modified
+
+- **Lines**: Import section and JSX section
+- **Type**: Addition (~15 lines total)
+
+#### Reason for Modification
+
+Display current model's pricing information (input/output rates) on the landing page below the greeting message.
+
+#### Modification Impact
+
+**Impact Level**: Low
+
+**Explanation**:
+
+- **Functionality**: Adds informational display without affecting existing functionality
+- **Performance**: Single API call per model selection, minimal impact
+- **Security**: No security implications (displays public pricing data)
+- **Compatibility**: Uses existing hooks pattern, well-isolated
+
+#### Code Changes
+
+```typescript
+// Import section
+// CUSTOM: gptchina - Model Pricing Display
+// See: custom/features/model-pricing/README.md
+import { usePricing, formatPricing } from '@custom/features/model-pricing/client';
+
+// Hook usage (before return statement)
+// CUSTOM: gptchina - Fetch pricing for current model
+const { pricing } = usePricing(conversation?.model, conversation?.endpoint);
+
+// JSX section (after greeting, before description)
+{/* CUSTOM: gptchina - Display model pricing */}
+{conversation?.model && pricing && (
+  <div className="animate-fadeIn mt-4 flex flex-col items-center gap-1 text-center text-sm text-text-secondary">
+    <div className="font-medium">
+      {localize('com_ui_model')}: {conversation.model}
+    </div>
+    <div>{formatPricing(pricing)}</div>
+  </div>
+)}
+```
+
+#### Update Strategy
+
+When upstream updates Landing.tsx, re-add import, hook usage, and JSX pricing display.
+
+---
+
+### client/tsconfig.json
+
+**Status**: 🟢 Stable
+
+**Modified Date**: 2025-11-09
+
+**Last Reviewed**: 2025-11-09
+
+**Upstream Version at Modification**: v0.8.1-rc1 (commit: 63ed3a35)
+
+**Feature**: Model Pricing Display (enables @custom alias for TypeScript)
+
+#### Lines Modified
+
+- **Lines**: paths section in compilerOptions
+- **Type**: Addition (1 line)
+
+#### Reason for Modification
+
+Add TypeScript path alias `@custom` to match the Vite alias already configured in vite.config.ts. This allows TypeScript to resolve imports from custom features without errors.
+
+#### Modification Impact
+
+**Impact Level**: Low
+
+**Explanation**:
+
+- **Functionality**: Enables type checking for custom feature imports
+- **Performance**: No runtime impact (compile-time only)
+- **Security**: No security implications
+- **Compatibility**: Matches existing Vite alias pattern
+
+#### Code Changes
+
+```json
+"paths": {
+  "~/*": ["./client/src/*"],
+  "test/*": ["./client/test/*"],
+  "*": ["./client/*", "../node_modules/*"],
+  "librechat-data-provider/*": ["./packages/data-provider/*"],
+  "@custom/*": ["./custom/*"]
+}
+```
+
+#### Update Strategy
+
+When upstream updates tsconfig.json paths, re-add `"@custom/*": ["./custom/*"]` entry.
+
+---
+
 ### eslint.config.mjs
 
 - **Lines**: 376-387 (added new configuration block at end of config array)
