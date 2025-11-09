@@ -9,6 +9,7 @@
  */
 
 import { useState, useCallback } from 'react';
+import { request } from 'librechat-data-provider';
 
 interface CreatePaymentIntentResponse {
   success: boolean;
@@ -31,17 +32,12 @@ export const useBuyTokens = () => {
       setError(null);
 
       try {
-        const response = await fetch('/api/custom/stripe/create-payment-intent', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ packageId, paymentMethod }),
-        });
+        const data: CreatePaymentIntentResponse = await request.post(
+          '/api/custom/stripe/create-payment-intent',
+          { packageId, paymentMethod },
+        );
 
-        const data: CreatePaymentIntentResponse = await response.json();
-
-        if (!response.ok || !data.success) {
+        if (!data.success) {
           throw new Error(data.error || 'Failed to create payment intent');
         }
 

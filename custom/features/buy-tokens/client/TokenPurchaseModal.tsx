@@ -11,85 +11,91 @@
  * - VITE_STRIPE_PUBLIC_KEY environment variable
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 import { TokenPackageCard } from './TokenPackageCard';
+import { PaymentForm } from './PaymentForm';
 import { useBuyTokens } from './useBuyTokens';
 import { cn } from '~/utils';
+import { useQueryClient } from '@tanstack/react-query';
+import { TOKEN_PACKAGES } from '../shared/types';
+
+// Initialize Stripe with public key from environment
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || '');
 
 interface TokenPurchaseModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-// Import constants
-const TOKEN_PACKAGES = [
-  {
-    id: 'package_100k',
-    tokens: 100000,
-    price: 1000,
-    originalPrice: null,
-    discount: null,
-    popular: false,
-    label: '100K Tokens',
-  },
-  {
-    id: 'package_500k',
-    tokens: 500000,
-    price: 3500,
-    originalPrice: 5000,
-    discount: 30,
-    popular: true,
-    label: '500K Tokens',
-  },
-  {
-    id: 'package_1m',
-    tokens: 1000000,
-    price: 5500,
-    originalPrice: 10000,
-    discount: 45,
-    popular: false,
-    label: '1M Tokens',
-  },
-  {
-    id: 'package_10m',
-    tokens: 10000000,
-    price: 28000,
-    originalPrice: 100000,
-    discount: 72,
-    popular: false,
-    label: '10M Tokens',
-  },
-];
-
 export const TokenPurchaseModal: React.FC<TokenPurchaseModalProps> = ({ open, onOpenChange }) => {
-  const { createPaymentIntent, isLoading, error } = useBuyTokens();
+  const queryClient = useQueryClient();
+  const { createPaymentIntent, isLoading, error, clientSecret, setError } = useBuyTokens();
   const [selectedPackageId, setSelectedPackageId] = useState<string | null>(null);
-  const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'success' | 'error'>(
-    'idle',
-  );
+  const [paymentStatus, setPaymentStatus] = useState<
+    'idle' | 'selecting' | 'payment' | 'processing' | 'success' | 'error'
+  >('idle');
+  const [paymentAmount, setPaymentAmount] = useState<number>(0);
+
+  // Reset state when modal opens/closes
+  useEffect(() => {
+    if (open) {
+      setPaymentStatus('selecting');
+      setSelectedPackageId(null);
+      setError(null);
+    } else {
+      setPaymentStatus('idle');
+      setSelectedPackageId(null);
+      setError(null);
+    }
+  }, [open, setError]);
 
   if (!open) {
     return null;
   }
 
-  const closeModal = () => onOpenChange(false);
+  const closeModal = () => {
+    if (paymentStatus === 'processing') {
+      return; // Don't allow closing during payment
+    }
+    onOpenChange(false);
+  };
 
   const selectedPackage = TOKEN_PACKAGES.find((pkg) => pkg.id === selectedPackageId);
 
-  const handlePurchase = async () => {
+  const handleContinueToPayment = async () => {
     if (!selectedPackageId) return;
 
     setPaymentStatus('processing');
     try {
-      await createPaymentIntent(selectedPackageId, 'card');
-
-      // TODO: Integrate Stripe Elements here
-      // For now, show a placeholder message
-      setPaymentStatus('error');
+      const response = await createPaymentIntent(selectedPackageId, 'card');
+      setPaymentAmount(response.amount || 0);
+      setPaymentStatus('payment');
     } catch (err) {
       setPaymentStatus('error');
     }
+  };
+
+  const handlePaymentSuccess = () => {
+    setPaymentStatus('success');
+    // Invalidate balance query to update displayed balance
+    queryClient.invalidateQueries({ queryKey: ['balance'] });
+    // Auto-close after 2 seconds
+    setTimeout(() => {
+      onOpenChange(false);
+    }, 2000);
+  };
+
+  const handlePaymentError = (errorMessage: string) => {
+    setError(errorMessage);
+    setPaymentStatus('error');
+  };
+
+  const handleBackToSelection = () => {
+    setPaymentStatus('selecting');
+    setError(null);
   };
 
   return (
@@ -152,82 +158,134 @@ export const TokenPurchaseModal: React.FC<TokenPurchaseModalProps> = ({ open, on
                 </button>
               </DialogTitle>
 
-              {paymentStatus === 'error' && (
-                <div className="mb-4 rounded-lg bg-red-50 p-4 text-red-800 dark:bg-red-900/20 dark:text-red-400">
-                  <p className="font-semibold">Stripe Integration Required</p>
-                  <p className="mt-1 text-sm">To complete the payment integration, please:</p>
-                  <ul className="mt-2 list-inside list-disc text-sm">
-                    <li>
-                      Install Stripe packages: npm install @stripe/stripe-js @stripe/react-stripe-js
-                      stripe
-                    </li>
-                    <li>Add VITE_STRIPE_PUBLIC_KEY to .env file</li>
-                    <li>Add STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET to backend .env</li>
-                    <li>Configure Stripe webhook endpoint</li>
-                  </ul>
-                  {error && <p className="mt-2 text-sm">Error: {error}</p>}
+              {/* Success State */}
+              {paymentStatus === 'success' && (
+                <div className="py-8 text-center">
+                  <div className="mb-4 flex justify-center">
+                    <div className="rounded-full bg-green-100 p-3 dark:bg-green-900/20">
+                      <svg
+                        className="h-12 w-12 text-green-600 dark:text-green-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <h3 className="mb-2 text-xl font-bold text-text-primary">Payment Successful!</h3>
+                  <p className="text-text-secondary">
+                    Your tokens have been added to your account.
+                  </p>
                 </div>
               )}
 
-              <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
-                {TOKEN_PACKAGES.map((pkg) => (
-                  <TokenPackageCard
-                    key={pkg.id}
-                    package={pkg}
-                    isSelected={selectedPackageId === pkg.id}
-                    onSelect={setSelectedPackageId}
-                  />
-                ))}
-              </div>
+              {/* Error State */}
+              {paymentStatus === 'error' && error && (
+                <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
+                  <p className="font-semibold text-red-800 dark:text-red-400">Payment Error</p>
+                  <p className="mt-1 text-sm text-red-700 dark:text-red-300">{error}</p>
+                  <button
+                    onClick={handleBackToSelection}
+                    className="mt-3 text-sm font-medium text-red-800 underline hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              )}
 
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-text-secondary">
-                  {selectedPackage && (
-                    <span>
-                      Selected: <strong>{selectedPackage.label}</strong> for{' '}
-                      <strong>¥{(selectedPackage.price / 100).toFixed(2)}</strong>
-                    </span>
-                  )}
+              {/* Package Selection */}
+              {(paymentStatus === 'selecting' || paymentStatus === 'processing') && (
+                <>
+                  <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+                    {TOKEN_PACKAGES.map((pkg) => (
+                      <TokenPackageCard
+                        key={pkg.id}
+                        package={pkg}
+                        isSelected={selectedPackageId === pkg.id}
+                        onSelect={setSelectedPackageId}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm text-text-secondary">
+                      {selectedPackage && (
+                        <span>
+                          Selected: <strong>{selectedPackage.label}</strong> for{' '}
+                          <strong>¥{(selectedPackage.price / 100).toFixed(2)}</strong>
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={closeModal}
+                        disabled={paymentStatus === 'processing'}
+                        className="rounded-lg border border-border-medium px-4 py-2 text-sm font-medium text-text-primary hover:bg-surface-hover disabled:opacity-50"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleContinueToPayment}
+                        disabled={!selectedPackageId || paymentStatus === 'processing' || isLoading}
+                        className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
+                      >
+                        {paymentStatus === 'processing' || isLoading ? (
+                          <span className="flex items-center gap-2">
+                            <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24">
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                                fill="none"
+                              />
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              />
+                            </svg>
+                            Processing...
+                          </span>
+                        ) : (
+                          'Continue to Payment'
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Payment Form */}
+              {paymentStatus === 'payment' && clientSecret && (
+                <div className="space-y-4">
+                  <div className="mb-4 flex items-center gap-2">
+                    <button
+                      onClick={handleBackToSelection}
+                      className="text-sm text-text-secondary hover:text-text-primary"
+                    >
+                      ← Back to packages
+                    </button>
+                  </div>
+                  <Elements stripe={stripePromise}>
+                    <PaymentForm
+                      clientSecret={clientSecret}
+                      amount={paymentAmount}
+                      onSuccess={handlePaymentSuccess}
+                      onError={handlePaymentError}
+                      onCancel={handleBackToSelection}
+                    />
+                  </Elements>
                 </div>
-                <div className="flex gap-3">
-                  <button
-                    onClick={closeModal}
-                    disabled={paymentStatus === 'processing'}
-                    className="rounded-lg border border-border-medium px-4 py-2 text-sm font-medium hover:bg-surface-hover disabled:opacity-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handlePurchase}
-                    disabled={!selectedPackageId || paymentStatus === 'processing' || isLoading}
-                    className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
-                  >
-                    {paymentStatus === 'processing' || isLoading ? (
-                      <span className="flex items-center gap-2">
-                        <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24">
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                            fill="none"
-                          />
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          />
-                        </svg>
-                        Processing...
-                      </span>
-                    ) : (
-                      'Continue to Payment'
-                    )}
-                  </button>
-                </div>
-              </div>
+              )}
             </DialogPanel>
           </div>
         </TransitionChild>

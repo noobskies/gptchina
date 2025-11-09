@@ -5,38 +5,68 @@
  * Created: 2025-11-09
  * Upstream Impact: None (standalone module)
  *
- * TypeScript type definitions.
+ * Shared TypeScript types for the Buy Tokens feature.
  */
 
 export interface TokenPackage {
   id: string;
   tokens: number;
-  price: number; // Price in cents (CNY)
+  price: number;
   originalPrice: number | null;
   discount: number | null;
   popular: boolean;
   label: string;
 }
 
-export type PaymentMethod = 'card' | 'bitcoin' | 'google_pay' | 'apple_pay';
-
-export interface CreatePaymentIntentRequest {
-  packageId: string;
-  paymentMethod?: PaymentMethod;
-}
+/**
+ * Token package definitions
+ * All prices in cents (CNY)
+ */
+export const TOKEN_PACKAGES: TokenPackage[] = [
+  {
+    id: 'package_100k',
+    tokens: 100000,
+    price: 1000, // ¥10.00
+    originalPrice: null,
+    discount: null,
+    popular: false,
+    label: '100K Tokens',
+  },
+  {
+    id: 'package_500k',
+    tokens: 500000,
+    price: 3500, // ¥35.00
+    originalPrice: 5000, // ¥50.00
+    discount: 30,
+    popular: true,
+    label: '500K Tokens',
+  },
+  {
+    id: 'package_1m',
+    tokens: 1000000,
+    price: 5500, // ¥55.00
+    originalPrice: 10000, // ¥100.00
+    discount: 45,
+    popular: false,
+    label: '1M Tokens',
+  },
+  {
+    id: 'package_10m',
+    tokens: 10000000,
+    price: 28000, // ¥280.00
+    originalPrice: 100000, // ¥1000.00
+    discount: 72,
+    popular: false,
+    label: '10M Tokens',
+  },
+];
 
 export interface CreatePaymentIntentResponse {
   success: boolean;
   clientSecret?: string;
   amount?: number;
   currency?: string;
-  error?: string;
-}
-
-export interface PurchaseTokensResponse {
-  success: boolean;
-  balance?: number;
-  tokensAdded?: number;
+  paymentIntentId?: string;
   error?: string;
 }
 
@@ -58,13 +88,4 @@ export interface WebhookEvent {
       status: string;
     };
   };
-}
-
-export enum PaymentStatus {
-  IDLE = 'idle',
-  SELECTING_PACKAGE = 'selecting_package',
-  SELECTING_PAYMENT = 'selecting_payment',
-  PROCESSING = 'processing',
-  SUCCESS = 'success',
-  ERROR = 'error',
 }

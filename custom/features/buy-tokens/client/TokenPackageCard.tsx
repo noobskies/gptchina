@@ -9,16 +9,7 @@
  */
 
 import React from 'react';
-
-interface TokenPackage {
-  id: string;
-  tokens: number;
-  price: number;
-  originalPrice: number | null;
-  discount: number | null;
-  popular: boolean;
-  label: string;
-}
+import type { TokenPackage } from '../shared/types';
 
 interface TokenPackageCardProps {
   package: TokenPackage;
@@ -51,7 +42,7 @@ export const TokenPackageCard: React.FC<TokenPackageCardProps> = ({
       className={`relative flex flex-col rounded-lg border-2 p-4 transition-all ${
         isSelected
           ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-          : 'border-gray-200 hover:border-green-300 dark:border-gray-700 dark:hover:border-green-700'
+          : 'border-border-medium hover:border-green-300 dark:hover:border-green-700'
       } ${pkg.popular ? 'ring-2 ring-green-500 ring-opacity-50' : ''}`}
     >
       {pkg.popular && (
@@ -61,7 +52,9 @@ export const TokenPackageCard: React.FC<TokenPackageCardProps> = ({
       )}
 
       <div className="mb-2 text-center">
-        <div className="text-2xl font-bold">{formatTokens(pkg.tokens)} Tokens</div>
+        <div className="text-2xl font-bold text-text-primary">
+          {formatTokens(pkg.tokens)} Tokens
+        </div>
       </div>
 
       <div className="mb-3 text-center">
@@ -70,7 +63,7 @@ export const TokenPackageCard: React.FC<TokenPackageCardProps> = ({
         </div>
         {pkg.originalPrice && (
           <div className="mt-1 flex items-center justify-center gap-2">
-            <span className="text-sm text-gray-500 line-through dark:text-gray-400">
+            <span className="text-sm text-text-secondary line-through">
               {formatPrice(pkg.originalPrice)}
             </span>
             {pkg.discount && (

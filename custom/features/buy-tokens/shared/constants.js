@@ -5,7 +5,10 @@
  * Created: 2025-11-09
  * Upstream Impact: None (standalone module)
  *
- * Constants for token packages and configuration.
+ * Constants for token packages and configuration (CommonJS for backend).
+ *
+ * NOTE: This file is kept in sync with constants.ts (TypeScript version for frontend).
+ * When updating package definitions, update both files.
  */
 
 /**
