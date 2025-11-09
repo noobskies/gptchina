@@ -48,7 +48,16 @@ export const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
               !method.available && 'cursor-not-allowed opacity-50',
             )}
           >
-            <div className="text-lg text-text-primary">{method.icon}</div>
+            <div
+              className={cn(
+                'text-lg',
+                selectedMethod === method.id
+                  ? 'text-blue-600 dark:text-blue-400'
+                  : 'text-text-primary',
+              )}
+            >
+              {method.icon}
+            </div>
             <div className="flex-1 text-left text-sm text-text-primary">{method.name}</div>
             {selectedMethod === method.id && (
               <div className="text-blue-600 dark:text-blue-400">

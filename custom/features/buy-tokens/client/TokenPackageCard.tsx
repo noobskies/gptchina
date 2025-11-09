@@ -28,45 +28,55 @@ export const TokenPackageCard: React.FC<TokenPackageCardProps> = ({
       onClick={() => onSelect(pkg.id)}
       className={`relative flex flex-col rounded-lg border-2 p-4 transition-all ${
         isSelected
-          ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-          : 'border-border-medium hover:border-green-300 dark:hover:border-green-700'
-      } ${pkg.popular ? 'ring-2 ring-green-500 ring-opacity-50' : ''}`}
+          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+          : 'border-border-medium hover:border-blue-300 dark:hover:border-blue-600'
+      } ${pkg.popular ? 'ring-2 ring-blue-500 ring-opacity-50' : ''}`}
     >
       {pkg.popular && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-green-500 px-3 py-1 text-xs font-semibold text-white">
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-blue-500 px-3 py-1 text-xs font-semibold text-white">
           Popular
         </div>
       )}
 
-      <div className="mb-2 text-center">
-        <div className="text-2xl font-bold text-text-primary">
-          {formatTokens(pkg.tokens)} Tokens
+      {/* Selected checkmark in top right */}
+      {isSelected && (
+        <div className="absolute right-3 top-3">
+          <svg
+            className="h-5 w-5 text-blue-600 dark:text-blue-400"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+              clipRule="evenodd"
+            />
+          </svg>
         </div>
+      )}
+
+      {/* Token amount - left-aligned, on separate lines */}
+      <div className="mb-3 text-left">
+        <div className="text-lg font-semibold text-text-primary">{formatTokens(pkg.tokens)}</div>
+        <div className="text-sm text-text-secondary">Tokens</div>
       </div>
 
-      <div className="mb-3 text-center">
-        <div className="text-3xl font-bold text-green-600 dark:text-green-400">
-          {formatPrice(pkg.price)}
-        </div>
+      {/* Price - left-aligned, smaller */}
+      <div className="text-left">
+        <div className="text-xl font-semibold text-text-primary">{formatPrice(pkg.price)}</div>
         {pkg.originalPrice && (
-          <div className="mt-1 flex items-center justify-center gap-2">
+          <div className="mt-1 flex items-center gap-2">
             <span className="text-sm text-text-secondary line-through">
               {formatPrice(pkg.originalPrice)}
             </span>
             {pkg.discount && (
-              <span className="rounded-full bg-red-500 px-2 py-0.5 text-xs font-semibold text-white">
+              <span className="rounded-full bg-blue-500 px-2 py-0.5 text-xs font-semibold text-white">
                 {pkg.discount}% off
               </span>
             )}
           </div>
         )}
       </div>
-
-      {isSelected && (
-        <div className="mt-2 text-center text-sm font-semibold text-green-600 dark:text-green-400">
-          ✓ Selected
-        </div>
-      )}
     </button>
   );
 };

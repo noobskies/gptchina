@@ -221,7 +221,7 @@ export const TokenPurchaseModal: React.FC<TokenPurchaseModalProps> = ({ open, on
           leaveTo="opacity-0 scale-95"
         >
           <div className="fixed inset-0 flex items-center justify-center p-4">
-            <DialogPanel className="w-full max-w-lg overflow-hidden rounded-2xl bg-background shadow-2xl">
+            <DialogPanel className="w-full max-w-2xl overflow-hidden rounded-2xl bg-background shadow-2xl">
               {/* Header */}
               <DialogTitle
                 className="flex items-center justify-between border-b border-border-light bg-background p-4 sm:p-6"
