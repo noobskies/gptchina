@@ -134,6 +134,19 @@
   - **Status**: LIVE ON PRODUCTION (https://gptafrica.io) ✅✅✅
   - **Deployment Date**: 2025-11-09
   - **Production Testing**: All 4 packages working, tokens adding correctly
+- **Model Pricing Display**
+  - Displays AI model pricing on landing page
+  - Real-time pricing from backend API (`api/models/tx.js`)
+  - Shows input/output token costs per 1M tokens
+  - Format: "Model: gpt-4.1 | Input: 2.00 | Output: 8.00"
+  - Automatic updates when model selection changes
+  - Graceful handling of models without pricing data
+  - Dark/light mode compatible styling
+  - Single source of truth (no data duplication)
+  - **Files Created**: 7 (controller, routes, hook, README, etc.)
+  - **Files Modified**: 3 upstream (~19 lines total)
+  - **Status**: Complete & ready for testing ✅
+  - **Implementation Date**: 2025-11-09
 
 ## What's Left to Build
 

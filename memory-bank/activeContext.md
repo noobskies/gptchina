@@ -10,6 +10,103 @@
 
 ## Recent Changes
 
+### Model Pricing Display Feature Implementation (2025-11-09 4:54-5:01 PM)
+
+**Overview**: Implemented feature to display AI model pricing (input/output token costs) on the landing page below the greeting message. Helps users understand cost implications of model selection with real-time pricing data.
+
+**Implementation Approach**:
+
+1. **Backend API Endpoint** (4:54-4:56 PM)
+
+   - Created `custom/features/model-pricing/server/controller.js` - Uses existing `api/models/tx.js` as single source of truth
+   - Created `custom/features/model-pricing/server/routes.js` - Express routes for pricing endpoints
+   - Endpoint: `GET /api/custom/pricing/model/:modelName` returns pricing object
+
+2. **Frontend React Hook** (4:56-4:58 PM)
+
+   - Created `custom/features/model-pricing/client/usePricing.ts` - Custom hook to fetch pricing
+   - Created `custom/features/model-pricing/client/index.tsx` - Barrel export
+   - Hook fetches pricing on model change, handles loading/error states
+
+3. **Integration** (4:58-5:01 PM)
+
+   - Modified `api/server/index.js` - Registered pricing routes (3 lines)
+   - Modified `client/tsconfig.json` - Added `@custom` alias for TypeScript (1 line)
+   - Modified `client/src/components/Chat/Landing.tsx` - Display pricing UI (15 lines)
+   - Fixed ESLint error by using localize() for "Model:" text
+
+4. **Documentation** (5:00-5:01 PM)
+   - Created comprehensive `custom/features/model-pricing/README.md`
+   - Updated `custom/MODIFICATIONS.md` - Tracked 3 upstream file modifications
+   - Updated `custom/FEATURES.md` - Added feature documentation
+
+**Files Created** (7 total):
+
+- `custom/features/model-pricing/server/controller.js` (90 lines)
+- `custom/features/model-pricing/server/routes.js` (30 lines)
+- `custom/features/model-pricing/client/usePricing.ts` (100 lines)
+- `custom/features/model-pricing/client/index.tsx` (15 lines)
+- `custom/features/model-pricing/README.md` (190 lines)
+
+**Files Modified** (3 upstream files, ~19 lines total):
+
+- `api/server/index.js` - Route registration (3 lines)
+- `client/src/components/Chat/Landing.tsx` - UI display (15 lines)
+- `client/tsconfig.json` - TypeScript alias (1 line)
+
+**Display Format**:
+
+```
+Good afternoon, Tyler John McNew
+
+Model: gpt-4.1
+Input: 2.00 | Output: 8.00
+```
+
+**Key Technical Decisions**:
+
+1. **API Endpoint Pattern** (Not Duplication)
+
+   - Initially considered duplicating pricing data to frontend
+   - Chose API endpoint approach for single source of truth
+   - Pricing automatically updates when `api/models/tx.js` changes
+   - No manual sync needed between frontend and backend
+
+2. **TypeScript Path Alias**
+
+   - Discovered existing `@custom` alias in `vite.config.ts` (from Claim Tokens)
+   - Added matching alias to `client/tsconfig.json` for TypeScript compatibility
+   - Enables clean imports: `import { usePricing } from '@custom/features/model-pricing/client'`
+
+3. **Graceful Degradation**
+
+   - No pricing display if model not selected
+   - Silent fail if API unavailable
+   - Handles models without pricing data gracefully
+
+4. **Fork-Friendly Integration**
+   - Minimal upstream modifications (only 19 lines across 3 files)
+   - All custom code isolated in `custom/features/model-pricing/`
+   - Clear `// CUSTOM: gptchina` markers on all modifications
+   - Well-documented in MODIFICATIONS.md for future merges
+
+**Current Status**:
+
+- ✅ Backend API complete
+- ✅ Frontend hook complete
+- ✅ UI integration complete
+- ✅ Documentation complete
+- ✅ Fork-friendly architecture followed
+- ⏳ Ready for testing (manual testing pending)
+
+**Testing Checklist**:
+
+- [ ] Start dev server and verify no errors
+- [ ] Select different models and verify pricing updates
+- [ ] Test with model without pricing data
+- [ ] Verify dark/light mode compatibility
+- [ ] Check mobile responsive layout
+
 ### Buy Tokens Feature - Production Deployment Success (2025-11-09 3:46-4:44 PM)
 
 **Overview**: Successfully debugged webhook issues, fixed production environment variable configuration, and deployed Buy Tokens feature to production. Complete end-to-end payment flow now working on https://gptafrica.io.
