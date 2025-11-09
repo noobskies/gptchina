@@ -150,6 +150,11 @@ const startServer = async () => {
   const customClaimTokensRoutes = require('../../custom/features/claim-tokens/server/routes');
   app.use('/api/custom', customClaimTokensRoutes);
 
+  // CUSTOM: gptchina - Buy Tokens feature
+  // See: custom/features/buy-tokens/README.md
+  const customBuyTokensRoutes = require('../../custom/features/buy-tokens/server/routes');
+  app.use('/api/custom', customBuyTokensRoutes);
+
   app.use(ErrorController);
 
   app.use((req, res) => {

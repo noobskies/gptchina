@@ -2,13 +2,116 @@
 
 ## Current Work Focus
 
-**Status**: Claim Tokens Feature - Production Ready
+**Status**: Buy Tokens Feature - Implementation Complete
 
-**Active Task**: Bug fixes and UI improvements for the Claim Tokens feature completed. Feature is now production-ready with race condition fix and improved user interface.
+**Active Task**: Stripe payment integration for token purchases completed. Feature includes 4 token packages, multiple payment methods, atomic operations, and comprehensive security measures.
 
 **Key Objective**: Maintain and enhance custom features while following fork-friendly architecture principles.
 
 ## Recent Changes
+
+### Buy Tokens Feature Implementation (2025-11-09 12:45-1:02 PM)
+
+**Overview**: Implemented complete Stripe payment integration allowing users to purchase tokens with credit cards, Bitcoin, Google Pay, and Apple Pay.
+
+**Files Created** (15 total):
+
+Backend (8 files):
+
+- `custom/features/buy-tokens/server/controller.js` - Payment intent creation, webhook handling, atomic token addition
+- `custom/features/buy-tokens/server/routes.js` - Express routes for payment and webhook endpoints
+- `custom/features/buy-tokens/server/stripe.service.js` - Stripe SDK wrapper with payment intent logic
+- `custom/features/buy-tokens/shared/constants.js` - Token packages, payment methods, error messages
+- `custom/features/buy-tokens/shared/types.ts` - TypeScript type definitions
+
+Frontend (6 files):
+
+- `custom/features/buy-tokens/client/index.tsx` - Barrel export combining button and modal
+- `custom/features/buy-tokens/client/BuyTokensButton.tsx` - Green sidebar button component
+- `custom/features/buy-tokens/client/BuyTokensIcon.tsx` - Shopping cart SVG icon
+- `custom/features/buy-tokens/client/TokenPurchaseModal.tsx` - Modal with package selection and payment UI
+- `custom/features/buy-tokens/client/TokenPackageCard.tsx` - Individual package display with discounts
+- `custom/features/buy-tokens/client/useBuyTokens.ts` - React hook for state management and API calls
+
+Documentation:
+
+- `custom/features/buy-tokens/README.md` - Comprehensive 450+ line documentation
+
+**Files Modified** (4 upstream files):
+
+1. `client/src/components/Nav/Nav.tsx` - Added BuyTokensButton import and render (~3 lines)
+2. `api/server/index.js` - Registered custom routes (~4 lines)
+3. `packages/data-schemas/src/schema/balance.ts` - Added `processedPayments` field (~5 lines)
+4. `packages/data-schemas/src/types/balance.ts` - Added type definition (~1 line)
+
+**Token Packages**:
+
+- 100,000 tokens - ¥10.00
+- 500,000 tokens - ¥35.00 (was ¥50.00, 30% off) - Popular
+- 1,000,000 tokens - ¥55.00 (was ¥100.00, 45% off)
+- 10,000,000 tokens - ¥280.00 (was ¥1,000.00, 72% off)
+
+**Security Implementation**:
+
+- **Atomic Operations**: Used `findOneAndUpdate()` with `processedPayments` array to prevent duplicate processing from concurrent webhooks
+- **Webhook Verification**: Stripe signature verification using `stripe.webhooks.constructEvent()`
+- **Server-side Validation**: Package validation, amount verification, user authentication required
+- **PCI Compliance**: Stripe Elements handles all sensitive card data
+
+**Key Technical Decisions**:
+
+1. **Atomic Payment Processing**:
+
+   ```javascript
+   const updatedBalance = await Balance.findOneAndUpdate(
+     { user: userId, processedPayments: { $ne: paymentIntentId } },
+     { $inc: { tokenCredits: tokens }, $push: { processedPayments: paymentIntentId } },
+     { new: true, upsert: true },
+   );
+   ```
+
+   - Single database operation prevents race conditions
+   - Payment intent ID used for idempotency
+   - Follows same pattern as Claim Tokens feature
+
+2. **Payment Flow Architecture**:
+
+   - User selects package → Create payment intent → Stripe processes → Webhook confirms → Tokens added
+   - Webhook signature verification ensures authenticity
+   - Transaction logging for audit trail
+
+3. **Fork-Friendly Integration**:
+   - Minimal upstream modifications (only 4 files)
+   - All custom code in `custom/features/buy-tokens/`
+   - Follows established Claim Tokens pattern
+   - Clear marking with "CUSTOM: gptchina" comments
+
+**Integration Status**:
+
+- ✅ Backend API complete
+- ✅ Frontend UI complete
+- ✅ Routes registered
+- ✅ Schema updated
+- ✅ Documentation complete
+- ⏳ Requires: Stripe packages installation (`npm install stripe @stripe/stripe-js @stripe/react-stripe-js`)
+- ⏳ Requires: Environment variables (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, VITE_STRIPE_PUBLIC_KEY)
+- ⏳ Requires: Stripe webhook configuration
+
+**Key Learnings**:
+
+- Webhook-based payment confirmation requires robust idempotency handling
+- Stripe Elements provides PCI-compliant card handling without storing sensitive data
+- Payment metadata crucial for linking payments to users and packages
+- Atomic database operations essential for financial transactions
+- Multiple payment methods can share same payment intent flow
+
+**Next Steps for Completion**:
+
+1. Install Stripe packages: `npm install stripe @stripe/stripe-js @stripe/react-stripe-js`
+2. Add environment variables to `.env`
+3. Configure Stripe webhook in dashboard
+4. Run `npm run build:packages`
+5. Test with Stripe test cards
 
 ### Claim Tokens Bug Fixes & UI Improvements (2025-11-09 12:32-12:37 PM)
 

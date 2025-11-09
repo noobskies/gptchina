@@ -329,4 +329,16 @@ export default [
       },
     },
   },
+  {
+    // CUSTOM: gptchina - Custom features TypeScript configuration
+    files: ['./custom/**/*.ts', './custom/**/*.tsx'],
+    languageOptions: {
+      parser: tsParser,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      parserOptions: {
+        project: './custom/tsconfig.json',
+      },
+    },
+  },
 ];

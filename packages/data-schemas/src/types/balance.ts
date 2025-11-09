@@ -11,4 +11,6 @@ export interface IBalance extends Document {
   refillAmount: number;
   // CUSTOM: gptchina - Claim Tokens feature
   lastTokenClaim?: Date | null;
+  // CUSTOM: gptchina - Buy Tokens feature
+  processedPayments?: string[];
 }

@@ -23,6 +23,8 @@ const AccountSettings = lazy(() => import('./AccountSettings'));
 const AgentMarketplaceButton = lazy(() => import('./AgentMarketplaceButton'));
 // CUSTOM: gptchina - Claim Tokens feature
 const ClaimTokensButton = lazy(() => import('@custom/features/claim-tokens/client'));
+// CUSTOM: gptchina - Buy Tokens feature
+const BuyTokensButton = lazy(() => import('@custom/features/buy-tokens/client'));
 
 const NAV_WIDTH_DESKTOP = '260px';
 const NAV_WIDTH_MOBILE = '320px';
@@ -234,6 +236,10 @@ const Nav = memo(
                     {/* CUSTOM: gptchina - Claim Tokens feature */}
                     <Suspense fallback={null}>
                       <ClaimTokensButton />
+                    </Suspense>
+                    {/* CUSTOM: gptchina - Buy Tokens feature */}
+                    <Suspense fallback={null}>
+                      <BuyTokensButton />
                     </Suspense>
                     <Suspense fallback={null}>
                       <AccountSettings />

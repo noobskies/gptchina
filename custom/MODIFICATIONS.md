@@ -1,98 +1,103 @@
-# Upstream Modifications - gptchina Fork
+# Custom Modifications to Upstream Files
 
-This document tracks **all** modifications made to upstream LibreChat files. Every change to an upstream file must be documented here to ensure maintainability and smooth upstream merges.
+This document tracks all modifications made to upstream LibreChat files to support custom features in the gptchina fork.
 
-## Purpose
+## Modified Files
 
-Tracking upstream modifications helps us:
+### eslint.config.mjs
 
-- **Identify merge conflicts** before they happen
-- **Assess impact** of upstream changes
-- **Maintain compatibility** during upgrades
-- **Document rationale** for necessary modifications
-- **Plan refactoring** to reduce upstream dependencies
+- **Lines**: 376-387 (added new configuration block at end of config array)
+- **Reason**: Configure ESLint to properly lint custom TypeScript files in `custom/` directory
+- **Upstream Version**: v0.8.1-rc1 (commit: ba71375)
+- **Impact**: Low (isolated addition, doesn't modify existing rules)
+- **Alternative Considered**: Modifying client/tsconfig.json to include custom files (rejected to maintain fork-friendly separation)
+- **Change Description**:
+  ```javascript
+  {
+    // CUSTOM: gptchina - Custom features TypeScript configuration
+    files: ['./custom/**/*.ts', './custom/**/*.tsx'],
+    languageOptions: {
+      parser: tsParser,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      parserOptions: {
+        project: './custom/tsconfig.json',
+      },
+    },
+  }
+  ```
 
-## Modification Status
+## New Files (Not Modifying Upstream)
 
-- 🟢 **Stable** - Modification is stable and well-tested
-- 🟡 **Needs Review** - Should be reviewed for potential refactoring
-- 🔴 **High Risk** - High risk of merge conflicts, needs attention
-- ⚪ **Temporary** - Temporary modification, plan to remove
+### custom/tsconfig.json
 
-## Current Modifications
+- **Purpose**: TypeScript configuration for custom features
+- **Extends**: `../client/tsconfig.json`
+- **Reason**: Provides type checking for custom TypeScript code without modifying upstream configs
+- **Impact**: None on upstream code
+- **Includes**: All TypeScript files in `custom/features/**/client/` and `custom/features/**/shared/`
 
-### Summary
+## Merge Strategy
 
-- **Total Files Modified**: 5
-- **Stable Modifications**: 5
-- **Needs Review**: 0
-- **High Risk**: 0
-- **Temporary**: 0
+When syncing with upstream:
 
-**Last Upstream Sync**: Never
+### For eslint.config.mjs
 
-**Current Upstream Version**: v0.8.1-rc1 (commit: c31777b69d95782b9d6b40537473eb7283de0520)
+1. Check if upstream modified the end of the config array
+2. If yes, review changes for compatibility with custom block
+3. Ensure custom block remains at the end of the array
+4. If upstream added new TypeScript config blocks, verify no conflicts with custom block
+5. Test ESLint on custom files after merge
 
----
+### For custom/tsconfig.json
 
-## Active Modifications
+- No merge conflicts possible (custom file only)
+- If `client/tsconfig.json` is updated upstream, review for needed changes
+- Verify `extends` still works after upstream updates
 
-### 1. api/server/index.js
+## Testing After Merge
 
-**Status**: 🟢 Stable
+```bash
+# Test ESLint on custom files
+npx eslint custom/**/*.tsx
 
-**Modified Date**: 2025-11-09
+# Test TypeScript compilation
+npx tsc --project custom/tsconfig.json --noEmit
 
-**Last Reviewed**: 2025-11-09
-
-**Upstream Version at Modification**: v0.8.1-rc1 (commit: c31777b)
-
-**Feature**: Claim Tokens
-
-#### Lines Modified
-
-- **Lines**: After line 140 (after `app.use('/api/mcp', routes.mcp);`)
-- **Type**: Addition (3 lines)
-
-#### Reason for Modification
-
-Register custom routes for the Claim Tokens feature. This is the central route registration point in the Express application.
-
-#### Modification Impact
-
-**Impact Level**: Low
-
-**Explanation**:
-
-- **Functionality**: Adds new `/api/custom` route namespace without affecting existing routes
-- **Performance**: Negligible (one-time route registration at startup)
-- **Security**: Routes use existing `requireJwtAuth` middleware
-- **Compatibility**: Added after all existing routes, minimal conflict risk
-
-#### Code Changes
-
-```javascript
-// CUSTOM: gptchina - Claim Tokens feature
-// See: custom/features/claim-tokens/README.md
-const customClaimTokensRoutes = require('../../custom/features/claim-tokens/server/routes');
-app.use('/api/custom', customClaimTokensRoutes);
+# Run full linting
+npm run lint
 ```
 
-#### Update Strategy
+## History
 
-When upstream updates this file, re-add these lines after the MCP route and before ErrorController.
+### 2025-11-09: Initial ESLint/TypeScript Setup for Custom Code
 
----
+**Problem**: ESLint was unable to parse custom TypeScript files in `custom/features/buy-tokens/client/` because:
 
-### 2. client/vite.config.ts
+- `client/tsconfig.json` only includes files under `client/src/`
+- ESLint was trying to use `client/tsconfig.json` for all `**/*.ts` and `**/*.tsx` files
 
-**Status**: 🟢 Stable
+**Solution**:
 
-**Modified Date**: 2025-11-09
+1. Created `custom/tsconfig.json` extending `client/tsconfig.json` with proper React/JSX settings
+2. Added new ESLint configuration block specifically for `custom/**/*.ts` and `custom/**/*.tsx` files
+3. Configuration follows fork-friendly principles by isolating custom code
 
-**Last Reviewed**: 2025-11-09
+**Files Modified**:
 
-**Upstream Version at Modification**: v0.8.1-rc1 (commit: c31777b)
+- `eslint.config.mjs` - Added 12 lines (new config block)
+
+**Files Created**:
+
+- `custom/tsconfig.json` - New file (18 lines)
+
+**Verification**:
+
+- ✅ ESLint runs without errors on custom TypeScript files
+- ✅ TypeScript compiler recognizes React JSX syntax
+- ✅ No modifications to upstream TypeScript configurations
+- ✅ Maintains separation between custom and upstream code
+  **Upstream Version at Modification**: v0.8.1-rc1 (commit: c31777b)
 
 **Feature**: Claim Tokens (enables @custom alias for all custom features)
 

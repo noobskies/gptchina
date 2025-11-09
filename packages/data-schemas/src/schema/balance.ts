@@ -42,6 +42,12 @@ const balanceSchema = new Schema<t.IBalance>({
     type: Date,
     default: null,
   },
+  // CUSTOM: gptchina - Buy Tokens feature
+  // Array of Stripe payment intent IDs that have been processed (prevents duplicate processing)
+  processedPayments: {
+    type: [String],
+    default: [],
+  },
 });
 
 export default balanceSchema;
