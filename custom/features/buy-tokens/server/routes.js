@@ -29,9 +29,9 @@ router.post('/stripe/create-payment-intent', requireJwtAuth, createPaymentIntent
  * POST /api/custom/stripe/webhook
  * Handle Stripe webhook events (payment confirmations)
  * No authentication required - signature verification used instead
- * IMPORTANT: Must use express.raw() middleware for this route
+ * IMPORTANT: express.raw() middleware applied at app level (see api/server/index.js)
  */
-router.post('/stripe/webhook', express.raw({ type: 'application/json' }), handleWebhook);
+router.post('/stripe/webhook', handleWebhook);
 
 /**
  * GET /api/custom/stripe/payment-methods

@@ -28,9 +28,9 @@ export const TokenPackageCard: React.FC<TokenPackageCardProps> = ({
       onClick={() => onSelect(pkg.id)}
       className={`relative flex flex-col rounded-lg border-2 p-4 transition-all ${
         isSelected
-          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+          ? 'border-blue-500'
           : 'border-border-medium hover:border-blue-300 dark:hover:border-blue-600'
-      } ${pkg.popular ? 'ring-2 ring-blue-500 ring-opacity-50' : ''}`}
+      }`}
     >
       {pkg.popular && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-blue-500 px-3 py-1 text-xs font-semibold text-white">

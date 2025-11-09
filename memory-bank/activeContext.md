@@ -145,8 +145,67 @@
 - ✅ Error handling improved
 - ✅ Loading states fixed
 - ✅ Default package changed to Popular (500K tokens)
+- ✅ Blue theme styling applied (2:43-2:50 PM)
 - ⏳ Ready for testing with Stripe test cards
 - ⏳ Ready for webhook configuration
+
+### Buy Tokens Styling Improvements (2025-11-09 2:43-2:50 PM)
+
+**Overview**: Applied comprehensive styling improvements based on user design requirements, implementing full blue theme and fixing visual clarity issues.
+
+**Styling Changes**:
+
+1. **Token Package Cards** (2:44-2:50 PM)
+
+   - **Layout Changes**:
+     - Changed from centered to left-aligned text
+     - Reduced font sizes: text-2xl → text-lg, text-3xl → text-xl
+     - Split token count and "Tokens" label onto separate lines
+     - Moved selected checkmark to top-right corner
+   - **Blue Theme Implementation**:
+     - Changed all green colors to blue (borders, badges, checkmarks)
+     - Selected border: border-green-500 → border-blue-500
+     - Hover border: green → blue
+     - Popular badge: bg-green-500 → bg-blue-500
+     - Checkmark: green → blue
+     - Discount badges already blue
+   - **Visual Clarity Fixes**:
+     - Removed ring effect from Popular packages (was confusing - looked selected)
+     - Removed background from selected state (fixed white-on-white issue)
+   - **File Modified**: `client/TokenPackageCard.tsx`
+
+2. **Payment Method Selector** (2:46-2:49 PM)
+
+   - **Visual Fixes**:
+     - Icons turn blue when selected (text-blue-600 dark:text-blue-400)
+     - Removed background from selected state (only blue border)
+     - Fixed white-on-white contrast issue
+   - **File Modified**: `client/components/PaymentMethodSelector.tsx`
+
+3. **Modal Width** (2:46 PM)
+   - Increased modal width: max-w-lg (512px) → max-w-2xl (672px)
+   - Better spacing and breathing room
+   - **File Modified**: `client/TokenPurchaseModal.tsx`
+
+**Final Selected States**:
+
+- Token packages: Blue border + blue checkmark (top-right) - NO background
+- Payment methods: Blue border + blue icon + blue checkmark - NO background
+- No more white-on-white contrast issues
+- No confusion between Popular and Selected states
+
+**Files Summary**:
+
+- **Modified**: 3 files (TokenPackageCard, PaymentMethodSelector, TokenPurchaseModal)
+- **Theme**: Consistent blue throughout
+- **UX**: Clean, professional, clear visual hierarchy
+
+**Key Learnings**:
+
+1. Backgrounds on selected states can cause visibility issues
+2. Ring effects should be used carefully to avoid confusion with selected states
+3. Borders + icon color changes are sufficient for selection indication
+4. Consistent color theme improves overall design coherence
 
 **Final File Structure**:
 

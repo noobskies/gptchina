@@ -43,7 +43,7 @@ export const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
             className={cn(
               'flex cursor-pointer items-center gap-2 rounded-lg border p-3 transition-all',
               selectedMethod === method.id
-                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                ? 'border-blue-500'
                 : 'border-border-light hover:border-border-medium',
               !method.available && 'cursor-not-allowed opacity-50',
             )}

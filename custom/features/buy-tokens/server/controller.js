@@ -87,11 +87,25 @@ const createPaymentIntentHandler = async (req, res) => {
  * @param {Object} res - Express response object
  */
 const handleWebhook = async (req, res) => {
+  // DEBUG: Log webhook entry
+  logger.info('[BuyTokens Webhook] ===== WEBHOOK RECEIVED =====');
+  logger.info('[BuyTokens Webhook] Headers:', {
+    signature: req.headers['stripe-signature'] ? 'present' : 'missing',
+    contentType: req.headers['content-type'],
+    contentLength: req.headers['content-length'],
+  });
+  logger.info(
+    '[BuyTokens Webhook] Body type:',
+    typeof req.body,
+    '| Is Buffer:',
+    Buffer.isBuffer(req.body),
+  );
+
   try {
     const signature = req.headers['stripe-signature'];
 
     if (!signature) {
-      logger.error('[BuyTokens] Missing Stripe signature');
+      logger.error('[BuyTokens Webhook] ❌ Missing Stripe signature');
       return res.status(400).json({
         success: false,
         error: 'Missing signature',
@@ -99,30 +113,44 @@ const handleWebhook = async (req, res) => {
     }
 
     // Verify webhook signature
+    logger.info('[BuyTokens Webhook] Attempting signature verification...');
     let event;
     try {
       event = verifyWebhookSignature(req.body, signature);
+      logger.info('[BuyTokens Webhook] ✅ Signature verified successfully');
     } catch (err) {
-      logger.error('[BuyTokens] Webhook signature verification failed', err);
+      logger.error('[BuyTokens Webhook] ❌ Signature verification FAILED:', err.message);
       return res.status(400).json({
         success: false,
         error: BUY_TOKENS_ERRORS.WEBHOOK_VERIFICATION_FAILED,
       });
     }
 
-    logger.info('[BuyTokens] Webhook received', {
+    logger.info('[BuyTokens Webhook] Event details:', {
       eventType: event.type,
       eventId: event.id,
+      livemode: event.livemode,
     });
 
     // Handle payment intent succeeded event
     if (event.type === 'payment_intent.succeeded') {
+      logger.info('[BuyTokens Webhook] Processing payment_intent.succeeded event');
       const paymentIntent = event.data.object;
       const { userId, packageId, tokens } = paymentIntent.metadata;
 
+      logger.info('[BuyTokens Webhook] Payment metadata:', {
+        userId,
+        packageId,
+        tokens,
+        amount: paymentIntent.amount,
+        currency: paymentIntent.currency,
+        paymentIntentId: paymentIntent.id,
+      });
+
       if (!userId || !packageId || !tokens) {
-        logger.error('[BuyTokens] Missing metadata in payment intent', {
+        logger.error('[BuyTokens Webhook] ❌ Missing metadata', {
           paymentIntentId: paymentIntent.id,
+          metadata: paymentIntent.metadata,
         });
         return res.status(400).json({
           success: false,
@@ -131,6 +159,7 @@ const handleWebhook = async (req, res) => {
       }
 
       const tokensToAdd = parseInt(tokens, 10);
+      logger.info('[BuyTokens Webhook] Starting MongoDB transaction...', { userId, tokensToAdd });
 
       // Use MongoDB transaction for atomic operation
       const mongoose = require('mongoose');
@@ -159,12 +188,14 @@ const handleWebhook = async (req, res) => {
         if (!updatedBalance) {
           // Payment already processed, abort transaction
           await session.abortTransaction();
-          logger.info('[BuyTokens] Payment already processed, skipping', {
+          logger.warn('[BuyTokens Webhook] ⚠️  Duplicate webhook - payment already processed', {
             userId,
             paymentIntentId: paymentIntent.id,
           });
           return res.json({ received: true });
         }
+
+        logger.info('[BuyTokens Webhook] ✅ Balance updated in MongoDB');
 
         // Create transaction record (with session)
         await createTransaction(
@@ -184,7 +215,8 @@ const handleWebhook = async (req, res) => {
         // Commit both operations atomically
         await session.commitTransaction();
 
-        logger.info('[BuyTokens] Payment processed successfully', {
+        logger.info('[BuyTokens Webhook] ✅✅✅ PAYMENT PROCESSED SUCCESSFULLY ✅✅✅');
+        logger.info('[BuyTokens Webhook] Details:', {
           userId,
           tokensAdded: tokensToAdd,
           newBalance: updatedBalance.tokenCredits,
@@ -193,24 +225,33 @@ const handleWebhook = async (req, res) => {
       } catch (error) {
         // Rollback on any error
         await session.abortTransaction();
-        logger.error('[BuyTokens] Transaction failed, rolled back', error);
+        logger.error(
+          '[BuyTokens Webhook] ❌ MongoDB transaction FAILED - rolled back:',
+          error.message,
+        );
         throw error;
       } finally {
         session.endSession();
+        logger.info('[BuyTokens Webhook] MongoDB session closed');
       }
     } else if (event.type === 'payment_intent.payment_failed') {
       const paymentIntent = event.data.object;
-      logger.error('[BuyTokens] Payment failed', {
+      logger.error('[BuyTokens Webhook] ❌ Payment FAILED:', {
         paymentIntentId: paymentIntent.id,
         userId: paymentIntent.metadata.userId,
         error: paymentIntent.last_payment_error?.message,
       });
+    } else {
+      logger.info('[BuyTokens Webhook] Ignoring event type:', event.type);
     }
 
     // Return success to Stripe
+    logger.info('[BuyTokens Webhook] Returning 200 OK to Stripe');
     return res.json({ received: true });
   } catch (error) {
-    logger.error('[BuyTokens] Error processing webhook', error);
+    logger.error('[BuyTokens Webhook] ❌❌❌ UNHANDLED ERROR ❌❌❌');
+    logger.error('[BuyTokens Webhook] Error:', error.message);
+    logger.error('[BuyTokens Webhook] Stack:', error.stack);
     return res.status(500).json({
       success: false,
       error: BUY_TOKENS_ERRORS.SERVER_ERROR,

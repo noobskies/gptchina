@@ -100,23 +100,6 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ onSuccess, onBack }) =
                 console.error('Payment Element load error:', error);
                 setErrorMessage('Failed to load payment form. Please refresh and try again.');
               }}
-              options={{
-                fields: {
-                  billingDetails: {
-                    address: {
-                      country: 'never',
-                      line1: 'never',
-                      line2: 'never',
-                      city: 'never',
-                      state: 'never',
-                      postalCode: 'auto',
-                    },
-                    name: 'never',
-                    email: 'never',
-                    phone: 'never',
-                  },
-                },
-              }}
             />
           </div>
         </div>
