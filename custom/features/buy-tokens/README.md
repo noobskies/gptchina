@@ -148,19 +148,6 @@ npm install stripe
 npm install @stripe/stripe-js @stripe/react-stripe-js
 ```
 
-### 2. Environment Variables
-
-Add these to your `.env` file:
-
-```bash
-# Backend Stripe Keys
-STRIPE_SECRET_KEY=xxx
-STRIPE_WEBHOOK_SECRET=xxx  # Get from Stripe Dashboard
-
-# Frontend Stripe Key (Vite)
-VITE_STRIPE_PUBLIC_KEY=xxx
-```
-
 ### 3. Configure Stripe Webhook
 
 1. Go to [Stripe Dashboard](https://dashboard.stripe.com/webhooks)
