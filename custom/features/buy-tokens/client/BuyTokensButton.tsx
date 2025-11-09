@@ -17,16 +17,14 @@ interface BuyTokensButtonProps {
 
 export const BuyTokensButton: React.FC<BuyTokensButtonProps> = ({ onClick }) => {
   return (
-    <div className="px-2 py-2">
-      <button
-        onClick={onClick}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 p-2 text-sm text-white transition-all duration-200 ease-in-out hover:bg-green-700"
-        data-testid="buy-tokens-button"
-        aria-label="Buy tokens"
-      >
-        <BuyTokensIcon className="h-5 w-5" />
-        <span className="flex-1 text-center">Buy Tokens</span>
-      </button>
-    </div>
+    <button
+      onClick={onClick}
+      className="relative mb-2 flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white ring-offset-background transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+      data-testid="buy-tokens-button"
+      aria-label="Buy tokens"
+    >
+      <BuyTokensIcon className="h-4 w-4" />
+      <span className="text-center">Buy Tokens</span>
+    </button>
   );
 };
