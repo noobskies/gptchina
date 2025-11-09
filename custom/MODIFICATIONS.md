@@ -23,23 +23,255 @@ Tracking upstream modifications helps us:
 
 ### Summary
 
-- **Total Files Modified**: 0
-- **Stable Modifications**: 0
+- **Total Files Modified**: 5
+- **Stable Modifications**: 5
 - **Needs Review**: 0
 - **High Risk**: 0
 - **Temporary**: 0
 
 **Last Upstream Sync**: Never
 
-**Current Upstream Version**: v0.8.1-rc1 (commit: ba71375982ac287ae81707329b4e95d27988f393)
+**Current Upstream Version**: v0.8.1-rc1 (commit: c31777b69d95782b9d6b40537473eb7283de0520)
 
 ---
 
-## No Modifications Yet
+## Active Modifications
 
-✅ **No upstream files have been modified.** This is ideal! All custom features are implemented in the `custom/` directory without touching upstream code.
+### 1. api/server/index.js
 
-When upstream modifications become necessary, they will be documented below using the template provided.
+**Status**: 🟢 Stable
+
+**Modified Date**: 2025-11-09
+
+**Last Reviewed**: 2025-11-09
+
+**Upstream Version at Modification**: v0.8.1-rc1 (commit: c31777b)
+
+**Feature**: Claim Tokens
+
+#### Lines Modified
+
+- **Lines**: After line 140 (after `app.use('/api/mcp', routes.mcp);`)
+- **Type**: Addition (3 lines)
+
+#### Reason for Modification
+
+Register custom routes for the Claim Tokens feature. This is the central route registration point in the Express application.
+
+#### Modification Impact
+
+**Impact Level**: Low
+
+**Explanation**:
+
+- **Functionality**: Adds new `/api/custom` route namespace without affecting existing routes
+- **Performance**: Negligible (one-time route registration at startup)
+- **Security**: Routes use existing `requireJwtAuth` middleware
+- **Compatibility**: Added after all existing routes, minimal conflict risk
+
+#### Code Changes
+
+```javascript
+// CUSTOM: gptchina - Claim Tokens feature
+// See: custom/features/claim-tokens/README.md
+const customClaimTokensRoutes = require('../../custom/features/claim-tokens/server/routes');
+app.use('/api/custom', customClaimTokensRoutes);
+```
+
+#### Update Strategy
+
+When upstream updates this file, re-add these lines after the MCP route and before ErrorController.
+
+---
+
+### 2. client/vite.config.ts
+
+**Status**: 🟢 Stable
+
+**Modified Date**: 2025-11-09
+
+**Last Reviewed**: 2025-11-09
+
+**Upstream Version at Modification**: v0.8.1-rc1 (commit: c31777b)
+
+**Feature**: Claim Tokens (enables @custom alias for all custom features)
+
+#### Lines Modified
+
+- **Lines**: resolve.alias section
+- **Type**: Addition (2 lines)
+
+#### Reason for Modification
+
+Add Vite alias `@custom` to resolve imports from the root `custom/` directory. This allows frontend code to import custom features without complex relative paths.
+
+#### Modification Impact
+
+**Impact Level**: Low
+
+**Explanation**:
+
+- **Functionality**: Enables clean imports for custom features
+- **Performance**: No performance impact (build-time resolution)
+- **Security**: No security implications
+- **Compatibility**: Alias addition is non-breaking
+
+#### Code Changes
+
+```typescript
+// CUSTOM: gptchina - Claim Tokens feature - alias for custom folder
+'@custom': path.resolve(__dirname, '../custom'),
+```
+
+#### Update Strategy
+
+When upstream updates vite.config.ts, re-add alias to the resolve.alias object.
+
+---
+
+### 3. client/src/components/Nav/Nav.tsx
+
+**Status**: 🟢 Stable
+
+**Modified Date**: 2025-11-09
+
+**Last Reviewed**: 2025-11-09
+
+**Upstream Version at Modification**: v0.8.1-rc1 (commit: c31777b)
+
+**Feature**: Claim Tokens
+
+#### Lines Modified
+
+- **Lines**: Import section and JSX section
+- **Type**: Addition (4 lines total)
+
+#### Reason for Modification
+
+Integrate ClaimTokensButton component into the navigation sidebar above the AccountSettings component.
+
+#### Modification Impact
+
+**Impact Level**: Low
+
+**Explanation**:
+
+- **Functionality**: Adds new UI element without affecting existing navigation
+- **Performance**: Lazy loaded, minimal impact
+- **Security**: No security implications
+- **Compatibility**: Uses existing Suspense pattern, well-isolated
+
+#### Code Changes
+
+```typescript
+// Import section
+// CUSTOM: gptchina - Claim Tokens feature
+const ClaimTokensButton = lazy(() => import('@custom/features/claim-tokens/client'));
+
+// JSX section (before AccountSettings)
+{/* CUSTOM: gptchina - Claim Tokens feature */}
+<Suspense fallback={null}>
+  <ClaimTokensButton />
+</Suspense>
+```
+
+#### Update Strategy
+
+When upstream updates Nav.tsx, re-add ClaimTokensButton import and render it before AccountSettings.
+
+---
+
+### 4. packages/data-schemas/src/schema/balance.ts
+
+**Status**: 🟢 Stable
+
+**Modified Date**: 2025-11-09
+
+**Last Reviewed**: 2025-11-09
+
+**Upstream Version at Modification**: v0.8.1-rc1 (commit: c31777b)
+
+**Feature**: Claim Tokens
+
+#### Lines Modified
+
+- **Lines**: After refillAmount field
+- **Type**: Addition (7 lines)
+
+#### Reason for Modification
+
+Add `lastTokenClaim` field to Balance schema to track when user last claimed free tokens, enabling 24-hour cooldown enforcement.
+
+#### Modification Impact
+
+**Impact Level**: Low
+
+**Explanation**:
+
+- **Functionality**: Adds new field without affecting existing balance functionality
+- **Performance**: No performance impact (optional field)
+- **Security**: No security implications
+- **Compatibility**: Default value of null makes this non-breaking for existing records
+
+#### Code Changes
+
+```typescript
+// CUSTOM: gptchina - Claim Tokens feature
+// Timestamp of last manual token claim (24-hour cooldown)
+lastTokenClaim: {
+  type: Date,
+  default: null,
+},
+```
+
+#### Update Strategy
+
+When upstream updates balance schema, re-add lastTokenClaim field at the end of the schema.
+
+---
+
+### 5. packages/data-schemas/src/types/balance.ts
+
+**Status**: 🟢 Stable
+
+**Modified Date**: 2025-11-09
+
+**Last Reviewed**: 2025-11-09
+
+**Upstream Version at Modification**: v0.8.1-rc1 (commit: c31777b)
+
+**Feature**: Claim Tokens
+
+#### Lines Modified
+
+- **Lines**: IBalance interface
+- **Type**: Addition (2 lines)
+
+#### Reason for Modification
+
+Add TypeScript type for `lastTokenClaim` field to match the schema addition.
+
+#### Modification Impact
+
+**Impact Level**: Low
+
+**Explanation**:
+
+- **Functionality**: Type-safety for new field
+- **Performance**: No runtime impact (compile-time only)
+- **Security**: No security implications
+- **Compatibility**: Optional field, non-breaking
+
+#### Code Changes
+
+```typescript
+// CUSTOM: gptchina - Claim Tokens feature
+lastTokenClaim?: Date | null;
+```
+
+#### Update Strategy
+
+When upstream updates IBalance interface, re-add lastTokenClaim field at the end.
 
 ---
 

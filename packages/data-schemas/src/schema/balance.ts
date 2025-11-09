@@ -36,6 +36,12 @@ const balanceSchema = new Schema<t.IBalance>({
     type: Number,
     default: 0,
   },
+  // CUSTOM: gptchina - Claim Tokens feature
+  // Timestamp of last manual token claim (24-hour cooldown)
+  lastTokenClaim: {
+    type: Date,
+    default: null,
+  },
 });
 
 export default balanceSchema;

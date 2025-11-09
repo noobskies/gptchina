@@ -145,6 +145,11 @@ const startServer = async () => {
   app.use('/api/tags', routes.tags);
   app.use('/api/mcp', routes.mcp);
 
+  // CUSTOM: gptchina - Claim Tokens feature
+  // See: custom/features/claim-tokens/README.md
+  const customClaimTokensRoutes = require('../../custom/features/claim-tokens/server/routes');
+  app.use('/api/custom', customClaimTokensRoutes);
+
   app.use(ErrorController);
 
   app.use((req, res) => {
