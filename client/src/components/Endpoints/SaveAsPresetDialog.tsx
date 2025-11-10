@@ -83,7 +83,7 @@ const SaveAsPresetDialog = ({ open, onOpenChange, preset }: TEditPresetProps) =>
         }
         selection={{
           selectHandler: submitPreset,
-          selectClasses: 'bg-green-500 hover:bg-green-600 dark:hover:bg-green-600 text-white',
+          selectClasses: 'bg-blue-500 hover:bg-blue-600 dark:hover:bg-blue-600 text-white',
           selectText: localize('com_ui_save'),
         }}
       />

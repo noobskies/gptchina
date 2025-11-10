@@ -45,7 +45,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
       if (validator) {
         setStatus('success');
-        setStatusColor('text-green-500 dark:text-green-500');
+        setStatusColor('text-blue-500 dark:text-blue-500');
       }
 
       onFileSelected(jsonData);
@@ -75,7 +75,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         type="button"
         onClick={handleClick}
         className={cn(
-          'mr-1 flex h-auto cursor-pointer items-center rounded bg-transparent px-2 py-1 text-xs font-normal transition-colors hover:bg-gray-100 hover:text-green-600 focus:ring-ring dark:bg-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-green-500',
+          'mr-1 flex h-auto cursor-pointer items-center rounded bg-transparent px-2 py-1 text-xs font-normal transition-colors hover:bg-gray-100 hover:text-blue-600 focus:ring-ring dark:bg-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-blue-500',
           statusColor,
           containerClassName,
         )}

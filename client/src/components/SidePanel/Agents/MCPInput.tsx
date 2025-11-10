@@ -234,7 +234,7 @@ export default function MCPInput({ mcp, agent_id, setMCP }: MCPInputProps) {
         <button
           onClick={saveMCP}
           disabled={isLoading}
-          className="focus:shadow-outline mt-1 flex min-w-[100px] items-center justify-center rounded bg-green-500 px-4 py-2 font-semibold text-white hover:bg-green-400 focus:border-green-500 focus:outline-none focus:ring-0 disabled:bg-green-400"
+          className="focus:shadow-outline mt-1 flex min-w-[100px] items-center justify-center rounded bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-400 focus:border-blue-500 focus:outline-none focus:ring-0 disabled:bg-blue-400"
           type="button"
         >
           {(() => {
