@@ -10,6 +10,137 @@
 
 ## Recent Changes
 
+### Split Auth Layout Implementation (2025-11-09 6:29-6:53 PM)
+
+**Overview**: Implemented and customized split-screen authentication layout with blue theme and white-labeling for production use.
+
+**Implementation Phases**:
+
+1. **Initial Layout Implementation** (6:29-6:32 PM)
+
+   - Replaced static image with clean dual-column design
+   - Left side: Full-height image from example design
+   - Right side: Centered auth forms (max-width: 672px)
+   - Files modified: `SplitAuthLayout.tsx`
+
+2. **Layout Fixes** (6:32-6:37 PM)
+
+   - **Problem 1**: Vertical scrollbars appearing
+     - **Solution**: Added `overflow-hidden` to main container, changed left div from `h-screen min-h-full` to `h-full`
+   - **Problem 2**: Auth form taking 100% width on desktop
+     - **Solution**: Reduced max-width from `max-w-xl` (576px) to `max-w-md` (448px)
+     - Added `mx-auto w-full max-w-md p-6` to form container
+   - **Problem 3**: Whitespace at top of grid
+     - **Solution**: Removed `items-center` class from main grid container
+     - Removed `gap-4` to eliminate all spacing between grid items
+
+3. **Feature Cards Integration** (6:39 PM)
+
+   - Replaced static image with FeaturesPanel component
+   - Restored original feature showcase design
+   - Maintained all layout improvements (no scroll, proper sizing, no gaps)
+
+4. **Blue Theme & White-Labeling** (6:40-6:47 PM)
+
+   - **Background Changes**:
+     - Applied solid blue background to left side container: `bg-blue-600 dark:bg-blue-700`
+     - Removed background from inner FeaturesPanel for clean inheritance
+   - **Content Updates** (constants.ts):
+     - Changed tagline: "Open source. Cost effective. Powerful." → "Secure. Cost effective. Powerful."
+     - Updated Privacy & Control: Removed "Self-host or use cloud" → "Your data, your choice. Complete ownership and control"
+   - **Text Color Updates** (white for visibility on blue):
+     - Hero headline: `text-white`
+     - Hero subheadline: `text-white`
+     - Hero tagline: `text-white`
+     - Feature card titles: `text-white`
+     - Feature card descriptions: `text-white`
+     - Feature card icons: `text-white`
+   - **Card Styling** (FeatureCard.tsx):
+     - Glass-morphism effect: `bg-white/5 backdrop-blur-sm`
+     - Borders: `border-white/10` (hover: `border-white/20`)
+     - Hover effect: `hover:bg-white/10 hover:shadow-md`
+
+5. **Banner Removal & Vertical Centering** (6:47-6:48 PM)
+
+   - Removed Banner component import and usage
+   - Added vertical centering to left side: `flex items-center justify-center`
+   - Added `overflow-y-auto` to left side for content scrolling if needed
+   - Right side already had proper centering
+
+6. **Custom Icon Creation** (6:51-6:52 PM)
+   - **Created**: `ComparisonIcon.tsx` - Side-by-side panel icon for Model Comparison
+   - **Replaced**: Code Interpreter feature with Model Comparison
+   - **Updates**:
+     - Added export to `icons/index.tsx`
+     - Updated icon map in `FeaturesPanel.tsx`
+     - Changed constants to use `ComparisonIcon` instead of `CodeIcon`
+
+**Files Created** (1 new file):
+
+- `custom/features/split-auth-layout/client/icons/ComparisonIcon.tsx` - Model comparison icon
+
+**Files Modified** (6 files):
+
+- `custom/features/split-auth-layout/client/SplitAuthLayout.tsx` - Main layout component
+- `custom/features/split-auth-layout/client/FeaturesPanel.tsx` - Features display panel
+- `custom/features/split-auth-layout/client/FeatureCard.tsx` - Individual feature cards
+- `custom/features/split-auth-layout/shared/constants.ts` - Content and white-labeling
+- `custom/features/split-auth-layout/client/icons/index.tsx` - Icon exports
+- `custom/features/split-auth-layout/client/FeaturesPanel.tsx` - Icon map
+
+**Key Design Decisions**:
+
+1. **Clean Split-Screen Layout**:
+
+   - No banner component to avoid unwanted whitespace
+   - Equal 50/50 split on desktop (responsive on mobile)
+   - Both sides vertically centered
+   - No scrollbars or spacing issues
+
+2. **Blue Theme Branding**:
+
+   - Solid blue backgrounds instead of gradients
+   - All text white for maximum contrast
+   - Glass-morphism feature cards (white/5 opacity with backdrop blur)
+   - Professional, cohesive color scheme
+
+3. **White-Labeling**:
+
+   - Removed "Open source" references
+   - Removed "Self-host" and LibreChat-specific terminology
+   - Generic, professional messaging suitable for any brand
+
+4. **Content Strategy**:
+   - Replaced Code Interpreter (paid feature) with Model Comparison (free)
+   - Maintained 6 feature cards showcasing platform capabilities
+   - Custom ComparisonIcon created for new feature
+
+**Final Feature List**:
+
+1. Multiple AI Providers
+2. Privacy & Control (white-labeled)
+3. Cost Savings
+4. AI Agents & Tools
+5. Model Comparison (NEW - replaced Code Interpreter)
+6. Web Search
+
+**Current Status**:
+
+- ✅ Layout implementation complete
+- ✅ All spacing and sizing issues resolved
+- ✅ Blue theme applied throughout
+- ✅ All text optimized for visibility
+- ✅ White-labeling complete
+- ✅ Custom ComparisonIcon created and integrated
+- ✅ Production-ready split authentication layout
+
+**Visual Summary**:
+
+- Left: Blue background with white-text feature showcase (vertically centered)
+- Right: White background with centered auth form (448px max width)
+- No banner, no scrollbars, no spacing issues
+- Professional appearance ready for production deployment
+
 ### Model Pricing Display Feature Implementation (2025-11-09 4:54-5:01 PM)
 
 **Overview**: Implemented feature to display AI model pricing (input/output token costs) on the landing page below the greeting message. Helps users understand cost implications of model selection with real-time pricing data.

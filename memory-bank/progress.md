@@ -147,6 +147,20 @@
   - **Files Modified**: 3 upstream (~19 lines total)
   - **Status**: Complete & ready for testing ✅
   - **Implementation Date**: 2025-11-09
+- **Split Auth Layout** (White-Labeled)
+  - Clean 50/50 split-screen authentication layout
+  - Left side: Blue background with feature showcase (vertically centered)
+  - Right side: Centered auth form (448px max width)
+  - 6 feature cards with glass-morphism design
+  - Features: Multi-Provider, Privacy, Cost Savings, Agents, Model Comparison, Web Search
+  - Removed Banner component to eliminate whitespace
+  - All text white for visibility on blue background
+  - White-labeled content (no "Open source" or "Self-host" references)
+  - Custom ComparisonIcon created for Model Comparison feature
+  - **Files Created**: 1 (ComparisonIcon.tsx)
+  - **Files Modified**: 6 (SplitAuthLayout, FeaturesPanel, FeatureCard, constants, icons/index, icon map)
+  - **Status**: Production ready ✅
+  - **Implementation Date**: 2025-11-09
 
 ## What's Left to Build
 
@@ -467,6 +481,20 @@ The following categories represent potential work areas, but specific tasks will
 - Tokens adding correctly to user balances
 - **Files Modified**: Dockerfile, docker-compose.override.yml
 - **Status**: LIVE & OPERATIONAL IN PRODUCTION ✅✅✅
+
+✅ **Split Auth Layout** (2025-11-09 6:29-6:53 PM)
+
+- Implemented clean 50/50 split-screen authentication layout
+- Blue background theme with white text for visibility
+- White-labeled content (removed "Open source", "Self-host" references)
+- Created custom ComparisonIcon for Model Comparison feature
+- Removed Banner component to eliminate whitespace
+- Both sides vertically centered
+- Glass-morphism feature cards with semi-transparent white backgrounds
+- 6 features: Multi-Provider, Privacy, Cost Savings, Agents, Model Comparison, Web Search
+- **Files Created**: 1 (ComparisonIcon.tsx)
+- **Files Modified**: 6 (SplitAuthLayout, FeaturesPanel, FeatureCard, constants, icons/index, icon map)
+- **Status**: Production ready ✅
 
 ### Recently Completed
 
