@@ -293,6 +293,137 @@ When upstream updates vite.config.ts, re-add alias to the resolve.alias object.
 
 ---
 
+### 6. client/src/routes/Layouts/Startup.tsx
+
+**Status**: 🟢 Stable
+
+**Modified Date**: 2025-11-09
+
+**Last Reviewed**: 2025-11-09
+
+**Upstream Version at Modification**: v0.8.1-rc1 (commit: 0d401da1f)
+
+**Feature**: Split Auth Layout
+
+#### Lines Modified
+
+- **Lines**: Import section and conditional layout selection
+- **Type**: Addition (~20 lines total)
+
+#### Reason for Modification
+
+Implement conditional layout selection to use SplitAuthLayout for main authentication pages (login, register, forgot password, reset password) while preserving the original AuthLayout for other pages (2FA, email verification). This creates a modern split-screen design for the primary auth flows without affecting other authentication flows.
+
+#### Modification Impact
+
+**Impact Level**: Minimal
+
+**Explanation**:
+
+- **Functionality**: Adds alternative layout without affecting existing functionality
+- **Performance**: No performance impact (conditional component selection at render)
+- **Security**: No security implications (UI-only change)
+- **Compatibility**: Drop-in replacement with identical props signature
+
+#### Code Changes
+
+```typescript
+// Import section (after existing imports)
+// CUSTOM: gptchina - Split auth layout feature
+// See: custom/features/split-auth-layout/README.md
+import { SplitAuthLayout } from '~/../../custom/features/split-auth-layout/client';
+
+// Conditional layout selection (before return statement)
+// CUSTOM: gptchina - Conditional layout selection for split design
+// Use SplitAuthLayout for main auth pages, AuthLayout for others
+const usesSplitLayout = ['/login', '/register', '/forgot-password', '/reset-password'].includes(
+  location.pathname,
+);
+const Layout = usesSplitLayout ? SplitAuthLayout : AuthLayout;
+
+// Return statement change
+return (
+  <Layout  // Changed from <AuthLayout
+    header={headerText ? localize(headerText) : localize(headerMap[location.pathname])}
+    isFetching={isFetching}
+    startupConfig={startupConfig}
+    startupConfigError={startupConfigError}
+    pathname={location.pathname}
+    error={error}
+  >
+    <Outlet context={contextValue} />
+  </Layout>  // Changed from </AuthLayout>
+);
+```
+
+#### Alternative Approaches Considered
+
+1. **Modify AuthLayout directly**
+
+   - **Pros**: No need for separate component
+   - **Cons**: Would make AuthLayout more complex, harder to maintain, affects all auth pages
+   - **Rejected Because**: Violates separation of concerns, increases upstream modification surface
+
+2. **Create new routes for split layout**
+
+   - **Pros**: No modification to Startup.tsx
+   - **Cons**: Would duplicate route definitions, more complex routing
+   - **Rejected Because**: Route duplication is harder to maintain than this minimal modification
+
+3. **Use CSS-only solution**
+   - **Pros**: No component changes needed
+   - **Cons**: Cannot add features panel content, limited functionality
+   - **Rejected Because**: Doesn't achieve the desired split-screen with feature showcase
+
+#### Update Strategy
+
+**When Upstream Updates This File**:
+
+1. Check if `AuthLayout` props signature changed
+2. Check if `Startup.tsx` component structure changed
+3. Verify conditional rendering still works
+4. Update `SplitAuthLayoutProps` interface if needed
+5. Re-add import, conditional logic, and Layout usage
+
+**Automated Checks**:
+
+- [ ] Test: All auth routes render correctly
+- [ ] Test: Split layout appears on /login, /register, /forgot-password, /reset-password
+- [ ] Test: Original layout appears on /login/2fa, /verify
+- [ ] Test: Form functionality preserved
+
+#### Dependencies
+
+**Custom Features Depending on This**:
+
+- Split Auth Layout: Requires this modification to be activated
+
+**Upstream Code This Depends On**:
+
+- `AuthLayout` component: Must remain compatible as fallback
+- `location.pathname`: Must continue to provide pathname
+- Router context: Must continue to work with both layouts
+
+#### Refactoring Plan
+
+**Goal**: Minimal modification already achieved. If upstream adds layout plugin system, could migrate to that.
+
+**Blockers**:
+
+- No upstream layout plugin system exists
+- Conditional rendering is standard React pattern
+- This is the most minimal approach possible
+
+**Steps to Remove**:
+
+1. Wait for upstream to add layout customization system
+2. Migrate to official API if available
+3. Remove conditional logic
+
+**Timeline**: Not planned - this is the most minimal approach possible
+
+---
+
 ### 3. client/src/components/Nav/Nav.tsx
 
 **Status**: 🟢 Stable

@@ -4,6 +4,9 @@ import type { TStartupConfig } from 'librechat-data-provider';
 import { useGetStartupConfig } from '~/data-provider';
 import AuthLayout from '~/components/Auth/AuthLayout';
 import { TranslationKeys, useLocalize } from '~/hooks';
+// CUSTOM: gptchina - Split auth layout feature
+// See: custom/features/split-auth-layout/README.md
+import { SplitAuthLayout } from '~/../../custom/features/split-auth-layout/client';
 
 const headerMap: Record<string, TranslationKeys> = {
   '/login': 'com_auth_welcome_back',
@@ -56,8 +59,15 @@ export default function StartupLayout({ isAuthenticated }: { isAuthenticated?: b
     isFetching,
   };
 
+  // CUSTOM: gptchina - Conditional layout selection for split design
+  // Use SplitAuthLayout for main auth pages, AuthLayout for others
+  const usesSplitLayout = ['/login', '/register', '/forgot-password', '/reset-password'].includes(
+    location.pathname,
+  );
+  const Layout = usesSplitLayout ? SplitAuthLayout : AuthLayout;
+
   return (
-    <AuthLayout
+    <Layout
       header={headerText ? localize(headerText) : localize(headerMap[location.pathname])}
       isFetching={isFetching}
       startupConfig={startupConfig}
@@ -66,6 +76,6 @@ export default function StartupLayout({ isAuthenticated }: { isAuthenticated?: b
       error={error}
     >
       <Outlet context={contextValue} />
-    </AuthLayout>
+    </Layout>
   );
 }

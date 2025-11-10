@@ -15,10 +15,10 @@ This document tracks all custom features implemented in the gptchina fork of Lib
 
 ### Status Summary
 
-- **Total Features**: 3
+- **Total Features**: 4
 - **Planned**: 0
 - **In Progress**: 0
-- **Complete**: 3
+- **Complete**: 4
 - **Needs Maintenance**: 0
 
 ---
@@ -325,6 +325,147 @@ Stripe-integrated payment system allowing users to purchase tokens with multiple
 - ✅ Deployed to https://gptafrica.io
 - ✅ All payment methods operational
 - ✅ Tokens adding correctly to user balances
+
+---
+
+### Split Auth Layout
+
+**Status**: ✅ Complete
+
+**Category**: Frontend
+
+**Priority**: Medium
+
+**Created**: 2025-11-09
+
+**Last Updated**: 2025-11-09
+
+**Owner**: Development Team
+
+#### Description
+
+Redesigns authentication pages (login, register, forgot password, reset password) with a modern split-screen layout. The left side (40%) showcases platform features and benefits with hero content and feature cards, while the right side (60%) contains authentication forms. Creates a more engaging and informative user experience for new and returning users.
+
+#### Integration Approach
+
+- **Pattern Used**: Component Wrapper (Drop-in Replacement)
+- **Upstream Files Modified**:
+  - `client/src/routes/Layouts/Startup.tsx` (conditional layout selection - ~20 lines)
+- **Modification Impact**: Minimal
+
+Uses conditional rendering to swap between `SplitAuthLayout` and `AuthLayout` based on pathname. Drop-in replacement with identical props signature.
+
+#### Configuration
+
+**No environment variables needed** - Feature works automatically.
+
+**Content Configuration** (in `shared/constants.ts`):
+
+- `HERO_CONTENT`: Headline, subheadline, and tagline
+- `PLATFORM_FEATURES`: Array of 6 feature objects with icon, title, and description
+
+Content can be edited directly in constants file without code changes.
+
+#### Location
+
+- **Feature Directory**: `custom/features/split-auth-layout/`
+- **Documentation**: `custom/features/split-auth-layout/README.md`
+- **Frontend**: `custom/features/split-auth-layout/client/`
+- **Shared**: `custom/features/split-auth-layout/shared/`
+- **Tests**: Manual testing only (see README)
+
+#### Dependencies
+
+**Upstream Dependencies**:
+
+- `AuthLayout` component (for non-split pages like 2FA)
+- `ErrorMessage`, `SocialLoginRender`, `BlinkAnimation`, `Footer`, `Banner` components
+- LibreChat design tokens (for consistent styling)
+- Tailwind CSS classes
+
+**External Packages**:
+
+- None (uses existing React and Tailwind dependencies)
+
+**Other Custom Features**:
+
+- None
+
+#### Testing
+
+**Test Coverage**: Manual testing
+
+**Routes with Split Layout**:
+
+- ✅ `/login` - Login page
+- ✅ `/register` - Registration page
+- ✅ `/forgot-password` - Password reset request
+- ✅ `/reset-password` - Password reset form
+
+**Routes with Original Layout**:
+
+- ✅ `/login/2fa` - Two-factor authentication
+- ✅ `/verify` - Email verification
+
+**Visual Features**:
+
+- ✅ 40/60 split on desktop (≥1024px)
+- ✅ Stacked layout on mobile (<1024px)
+- ✅ 6 custom SVG icons (inline, no HTTP requests)
+- ✅ Feature cards with hover effects
+- ✅ Gradient background on features panel
+- ✅ Full dark/light mode support
+- ✅ Responsive grid (adapts to screen size)
+
+#### Known Issues
+
+- None currently
+
+#### Maintenance Notes
+
+**Upstream Compatibility**:
+
+- Tested with upstream version: v0.8.1-rc1 (commit: 0d401da1f)
+- Minimal upstream modification (one file, ~20 lines)
+- Props match `AuthLayout` exactly for compatibility
+- Uses design tokens for automatic theme compatibility
+
+**Update Strategy**:
+
+- If `AuthLayout` props change: Update `SplitAuthLayoutProps` interface
+- If `Startup.tsx` changes: Re-apply conditional layout selection logic
+- If design tokens change: No action needed (automatically updates)
+- If new auth routes added: Add to `usesSplitLayout` array if desired
+
+**Component Structure**:
+
+- `SplitAuthLayout.tsx` (115 lines) - Main wrapper
+- `FeaturesPanel.tsx` (48 lines) - Left panel with hero and features
+- `FeatureCard.tsx` (20 lines) - Individual feature display
+- 6 icon components (~25 lines each) - Custom SVG icons
+- `types.ts` (66 lines) - TypeScript definitions
+- `constants.ts` (57 lines) - Feature content
+
+**Performance**:
+
+- Bundle Impact: ~8-10KB additional JavaScript
+- HTTP Requests: 0 additional (inline SVGs)
+- Render Performance: Negligible (FeaturesPanel can be memoized if needed)
+
+**Customization**:
+
+- Edit `HERO_CONTENT` in constants.ts to change headline/tagline
+- Edit `PLATFORM_FEATURES` array to add/remove/modify features
+- Add new icons in `client/icons/` and register in `iconMap`
+- Modify Tailwind classes for styling changes
+
+**Todo**:
+
+- [ ] Add entrance animations for feature cards
+- [ ] Consider adding testimonials section
+- [ ] Add A/B testing for different feature sets
+- [ ] Localization for feature content
+- [ ] Accessibility audit with screen reader testing
 
 ---
 
