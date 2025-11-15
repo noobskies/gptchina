@@ -224,7 +224,7 @@ export const TokenPurchaseModal: React.FC<TokenPurchaseModalProps> = ({ open, on
           leaveFrom="opacity-100 scale-100"
           leaveTo="opacity-0 scale-95"
         >
-          <div className="fixed inset-0 flex items-center justify-center p-4">
+          <div className="fixed inset-0 flex items-center justify-center p-2 sm:p-4">
             <DialogPanel className="w-full max-w-2xl overflow-hidden rounded-2xl bg-background shadow-2xl">
               {/* Header */}
               <DialogTitle
@@ -254,7 +254,9 @@ export const TokenPurchaseModal: React.FC<TokenPurchaseModalProps> = ({ open, on
               </DialogTitle>
 
               {/* Content */}
-              <div className="max-h-[calc(90vh-8rem)] overflow-y-auto">{renderStepContent()}</div>
+              <div className="max-h-[65vh] overflow-y-auto sm:max-h-[calc(90vh-8rem)]">
+                {renderStepContent()}
+              </div>
             </DialogPanel>
           </div>
         </TransitionChild>

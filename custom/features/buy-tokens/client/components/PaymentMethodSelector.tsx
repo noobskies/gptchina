@@ -65,8 +65,8 @@ export const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
   ];
 
   return (
-    <div className="mt-6">
-      <h3 className="mb-3 text-sm font-medium text-text-secondary">
+    <div className="mt-4 sm:mt-6">
+      <h3 className="mb-2 text-sm font-medium text-text-secondary sm:mb-3">
         {(localize as any)('com_custom_tokens_buy_payment_methods')}
       </h3>
       <div className="grid grid-cols-2 gap-2">

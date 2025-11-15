@@ -29,7 +29,7 @@ export const TokenPackageCard: React.FC<TokenPackageCardProps> = ({
   return (
     <button
       onClick={() => onSelect(pkg.id)}
-      className={`relative flex flex-col rounded-lg border-2 p-4 transition-all ${
+      className={`relative flex flex-col rounded-lg border-2 p-3 transition-all sm:p-4 ${
         isSelected
           ? 'border-blue-500'
           : 'border-border-medium hover:border-blue-300 dark:hover:border-blue-600'
