@@ -396,6 +396,17 @@ The following categories represent potential work areas, but specific tasks will
 
 ### Completed
 
+✅ **Code Interpreter Removal** (2025-11-15 11:06 AM)
+
+- Removed Code Interpreter from Tools dropdown menu
+- LibreChat paid-only service not available in this fork
+- Commented out code (lines 217-275) in ToolsDropdown.tsx instead of deleting
+- Updated custom/MODIFICATIONS.md with removal documentation
+- Fork-friendly approach preserves upstream code for future integration
+- Merge strategy documented for upstream syncs
+- Testing checklist created for validation
+- **Status**: Code complete, ready for testing
+
 ✅ **Memory Bank Initialization** (2025-11-09 11:38 AM)
 
 - Comprehensive documentation created

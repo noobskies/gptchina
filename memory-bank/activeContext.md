@@ -2,11 +2,11 @@
 
 ## Current Work Focus
 
-**Status**: i18n Implementation Planning - COMPLETE ✅
+**Status**: Code Interpreter Removal - COMPLETE ✅
 
-**Active Task**: Comprehensive internationalization planning for all custom features completed. Ready to begin Phase 1 implementation.
+**Active Task**: Removed Code Interpreter from Tools dropdown as it's a LibreChat paid-only service.
 
-**Key Objective**: Add English + Simplified Chinese translations to all 5 custom features (~160 strings total).
+**Key Objective**: Clean up UI to remove unavailable paid features and prevent user confusion.
 
 ---
 

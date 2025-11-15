@@ -118,6 +118,60 @@ If needed to revert:
 
 ---
 
+## Code Interpreter Removal (2025-11-15)
+
+### Overview
+
+Removed Code Interpreter from the Tools dropdown menu as it is a LibreChat paid-only service not available in this fork.
+
+### Modified Files
+
+#### client/src/components/Chat/Input/ToolsDropdown.tsx
+
+- **Lines**: 217-275 (commented out)
+- **Reason**: Remove Code Interpreter from Tools dropdown (LibreChat paid-only service)
+- **Upstream Version**: v0.8.1-rc1 (commit: 8ea0896d485d7e7f3c2ea6edb5267703492bf6cd)
+- **Impact**: Low (isolated to dropdown menu item)
+- **Changes**:
+  - Commented out the entire Code Interpreter dropdown item block
+  - Preserved original code in comments for potential future re-enablement
+  - Added clear documentation explaining why it was removed
+- **Alternative Considered**: Configure via permissions/environment variables (rejected for less explicit control and potential side effects)
+
+### User Impact
+
+- **Before**: Code Interpreter appeared in Tools dropdown (gear icon in chat input) between Web Search and Artifacts
+- **After**: Code Interpreter no longer visible in Tools dropdown
+- **Other Tools**: File Search, Web Search, Artifacts, and MCP remain functional
+
+### Merge Strategy
+
+When syncing with upstream:
+
+1. Check if upstream modified the Code Interpreter block in ToolsDropdown.tsx
+2. If significantly changed, update the commented-out code to match upstream structure
+3. Re-apply the comment block with updated code
+4. Verify no new Code Interpreter features were added elsewhere (e.g., in BadgeRow.tsx)
+5. Test that remaining tools (File Search, Web Search, Artifacts) still work correctly
+
+### Rationale
+
+- Code Interpreter is a paid LibreChat service requiring additional infrastructure
+- Removing it from the UI prevents user confusion about unavailable features
+- Commenting out instead of deleting preserves upstream code for easier future integration
+- Fork-friendly approach with clear documentation for maintenance
+
+### Testing Checklist
+
+- [ ] Verify Code Interpreter no longer appears in Tools dropdown
+- [ ] Verify File Search still works (appears in dropdown)
+- [ ] Verify Web Search still works (appears in dropdown)
+- [ ] Verify Artifacts still works (appears in dropdown)
+- [ ] Test no console errors when opening Tools dropdown
+- [ ] Test in both light and dark mode
+
+---
+
 ## Custom Features
 
 For documentation on custom features (Claim Tokens, Buy Tokens, Model Pricing, Split Auth Layout), see:

@@ -215,6 +215,14 @@ const ToolsDropdown = ({ disabled }: ToolsDropdownProps) => {
     });
   }
 
+  // CUSTOM: gptchina - Removed Code Interpreter from Tools Dropdown
+  // Reason: Code Interpreter is a LibreChat paid-only service, not available in this fork
+  // See: custom/MODIFICATIONS.md for merge strategy
+  // Upstream version: v0.8.1-rc1 (commit: 8ea0896d485d7e7f3c2ea6edb5267703492bf6cd)
+  // Impact: Low (isolated to dropdown menu item)
+  //
+  // Original code preserved below but commented out:
+  /*
   if (canRunCode && codeEnabled) {
     dropdownItems.push({
       onClick: handleCodeInterpreterToggle,
@@ -268,6 +276,7 @@ const ToolsDropdown = ({ disabled }: ToolsDropdownProps) => {
       ),
     });
   }
+  */
 
   if (artifactsEnabled) {
     dropdownItems.push({
