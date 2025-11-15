@@ -2,7 +2,114 @@
 
 ## Current Work Focus
 
-**Status**: Token Info / Pricing Guide Feature - REDESIGNED & PRODUCTION READY ✅
+**Status**: i18n Implementation Planning - COMPLETE ✅
+
+**Active Task**: Comprehensive internationalization planning for all custom features completed. Ready to begin Phase 1 implementation.
+
+**Key Objective**: Add English + Simplified Chinese translations to all 5 custom features (~160 strings total).
+
+---
+
+## Recent Changes
+
+### i18n Implementation Plan Creation (2025-11-15 12:32-12:43 AM)
+
+**Overview**: Created comprehensive implementation plan for internationalizing all custom features in gptchina fork.
+
+**Problem Identified**: All custom features have hardcoded English strings with no internationalization support.
+
+**Solution Implemented**: Created detailed implementation plan document (`memory-bank/i18n-implementation-plan.md`) with:
+
+- Translation key inventory (~160 strings across 5 features)
+- Phase-by-phase implementation steps
+- English + Chinese translations pre-generated
+- Technical patterns and code examples
+- Testing and deployment strategies
+
+**Features to be Translated**:
+
+1. **Claim Tokens** (~5 strings) - Phase 1
+2. **Model Pricing Display** (~3 strings) - Phase 2
+3. **Split Auth Layout** (~15 strings) - Phase 3
+4. **Buy Tokens** (~40 strings) - Phase 4
+5. **Token Info/Pricing Page** (~100 strings) - Phase 5
+
+**Key Technical Decisions**:
+
+1. **Key Naming Convention**: `com_custom_[feature]_[context]_[specific]`
+2. **Language Priority**: English (en) + Simplified Chinese (zh-Hans) only
+3. **Implementation Approach**: Feature-by-feature (safer, incremental)
+4. **Translation Method**: AI-generated Chinese with manual review
+
+**Implementation Phases**:
+
+**Phase 1: Claim Tokens** (~5 strings, 1-2 hours)
+
+- Button text: "Claim {{amount}} Tokens"
+- Countdown: "Claim in {{time}}"
+- Aria labels and error messages
+- Simplest feature - validation of approach
+
+**Phase 2: Model Pricing Display** (~3 strings, 1 hour)
+
+- "Model:", "Input:", "Output:" labels
+- Displayed on landing page
+- Quick win after Phase 1
+
+**Phase 3: Split Auth Layout** (~15 strings, 2-3 hours)
+
+- Hero headline and tagline
+- 6 feature card titles and descriptions
+- White-labeled professional messaging
+
+**Phase 4: Buy Tokens** (~40 strings, 4-5 hours)
+
+- Modal titles and navigation
+- Package badges and descriptions
+- Payment method names
+- Error messages
+- Receipt labels
+
+**Phase 5: Token Info/Pricing Page** (~100 strings, 8-10 hours)
+
+- Page header and sections
+- Pricing categories
+- Calculator interface
+- Tips and educational content
+- Most complex feature
+
+**Files Created**:
+
+- `memory-bank/i18n-implementation-plan.md` - Complete implementation roadmap (400+ lines)
+
+**Current Status**:
+
+- ✅ Planning complete
+- ✅ Implementation plan document created
+- ✅ All translation keys catalogued
+- ✅ Chinese translations pre-generated
+- ✅ Code patterns documented
+- ✅ Testing strategy established
+- ⏳ Ready for Phase 1 implementation (Claim Tokens)
+
+**Key Learnings**:
+
+1. **Systematic Planning Essential**: Large-scale i18n requires detailed documentation for multi-session work
+2. **LibreChat i18n System**: Uses i18next with 37 languages, key pattern `com_[category]_[name]`
+3. **Feature-by-Feature Best**: Incremental approach allows testing and learning between phases
+4. **Translation Keys First**: Design all keys upfront to maintain consistency across features
+
+**Next Steps**:
+
+- Begin Phase 1: Add translations to Claim Tokens feature
+- Test language switching works correctly
+- Iterate through remaining 4 phases
+
+---
+
+## Previous Work
+
+### Token Info / Pricing Guide Feature - REDESIGNED & PRODUCTION READY ✅
 
 **Active Task**: Complete redesign of Token Pricing Page with theme integration, modular architecture, and professional icon-based design. Feature fully polished and ready for deployment.
 
