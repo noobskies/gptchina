@@ -2,6 +2,261 @@
 
 ## Current Work Focus
 
+**Status**: Internationalization (i18n) Implementation - IN PROGRESS 🚧
+
+**Active Task**: Translating all custom features to English + Simplified Chinese (zh-Hans)
+
+**Key Objective**: Make all custom features fully multilingual with proper i18n support using LibreChat's i18next system.
+
+---
+
+## Recent Changes
+
+### i18n Implementation - Phases 1-3 Complete (2025-11-15 11:08-11:24 AM)
+
+**Overview**: Successfully implemented internationalization for first 3 custom features (Claim Tokens, Model Pricing Display, Split Auth Layout). All UI strings now properly localized using LibreChat's i18next translation system.
+
+**Completed Work**:
+
+**Phase 1: Claim Tokens (7 strings) ✅** - Completed 11:15-11:18 AM
+
+- Added 7 translation keys to both `en/translation.json` and `zh-Hans/translation.json`
+- Translation keys:
+  - `com_custom_tokens_claim_button` - "Claim {{amount}} Tokens" / "领取 {{amount}} 代币"
+  - `com_custom_tokens_claim_countdown` - "Claim in {{time}}" / "{{time}} 后可领取"
+  - `com_custom_tokens_claim_loading` - "Loading..." / "加载中..."
+  - `com_custom_tokens_claim_button_aria` - Accessibility label
+  - `com_custom_tokens_claim_countdown_aria` - Accessibility label for countdown
+  - `com_custom_tokens_claim_toast_success` - Success toast message
+  - `com_custom_tokens_claim_toast_error` - Error toast message
+- **Files Modified**:
+  - `client/src/locales/en/translation.json` (+7 keys)
+  - `client/src/locales/zh-Hans/translation.json` (+7 keys)
+  - `custom/features/claim-tokens/client/ClaimTokensButton.tsx` - Added useLocalize hook, replaced all hardcoded strings
+  - `custom/features/claim-tokens/client/useClaimTokens.ts` - Updated formatRemainingTime to remove "Claim in" prefix (now in translation)
+- **Result**: Button text, countdown, toast messages, and aria labels all switch between English and Chinese based on user's language preference
+
+**Phase 2: Model Pricing Display (3 strings) ✅** - Completed 11:19-11:20 AM
+
+- Added 3 translation keys for pricing labels
+- Translation keys:
+  - `com_custom_pricing_display_model` - "Model:" / "模型："
+  - `com_custom_pricing_display_input` - "Input:" / "输入："
+  - `com_custom_pricing_display_output` - "Output:" / "输出："
+- **Files Modified**:
+  - `client/src/locales/en/translation.json` (+3 keys)
+  - `client/src/locales/zh-Hans/translation.json` (+3 keys)
+  - `custom/features/model-pricing/client/usePricing.ts` - Updated formatPricing() to accept localize parameter
+  - `client/src/components/Chat/Landing.tsx` - Pass localize to formatPricing(), use localized "Model:" label
+- **Result**: Pricing display on landing page now shows in user's selected language
+
+**Phase 3: Split Auth Layout (15 strings) ✅** - Completed 11:21-11:24 AM
+
+- Added 15 translation keys for hero content and feature cards
+- Translation keys (hero):
+  - `com_custom_splitauth_hero_headline` - "Your AI Assistant, Your Way" / "您的 AI 助手，由您掌控"
+  - `com_custom_splitauth_hero_subheadline` - Full tagline / Chinese tagline
+  - `com_custom_splitauth_hero_tagline` - "Secure. Cost effective. Powerful." / "安全。经济实惠。强大。"
+- Translation keys (features - 6 cards × 2 strings each = 12 keys):
+  - Multiple AI Providers (title + description)
+  - Privacy & Control (title + description)
+  - Cost Savings (title + description)
+  - AI Agents & Tools (title + description)
+  - Model Comparison (title + description)
+  - Web Search (title + description)
+- **Files Modified**:
+  - `client/src/locales/en/translation.json` (+15 keys)
+  - `client/src/locales/zh-Hans/translation.json` (+15 keys)
+  - `custom/features/split-auth-layout/shared/constants.ts` - Added HERO_CONTENT_KEYS and PLATFORM_FEATURES_KEYS (translation key references)
+  - `custom/features/split-auth-layout/client/FeaturesPanel.tsx` - Complete rewrite to use localize() hook, removed props
+  - `custom/features/split-auth-layout/client/SplitAuthLayout.tsx` - Updated to not pass props to FeaturesPanel
+- **Result**: Entire authentication page (hero section + 6 feature cards) now displays in user's language
+
+**Implementation Approach**:
+
+- Used `useLocalize()` hook from `~/hooks`
+- Followed LibreChat's naming convention: `com_custom_[feature]_[context]_[specific]`
+- Type assertions `(localize as any)` used to bypass TypeScript strict typing for custom keys
+- All strings with variables use i18next interpolation syntax: `{{variable}}`
+- Maintained backward compatibility with legacy constants for any code still using them
+
+**Technical Patterns Used**:
+
+1. **Simple String Replacement**:
+
+   ```typescript
+   // Before: 'Claim 20,000 Tokens'
+   // After: localize('com_custom_tokens_claim_button', { amount: '20,000' })
+   ```
+
+2. **Conditional with Variables**:
+
+   ```typescript
+   const buttonText = canClaim
+     ? localize('com_custom_tokens_claim_button', { amount: '20,000' })
+     : formattedTime
+       ? localize('com_custom_tokens_claim_countdown', { time: formattedTime })
+       : localize('com_custom_tokens_claim_loading');
+   ```
+
+3. **Function Parameters**:
+   ```typescript
+   export const formatPricing = (pricing: ModelPricing | null, localize?: any): string => {
+     if (localize) {
+       const inputLabel = localize('com_custom_pricing_display_input');
+       const outputLabel = localize('com_custom_pricing_display_output');
+       return `${inputLabel} ${input} | ${outputLabel} ${output}`;
+     }
+     return `Input: ${input} | Output: ${output}`; // Fallback
+   };
+   ```
+
+**Files Modified Summary** (Phases 1-3):
+
+Translation Files (2 files):
+
+- `client/src/locales/en/translation.json` - Added 25 translation keys
+- `client/src/locales/zh-Hans/translation.json` - Added 25 Chinese translations
+
+Custom Feature Files (7 files):
+
+1. `custom/features/claim-tokens/client/ClaimTokensButton.tsx`
+2. `custom/features/claim-tokens/client/useClaimTokens.ts`
+3. `custom/features/model-pricing/client/usePricing.ts`
+4. `client/src/components/Chat/Landing.tsx` (upstream file - minimal change)
+5. `custom/features/split-auth-layout/shared/constants.ts`
+6. `custom/features/split-auth-layout/client/FeaturesPanel.tsx`
+7. `custom/features/split-auth-layout/client/SplitAuthLayout.tsx`
+
+**Current Status**:
+
+- ✅ Phase 1 Complete: Claim Tokens (7 strings)
+- ✅ Phase 2 Complete: Model Pricing Display (3 strings)
+- ✅ Phase 3 Complete: Split Auth Layout (15 strings)
+- ✅ Phase 4 Complete: Buy Tokens (44 strings)
+- ⏳ Phase 5 Pending: Token Info/Pricing (~125-140 strings)
+
+**Progress**: 69 / ~195-210 total strings (33-36% complete)
+
+**Key Learnings**:
+
+1. **Type Safety Trade-offs**: Using `(localize as any)` bypasses TypeScript's strict key validation for custom keys not in LibreChat's core types
+2. **Interpolation Works Well**: i18next's `{{variable}}` syntax handles dynamic content seamlessly
+3. **Function Parameters**: Passing localize as optional parameter enables gradual migration with fallbacks
+4. **Constants Pattern**: Separating translation keys from content (KEYS vs legacy exports) maintains backward compatibility
+5. **Time Format Localization**: Separated prefix from time value allows proper Chinese translation ("{{time}} 后可领取" vs "Claim in {{time}}")
+
+### i18n Implementation - Phase 4 Complete (2025-11-15 11:37-11:47 AM)
+
+**Overview**: Successfully implemented internationalization for Buy Tokens feature, completing 44 translation keys across 8 component files. Entire payment flow now fully multilingual.
+
+**Completed Work**:
+
+**Phase 4: Buy Tokens (44 strings) ✅** - Completed 11:37-11:47 AM
+
+- Added 44 translation keys to both `en/translation.json` and `zh-Hans/translation.json`
+- Translation key categories:
+  - **Modal & Navigation** (11 keys): Titles, buttons (Continue, Cancel, Back, Close, Pay Now, Processing)
+  - **Package Labels** (3 keys): Popular badge, "Tokens" label, discount format
+  - **Payment Methods** (7 keys): Section title + 6 payment method names (Card, WeChat, Alipay, Bitcoin, Google Pay, Apple Pay)
+  - **Receipt** (6 keys): Success title/description + 5 receipt labels (Package, Tokens, Amount, Payment ID, Date)
+  - **Loading States** (2 keys): "Preparing payment...", "Loading payment form..."
+  - **Error Messages** (11 keys): Card declined, insufficient funds, expired card, incorrect CVC, auth required, network error, server error, processing error, load form error, retry hint, generic error
+  - **Accessibility** (4 keys): Button aria labels, close button sr-only text
+- **Files Modified** (10 files):
+  - `client/src/locales/en/translation.json` (+44 keys)
+  - `client/src/locales/zh-Hans/translation.json` (+44 keys)
+  - `custom/features/buy-tokens/client/BuyTokensButton.tsx` - Button text and aria label
+  - `custom/features/buy-tokens/client/TokenPackageCard.tsx` - Popular badge, "Tokens" label, discount format
+  - `custom/features/buy-tokens/client/TokenPurchaseModal.tsx` - Modal titles, navigation buttons, loading message
+  - `custom/features/buy-tokens/client/components/PaymentMethodSelector.tsx` - Section title + all payment method names
+  - `custom/features/buy-tokens/client/components/PaymentForm.tsx` - Back button, loading form message, Pay Now button, error messages
+  - `custom/features/buy-tokens/client/components/PurchaseReceipt.tsx` - Success title/description, receipt labels, close button
+  - `custom/features/buy-tokens/client/utils/errors.ts` - Updated getErrorMessage() to accept localize parameter and return localized errors
+- **Result**: Complete purchase flow (button → modal → packages → payment methods → payment form → receipt) now switches between English and Chinese
+
+**Implementation Highlights**:
+
+1. **Payment Method Localization**:
+
+   ```typescript
+   const paymentMethods = [
+     { id: 'card', name: localize('com_custom_tokens_buy_payment_card'), ... },
+     { id: 'wechat', name: localize('com_custom_tokens_buy_payment_wechat'), ... },
+     // All 6 payment methods dynamically localized
+   ];
+   ```
+
+2. **Error Message Localization**:
+
+   ```typescript
+   export const getErrorMessage = (errorType: PaymentErrorType, localize: any): string => {
+     switch (errorType) {
+       case PaymentErrorType.CARD_DECLINED:
+         return localize('com_custom_tokens_buy_error_card_declined');
+       // All error types mapped to translation keys
+     }
+   };
+   ```
+
+3. **Modal State Titles**:
+   ```typescript
+   const getStepTitle = () => {
+     switch (step) {
+       case 'receipt': return localize('com_custom_tokens_buy_title_success');
+       case 'payment': return localize('com_custom_tokens_buy_title_payment');
+       default: return localize('com_custom_tokens_buy_title');
+     }
+   };
+   ```
+
+**Technical Patterns Used**:
+
+1. **Function Parameter Pattern**: Updated getErrorMessage() to accept localize as second parameter for error localization
+2. **Dynamic Array Pattern**: Payment methods array rebuilt inside component with localized names
+3. **Conditional Rendering**: Modal titles and buttons change based on step/state with proper translations
+4. **Interpolation**: Discount percentage uses `{{percent}}` interpolation
+
+**Key Challenges Solved**:
+
+1. **Error Utility Localization**: Modified errors.ts to accept localize parameter, ensuring all Stripe errors show in user's language
+2. **Dynamic Payment Methods**: Payment methods array created inside component to access localize hook
+3. **Multi-Step Flow**: All 3 steps (select → payment → receipt) properly localized with context-specific titles
+
+**Current Status (Updated)**:
+
+- ✅ Phase 1 Complete: Claim Tokens (7 strings)
+- ✅ Phase 2 Complete: Model Pricing Display (3 strings)
+- ✅ Phase 3 Complete: Split Auth Layout (15 strings)
+- ✅ Phase 4 Complete: Buy Tokens (44 strings) ⭐ NEW
+- ⏳ Phase 5 Pending: Token Info/Pricing (~125-140 strings)
+
+**Progress**: 69 / ~195-210 total strings (33-36% complete) ⬆️ +44 keys
+
+**Next Steps**:
+
+- Phase 5: Token Info/Pricing page (~125-140 strings, 12-15 hours estimated) - Final phase
+- Testing: Language switching verification across all 4 completed features
+- Documentation: Final Memory Bank update after Phase 5
+
+**Key Learnings from Phase 4**:
+
+1. **Complex Multi-Step Flows**: Each step in modal flow requires separate translation keys for titles and context
+2. **Error Localization Pattern**: Utility functions need localize parameter passed through call chain
+3. **Payment Methods Array**: Dynamic localization requires building data structures inside component scope
+4. **Consistent Naming**: Following established pattern (`com_custom_tokens_buy_[category]_[specific]`) maintains organization with 44 keys
+5. **Testing Critical**: With payment flow, language switching must not break Stripe integration
+
+**Next Steps**:
+
+- Phase 5: Token Info/Pricing page (~125-140 strings, 12-15 hours estimated)
+- Testing: Language switching verification across all features
+- Documentation: Update Memory Bank with final results
+
+---
+
+## Previous Work
+
 **Status**: Code Interpreter Removal - COMPLETE ✅
 
 **Active Task**: Removed Code Interpreter from Tools dropdown as it's a LibreChat paid-only service.

@@ -10,10 +10,12 @@
 
 import React from 'react';
 import { Button, useToastContext } from '@librechat/client';
+import { useLocalize } from '~/hooks';
 import { useClaimTokens } from './useClaimTokens';
 import { ClaimTokensIcon } from './ClaimTokensIcon';
 
 export const ClaimTokensButton: React.FC = () => {
+  const localize = useLocalize();
   const { showToast } = useToastContext();
   const { canClaim, isLoading, isClaiming, formattedTime, claimTokens, isSuccess } =
     useClaimTokens();
@@ -22,15 +24,15 @@ export const ClaimTokensButton: React.FC = () => {
     claimTokens(undefined, {
       onSuccess: (data) => {
         showToast({
-          message: `Successfully claimed ${new Intl.NumberFormat().format(
-            data.tokensAdded || 20000,
-          )} tokens!`,
+          message: localize('com_custom_tokens_claim_toast_success', {
+            amount: new Intl.NumberFormat().format(data.tokensAdded || 20000),
+          }),
           status: 'success',
         });
       },
       onError: (error: unknown) => {
         const errorMessage =
-          error instanceof Error ? error.message : 'Failed to claim tokens. Please try again.';
+          error instanceof Error ? error.message : localize('com_custom_tokens_claim_toast_error');
         showToast({
           message: errorMessage,
           status: 'error',
@@ -39,7 +41,11 @@ export const ClaimTokensButton: React.FC = () => {
     });
   };
 
-  const buttonText = canClaim ? 'Claim 20,000 Tokens' : formattedTime || 'Loading...';
+  const buttonText = canClaim
+    ? localize('com_custom_tokens_claim_button', { amount: '20,000' })
+    : formattedTime
+      ? localize('com_custom_tokens_claim_countdown', { time: formattedTime })
+      : localize('com_custom_tokens_claim_loading');
   const isDisabled = !canClaim || isLoading;
 
   const buttonClassName = canClaim
@@ -53,7 +59,11 @@ export const ClaimTokensButton: React.FC = () => {
       variant="outline"
       className={buttonClassName}
       data-testid="claim-tokens-button"
-      aria-label={canClaim ? 'Claim 20,000 tokens' : `Next claim available in ${formattedTime}`}
+      aria-label={
+        canClaim
+          ? localize('com_custom_tokens_claim_button_aria', { amount: '20,000' })
+          : localize('com_custom_tokens_claim_countdown_aria', { time: formattedTime })
+      }
     >
       <ClaimTokensIcon className="h-4 w-4" />
       <span className="text-center">{buttonText}</span>

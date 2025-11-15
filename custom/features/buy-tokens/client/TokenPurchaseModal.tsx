@@ -17,6 +17,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { useQueryClient } from '@tanstack/react-query';
 import { QueryKeys } from 'librechat-data-provider';
+import { useLocalize } from '~/hooks';
 import { TOKEN_PACKAGES } from '../shared/types';
 import { getStripeAppearance } from './config/stripeConfig';
 import { PackageSelection } from './components/PackageSelection';
@@ -44,6 +45,7 @@ export const TokenPurchaseModal: React.FC<TokenPurchaseModalProps> = ({ open, on
   const { createPaymentIntent, isLoading, error, clientSecret, setError } = useBuyTokens();
   const queryClient = useQueryClient();
   const { theme } = useContext(ThemeContext);
+  const localize = useLocalize();
 
   // Compute dark mode
   const isDarkMode = useMemo(() => isDark(theme), [theme]);
@@ -95,7 +97,9 @@ export const TokenPurchaseModal: React.FC<TokenPurchaseModalProps> = ({ open, on
           return (
             <div className="p-4 text-center">
               <Loader2 className="mx-auto h-8 w-8 animate-spin" />
-              <p className="mt-4 text-text-secondary">Preparing payment...</p>
+              <p className="mt-4 text-text-secondary">
+                {(localize as any)('com_custom_tokens_buy_loading_payment')}
+              </p>
             </div>
           );
         }
@@ -147,7 +151,7 @@ export const TokenPurchaseModal: React.FC<TokenPurchaseModalProps> = ({ open, on
             {/* Action Buttons */}
             <div className="flex justify-between border-t border-border-light bg-background px-4 py-3 sm:justify-end sm:gap-2 sm:px-6 sm:py-4">
               <Button variant="outline" onClick={handleClose} className="w-1/3 sm:w-auto sm:px-4">
-                Cancel
+                {(localize as any)('com_custom_tokens_buy_button_cancel')}
               </Button>
               <Button
                 variant="submit"
@@ -158,12 +162,12 @@ export const TokenPurchaseModal: React.FC<TokenPurchaseModalProps> = ({ open, on
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processing...
+                    {(localize as any)('com_custom_tokens_buy_button_processing')}
                   </>
                 ) : (
                   <>
                     <CreditCard className="mr-2 h-4 w-4" />
-                    Purchase
+                    {(localize as any)('com_custom_tokens_buy_button_continue')}
                   </>
                 )}
               </Button>
@@ -177,17 +181,17 @@ export const TokenPurchaseModal: React.FC<TokenPurchaseModalProps> = ({ open, on
   const getStepTitle = () => {
     switch (step) {
       case 'receipt':
-        return 'Purchase Complete';
+        return (localize as any)('com_custom_tokens_buy_title_success');
       case 'payment':
-        return 'Complete Payment';
+        return (localize as any)('com_custom_tokens_buy_title_payment');
       default:
-        return 'Buy Tokens';
+        return (localize as any)('com_custom_tokens_buy_title');
     }
   };
 
   const getStepDescription = () => {
     if (step === 'select') {
-      return 'Select a package and payment method';
+      return (localize as any)('com_custom_tokens_buy_subtitle_select');
     }
     return null;
   };
@@ -242,7 +246,9 @@ export const TokenPurchaseModal: React.FC<TokenPurchaseModalProps> = ({ open, on
                     onClick={handleClose}
                   >
                     <X className="h-5 w-5 text-text-primary" />
-                    <span className="sr-only">Close</span>
+                    <span className="sr-only">
+                      {(localize as any)('com_custom_tokens_buy_button_close')}
+                    </span>
                   </button>
                 )}
               </DialogTitle>

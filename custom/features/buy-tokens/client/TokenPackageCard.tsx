@@ -9,6 +9,7 @@
  */
 
 import React from 'react';
+import { useLocalize } from '~/hooks';
 import type { TokenPackage } from '../shared/types';
 import { formatPrice, formatTokens } from './utils/currency';
 
@@ -23,6 +24,8 @@ export const TokenPackageCard: React.FC<TokenPackageCardProps> = ({
   isSelected,
   onSelect,
 }) => {
+  const localize = useLocalize();
+
   return (
     <button
       onClick={() => onSelect(pkg.id)}
@@ -34,7 +37,7 @@ export const TokenPackageCard: React.FC<TokenPackageCardProps> = ({
     >
       {pkg.popular && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-blue-500 px-3 py-1 text-xs font-semibold text-white">
-          Popular
+          {(localize as any)('com_custom_tokens_buy_package_popular')}
         </div>
       )}
 
@@ -58,7 +61,9 @@ export const TokenPackageCard: React.FC<TokenPackageCardProps> = ({
       {/* Token amount - left-aligned, on separate lines */}
       <div className="mb-3 text-left">
         <div className="text-lg font-semibold text-text-primary">{formatTokens(pkg.tokens)}</div>
-        <div className="text-sm text-text-secondary">Tokens</div>
+        <div className="text-sm text-text-secondary">
+          {(localize as any)('com_custom_tokens_buy_package_tokens_label')}
+        </div>
       </div>
 
       {/* Price - left-aligned, smaller */}
@@ -66,12 +71,14 @@ export const TokenPackageCard: React.FC<TokenPackageCardProps> = ({
         <div className="text-xl font-semibold text-text-primary">{formatPrice(pkg.price)}</div>
         {pkg.originalPrice && (
           <div className="mt-1 flex items-center gap-2">
-            <span className="text-sm text-text-secondary line-through">
-              {formatPrice(pkg.originalPrice)}
+            <span className="text-sm text-text-secondary">
+              <s>{formatPrice(pkg.originalPrice)}</s>
             </span>
             {pkg.discount && (
               <span className="rounded-full bg-blue-500 px-2 py-0.5 text-xs font-semibold text-white">
-                {pkg.discount}% off
+                {(localize as any)('com_custom_tokens_buy_package_discount', {
+                  percent: pkg.discount,
+                })}
               </span>
             )}
           </div>

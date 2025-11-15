@@ -32,13 +32,15 @@ const claimTokens = async (): Promise<ClaimTokensResponse> => {
 
 /**
  * Format remaining time to human-readable string
+ * Returns just the time part (e.g., "23h 2m 24s") without prefix
+ * The prefix "Claim in" will be added via localization
  */
 const formatRemainingTime = (ms: number): string => {
   const hours = Math.floor(ms / (1000 * 60 * 60));
   const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((ms % (1000 * 60)) / 1000);
 
-  return `Claim in ${hours}h ${minutes}m ${seconds}s`;
+  return `${hours}h ${minutes}m ${seconds}s`;
 };
 
 /**

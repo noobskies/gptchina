@@ -56,28 +56,29 @@ export const mapStripeError = (stripeError: any): PaymentErrorType => {
 /**
  * Get user-friendly error message from error type
  * @param errorType - PaymentErrorType enum value
+ * @param localize - Localization function
  * @returns User-friendly error message
  */
-export const getErrorMessage = (errorType: PaymentErrorType): string => {
+export const getErrorMessage = (errorType: PaymentErrorType, localize: any): string => {
   switch (errorType) {
     case PaymentErrorType.CARD_DECLINED:
-      return 'Your card was declined. Please try another payment method or contact your bank.';
+      return localize('com_custom_tokens_buy_error_card_declined');
     case PaymentErrorType.INSUFFICIENT_FUNDS:
-      return 'Insufficient funds on your card. Please use a different payment method.';
+      return localize('com_custom_tokens_buy_error_insufficient_funds');
     case PaymentErrorType.EXPIRED_CARD:
-      return 'Your card has expired. Please use a different card.';
+      return localize('com_custom_tokens_buy_error_expired_card');
     case PaymentErrorType.INCORRECT_CVC:
-      return 'Incorrect security code (CVC). Please check and try again.';
+      return localize('com_custom_tokens_buy_error_incorrect_cvc');
     case PaymentErrorType.AUTHENTICATION_REQUIRED:
-      return 'Additional authentication required. Please complete the verification and try again.';
+      return localize('com_custom_tokens_buy_error_auth_required');
     case PaymentErrorType.NETWORK_ERROR:
-      return 'Network error. Please check your internet connection and try again.';
+      return localize('com_custom_tokens_buy_error_network');
     case PaymentErrorType.SERVER_ERROR:
-      return 'Server error occurred. Please try again later.';
+      return localize('com_custom_tokens_buy_error_server');
     case PaymentErrorType.PROCESSING_ERROR:
-      return 'Error processing payment. Please try again.';
+      return localize('com_custom_tokens_buy_error_processing');
     default:
-      return 'Payment failed. Please try again or contact support.';
+      return localize('com_custom_tokens_buy_error_generic');
   }
 };
 

@@ -12,6 +12,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, CreditCard, Loader2 } from 'lucide-react';
 import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { Button } from '@librechat/client';
+import { useLocalize } from '~/hooks';
 import { getErrorMessage, mapStripeError, isRetryable } from '../utils/errors';
 
 interface PaymentFormProps {
@@ -23,6 +24,7 @@ interface PaymentFormProps {
 export const PaymentForm: React.FC<PaymentFormProps> = ({ onSuccess, onBack }) => {
   const stripe = useStripe();
   const elements = useElements();
+  const localize = useLocalize();
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isReady, setIsReady] = useState(false);
@@ -50,17 +52,17 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ onSuccess, onBack }) =
 
       if (error) {
         const errorType = mapStripeError(error);
-        setErrorMessage(getErrorMessage(errorType));
+        setErrorMessage(getErrorMessage(errorType, localize));
         setShowRetry(isRetryable(errorType));
       } else if (paymentIntent && paymentIntent.status === 'succeeded') {
         onSuccess(paymentIntent);
       } else {
-        setErrorMessage('Payment failed. Please try again.');
+        setErrorMessage((localize as any)('com_custom_tokens_buy_error_generic'));
         setShowRetry(true);
       }
     } catch (err) {
       console.error('Payment error:', err);
-      setErrorMessage('An unexpected error occurred. Please try again.');
+      setErrorMessage((localize as any)('com_custom_tokens_buy_error_generic'));
       setShowRetry(true);
     } finally {
       setLoading(false);
@@ -77,7 +79,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ onSuccess, onBack }) =
             className="flex items-center text-sm text-text-secondary hover:text-text-primary"
           >
             <ArrowLeft className="mr-1 h-4 w-4" />
-            Back
+            {(localize as any)('com_custom_tokens_buy_button_back')}
           </button>
         </div>
 
@@ -86,7 +88,9 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ onSuccess, onBack }) =
             <div className="space-y-4">
               <div className="flex items-center justify-center py-4">
                 <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
-                <span className="ml-2 text-text-secondary">Loading payment form...</span>
+                <span className="ml-2 text-text-secondary">
+                  {(localize as any)('com_custom_tokens_buy_loading_form')}
+                </span>
               </div>
               <div className="h-12 animate-pulse rounded-md bg-surface-tertiary"></div>
               <div className="h-12 animate-pulse rounded-md bg-surface-tertiary"></div>
@@ -98,7 +102,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ onSuccess, onBack }) =
               onReady={() => setIsReady(true)}
               onLoadError={(error) => {
                 console.error('Payment Element load error:', error);
-                setErrorMessage('Failed to load payment form. Please refresh and try again.');
+                setErrorMessage((localize as any)('com_custom_tokens_buy_error_load_form'));
               }}
             />
           </div>
@@ -109,7 +113,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ onSuccess, onBack }) =
             {errorMessage}
             {showRetry && (
               <p className="mt-2 text-xs">
-                You can try again or go back to select a different payment method.
+                {(localize as any)('com_custom_tokens_buy_error_retry_hint')}
               </p>
             )}
           </div>
@@ -126,12 +130,12 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ onSuccess, onBack }) =
           {loading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processing...
+              {(localize as any)('com_custom_tokens_buy_button_processing')}
             </>
           ) : (
             <>
               <CreditCard className="mr-2 h-4 w-4" />
-              Pay Now
+              {(localize as any)('com_custom_tokens_buy_button_pay')}
             </>
           )}
         </Button>

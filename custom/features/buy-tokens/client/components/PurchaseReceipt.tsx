@@ -11,6 +11,7 @@
 import React from 'react';
 import { CheckCircle } from 'lucide-react';
 import { Button } from '@librechat/client';
+import { useLocalize } from '~/hooks';
 import { TOKEN_PACKAGES } from '../../shared/types';
 import { formatPrice } from '../utils/currency';
 
@@ -25,6 +26,7 @@ export const PurchaseReceipt: React.FC<PurchaseReceiptProps> = ({
   selectedPackage,
   onClose,
 }) => {
+  const localize = useLocalize();
   const packageDetails = TOKEN_PACKAGES.find((pkg) => pkg.id === selectedPackage);
 
   return (
@@ -39,50 +41,57 @@ export const PurchaseReceipt: React.FC<PurchaseReceiptProps> = ({
 
         {/* Success Message */}
         <div className="mb-6 text-center">
-          <h3 className="mb-2 text-xl font-semibold text-text-primary">Payment Successful!</h3>
+          <h3 className="mb-2 text-xl font-semibold text-text-primary">
+            {(localize as any)('com_custom_tokens_buy_receipt_success_title')}
+          </h3>
           <p className="text-sm text-text-secondary">
-            Your tokens have been added to your account.
+            {(localize as any)('com_custom_tokens_buy_receipt_success_desc')}
           </p>
         </div>
 
         {/* Receipt Details */}
         <div className="rounded-lg border border-border-light bg-surface-tertiary p-4">
-          <h4 className="mb-3 text-sm font-medium text-text-secondary">Receipt</h4>
+          <h4 className="mb-3 text-sm font-medium text-text-secondary">
+            {(localize as any)('com_custom_tokens_buy_receipt_title')}
+          </h4>
 
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-text-secondary">Package:</span>
+              <span className="text-text-secondary">
+                {(localize as any)('com_custom_tokens_buy_receipt_package')}
+              </span>
               <span className="font-medium text-text-primary">{packageDetails?.label}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-text-secondary">Tokens:</span>
+              <span className="text-text-secondary">
+                {(localize as any)('com_custom_tokens_buy_receipt_tokens')}
+              </span>
               <span className="font-medium text-text-primary">
                 {packageDetails?.tokens.toLocaleString()}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-text-secondary">Amount Paid:</span>
+              <span className="text-text-secondary">
+                {(localize as any)('com_custom_tokens_buy_receipt_amount')}
+              </span>
               <span className="font-medium text-text-primary">
                 {packageDetails ? formatPrice(packageDetails.price) : ''}
               </span>
             </div>
             <div className="flex justify-between border-t border-border-light pt-2">
-              <span className="text-text-secondary">Payment ID:</span>
+              <span className="text-text-secondary">
+                {(localize as any)('com_custom_tokens_buy_receipt_payment_id')}
+              </span>
               <span className="font-mono text-xs text-text-primary">
                 {paymentIntent?.id?.substring(0, 20)}...
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-text-secondary">Date:</span>
+              <span className="text-text-secondary">
+                {(localize as any)('com_custom_tokens_buy_receipt_date')}
+              </span>
               <span className="text-text-primary">{new Date().toLocaleDateString()}</span>
             </div>
-          </div>
-
-          {/* TODO: Future enhancements */}
-          <div className="mt-4 space-y-2 border-t border-border-light pt-4">
-            <p className="text-xs text-text-secondary">
-              TODO: Add download PDF and email receipt functionality
-            </p>
           </div>
         </div>
       </div>
@@ -94,7 +103,7 @@ export const PurchaseReceipt: React.FC<PurchaseReceiptProps> = ({
           onClick={onClose}
           className="w-full bg-blue-600 px-4 hover:bg-blue-700 sm:w-auto"
         >
-          Close
+          {(localize as any)('com_custom_tokens_buy_button_close')}
         </Button>
       </div>
     </>

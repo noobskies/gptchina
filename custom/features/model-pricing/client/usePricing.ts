@@ -87,9 +87,10 @@ export const usePricing = (
 /**
  * Format pricing for display
  * @param pricing - The pricing object
+ * @param localize - The localize function from useLocalize hook
  * @returns Formatted string like "Input: 2.00 | Output: 8.00"
  */
-export const formatPricing = (pricing: ModelPricing | null): string => {
+export const formatPricing = (pricing: ModelPricing | null, localize?: any): string => {
   if (!pricing) {
     return '';
   }
@@ -97,5 +98,13 @@ export const formatPricing = (pricing: ModelPricing | null): string => {
   const input = pricing.prompt.toFixed(2);
   const output = pricing.completion.toFixed(2);
 
+  // If localize function is provided, use localized labels
+  if (localize) {
+    const inputLabel = localize('com_custom_pricing_display_input');
+    const outputLabel = localize('com_custom_pricing_display_output');
+    return `${inputLabel} ${input} | ${outputLabel} ${output}`;
+  }
+
+  // Fallback to English if no localize function
   return `Input: ${input} | Output: ${output}`;
 };

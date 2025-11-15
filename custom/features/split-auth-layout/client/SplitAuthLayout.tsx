@@ -13,7 +13,6 @@ import { BlinkAnimation } from '~/components/Auth/BlinkAnimation';
 import { useLocalize } from '~/hooks';
 import Footer from '~/components/Auth/Footer';
 import { FeaturesPanel } from './FeaturesPanel';
-import { HERO_CONTENT, PLATFORM_FEATURES } from '../shared/constants';
 
 export function SplitAuthLayout({
   children,
@@ -60,7 +59,7 @@ export function SplitAuthLayout({
     <div className="grid h-screen grid-cols-1 overflow-hidden md:grid-cols-2 lg:grid-cols-2">
       {/* Left Side - Features Panel */}
       <div className="flex items-center justify-center overflow-y-auto bg-blue-600 dark:bg-blue-700">
-        <FeaturesPanel hero={HERO_CONTENT} features={PLATFORM_FEATURES} />
+        <FeaturesPanel />
       </div>
 
       {/* Right Side - Auth Forms */}

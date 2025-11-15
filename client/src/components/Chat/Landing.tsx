@@ -213,9 +213,9 @@ export default function Landing({ centerFormOnLanding }: { centerFormOnLanding: 
         {conversation?.model && pricing && (
           <div className="animate-fadeIn mt-4 flex flex-col items-center gap-1 text-center text-sm text-text-secondary">
             <div className="font-medium">
-              {localize('com_ui_model')}: {conversation.model}
+              {(localize as any)('com_custom_pricing_display_model')} {conversation.model}
             </div>
-            <div>{formatPricing(pricing)}</div>
+            <div>{formatPricing(pricing, localize)}</div>
           </div>
         )}
         {description && (
