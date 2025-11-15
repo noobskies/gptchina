@@ -25,13 +25,13 @@ export function FeaturesPanel() {
   const localize = useLocalize();
 
   return (
-    <div className="px-8 py-12">
+    <div className="px-4 py-6 md:px-8 md:py-12">
       {/* Hero Section */}
-      <div className="mb-12 text-center md:text-left">
-        <h1 className="mb-4 text-4xl font-bold text-white lg:text-5xl">
+      <div className="mb-8 text-center md:mb-12 md:text-left">
+        <h1 className="mb-3 text-3xl font-bold text-white md:mb-4 md:text-4xl lg:text-5xl">
           {(localize as any)(HERO_CONTENT_KEYS.headline)}
         </h1>
-        <p className="mb-2 text-lg text-white lg:text-xl">
+        <p className="mb-2 text-base text-white md:text-lg lg:text-xl">
           {(localize as any)(HERO_CONTENT_KEYS.subheadline)}
         </p>
         <p className="text-sm font-medium text-white">
@@ -40,7 +40,7 @@ export function FeaturesPanel() {
       </div>
 
       {/* Features Grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-1 md:gap-4 lg:grid-cols-2">
         {PLATFORM_FEATURES_KEYS.map((feature) => {
           const IconComponent = iconMap[feature.icon];
           return (

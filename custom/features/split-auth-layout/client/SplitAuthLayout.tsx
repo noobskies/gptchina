@@ -6,6 +6,7 @@
  */
 
 import { ThemeSelector } from '@librechat/client';
+import { ChevronDown } from 'lucide-react';
 import type { SplitAuthLayoutProps } from '../shared/types';
 import { ErrorMessage } from '~/components/Auth/ErrorMessage';
 import SocialLoginRender from '~/components/Auth/SocialLoginRender';
@@ -55,15 +56,14 @@ export function SplitAuthLayout({
     return null;
   };
 
-  return (
-    <div className="grid h-screen grid-cols-1 overflow-hidden md:grid-cols-2 lg:grid-cols-2">
-      {/* Left Side - Features Panel */}
-      <div className="flex items-center justify-center overflow-y-auto bg-blue-600 dark:bg-blue-700">
-        <FeaturesPanel />
-      </div>
+  const handleScrollToFeatures = () => {
+    document.getElementById('features-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
-      {/* Right Side - Auth Forms */}
-      <div className="relative order-1 flex items-center justify-center p-6 md:order-2">
+  return (
+    <div className="grid min-h-screen grid-cols-1 md:h-screen md:grid-cols-2 md:overflow-hidden">
+      {/* Right Side - Auth Forms - Shows FIRST on mobile */}
+      <div className="relative order-1 flex h-screen items-center justify-center p-6 md:order-2 md:min-h-0">
         <div className="mx-auto w-full max-w-md p-6">
           <BlinkAnimation active={isFetching}>
             <div className="mb-8 flex justify-center">
@@ -104,6 +104,23 @@ export function SplitAuthLayout({
             <ThemeSelector />
           </div>
         </div>
+
+        {/* Down Arrow - Only visible on mobile */}
+        <button
+          onClick={handleScrollToFeatures}
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 transform animate-bounce md:hidden"
+          aria-label="Scroll to features"
+        >
+          <ChevronDown className="h-8 w-8 text-gray-400 dark:text-gray-500" />
+        </button>
+      </div>
+
+      {/* Left Side - Features Panel - Shows SECOND on mobile */}
+      <div
+        id="features-section"
+        className="order-2 flex items-center justify-center bg-blue-600 py-8 dark:bg-blue-700 md:order-1 md:overflow-y-auto md:py-0"
+      >
+        <FeaturesPanel />
       </div>
     </div>
   );
