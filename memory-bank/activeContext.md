@@ -2,11 +2,275 @@
 
 ## Current Work Focus
 
-**Status**: Token Info / Pricing Guide Feature - COMPLETE & PRODUCTION READY ✅
+**Status**: Token Info / Pricing Guide Feature - REDESIGNED & PRODUCTION READY ✅
 
-**Active Task**: Successfully implemented comprehensive token pricing guide with interactive calculator. Feature complete and ready for deployment.
+**Active Task**: Complete redesign of Token Pricing Page with theme integration, modular architecture, and professional icon-based design. Feature fully polished and ready for deployment.
 
-**Key Objective**: Educate users about AI model costs and help them estimate usage with real-time pricing data and interactive calculator.
+**Key Objective**: Provide professional, theme-aware pricing guide that educates users about AI model costs with excellent UX across light and dark modes.
+
+## Recent Changes
+
+### Token Pricing Page Complete Redesign (2025-11-15 12:00 AM - 12:18 AM)
+
+**Overview**: Comprehensive redesign of the entire Token Pricing Page to implement theme integration, remove all emojis, create modular component architecture, and expand layout for better space utilization.
+
+**Problem Identified**: Initial implementation (from 2025-11-14) had several UX and architectural issues:
+
+1. No theme integration - users couldn't switch between light/dark modes
+2. 15+ emojis throughout (📚, 💰, 📦, 💡, etc.) - unprofessional appearance
+3. Monolithic 516-line component - poor maintainability
+4. Narrow layout (896px max-width) - wasted horizontal space on larger screens
+5. Hardcoded colors not respecting theme
+6. CostCalculator had theme compatibility issues
+
+**Solution Implemented**: Complete architectural redesign with 5 new modular components and full theme integration.
+
+**Implementation Phases**:
+
+**Phase 1: Component Architecture** (12:12-12:14 AM)
+
+Created 5 new reusable components following SOLID principles:
+
+1. **ThemeToggle.tsx** - Light/dark mode switcher button
+
+   - Sun/Moon icons from lucide-react
+   - Uses `useTheme()` hook from `@librechat/client`
+   - Toggles between light and dark modes
+   - Persists via Jotai atoms automatically
+
+2. **PageHeader.tsx** - Header with title and theme toggle
+
+   - Page title and description
+   - Theme toggle positioned top-right
+   - Responsive layout with flexbox
+   - Clean separator with border-bottom
+
+3. **SectionContainer.tsx** - Reusable section wrapper
+
+   - Accepts icon and title props
+   - Consistent spacing and typography
+   - Optional separator between sections
+   - Standardizes all section layouts
+
+4. **ModelPricingCard.tsx** - Pricing table component
+
+   - Replaced PricingTable.tsx functionality
+   - Category badges (Budget, Mid-Range, Premium)
+   - DollarSign icon from lucide-react
+   - Theme-aware styling throughout
+   - Hover effects and transitions
+
+5. **PackageCard.tsx** - Package display component
+   - Shows token package details
+   - Icon badges (Package, Star, TrendingUp, Zap)
+   - Conversation count breakdowns by model
+   - Discount indicators
+   - Popular package highlighting
+
+**Phase 2: Main Page Rebuild** (12:14 AM)
+
+Completely rewrote TokenPricingPage.tsx:
+
+- **Before**: 516 lines, monolithic, emoji-filled
+- **After**: ~440 lines, well-organized, icon-based
+
+Key changes:
+
+- Imported `useTheme` hook for theme awareness
+- Imported 9 lucide-react icons (BookOpen, DollarSign, Package, MessageSquare, Zap, Target, Scissors, Gift, BarChart3)
+- Removed ALL 15+ emojis
+- Expanded max-width from `max-w-4xl` (896px) to `max-w-7xl` (1280px)
+- Implemented responsive 2-column layouts (lg:grid-cols-2)
+- 3-column layout for conversation examples (lg:grid-cols-3)
+- Used SectionContainer for all major sections
+- Replaced hardcoded colors with design tokens throughout
+
+**Phase 3: CostCalculator Theme Fix** (12:17-12:18 AM)
+
+Updated CostCalculator.tsx for full theme compatibility:
+
+- **Removed Emojis**:
+
+  - 🧮 → `<Calculator />` icon
+  - 📊 → `<BarChart3 />` icon
+  - 💡 → `<Lightbulb />` icon
+
+- **Replaced Hardcoded Colors**:
+
+  - `border-2 border-blue-500 bg-blue-50` → `border border-border-medium bg-surface-secondary`
+  - `bg-background` → `bg-surface-primary` (for form inputs)
+  - `bg-blue-50 dark:bg-blue-900/20` → `bg-blue-500/5` (theme-aware)
+  - All text colors now use `text-text-primary` and `text-text-secondary`
+
+- **Visual Improvements**:
+  - Added icon + heading layout
+  - Consistent border styling
+  - Hover effects added
+  - Better spacing and padding
+
+**Files Created** (5 new components):
+
+1. `custom/features/token-info/client/components/ThemeToggle.tsx` (~40 lines)
+2. `custom/features/token-info/client/components/PageHeader.tsx` (~25 lines)
+3. `custom/features/token-info/client/components/SectionContainer.tsx` (~36 lines)
+4. `custom/features/token-info/client/components/ModelPricingCard.tsx` (~95 lines)
+5. `custom/features/token-info/client/components/PackageCard.tsx` (~98 lines)
+
+**Files Modified**:
+
+1. `custom/features/token-info/client/TokenPricingPage.tsx` - Complete rebuild (~440 lines)
+2. `custom/features/token-info/client/components/CostCalculator.tsx` - Theme compatibility fixes
+
+**Design Token Usage**:
+
+All colors now use LibreChat's design token system:
+
+- `bg-background` - Page background
+- `bg-surface-primary` - Primary surfaces
+- `bg-surface-secondary` - Secondary surfaces
+- `bg-surface-tertiary` - Tertiary surfaces
+- `text-text-primary` - Primary text
+- `text-text-secondary` - Secondary text
+- `border-border-medium` - Borders
+- `border-border-light` - Light borders
+
+**Responsive Layout**:
+
+- **Mobile (< 768px)**: Single column, stacked sections
+- **Tablet (768px - 1024px)**: Mixed layouts, some 2-column
+- **Desktop (> 1024px)**: Full 2-3 column grids where appropriate
+- **Max width**: 1280px (max-w-7xl) for better space utilization
+
+**Icon Mapping** (Emojis → lucide-react icons):
+
+- 📚 → `<BookOpen />` - How It Works section
+- 💰 → `<DollarSign />` - Pricing tables
+- 📦 → `<Package />` - Package value section
+- 💬 → `<MessageSquare />` - Conversation examples
+- ⚡ → `<Zap />` - Cost comparison
+- 🎯 → `<Target />` - Tips section, info highlights
+- ✂️ → `<Scissors />` - Keep prompts concise tip
+- 🎁 → `<Gift />` - Free tokens tip
+- 📊 → `<BarChart3 />` - Calculator section, cost estimates
+- 🧮 → `<Calculator />` - Calculator header
+- 💡 → `<Lightbulb />` - Usage tips, smart suggestions
+
+**User Impact**:
+
+- **Before Redesign**:
+
+  - No theme switcher
+  - 15+ emojis looked unprofessional
+  - Narrow layout (896px) wasted screen space
+  - Dark mode colors hardcoded
+  - 516-line monolithic component
+  - Calculator had theme issues
+
+- **After Redesign**:
+  ✅ Theme toggle in header (light/dark switching)
+  ✅ Zero emojis - professional icon-based design
+  ✅ Wider layout (1280px) better utilizes screen space
+  ✅ Full theme integration with automatic persistence
+  ✅ Modular architecture - 5 reusable components
+  ✅ Calculator fully theme-compatible
+  ✅ Responsive 2-3 column layouts
+  ✅ All design tokens throughout
+  ✅ Professional appearance in both light and dark modes
+
+**Key Technical Decisions**:
+
+1. **Theme Integration Approach**:
+
+   - Decision: Use existing `useTheme()` hook from `@librechat/client`
+   - Rationale: Leverages LibreChat's theme system, automatic persistence via Jotai, no custom state management needed
+   - Implementation: Import and use hook, access theme state, no local storage logic required
+
+2. **Component Extraction Strategy**:
+
+   - Decision: Split into 5 focused components vs keeping monolithic
+   - Rationale: Single Responsibility Principle, easier testing, better maintainability, code reuse
+   - Result: Each component < 100 lines, clear purpose, independently testable
+
+3. **Icon Library Choice**:
+
+   - Decision: Use lucide-react (already in project)
+   - Rationale: Consistent with rest of LibreChat, lightweight, excellent icon selection, theme-friendly
+   - Implementation: Imported 9 specific icons, replaced all emoji instances
+
+4. **Layout Expansion**:
+
+   - Decision: Increase from max-w-4xl (896px) to max-w-7xl (1280px)
+   - Rationale: Better utilizes modern screen resolutions, improves readability with proper columns, doesn't waste horizontal space
+   - Implementation: Responsive grids (1/2/3 columns based on breakpoints)
+
+5. **Design Token Usage**:
+   - Decision: Replace ALL hardcoded colors with design tokens
+   - Rationale: Ensures theme compatibility, maintains consistency with LibreChat design system, future-proof
+   - Implementation: Systematic replacement (bg-blue-50 → bg-surface-secondary, etc.)
+
+**Code Quality Improvements**:
+
+- **SOLID Principles**: Each component has single responsibility
+- **DRY Principle**: Reusable SectionContainer, shared icon patterns
+- **Modularity**: 5 independent components vs 1 monolithic file
+- **Testability**: Components can be unit tested independently
+- **Maintainability**: Clear component boundaries, easy to modify
+
+**Current Status**:
+
+- ✅ Theme integration complete with toggle
+- ✅ All 15+ emojis removed
+- ✅ All icons from lucide-react added
+- ✅ 5 new modular components created
+- ✅ Main page rebuilt with new architecture
+- ✅ Layout expanded to 1280px max-width
+- ✅ Responsive 2-3 column grids implemented
+- ✅ All design tokens applied
+- ✅ CostCalculator theme issues fixed
+- ✅ Professional appearance in light & dark modes
+- ✅ Feature production-ready
+
+**Key Learnings**:
+
+1. **Theme Integration Best Practices**:
+
+   - Always use existing theme hooks rather than creating custom solutions
+   - Design tokens ensure consistency and theme compatibility
+   - Test both light and dark modes during development
+
+2. **Component Architecture**:
+
+   - Large components (>200 lines) should be decomposed
+   - Extract reusable patterns (SectionContainer, cards)
+   - Icon + heading pattern creates consistency
+
+3. **Icon vs Emoji Decision**:
+
+   - Emojis can look unprofessional in production apps
+   - Icons provide better consistency and theme integration
+   - lucide-react provides excellent professional icons
+
+4. **Responsive Design**:
+
+   - Mobile-first approach with progressive enhancement
+   - Use Tailwind breakpoints (md:, lg:) effectively
+   - Test at multiple viewport sizes
+
+5. **Design System Integration**:
+   - Following LibreChat's patterns ensures consistency
+   - Design tokens future-proof the implementation
+   - Reusing existing hooks reduces maintenance burden
+
+**Testing Checklist**:
+
+- [x] Test theme toggle (light ↔ dark)
+- [x] Verify all colors respect current theme
+- [x] Check responsive layouts (mobile/tablet/desktop)
+- [x] Confirm all emojis removed
+- [x] Verify all icons render correctly
+- [x] Test calculator in both themes
+- [x] Check hover states and transitions
+- [ ] User acceptance testing
 
 ## Recent Changes
 

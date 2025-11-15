@@ -3,6 +3,7 @@
  *
  * Feature: Token Info / Pricing Guide
  * Created: 2025-11-14
+ * Updated: 2025-11-15 - Theme compatibility improvements
  * Upstream Impact: None (standalone module)
  *
  * Interactive cost calculator component.
@@ -10,6 +11,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { request } from 'librechat-data-provider';
+import { Calculator, BarChart3, Lightbulb } from 'lucide-react';
 
 interface CalculationResult {
   model: string;
@@ -81,11 +83,11 @@ export const CostCalculator: React.FC<CostCalculatorProps> = ({ models }) => {
   };
 
   return (
-    <div className="rounded-lg border-2 border-blue-500 bg-blue-50 p-6 dark:bg-blue-900/10">
-      <h3 className="mb-4 flex items-center text-lg font-semibold text-blue-600 dark:text-blue-400">
-        <span className="mr-2 text-2xl">🧮</span>
-        Cost Calculator
-      </h3>
+    <div className="rounded-lg border border-border-medium bg-surface-secondary p-6 transition-all hover:shadow-md">
+      <div className="mb-4 flex items-center gap-3">
+        <Calculator className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+        <h3 className="text-lg font-semibold text-text-primary">Cost Calculator</h3>
+      </div>
 
       <div className="space-y-4">
         {/* Model selector */}
@@ -100,7 +102,7 @@ export const CostCalculator: React.FC<CostCalculatorProps> = ({ models }) => {
             id="model-select"
             value={selectedModel}
             onChange={(e) => setSelectedModel(e.target.value)}
-            className="w-full rounded-md border border-border-medium bg-background px-3 py-2 text-text-primary focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-border-medium bg-surface-primary px-3 py-2 text-text-primary transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             {allModels.map((model) => (
               <option key={model.model} value={model.model}>
@@ -121,7 +123,7 @@ export const CostCalculator: React.FC<CostCalculatorProps> = ({ models }) => {
             min="1"
             value={inputWords}
             onChange={(e) => setInputWords(Math.max(1, parseInt(e.target.value) || 0))}
-            className="w-full rounded-md border border-border-medium bg-background px-3 py-2 text-text-primary focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-border-medium bg-surface-primary px-3 py-2 text-text-primary transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -139,60 +141,68 @@ export const CostCalculator: React.FC<CostCalculatorProps> = ({ models }) => {
             min="1"
             value={outputWords}
             onChange={(e) => setOutputWords(Math.max(1, parseInt(e.target.value) || 0))}
-            className="w-full rounded-md border border-border-medium bg-background px-3 py-2 text-text-primary focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-border-medium bg-surface-primary px-3 py-2 text-text-primary transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         {/* Results */}
         {isCalculating && (
-          <div className="rounded-md bg-background p-4 text-center text-text-secondary">
+          <div className="rounded-md bg-surface-tertiary p-4 text-center text-text-secondary">
             Calculating...
           </div>
         )}
 
         {error && (
-          <div className="rounded-md bg-red-50 p-4 text-center text-red-600 dark:bg-red-900/20 dark:text-red-400">
+          <div className="rounded-md border border-red-500/20 bg-red-500/5 p-4 text-center text-red-600 dark:text-red-400">
             {error}
           </div>
         )}
 
         {result && !isCalculating && !error && (
-          <div className="rounded-md bg-background p-4">
-            <h4 className="mb-3 font-semibold text-text-primary">📊 Estimated Cost:</h4>
+          <div className="space-y-4">
+            <div className="rounded-md border border-border-medium bg-surface-tertiary p-4">
+              <div className="mb-3 flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <h4 className="font-semibold text-text-primary">Estimated Cost</h4>
+              </div>
 
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-text-secondary">Input:</span>
-                <span className="font-mono text-text-primary">
-                  ~{result.input.tokens.toLocaleString()} tokens = {result.input.cost.toFixed(6)}{' '}
-                  credits
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-text-secondary">Output:</span>
-                <span className="font-mono text-text-primary">
-                  ~{result.output.tokens.toLocaleString()} tokens = {result.output.cost.toFixed(6)}{' '}
-                  credits
-                </span>
-              </div>
-              <div className="my-2 border-t border-border-medium"></div>
-              <div className="flex justify-between font-semibold">
-                <span className="text-text-primary">Total:</span>
-                <span className="font-mono text-text-primary">
-                  ~{result.total.tokens.toLocaleString()} tokens = {result.total.cost.toFixed(6)}{' '}
-                  credits
-                </span>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-text-secondary">Input:</span>
+                  <span className="font-mono text-text-primary">
+                    ~{result.input.tokens.toLocaleString()} tokens = {result.input.cost.toFixed(6)}{' '}
+                    credits
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-text-secondary">Output:</span>
+                  <span className="font-mono text-text-primary">
+                    ~{result.output.tokens.toLocaleString()} tokens ={' '}
+                    {result.output.cost.toFixed(6)} credits
+                  </span>
+                </div>
+                <div className="my-2 border-t border-border-medium"></div>
+                <div className="flex justify-between font-semibold">
+                  <span className="text-text-primary">Total:</span>
+                  <span className="font-mono text-text-primary">
+                    ~{result.total.tokens.toLocaleString()} tokens = {result.total.cost.toFixed(6)}{' '}
+                    credits
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="mt-4 rounded-md bg-blue-50 p-3 dark:bg-blue-900/20">
-              <p className="text-sm text-blue-600 dark:text-blue-400">
-                💡 Your 20,000 free tokens ={' '}
-                <span className="font-semibold">
-                  ~{result.context.conversationsPossible.toLocaleString()} conversations
-                </span>{' '}
-                like this with {selectedModel}
-              </p>
+            <div className="rounded-md border border-blue-500/20 bg-blue-500/5 p-4">
+              <div className="flex items-start gap-3">
+                <Lightbulb className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600 dark:text-blue-400" />
+                <p className="text-sm text-blue-600 dark:text-blue-400">
+                  <strong>Your 20,000 free tokens</strong> ={' '}
+                  <span className="font-semibold">
+                    ~{result.context.conversationsPossible.toLocaleString()} conversations
+                  </span>{' '}
+                  like this with {selectedModel}
+                </p>
+              </div>
             </div>
           </div>
         )}
