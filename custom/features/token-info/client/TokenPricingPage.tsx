@@ -97,35 +97,49 @@ export const TokenPricingPage: React.FC = () => {
       {/* Main Content */}
       <main className="container mx-auto max-w-7xl px-4 py-8">
         {/* How It Works Section */}
-        <SectionContainer title="How Token Consumption Works" icon={BookOpen}>
+        <SectionContainer title="Understanding Burn Rates" icon={BookOpen}>
           <div className="rounded-lg bg-surface-secondary p-6">
             <div className="space-y-4 text-text-secondary">
               <p>
-                Tokens are the fundamental units of text processing in AI models. Both your messages
-                (input) and the AI's responses (output) consume tokens.
+                Tokens are the fundamental units of text processing in AI models. Different models
+                consume tokens at different rates, which we measure using a{' '}
+                <strong className="text-text-primary">Burn Rate (BR)</strong>.
               </p>
+              <div className="my-4 rounded-lg border-2 border-blue-500 bg-blue-500/5 p-4">
+                <div className="flex items-start gap-3">
+                  <Target className="mt-0.5 h-6 w-6 flex-shrink-0 text-blue-600 dark:text-blue-400" />
+                  <div>
+                    <p className="mb-2 font-semibold text-blue-600 dark:text-blue-400">
+                      What is Burn Rate (BR)?
+                    </p>
+                    <p className="text-sm text-blue-600 dark:text-blue-400">
+                      BR is a multiplier that shows how expensive a model is relative to a $1
+                      baseline. Higher BR = faster token consumption = higher costs.
+                    </p>
+                  </div>
+                </div>
+              </div>
               <ul className="ml-6 list-disc space-y-2">
                 <li>
-                  <strong className="text-text-primary">Input tokens</strong> = your message to the
-                  AI (prompt, question, instruction)
+                  <strong className="text-text-primary">Budget models</strong> have low BR
+                  (0.15-1.5) - great for everyday tasks
                 </li>
                 <li>
-                  <strong className="text-text-primary">Output tokens</strong> = the AI's response
-                  to your message
+                  <strong className="text-text-primary">Mid-range models</strong> have medium BR
+                  (2.5-15) - balanced performance and cost
                 </li>
                 <li>
-                  <strong className="text-text-primary">Pricing shown per 1 million tokens</strong>{' '}
-                  - actual costs are proportional to usage
+                  <strong className="text-text-primary">Premium models</strong> have high BR
+                  (15-60+) - advanced reasoning, use when quality matters
                 </li>
               </ul>
-              <div className="rounded-md border border-blue-500/20 bg-blue-500/5 p-4">
-                <div className="flex items-start gap-3">
-                  <Target className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600 dark:text-blue-400" />
-                  <p className="text-sm text-blue-600 dark:text-blue-400">
-                    <strong>Quick estimate:</strong> 1 word ≈ 1.3 tokens on average. A 1000-word
-                    conversation uses ~2,600 tokens total.
-                  </p>
-                </div>
+              <div className="mt-4 rounded-md border border-border-medium bg-surface-tertiary p-4">
+                <p className="mb-2 font-semibold text-text-primary">Quick Comparison:</p>
+                <ul className="space-y-1 text-sm">
+                  <li>• gpt-4o-mini: BR ~0.38 (baseline - most economical)</li>
+                  <li>• gpt-4o: BR ~6.25 (16x more expensive)</li>
+                  <li>• o1: BR ~37.5 (98x more expensive!)</li>
+                </ul>
               </div>
             </div>
           </div>
@@ -275,9 +289,9 @@ export const TokenPricingPage: React.FC = () => {
         </SectionContainer>
 
         {/* Real Conversation Examples */}
-        <SectionContainer title="Real Conversation Examples" icon={MessageSquare}>
+        <SectionContainer title="Token Consumption Examples" icon={MessageSquare}>
           <p className="mb-6 text-text-secondary">
-            See exactly how much different types of conversations cost across models:
+            See exactly how many tokens different types of conversations consume across models:
           </p>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -285,29 +299,35 @@ export const TokenPricingPage: React.FC = () => {
             <div className="rounded-lg border border-border-medium bg-surface-secondary p-6">
               <h3 className="mb-4 text-lg font-semibold text-text-primary">Quick Question</h3>
               <p className="mb-4 text-sm text-text-secondary">
-                50 words in, 100 words out = ~195 tokens
+                50 words in, 100 words out (150 words total)
               </p>
               <div className="space-y-3">
                 <div className="rounded-md bg-green-500/10 p-3">
                   <div className="mb-1 font-medium text-text-primary">gpt-4o-mini</div>
                   <div className="font-mono text-sm font-semibold text-green-600 dark:text-green-400">
-                    0.0001 credits
+                    ~74 tokens
                   </div>
-                  <div className="text-xs text-text-secondary">10,000 questions per ¥10</div>
+                  <div className="text-xs text-text-secondary">
+                    Cost: ¥0.001 | 10,000 questions per ¥10
+                  </div>
                 </div>
                 <div className="rounded-md bg-blue-500/10 p-3">
                   <div className="mb-1 font-medium text-text-primary">gpt-4o</div>
                   <div className="font-mono text-sm font-semibold text-blue-600 dark:text-blue-400">
-                    0.0024 credits
+                    ~1,215 tokens
                   </div>
-                  <div className="text-xs text-text-secondary">41,000 questions per ¥10</div>
+                  <div className="text-xs text-text-secondary">
+                    Cost: ¥0.024 | 410 questions per ¥10
+                  </div>
                 </div>
                 <div className="rounded-md bg-orange-500/10 p-3">
                   <div className="mb-1 font-medium text-text-primary">o1</div>
                   <div className="font-mono text-sm font-semibold text-orange-600 dark:text-orange-400">
-                    0.0146 credits
+                    ~7,313 tokens
                   </div>
-                  <div className="text-xs text-text-secondary">6,800 questions per ¥10</div>
+                  <div className="text-xs text-text-secondary">
+                    Cost: ¥0.146 | 68 questions per ¥10
+                  </div>
                 </div>
               </div>
             </div>
@@ -316,29 +336,33 @@ export const TokenPricingPage: React.FC = () => {
             <div className="rounded-lg border border-border-medium bg-surface-secondary p-6">
               <h3 className="mb-4 text-lg font-semibold text-text-primary">Standard Chat</h3>
               <p className="mb-4 text-sm text-text-secondary">
-                200 words in, 300 words out = ~650 tokens
+                200 words in, 300 words out (500 words total)
               </p>
               <div className="space-y-3">
                 <div className="rounded-md bg-green-500/10 p-3">
                   <div className="mb-1 font-medium text-text-primary">gpt-4o-mini</div>
                   <div className="font-mono text-sm font-semibold text-green-600 dark:text-green-400">
-                    0.0005 credits
+                    ~247 tokens
                   </div>
-                  <div className="text-xs text-text-secondary">205,000 chats per ¥10</div>
+                  <div className="text-xs text-text-secondary">
+                    Cost: ¥0.005 | 2,050 chats per ¥10
+                  </div>
                 </div>
                 <div className="rounded-md bg-blue-500/10 p-3">
                   <div className="mb-1 font-medium text-text-primary">gpt-4o</div>
                   <div className="font-mono text-sm font-semibold text-blue-600 dark:text-blue-400">
-                    0.0081 credits
+                    ~4,050 tokens
                   </div>
-                  <div className="text-xs text-text-secondary">12,300 chats per ¥10</div>
+                  <div className="text-xs text-text-secondary">
+                    Cost: ¥0.081 | 123 chats per ¥10
+                  </div>
                 </div>
                 <div className="rounded-md bg-orange-500/10 p-3">
                   <div className="mb-1 font-medium text-text-primary">o1</div>
                   <div className="font-mono text-sm font-semibold text-orange-600 dark:text-orange-400">
-                    0.0488 credits
+                    ~24,375 tokens
                   </div>
-                  <div className="text-xs text-text-secondary">2,000 chats per ¥10</div>
+                  <div className="text-xs text-text-secondary">Cost: ¥0.488 | 20 chats per ¥10</div>
                 </div>
               </div>
             </div>
@@ -347,29 +371,35 @@ export const TokenPricingPage: React.FC = () => {
             <div className="rounded-lg border border-border-medium bg-surface-secondary p-6">
               <h3 className="mb-4 text-lg font-semibold text-text-primary">Deep Dive</h3>
               <p className="mb-4 text-sm text-text-secondary">
-                500 words in, 1000 words out = ~1,950 tokens
+                500 words in, 1000 words out (1,500 words total)
               </p>
               <div className="space-y-3">
                 <div className="rounded-md bg-green-500/10 p-3">
                   <div className="mb-1 font-medium text-text-primary">gpt-4o-mini</div>
                   <div className="font-mono text-sm font-semibold text-green-600 dark:text-green-400">
-                    0.0015 credits
+                    ~741 tokens
                   </div>
-                  <div className="text-xs text-text-secondary">68,000 deep dives per ¥10</div>
+                  <div className="text-xs text-text-secondary">
+                    Cost: ¥0.015 | 680 deep dives per ¥10
+                  </div>
                 </div>
                 <div className="rounded-md bg-blue-500/10 p-3">
                   <div className="mb-1 font-medium text-text-primary">gpt-4o</div>
                   <div className="font-mono text-sm font-semibold text-blue-600 dark:text-blue-400">
-                    0.0244 credits
+                    ~12,150 tokens
                   </div>
-                  <div className="text-xs text-text-secondary">4,100 deep dives per ¥10</div>
+                  <div className="text-xs text-text-secondary">
+                    Cost: ¥0.244 | 41 deep dives per ¥10
+                  </div>
                 </div>
                 <div className="rounded-md bg-orange-500/10 p-3">
                   <div className="mb-1 font-medium text-text-primary">o1</div>
                   <div className="font-mono text-sm font-semibold text-orange-600 dark:text-orange-400">
-                    0.1463 credits
+                    ~73,125 tokens
                   </div>
-                  <div className="text-xs text-text-secondary">680 deep dives per ¥10</div>
+                  <div className="text-xs text-text-secondary">
+                    Cost: ¥1.463 | 7 deep dives per ¥10
+                  </div>
                 </div>
               </div>
             </div>
@@ -380,34 +410,36 @@ export const TokenPricingPage: React.FC = () => {
             <div className="mb-4 flex items-center gap-3">
               <Zap className="h-6 w-6 text-blue-600 dark:text-blue-400" />
               <h3 className="text-lg font-semibold text-blue-600 dark:text-blue-400">
-                Cost Comparison Summary
+                Why Token Consumption Varies So Much
               </h3>
             </div>
             <div className="space-y-3 text-sm text-text-secondary">
               <p>
-                For the <strong className="text-text-primary">same 650-token conversation</strong>:
+                For the <strong className="text-text-primary">same 500-word conversation</strong>:
               </p>
               <ul className="ml-6 space-y-1">
                 <li>
-                  gpt-4o-mini costs{' '}
-                  <strong className="text-green-600 dark:text-green-400">0.0005 credits</strong>{' '}
+                  gpt-4o-mini consumes{' '}
+                  <strong className="text-green-600 dark:text-green-400">~247 tokens</strong>{' '}
                   (baseline)
                 </li>
                 <li>
-                  gpt-4o costs{' '}
-                  <strong className="text-blue-600 dark:text-blue-400">0.0081 credits</strong> (16x
+                  gpt-4o consumes{' '}
+                  <strong className="text-blue-600 dark:text-blue-400">~4,050 tokens</strong> (16x
                   more)
                 </li>
                 <li>
-                  claude-3.5-sonnet costs{' '}
-                  <strong className="text-text-primary">0.0117 credits</strong> (23x more)
-                </li>
-                <li>
-                  o1 costs{' '}
-                  <strong className="text-orange-600 dark:text-orange-400">0.0488 credits</strong>{' '}
+                  o1 consumes{' '}
+                  <strong className="text-orange-600 dark:text-orange-400">~24,375 tokens</strong>{' '}
                   (98x more!)
                 </li>
               </ul>
+              <p className="mt-3">
+                This is why{' '}
+                <strong className="text-text-primary">choosing the right model matters</strong>!
+                Budget models are perfect for everyday tasks, while premium models should be
+                reserved for complex work.
+              </p>
               <div className="mt-4 rounded-md border border-blue-500/20 bg-blue-500/10 p-4">
                 <div className="flex items-start gap-3">
                   <Target className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600 dark:text-blue-400" />
@@ -415,7 +447,7 @@ export const TokenPricingPage: React.FC = () => {
                     <strong>Smart Usage Tip:</strong> Use budget models (gpt-4o-mini,
                     gemini-2.0-flash) for everyday tasks. Save premium models (o1, claude-opus-4)
                     for complex reasoning, coding, or creative work where quality justifies the
-                    cost.
+                    higher token consumption.
                   </p>
                 </div>
               </div>

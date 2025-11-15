@@ -11,6 +11,11 @@ interface Model {
   input: number;
   output: number;
   total: number;
+  burnRate?: {
+    input: number;
+    output: number;
+    average: number;
+  };
 }
 
 interface ModelPricingCardProps {
@@ -59,13 +64,11 @@ export const ModelPricingCard: React.FC<ModelPricingCardProps> = ({
           <thead>
             <tr className="border-b border-border-medium">
               <th className="pb-3 text-left text-sm font-semibold text-text-primary">Model</th>
+              <th className="pb-3 text-right text-sm font-semibold text-text-primary">Input BR</th>
+              <th className="pb-3 text-right text-sm font-semibold text-text-primary">Output BR</th>
               <th className="pb-3 text-right text-sm font-semibold text-text-primary">
-                Input (per 1M)
+                Average BR
               </th>
-              <th className="pb-3 text-right text-sm font-semibold text-text-primary">
-                Output (per 1M)
-              </th>
-              <th className="pb-3 text-right text-sm font-semibold text-text-primary">Total</th>
             </tr>
           </thead>
           <tbody>
@@ -78,13 +81,13 @@ export const ModelPricingCard: React.FC<ModelPricingCardProps> = ({
               >
                 <td className="py-3 pr-4 font-mono text-sm text-text-primary">{model.model}</td>
                 <td className="py-3 text-right font-mono text-sm text-text-secondary">
-                  ${model.input.toFixed(2)}
+                  {model.input.toFixed(2)}
                 </td>
                 <td className="py-3 text-right font-mono text-sm text-text-secondary">
-                  ${model.output.toFixed(2)}
+                  {model.output.toFixed(2)}
                 </td>
                 <td className="py-3 text-right font-mono text-sm font-semibold text-text-primary">
-                  ${model.total.toFixed(2)}
+                  {((model.input + model.output) / 2).toFixed(2)}
                 </td>
               </tr>
             ))}

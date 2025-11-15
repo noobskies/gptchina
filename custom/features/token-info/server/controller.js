@@ -24,8 +24,19 @@ const categorizePricing = (pricing) => {
 };
 
 /**
- * Get popular models with their pricing, categorized by tier
- * @returns {Object} Categorized pricing data
+ * Calculate burn rate (BR) - normalized pricing for easy comparison
+ * BR represents how many "units" of tokens are consumed relative to a $1 baseline
+ * @param {number} pricePerMillion - Price per 1M tokens in USD
+ * @returns {number} Burn rate normalized to $1
+ */
+const calculateBurnRate = (pricePerMillion) => {
+  // Normalize to $1 baseline for easy comparison
+  return pricePerMillion;
+};
+
+/**
+ * Get popular models with their pricing and burn rates, categorized by tier
+ * @returns {Object} Categorized pricing data with burn rates
  */
 const getPopularModels = () => {
   // Define popular models to display
@@ -65,11 +76,20 @@ const getPopularModels = () => {
     const pricing = tokenValues[key];
     if (pricing) {
       const category = categorizePricing(pricing);
+      const inputBR = calculateBurnRate(pricing.prompt);
+      const outputBR = calculateBurnRate(pricing.completion);
+      const avgBR = (inputBR + outputBR) / 2;
+
       categorized[category].push({
         model: key,
         input: pricing.prompt,
         output: pricing.completion,
         total: pricing.prompt + pricing.completion,
+        burnRate: {
+          input: inputBR,
+          output: outputBR,
+          average: avgBR,
+        },
       });
     }
   });

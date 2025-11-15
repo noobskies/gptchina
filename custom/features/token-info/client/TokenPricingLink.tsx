@@ -16,9 +16,8 @@ export const TokenPricingLink: React.FC = () => {
       href="/token-pricing"
       target="_blank"
       rel="noopener noreferrer"
-      className="mb-1 flex items-center justify-center text-sm text-blue-600 underline-offset-2 hover:underline dark:text-blue-400"
+      className="mb-2 flex items-center justify-center text-sm text-blue-600 underline-offset-2 hover:underline dark:text-blue-400"
     >
-      <span className="mr-1">📖</span>
       Token Pricing Guide
     </a>
   );

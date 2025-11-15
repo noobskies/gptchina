@@ -163,31 +163,67 @@ export const CostCalculator: React.FC<CostCalculatorProps> = ({ models }) => {
             <div className="rounded-md border border-border-medium bg-surface-tertiary p-4">
               <div className="mb-3 flex items-center gap-2">
                 <BarChart3 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                <h4 className="font-semibold text-text-primary">Estimated Cost</h4>
+                <h4 className="font-semibold text-text-primary">Token Consumption</h4>
               </div>
 
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-text-secondary">Input:</span>
+                  <span className="text-text-secondary">Input tokens:</span>
                   <span className="font-mono text-text-primary">
-                    ~{result.input.tokens.toLocaleString()} tokens = {result.input.cost.toFixed(6)}{' '}
-                    credits
+                    ~{result.input.tokens.toLocaleString()} tokens
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-text-secondary">Output:</span>
+                  <span className="text-text-secondary">Output tokens:</span>
                   <span className="font-mono text-text-primary">
-                    ~{result.output.tokens.toLocaleString()} tokens ={' '}
-                    {result.output.cost.toFixed(6)} credits
+                    ~{result.output.tokens.toLocaleString()} tokens
                   </span>
                 </div>
                 <div className="my-2 border-t border-border-medium"></div>
                 <div className="flex justify-between font-semibold">
-                  <span className="text-text-primary">Total:</span>
-                  <span className="font-mono text-text-primary">
-                    ~{result.total.tokens.toLocaleString()} tokens = {result.total.cost.toFixed(6)}{' '}
-                    credits
+                  <span className="text-text-primary">Total tokens consumed:</span>
+                  <span className="font-mono text-blue-600 dark:text-blue-400">
+                    ~{result.total.tokens.toLocaleString()} tokens
                   </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-md border border-green-500/20 bg-green-500/5 p-4">
+              <div className="mb-3 flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-green-600 dark:text-green-400" />
+                <h4 className="font-semibold text-green-600 dark:text-green-400">
+                  Cost in ¥ (RMB)
+                </h4>
+              </div>
+
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-text-secondary">Per conversation:</span>
+                  <span className="font-mono font-semibold text-green-600 dark:text-green-400">
+                    ¥{((result.total.tokens / 100000) * 10).toFixed(3)}
+                  </span>
+                </div>
+                <div className="my-2 border-t border-green-500/20"></div>
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-text-secondary">With 100K tokens (¥10):</span>
+                    <span className="text-text-primary">
+                      ~{Math.floor(100000 / result.total.tokens).toLocaleString()} conversations
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-text-secondary">With 500K tokens (¥35):</span>
+                    <span className="text-text-primary">
+                      ~{Math.floor(500000 / result.total.tokens).toLocaleString()} conversations
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-text-secondary">With 1M tokens (¥55):</span>
+                    <span className="text-text-primary">
+                      ~{Math.floor(1000000 / result.total.tokens).toLocaleString()} conversations
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -196,9 +232,9 @@ export const CostCalculator: React.FC<CostCalculatorProps> = ({ models }) => {
               <div className="flex items-start gap-3">
                 <Lightbulb className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600 dark:text-blue-400" />
                 <p className="text-sm text-blue-600 dark:text-blue-400">
-                  <strong>Your 20,000 free tokens</strong> ={' '}
+                  <strong>Your 20,000 free tokens (daily claim)</strong> ={' '}
                   <span className="font-semibold">
-                    ~{result.context.conversationsPossible.toLocaleString()} conversations
+                    ~{Math.floor(20000 / result.total.tokens).toLocaleString()} conversations
                   </span>{' '}
                   like this with {selectedModel}
                 </p>
