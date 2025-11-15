@@ -61,8 +61,9 @@ function AuthLayout({
       <Banner />
       <BlinkAnimation active={isFetching}>
         <div className="mt-6 h-10 w-full bg-cover">
+          {/* CUSTOM: gptchina - Use China-specific logo */}
           <img
-            src="assets/logo.svg"
+            src="assets/logo-china.png"
             className="h-full w-full object-contain"
             alt={localize('com_ui_logo', { 0: startupConfig?.appTitle ?? 'LibreChat' })}
           />

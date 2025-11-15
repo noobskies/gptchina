@@ -69,7 +69,7 @@ export function SplitAuthLayout({
           <BlinkAnimation active={isFetching}>
             <div className="mb-8 flex justify-center">
               <img
-                src="assets/logo.svg"
+                src="assets/logo-china.png"
                 className="h-12 object-contain"
                 alt={localize('com_ui_logo', { 0: startupConfig?.appTitle ?? 'LibreChat' })}
               />
