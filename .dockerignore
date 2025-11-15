@@ -1,64 +1,21 @@
-# Dependencies - 1.7GB+
-node_modules/
-**/node_modules/
+**/.circleci
+**/.editorconfig
+**/.dockerignore
+**/.git
+**/.DS_Store
+**/.vscode
 **/node_modules
+
+# Specific patterns to ignore
+data-node
+meili_data*
+librechat*
+Dockerfile*
+docs
+
+# Ignore all hidden files
+.*
 
 # User-generated content - 17GB+ (created as volumes at runtime)
 images/
 uploads/
-
-# Runtime data and caches
-logs/
-data/
-data-node/
-meili_data/
-meili_data*/
-meili_data_*/
-
-# Environment files (keep .env.example)
-.env
-.env.*
-!.env.example
-
-# Git and version control - 183MB
-.git/
-.github/
-.gitignore
-.gitattributes
-
-# IDE and editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-**/.DS_Store
-
-# Docker files
-Dockerfile*
-docker-compose*.yml
-!docker-compose.yml
-deploy-compose.yml
-.dockerignore
-
-# CI/CD
-.circleci/
-.editorconfig
-
-# Documentation
-docs/
-*.md
-!README.md
-
-# LibreChat specific
-librechat*
-
-# Build artifacts
-dist/
-build/
-*.log
-
-# Optional: reduce size further
-bun.lockb
-package-lock.json
