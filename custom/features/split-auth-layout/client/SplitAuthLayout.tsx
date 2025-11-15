@@ -63,7 +63,7 @@ export function SplitAuthLayout({
   return (
     <div className="grid min-h-screen grid-cols-1 md:h-screen md:grid-cols-2 md:overflow-hidden">
       {/* Right Side - Auth Forms - Shows FIRST on mobile */}
-      <div className="relative order-1 flex h-screen items-center justify-center p-6 md:order-2 md:min-h-0">
+      <div className="relative order-1 flex h-[100dvh] h-screen items-center justify-center p-6 md:order-2 md:min-h-0">
         <div className="mx-auto w-full max-w-md p-6">
           <BlinkAnimation active={isFetching}>
             <div className="mb-8 flex justify-center">
