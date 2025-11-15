@@ -20,6 +20,8 @@ import ShareRoute from './ShareRoute';
 import ChatRoute from './ChatRoute';
 import Search from './Search';
 import Root from './Root';
+// CUSTOM: gptchina - Token Pricing Guide
+import { TokenPricingPage } from '@custom/features/token-info/client';
 
 const AuthLayout = () => (
   <AuthContextProvider>
@@ -36,6 +38,11 @@ export const router = createBrowserRouter(
     {
       path: 'share/:shareId',
       element: <ShareRoute />,
+      errorElement: <RouteErrorBoundary />,
+    },
+    {
+      path: 'token-pricing',
+      element: <TokenPricingPage />,
       errorElement: <RouteErrorBoundary />,
     },
     {

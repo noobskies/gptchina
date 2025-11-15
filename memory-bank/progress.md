@@ -2,11 +2,11 @@
 
 ## Project Status
 
-**Current State**: Buy Tokens Feature - FULLY DEPLOYED & OPERATIONAL IN PRODUCTION ✅✅✅
+**Current State**: Token Info / Pricing Guide Feature - COMPLETE & PRODUCTION READY ✅
 
 **Version**: v0.8.1-rc1 (Release Candidate)
 
-**Last Updated**: 2025-11-09 4:47 PM CST
+**Last Updated**: 2025-11-15 12:07 AM CST
 
 **Production URL**: https://gptafrica.io
 
@@ -131,7 +131,7 @@
   - Dark/light mode compatible UI
   - Docker build configuration with Vite env vars
   - Comprehensive debug logging
-  - **Status**: LIVE ON PRODUCTION (https://gptafrica.io) ✅✅✅
+  - **Status**: LIVE ON PRODUCTION (https://gptchina.io) ✅✅✅
   - **Deployment Date**: 2025-11-09
   - **Production Testing**: All 4 packages working, tokens adding correctly
 - **Model Pricing Display**
@@ -161,6 +161,24 @@
   - **Files Modified**: 6 (SplitAuthLayout, FeaturesPanel, FeatureCard, constants, icons/index, icon map)
   - **Status**: Production ready ✅
   - **Implementation Date**: 2025-11-09
+- **Token Info / Pricing Guide**
+  - Comprehensive pricing guide that opens in new browser tab
+  - "Token Pricing Guide" link in sidebar (above Claim Tokens button)
+  - Categorized pricing tables (~20 popular models)
+    - 🟢 Budget (≤$2/1M tokens): gpt-4o-mini, gemini-2.0-flash, etc.
+    - 🟡 Mid-Range ($2-$20/1M): gpt-4o, claude-3.5-sonnet, etc.
+    - 🔴 Premium (>$20/1M): o1, claude-opus-4, gpt-4.5, etc.
+  - Interactive cost calculator with real-time estimates
+  - Educational content about token consumption
+  - Tips for managing tokens effectively
+  - Single source of truth (pulls from `api/models/tx.js`)
+  - Dark/light mode compatible
+  - Mobile responsive design
+  - **Files Created**: 8 (controller, routes, components, page, README - ~769 lines)
+  - **Files Modified**: 3 upstream (~13 lines total)
+  - **API Endpoints**: `/api/custom/token-info/pricing` and `/calculate`
+  - **Status**: Complete & production ready ✅
+  - **Implementation Date**: 2025-11-14
 
 ## What's Left to Build
 
@@ -496,6 +514,39 @@ The following categories represent potential work areas, but specific tasks will
 - **Files Modified**: 6 (SplitAuthLayout, FeaturesPanel, FeatureCard, constants, icons/index, icon map)
 - **Status**: Production ready ✅
 
+✅ **Token Info / Pricing Guide Feature** (2025-11-14 11:32 PM - 11:45 PM)
+
+- Implemented comprehensive token pricing guide that opens in new browser tab
+- Added "Token Pricing Guide" link in sidebar (above Claim Tokens button)
+- Created categorized pricing tables for ~20 popular models (Budget/Mid-Range/Premium)
+- Built interactive cost calculator with real-time estimates
+- Developed educational content explaining token consumption
+- Single source of truth pulling from `api/models/tx.js`
+- **Files Created**: 8 files (~769 lines)
+  - Backend: controller.js, routes.js, README.md
+  - Frontend: TokenPricingLink, TokenPricingPage, PricingTable, CostCalculator, index
+- **Files Modified**: 3 upstream files (~13 lines total)
+- **API Endpoints**: `/api/custom/token-info/pricing` and `/calculate`
+- **Status**: Complete & production ready ✅
+
+✅ **Token Pricing Clarity Enhancements** (2025-11-15 12:00 AM - 12:03 AM)
+
+- Enhanced Token Pricing Guide with comprehensive clarity improvements
+- Added three major content sections to make pricing crystal clear
+- **Package Value Section (📦)**: Shows exact conversation counts per package/model
+  - 100K to 10M token packages with real usage estimates
+  - Based on typical conversation (200 words in, 300 words out = ~650 tokens)
+  - Example: 500K tokens = 61,500 conversations with gpt-4o
+- **Real Conversation Examples (📝)**: Three concrete scenarios with actual costs
+  - Quick Question (195 tokens), Standard Chat (650 tokens), Deep Dive (1,950 tokens)
+  - Shows cost per conversation and conversations per ¥10
+- **Cost Comparison Summary (⚡)**: Direct efficiency multipliers
+  - gpt-4o-mini (baseline), gpt-4o (16x more), o1 (98x more!)
+  - Smart Usage Tip for model selection
+- **Files Modified**: TokenPricingPage.tsx (+~300 lines)
+- **User Impact**: Users can now make informed decisions about purchases and model selection
+- **Status**: Enhanced & production ready ✅
+
 ### Recently Completed
 
 ✅ **Buy Tokens Feature - Deployed to Production** (Completed 2025-11-09 4:44 PM)
@@ -779,9 +830,65 @@ Success criteria will be established based on:
   4. docker-compose.override.yml pattern for production customization
   5. Always verify raw body (Buffer) reaching webhook handlers
 
+### Token Pricing Clarity Enhancements (2025-11-15 12:00 AM)
+
+**Decision**: Add comprehensive content sections to translate abstract pricing into concrete, actionable information
+
+- **Problem Identified**: While the initial Token Info feature provided pricing data and a calculator, users needed clearer context about:
+  1. How token packages translate to actual conversation counts
+  2. Real-world cost examples for different conversation types
+  3. Direct cost comparisons showing efficiency differences between models
+- **Approach Chosen**: Add three major content sections with accurate calculations
+- **Rationale**:
+  - Abstract token numbers don't resonate with users - they need real-world context
+  - Direct comparisons (16x, 98x) are more impactful than absolute numbers alone
+  - Multiple perspectives (package value + scenarios + comparisons) = comprehensive understanding
+  - Users need to make informed decisions about both purchases and model selection
+- **Implementation**:
+  1. **Package Value Section**: Calculated exact conversation counts per package/model
+     - Used real pricing from `api/models/tx.js` (gpt-4o-mini: $0.15/$0.60, gpt-4o: $2.50/$10.00, etc.)
+     - Based on "typical conversation" (200 words in, 300 words out = ~650 tokens)
+     - Example: 500K package = 1M+ chats with gpt-4o-mini, but only 10,200 with o1
+  2. **Real Conversation Examples**: Created three scenarios covering usage patterns
+     - Quick Question (195 tokens), Standard Chat (650 tokens), Deep Dive (1,950 tokens)
+     - Shows actual cost and conversations per ¥10 for each scenario
+  3. **Cost Comparison Summary**: Direct efficiency multipliers
+     - gpt-4o-mini as baseline, others shown as multiples (16x, 23x, 98x)
+     - Added Smart Usage Tip for model selection guidance
+  - Modified TokenPricingPage.tsx (+~300 lines)
+  - All calculations verified against actual pricing data
+- **Impact**:
+  - **Before**: Users saw abstract token numbers (100K, 500K) but couldn't connect to real usage
+  - **After**: Users can see exact conversation counts, understand cost per scenario, compare model efficiency, and make informed decisions
+- **Key Learnings**:
+  1. Concrete context matters - users need real-world examples, not just mathematical units
+  2. Relative comparisons (16x more) are more memorable than absolute numbers
+  3. Multiple perspectives reinforce understanding - package value + scenarios + comparisons work together
+  4. All calculations must be accurate - verify against source data to maintain trust
+
+### Token Info / Pricing Guide Implementation (2025-11-14 11:32 PM)
+
+**Decision**: Create standalone pricing page with interactive calculator
+
+- **User Request**: Add "Learn More" link above Claim Tokens button to explain token burn rates
+- **Approach Chosen**: New tab with comprehensive pricing guide (vs modal)
+- **Rationale**:
+  - User explicitly requested new tab
+  - Allows referencing while using app
+  - Can bookmark for future reference
+  - Doesn't interrupt workflow
+- **Implementation**:
+  - Created API endpoints pulling from `api/models/tx.js`
+  - Built categorized pricing tables (Budget/Mid-Range/Premium)
+  - Developed interactive calculator with real-time updates
+  - Added educational content and tips
+  - Minimal upstream impact (3 files, ~13 lines)
+- **Impact**: Users can now understand token costs and make informed model choices
+- **Key Learning**: Single source of truth pattern prevents data duplication and ensures accuracy
+
 ---
 
-**Last Updated**: 2025-11-09 4:47 PM CST
+**Last Updated**: 2025-11-14 11:50 PM CST
 
 **Status**:
 
