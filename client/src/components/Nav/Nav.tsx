@@ -21,8 +21,8 @@ import store from '~/store';
 const BookmarkNav = lazy(() => import('./Bookmarks/BookmarkNav'));
 const AccountSettings = lazy(() => import('./AccountSettings'));
 const AgentMarketplaceButton = lazy(() => import('./AgentMarketplaceButton'));
-// CUSTOM: gptchina - Token Pricing Guide feature
-const TokenPricingLink = lazy(() => import('@custom/features/token-info/client'));
+// CUSTOM: gptchina - Token Pricing Guide feature (HIDDEN)
+// const TokenPricingLink = lazy(() => import('@custom/features/token-info/client'));
 // CUSTOM: gptchina - Claim Tokens feature
 const ClaimTokensButton = lazy(() => import('@custom/features/claim-tokens/client'));
 // CUSTOM: gptchina - Buy Tokens feature
@@ -235,10 +235,10 @@ const Nav = memo(
                         isSearchLoading={isSearchLoading}
                       />
                     </div>
-                    {/* CUSTOM: gptchina - Token Pricing Guide link */}
-                    <Suspense fallback={null}>
+                    {/* CUSTOM: gptchina - Token Pricing Guide link (HIDDEN) */}
+                    {/* <Suspense fallback={null}>
                       <TokenPricingLink />
-                    </Suspense>
+                    </Suspense> */}
                     {/* CUSTOM: gptchina - Claim Tokens feature */}
                     <Suspense fallback={null}>
                       <ClaimTokensButton />
