@@ -52,7 +52,13 @@ router.post(
   checkBan,
   checkInviteUser,
   validateRegistration,
-  registrationController,
+  // registrationController,
+  (req, res) => {
+    return res.status(403).json({
+      message:
+        'Registration is disabled due to the upcoming service shutdown of gptchina.io / novlisky.io.',
+    });
+  },
 );
 router.post(
   '/requestPasswordReset',

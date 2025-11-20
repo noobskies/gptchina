@@ -1,3 +1,4 @@
+/* eslint-disable i18next/no-literal-string */
 import { useState, useEffect, useMemo, useCallback, useContext } from 'react';
 import { Check, CreditCard, X, ArrowLeft, Loader2 } from 'lucide-react';
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
@@ -677,126 +678,29 @@ const CheckoutModal = ({ open, onOpenChange, reason, details }: CheckoutModalPro
       case 'select':
       default: {
         return (
-          <>
-            <div className="p-3 sm:p-6">
-              {/* Show reason for modal opening if it's due to insufficient funds */}
-              {reason === 'insufficient_funds' && details && (
-                <div className="mb-6 rounded-md border border-amber-300 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-900/30">
-                  <h3 className="text-base font-medium text-amber-800 dark:text-amber-400">
-                    {localize('com_ui_insufficient_funds' as any)}
-                  </h3>
-                  <div className="mt-2 text-sm text-amber-700 dark:text-amber-300">
-                    <p>
-                      {localize('com_checkout_insufficient_funds_message' as any, {
-                        balance: details.balance?.toLocaleString() || '0',
-                        cost: details.cost?.toLocaleString() || '0',
-                      })}
-                    </p>
-                    <p className="mt-1">{localize('com_checkout_buy_more_tokens' as any)}</p>
-                  </div>
-                </div>
-              )}
-
-              {/* Token Packages */}
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4">
-                {domainConfig.tokenPackages.map((pkg) => (
-                  <div
-                    key={pkg.id}
-                    className={cn(
-                      'relative cursor-pointer rounded-lg p-3 transition-all sm:p-4',
-                      selectedPackage === pkg.id
-                        ? 'border border-border-light bg-surface-tertiary'
-                        : 'border border-border-light hover:border-border-medium',
-                    )}
-                    onClick={() => setSelectedPackage(pkg.id)}
-                  >
-                    {selectedPackage === pkg.id && (
-                      <div className="absolute right-2 top-2 text-text-primary">
-                        <Check size={16} />
-                      </div>
-                    )}
-                    <div className="text-base font-bold text-text-primary sm:text-lg">
-                      {pkg.tokens}
-                    </div>
-                    <div className="text-xs text-text-secondary sm:text-sm">
-                      {localize('com_checkout_tokens')}
-                    </div>
-                    <div className="mt-1 text-base font-bold text-text-primary sm:mt-2 sm:text-lg">
-                      {pkg.priceDisplay}
-                    </div>
-                    {pkg.originalPrice && (
-                      <div className="flex items-center gap-1 sm:gap-2">
-                        <span className="text-xs text-text-tertiary line-through sm:text-sm">
-                          {pkg.originalPriceDisplay}
-                        </span>
-                        <span className="rounded bg-blue-800 px-1 py-0.5 text-xs text-white sm:px-1.5 sm:py-0.5">
-                          {pkg.discount}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                ))}
+          <div className="p-6 text-center">
+            <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-6 text-red-800 dark:border-red-800 dark:bg-red-900/30 dark:text-red-200">
+              <div className="mb-4 flex justify-center">
+                <svg className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
               </div>
-
-              {/* Payment Methods */}
-              <div className="mt-6">
-                <h3 className="mb-3 text-sm font-medium text-text-secondary">
-                  {localize('com_checkout_payment_methods')}
-                </h3>
-                <div className="grid grid-cols-2 gap-2">
-                  {availablePaymentMethods.map((method) => (
-                    <div
-                      key={method.id}
-                      className={cn(
-                        'flex cursor-pointer items-center gap-2 rounded-lg p-3 transition-all',
-                        selectedPayment === method.id
-                          ? 'border border-border-light bg-surface-tertiary'
-                          : 'border border-border-light hover:border-border-medium',
-                      )}
-                      onClick={() => setSelectedPayment(method.id)}
-                    >
-                      <div className="text-lg text-text-primary">{method.icon}</div>
-                      <div className="text-text-primary">{method.name}</div>
-                      {selectedPayment === method.id && (
-                        <div className="ml-auto text-text-primary">
-                          <Check size={16} />
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <h3 className="mb-2 text-xl font-bold">Payments Disabled</h3>
+              <p className="text-lg">
+                New purchases have been suspended due to the upcoming service shutdown.
+              </p>
             </div>
-
-            <div className="flex justify-between border-t border-border-light bg-background px-4 py-3 sm:justify-end sm:gap-2 sm:px-6 sm:py-4">
-              <Button variant="outline" onClick={handleClose} className="w-1/3 sm:w-auto sm:px-4">
-                {localize('com_ui_cancel')}
-              </Button>
-              {purchaseError && (
-                <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-500 dark:bg-red-900/20 dark:text-red-400">
-                  {purchaseError}
-                </div>
-              )}
-              <Button
-                variant="submit"
-                onClick={handlePurchase}
-                className="ml-2 w-2/3 bg-blue-600 hover:bg-blue-700 sm:w-auto sm:px-4"
-                disabled={isPurchaseLoading}
-              >
-                {isPurchaseLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {localize('com_ui_processing')}
-                  </>
-                ) : (
-                  <>
-                    <CreditCard className="mr-2 h-4 w-4" />
-                    {localize('com_checkout_purchase')}
-                  </>
-                )}
+            <div className="flex justify-center">
+              <Button variant="outline" onClick={handleClose} className="w-full sm:w-auto sm:px-8">
+                {localize('com_ui_close')}
               </Button>
             </div>
-          </>
+          </div>
         );
       }
     }

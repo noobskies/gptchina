@@ -11,6 +11,12 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
  * @access Private
  */
 router.post('/create-payment-intent', requireJwtAuth, async (req, res) => {
+  return res.status(403).json({
+    error:
+      'Payments are disabled due to the upcoming service shutdown of gptchina.io / novlisky.io.',
+  });
+
+  /* eslint-disable no-unreachable */
   try {
     const { packageId, amount, paymentMethod, currency = 'usd' } = req.body;
     const userId = req.user.id;

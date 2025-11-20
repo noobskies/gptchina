@@ -16,6 +16,7 @@ import {
   SetConvoProvider,
 } from '~/Providers';
 import TermsAndConditionsModal from '~/components/ui/TermsAndConditionsModal';
+import ShutdownModal from '~/components/ui/ShutdownModal';
 import { useUserTermsQuery, useGetStartupConfig } from '~/data-provider';
 import { Nav, MobileNav } from '~/components/Nav';
 import { useHealthCheck } from '~/data-provider';
@@ -23,6 +24,7 @@ import { Banner } from '~/components/Banners';
 
 export default function Root() {
   const [showTerms, setShowTerms] = useState(false);
+  const [showShutdownModal, setShowShutdownModal] = useState(false);
   const [bannerHeight, setBannerHeight] = useState(0);
   const [navVisible, setNavVisible] = useState(() => {
     const savedNavVisible = localStorage.getItem('navVisible');
@@ -50,6 +52,15 @@ export default function Root() {
       setShowTerms(!termsData.termsAccepted);
     }
   }, [termsData]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const hasSeenNotice = sessionStorage.getItem('shutdown_notice_seen');
+      if (!hasSeenNotice) {
+        setShowShutdownModal(true);
+      }
+    }
+  }, [isAuthenticated]);
 
   const handleAcceptTerms = () => {
     setShowTerms(false);
@@ -96,6 +107,7 @@ export default function Root() {
               modalContent={config.interface.termsOfService.modalContent}
             />
           )}
+          <ShutdownModal open={showShutdownModal} onOpenChange={setShowShutdownModal} />
         </AssistantsMapContext.Provider>
       </FileMapContext.Provider>
     </SetConvoProvider>

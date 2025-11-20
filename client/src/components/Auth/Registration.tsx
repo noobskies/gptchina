@@ -96,132 +96,36 @@ const Registration: React.FC = () => {
   );
 
   return (
-    <>
-      {errorMessage && (
-        <ErrorMessage>
-          {localize('com_auth_error_create')} {errorMessage}
-        </ErrorMessage>
-      )}
-      {registerUser.isSuccess && countdown > 0 && (
-        <div
-          className="rounded-md border border-blue-500 bg-blue-500/10 px-3 py-2 text-sm text-gray-600 dark:text-gray-200"
-          role="alert"
-        >
-          {localize(
-            startupConfig?.emailEnabled
-              ? 'com_auth_registration_success_generic'
-              : 'com_auth_registration_success_insecure',
-          ) +
-            ' ' +
-            localize('com_auth_email_verification_redirecting', { 0: countdown.toString() })}
+    <div className="flex flex-col items-center justify-center p-4">
+      <div
+        className="mb-6 w-full rounded-md border border-red-200 bg-red-50 p-6 text-center text-red-800 dark:border-red-800 dark:bg-red-900/30 dark:text-red-200"
+        role="alert"
+      >
+        <div className="mb-2 flex justify-center">
+          <svg className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
         </div>
-      )}
-      {!startupConfigError && !isFetching && (
-        <>
-          <form
-            className="mt-6"
-            aria-label="Registration form"
-            method="POST"
-            onSubmit={handleSubmit((data: TRegisterUser) =>
-              registerUser.mutate({ ...data, token: token ?? undefined }),
-            )}
-          >
-            {renderInput('name', 'com_auth_full_name', 'text', {
-              required: localize('com_auth_name_required'),
-              minLength: {
-                value: 3,
-                message: localize('com_auth_name_min_length'),
-              },
-              maxLength: {
-                value: 80,
-                message: localize('com_auth_name_max_length'),
-              },
-            })}
-            {renderInput('username', 'com_auth_username', 'text', {
-              minLength: {
-                value: 2,
-                message: localize('com_auth_username_min_length'),
-              },
-              maxLength: {
-                value: 80,
-                message: localize('com_auth_username_max_length'),
-              },
-            })}
-            {renderInput('email', 'com_auth_email', 'email', {
-              required: localize('com_auth_email_required'),
-              minLength: {
-                value: 1,
-                message: localize('com_auth_email_min_length'),
-              },
-              maxLength: {
-                value: 120,
-                message: localize('com_auth_email_max_length'),
-              },
-              pattern: {
-                value: /\S+@\S+\.\S+/,
-                message: localize('com_auth_email_pattern'),
-              },
-            })}
-            {renderInput('password', 'com_auth_password', 'password', {
-              required: localize('com_auth_password_required'),
-              minLength: {
-                value: 8,
-                message: localize('com_auth_password_min_length'),
-              },
-              maxLength: {
-                value: 128,
-                message: localize('com_auth_password_max_length'),
-              },
-            })}
-            {renderInput('confirm_password', 'com_auth_password_confirm', 'password', {
-              validate: (value: string) =>
-                value === password || localize('com_auth_password_not_match'),
-            })}
+        <h2 className="mb-2 text-xl font-bold">Registration Disabled</h2>
+        <p className="mb-4">
+          We are no longer accepting new user registrations due to the upcoming service shutdown of
+          gptchina.io / novlisky.io.
+        </p>
+        <p className="text-sm">Existing users can still log in to access their accounts.</p>
+      </div>
 
-            {startupConfig?.turnstile?.siteKey && (
-              <div className="my-4 flex justify-center">
-                <Turnstile
-                  siteKey={startupConfig.turnstile.siteKey}
-                  options={{
-                    ...startupConfig.turnstile.options,
-                    theme: validTheme,
-                  }}
-                  onSuccess={(token) => setTurnstileToken(token)}
-                  onError={() => setTurnstileToken(null)}
-                  onExpire={() => setTurnstileToken(null)}
-                />
-              </div>
-            )}
-
-            <div className="mt-6">
-              <button
-                disabled={
-                  Object.keys(errors).length > 0 ||
-                  isSubmitting ||
-                  (requireCaptcha && !turnstileToken)
-                }
-                type="submit"
-                aria-label="Submit registration"
-                className="w-full rounded-2xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
-              >
-                {isSubmitting ? <Spinner /> : localize('com_auth_continue')}
-              </button>
-            </div>
-          </form>
-
-          <p className="my-4 text-center text-sm font-light text-gray-700 dark:text-white">
-            {localize('com_auth_already_have_account')}{' '}
-            <a
-              href="/login"
-              aria-label="Login"
-              className="inline-flex p-1 text-sm font-medium text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-            >
-              {localize('com_auth_login')}
-            </a>
-          </p>
-        </>
-      )}
-    </>
+      <a
+        href="/login"
+        className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      >
+        {localize('com_auth_login')}
+      </a>
+    </div>
   );
 };
 
