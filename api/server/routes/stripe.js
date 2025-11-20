@@ -11,12 +11,15 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
  * @access Private
  */
 router.post('/create-payment-intent', requireJwtAuth, async (req, res) => {
-  return res.status(403).json({
-    error:
-      'Payments are disabled due to the upcoming service shutdown of gptchina.io / novlisky.io.',
-  });
+  const host = req.get('host');
+  const isAllowed = host?.includes('gptchina.io') || host?.includes('localhost');
 
-  /* eslint-disable no-unreachable */
+  if (!isAllowed) {
+    return res.status(403).json({
+      error: 'Payments are disabled on this domain. Please use gptchina.io instead.',
+    });
+  }
+
   try {
     const { packageId, amount, paymentMethod, currency = 'usd' } = req.body;
     const userId = req.user.id;

@@ -52,11 +52,14 @@ router.post(
   checkBan,
   checkInviteUser,
   validateRegistration,
-  // registrationController,
-  (req, res) => {
+  (req, res, next) => {
+    const host = req.get('host');
+    const isAllowed = host?.includes('gptchina.io') || host?.includes('localhost');
+    if (isAllowed) {
+      return registrationController(req, res, next);
+    }
     return res.status(403).json({
-      message:
-        'Registration is disabled due to the upcoming service shutdown of gptchina.io / novlisky.io.',
+      message: 'Registration is disabled on this domain. Please use gptchina.io instead.',
     });
   },
 );

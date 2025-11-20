@@ -29,11 +29,22 @@ const ShutdownModal = ({ open, onOpenChange }: ShutdownModalProps) => {
           <div className="p-6 text-text-primary">
             <div className="mb-4 rounded-lg border border-red-200 bg-red-100 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/30 dark:text-red-200">
               <h3 className="mb-2 text-lg font-bold">Service Discontinuation</h3>
-              <p>gptchina.io / novlisky.io will be shutting down soon.</p>
+              <p>This service will be shutting down soon.</p>
             </div>
 
             <div className="space-y-4">
-              <p className="text-base">Please be advised of the following immediate changes:</p>
+              <p className="text-base">
+                Please use{' '}
+                <a
+                  href="https://gptchina.io"
+                  className="text-blue-600 underline hover:text-blue-800"
+                >
+                  gptchina.io
+                </a>{' '}
+                for continued service.
+              </p>
+
+              <p className="text-base">On this domain:</p>
 
               <ul className="list-disc space-y-2 pl-5">
                 <li>

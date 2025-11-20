@@ -55,6 +55,12 @@ export default function Root() {
 
   useEffect(() => {
     if (isAuthenticated) {
+      const hostname = window.location.hostname;
+      // Don't show shutdown notice on gptchina.io or localhost
+      if (hostname.includes('gptchina.io') || hostname.includes('localhost')) {
+        return;
+      }
+
       const hasSeenNotice = sessionStorage.getItem('shutdown_notice_seen');
       if (!hasSeenNotice) {
         setShowShutdownModal(true);
