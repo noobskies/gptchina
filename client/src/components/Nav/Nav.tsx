@@ -22,11 +22,11 @@ import store from '~/store';
 const BookmarkNav = lazy(() => import('./Bookmarks/BookmarkNav'));
 const AccountSettings = lazy(() => import('./AccountSettings'));
 const AgentMarketplaceButton = lazy(() => import('./AgentMarketplaceButton'));
-// CUSTOM: gptchina - Token Pricing Guide feature (HIDDEN)
+// CUSTOM: GPT China - Token Pricing Guide feature (HIDDEN)
 // const TokenPricingLink = lazy(() => import('@custom/features/token-info/client'));
-// CUSTOM: gptchina - Claim Tokens feature
+// CUSTOM: GPT China - Claim Tokens feature
 const ClaimTokensButton = lazy(() => import('@custom/features/claim-tokens/client'));
-// CUSTOM: gptchina - Buy Tokens feature
+// CUSTOM: GPT China - Buy Tokens feature
 const BuyTokensButton = lazy(() => import('@custom/features/buy-tokens/client'));
 
 const NAV_WIDTH_DESKTOP = '260px';
@@ -235,15 +235,15 @@ const Nav = memo(
                         isSearchLoading={isSearchLoading}
                       />
                     </div>
-                    {/* CUSTOM: gptchina - Token Pricing Guide link (HIDDEN) */}
+                    {/* CUSTOM: GPT China - Token Pricing Guide link (HIDDEN) */}
                     {/* <Suspense fallback={null}>
                       <TokenPricingLink />
                     </Suspense> */}
-                    {/* CUSTOM: gptchina - Claim Tokens feature */}
+                    {/* CUSTOM: GPT China - Claim Tokens feature */}
                     <Suspense fallback={null}>
                       <ClaimTokensButton />
                     </Suspense>
-                    {/* CUSTOM: gptchina - Buy Tokens feature */}
+                    {/* CUSTOM: GPT China - Buy Tokens feature */}
                     <Suspense fallback={null}>
                       <BuyTokensButton />
                     </Suspense>

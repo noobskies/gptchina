@@ -260,7 +260,7 @@ export default defineConfig(({ command }) => ({
       '~': path.join(__dirname, 'src/'),
       $fonts: path.resolve(__dirname, 'public/fonts'),
       'micromark-extension-math': 'micromark-extension-llm-math',
-      // CUSTOM: gptchina - Claim Tokens feature - alias for custom folder
+      // CUSTOM: GPT China - Claim Tokens feature - alias for custom folder
       '@custom': path.resolve(__dirname, '../custom'),
     },
   },
