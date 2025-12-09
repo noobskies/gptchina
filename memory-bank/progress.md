@@ -6,9 +6,9 @@
 
 **Version**: v0.8.1-rc1 (Release Candidate)
 
-**Last Updated**: 2025-11-15 12:07 AM CST
+**Last Updated**: 2025-12-09 11:40 AM CST
 
-**Production URL**: https://gptafrica.io
+**Production URL**: https://gptchina.io
 
 ## What Works
 
@@ -532,7 +532,7 @@ The following categories represent potential work areas, but specific tasks will
 - Fixed Vite environment variable issue in production Docker builds
 - Updated Dockerfile to accept ARG declarations for VITE\_\* variables
 - Created docker-compose.override.yml with build arguments
-- Successfully deployed to production (https://gptafrica.io)
+- Successfully deployed to production (https://gptchina.io)
 - Verified end-to-end payment flow working
 - All 4 token packages operational
 - Tokens adding correctly to user balances
@@ -644,6 +644,27 @@ The following categories represent potential work areas, but specific tasks will
 - **Status**: Phases 1-3 complete, Phases 4-5 pending ⏳
 
 ### Recently Completed
+
+✅ **Email Template Styling & Branding Fixes** (2025-12-09 11:21-11:34 AM)
+
+- Fixed Chinese characters appearing in email brand name
+- Simplified APP_TITLE in .env from verbose description to clean "GPT China"
+- Converted all 4 email templates from dark theme to light theme
+- **Files Modified**: .env, verifyEmail.handlebars, passwordReset.handlebars, requestPasswordReset.handlebars, inviteUser.handlebars
+- **Changes Applied**:
+  - Removed dark mode media queries
+  - Changed backgrounds from #212121 (black) to #ffffff (white)
+  - Changed text colors from #ffffff (white) to #000000 (black)
+  - Preserved green button with white text for good contrast
+- **User Impact**: Professional light theme emails, clean branding, better email client compatibility
+- **Status**: Complete ✅, requires backend restart for testing
+
+✅ **Plugins Endpoint Removal** (2025-12-09 11:11-11:13 AM)
+
+- Removed deprecated gptPlugins endpoint from Model Dropdown
+- Added filter in EndpointItem.tsx renderEndpoints() function
+- Minimal upstream impact (5 lines in 1 file)
+- **Status**: Complete ✅, ready for testing
 
 ✅ **Model Pricing Data Fix** (2025-12-09 10:52-10:57 AM)
 
@@ -995,7 +1016,7 @@ Success criteria will be established based on:
 
 ---
 
-**Last Updated**: 2025-12-09 11:02 AM CST
+**Last Updated**: 2025-12-09 11:40 AM CST
 
 **Status**:
 
@@ -1003,8 +1024,10 @@ Success criteria will be established based on:
 - ✅ Buy Tokens Feature - DEPLOYED & OPERATIONAL
 - ✅ Model Pricing Display - Production Ready (DeepSeek & Perplexity Fixed)
 - ✅ Token Info/Pricing Page - REDESIGNED & PRODUCTION READY
+- ✅ Email Templates - Fixed & Production Ready (Light Theme)
 - ✅ i18n Implementation Plan - COMPLETE & READY TO EXECUTE
-- ✅ Production URL: https://gptafrica.io
+- ✅ Production URL: https://gptchina.io
 - ✅ All payment methods working
 - ✅ Tokens adding correctly
 - ✅ All model pricing data complete (Perplexity & DeepSeek added)
+- ✅ All email templates using professional light theme

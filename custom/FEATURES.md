@@ -322,7 +322,7 @@ Stripe-integrated payment system allowing users to purchase tokens with multiple
 
 **Production Status**:
 
-- ✅ Deployed to https://gptafrica.io
+- ✅ Deployed to https://gptchina.io
 - ✅ All payment methods operational
 - ✅ Tokens adding correctly to user balances
 

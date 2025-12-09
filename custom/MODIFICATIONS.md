@@ -242,6 +242,133 @@ When syncing with upstream:
 
 ---
 
+## Email Template Styling & Branding (2025-12-09)
+
+### Overview
+
+Updated email templates to use light theme styling (white background, black text) instead of dark theme, and simplified APP_TITLE branding to remove Chinese characters.
+
+### Modified Files
+
+#### 1. .env
+
+- **Line**: ~477 (APP_TITLE)
+- **Reason**: Simplify brand name to "GPT China" without Chinese subtitle or description
+- **Upstream Version**: v0.8.1-rc1
+- **Impact**: Low (affects email templates and app title)
+- **Changes**:
+  - **Before**: `APP_TITLE=GPTChina - Your AI Assistant with Multiple Models`
+  - **After**: `APP_TITLE=GPT China`
+- **Alternative Considered**: Keep full description (rejected for being too verbose in emails)
+
+#### 2. api/server/utils/emails/verifyEmail.handlebars
+
+- **Lines**: Multiple (CSS styles and inline styles throughout)
+- **Reason**: Convert from dark theme to light theme for better email client compatibility
+- **Upstream Version**: v0.8.1-rc1
+- **Impact**: Low (cosmetic change only)
+- **Changes**:
+  - Removed dark mode media query (`@media (prefers-color-scheme: dark)`)
+  - Changed body background: `#212121` → `#ffffff`
+  - Changed body text color: `#ffffff` → `#000000`
+  - Changed table background: `#212121` → `#ffffff`
+  - Changed table/td text color: `#ffffff` → `#000000`
+  - Changed MSO conditional comments backgrounds: `#212121` → `#ffffff`
+  - Changed div backgrounds: `#212121` → `#ffffff`
+  - Button styling unchanged (green button with white text remains)
+- **Alternative Considered**: Keep dark theme (rejected due to email client rendering issues)
+
+#### 3. api/server/utils/emails/passwordReset.handlebars
+
+- **Lines**: Multiple (CSS styles and inline styles throughout)
+- **Reason**: Match light theme styling of verification email
+- **Upstream Version**: v0.8.1-rc1
+- **Impact**: Low (cosmetic change only)
+- **Changes**: Same as verifyEmail.handlebars
+  - Removed dark mode media query
+  - All backgrounds: `#212121` → `#ffffff`
+  - All text colors: `#ffffff` → `#000000`
+
+#### 4. api/server/utils/emails/requestPasswordReset.handlebars
+
+- **Lines**: Multiple (CSS styles and inline styles throughout)
+- **Reason**: Match light theme styling of other email templates
+- **Upstream Version**: v0.8.1-rc1
+- **Impact**: Low (cosmetic change only)
+- **Changes**: Same as other templates
+  - Removed dark mode media query
+  - All backgrounds: `#212121` → `#ffffff`
+  - All text colors: `#ffffff` → `#000000`
+
+#### 5. api/server/utils/emails/inviteUser.handlebars
+
+- **Lines**: Multiple (CSS styles and inline styles throughout)
+- **Reason**: Match light theme styling of other email templates
+- **Upstream Version**: v0.8.1-rc1
+- **Impact**: Low (cosmetic change only)
+- **Changes**: Same as other templates
+  - Removed dark mode media query
+  - All backgrounds: `#212121` → `#ffffff`
+  - All text colors: `#ffffff` → `#000000`
+
+### User Impact
+
+**Before**:
+
+- Email APP_TITLE could show: "GPTChina - Your AI Assistant with Multiple Models | 人工智能领域的前沿解决方案!" (if metadata was appended)
+- Emails had black backgrounds with white text (dark theme)
+- Poor rendering in some email clients
+
+**After**:
+
+- Email APP_TITLE shows: "GPT China" (clean, no Chinese characters)
+- Emails have white backgrounds with black text (light theme)
+- Better compatibility across all email clients
+- Professional, clean appearance
+- Button remains green with white text for good contrast
+
+### Merge Strategy
+
+When syncing with upstream:
+
+1. Check if upstream modified any email templates in `api/server/utils/emails/`
+2. If modified, re-apply light theme colors to any new sections
+3. Keep APP_TITLE simplified in .env
+4. Verify button colors remain accessible (white text on colored background)
+5. Test emails in multiple clients (Gmail, Outlook, Apple Mail)
+
+### Rationale
+
+**APP_TITLE Simplification**:
+
+- Users reported seeing Chinese characters appended via metadata
+- Clean "GPT China" brand name is sufficient for emails
+- Reduces confusion for English-speaking users
+- More professional appearance
+
+**Light Theme Styling**:
+
+- White background with black text is standard for email templates
+- Better rendering across email clients (Gmail, Outlook, Yahoo, Apple Mail)
+- Dark theme emails can have inconsistent rendering
+- Light theme ensures high readability
+- Professional appearance matching typical transactional emails
+
+### Testing Checklist
+
+- [ ] Restart backend server (to load new APP_TITLE)
+- [ ] Trigger verification email (register new test account)
+- [ ] Verify email shows "GPT China" (no Chinese characters)
+- [ ] Verify email has white background and black text
+- [ ] Trigger password reset request email
+- [ ] Verify password reset email styling is correct
+- [ ] Complete password reset and verify confirmation email
+- [ ] Test invite user email (if applicable)
+- [ ] Check emails in multiple clients (Gmail, Outlook, Apple Mail)
+- [ ] Verify button remains readable (green with white text)
+
+---
+
 ## Custom Features
 
 For documentation on custom features (Claim Tokens, Buy Tokens, Model Pricing, Split Auth Layout), see:

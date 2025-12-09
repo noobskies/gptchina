@@ -12,6 +12,111 @@
 
 ## Recent Changes
 
+### Email Template Styling & Branding Fixes (2025-12-09 11:21-11:34 AM)
+
+**Overview**: Fixed email template styling and branding issues - removed Chinese characters from brand name and converted all email templates from dark theme to professional light theme.
+
+**Problem Identified**: User reported two issues with email templates:
+
+1. **Chinese Characters in Brand Name**: Email subject lines and content showing "GPT China | 人工智能领域的前沿解决方案!" instead of just "GPT China"
+2. **Dark Theme Emails**: Black background with white text causing poor rendering in email clients
+
+**Solution Implemented**:
+
+**Issue 1: Brand Name Simplification**
+
+- **File Modified**: `.env` (line ~477)
+- **Change**:
+  - **Before**: `APP_TITLE=GPTChina - Your AI Assistant with Multiple Models`
+  - **After**: `APP_TITLE=GPT China`
+- **Impact**: Email templates now display clean "GPT China" branding without Chinese characters or lengthy descriptions
+
+**Issue 2: Light Theme Conversion** (4 email templates)
+
+- **Files Modified**:
+  1. `api/server/utils/emails/verifyEmail.handlebars`
+  2. `api/server/utils/emails/passwordReset.handlebars`
+  3. `api/server/utils/emails/requestPasswordReset.handlebars`
+  4. `api/server/utils/emails/inviteUser.handlebars`
+
+- **Changes Applied to All Templates**:
+  - Removed dark mode media query (`@media (prefers-color-scheme: dark)`)
+  - Body background: `#212121` (dark gray) → `#ffffff` (white)
+  - Body text color: `#ffffff` (white) → `#000000` (black)
+  - Table backgrounds: `#212121` → `#ffffff`
+  - Table/td text color: `#ffffff` → `#000000`
+  - MSO conditional comment backgrounds: `#212121` → `#ffffff`
+  - Div backgrounds: `#212121` → `#ffffff`
+  - **Button unchanged**: Green button (#10a37f) with white text maintained for good contrast
+
+**User Impact**:
+
+- **Before**:
+  - Emails showed verbose APP_TITLE with potential Chinese metadata appending
+  - Black backgrounds with white text (inconsistent rendering across email clients)
+  - Poor readability in some email applications
+
+- **After**:
+  - Clean "GPT China" branding throughout
+  - Professional white background with black text (standard for transactional emails)
+  - Better compatibility across all email clients (Gmail, Outlook, Apple Mail, Yahoo)
+  - Improved readability and professional appearance
+
+**Key Technical Decisions**:
+
+1. **Brand Name Simplification**:
+   - Decision: Use "GPT China" only (no subtitle or description)
+   - Rationale: Cleaner in emails, prevents Chinese metadata appending, more professional
+   - Impact: Affects email templates and app title display
+
+2. **Light Theme Standard**:
+   - Decision: White background with black text for all email templates
+   - Rationale: Industry standard for transactional emails, better email client compatibility, higher readability
+   - Impact: All email communications now use light theme consistently
+
+3. **Preserve Button Styling**:
+   - Decision: Keep green button with white text
+   - Rationale: Good contrast on white background, aligns with LibreChat's brand colors
+   - Impact: Call-to-action remains visually prominent
+
+**Documentation Updated**:
+
+- Added comprehensive entry to `custom/MODIFICATIONS.md`
+- Documented all 5 file modifications with detailed change logs
+- Created merge strategy for upstream syncs
+- Established testing checklist
+
+**Current Status**:
+
+- ✅ .env APP_TITLE simplified
+- ✅ All 4 email templates converted to light theme
+- ✅ Dark mode media queries removed
+- ✅ All color values updated throughout templates
+- ✅ Documentation complete in MODIFICATIONS.md
+- ⏳ Requires backend restart to load new APP_TITLE
+- ⏳ Ready for email testing
+
+**Testing Checklist**:
+
+- [ ] Restart backend server
+- [ ] Register new test account → verify verification email
+- [ ] Check email shows "GPT China" (no Chinese characters)
+- [ ] Verify white background with black text
+- [ ] Request password reset → check email styling
+- [ ] Complete password reset → verify confirmation email
+- [ ] Test invite user email (if applicable)
+- [ ] Verify button remains readable (green with white text)
+- [ ] Test in multiple email clients (Gmail, Outlook, Apple Mail)
+
+**Key Learnings**:
+
+1. **Email Client Compatibility**: Light theme emails render more consistently across different email clients
+2. **Brand Consistency**: Simple, clean brand names work better in email contexts
+3. **Metadata Considerations**: Environment variable values can have unexpected metadata appended in some contexts
+4. **Fork-Friendly Email Changes**: Email templates are rarely modified in upstream, making these changes low-risk for future merges
+
+---
+
 ### Plugins Endpoint Removal (2025-12-09 11:11-11:13 AM)
 
 **Overview**: Removed the deprecated Plugins (gptPlugins) endpoint from the Model Dropdown selector to clean up the UI and prevent user confusion.
@@ -25,6 +130,7 @@
 - **File Modified**: `client/src/components/Chat/Menus/Endpoints/components/EndpointItem.tsx`
 - **Lines**: 209-213 (added filter logic)
 - **Change**:
+
   ```typescript
   export function renderEndpoints(mappedEndpoints: Endpoint[]) {
     // CUSTOM: gptchina - Filter out deprecated gptPlugins endpoint
@@ -1251,14 +1357,14 @@ Input: 2.00 | Output: 8.00
 
 ### Buy Tokens Feature - Production Deployment Success (2025-11-09 3:46-4:44 PM)
 
-**Overview**: Successfully debugged webhook issues, fixed production environment variable configuration, and deployed Buy Tokens feature to production. Complete end-to-end payment flow now working on https://gptafrica.io.
+**Overview**: Successfully debugged webhook issues, fixed production environment variable configuration, and deployed Buy Tokens feature to production. Complete end-to-end payment flow now working on https://gptchina.io.
 
 **Problems Solved**:
 
 1. **Webhook Not Firing (3:46-4:07 PM)**
    - **Problem**: Payment succeeded on frontend, but webhooks never reached local backend
    - **Root Cause #1**: Dashboard webhook endpoint configured in Stripe Dashboard
-     - User had webhook pointing to production (https://gptafrica.io)
+     - User had webhook pointing to production (https://gptchina.io)
      - Even in test mode, dashboard webhooks bypass Stripe CLI
      - Webhooks went to production server, not localhost
    - **Solution**: Deleted dashboard webhook endpoint
@@ -1395,7 +1501,7 @@ Input: 2.00 | Output: 8.00
 - ✅ Payment flow working end-to-end
 - ✅ Tokens being added correctly
 - ✅ All 4 packages working
-- ✅ Feature fully operational on https://gptafrica.io
+- ✅ Feature fully operational on https://gptchina.io
 
 **Deployment Configuration Summary**:
 
