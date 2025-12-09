@@ -69,7 +69,6 @@ This document tracks the complete internationalization effort for all custom fea
 ### Files to Modify
 
 1. `custom/features/claim-tokens/client/ClaimTokensButton.tsx`
-
    - Import `useLocalize`
    - Replace: `'Claim 20,000 Tokens'` → `localize('com_custom_tokens_claim_button', { amount: '20,000' })`
    - Replace: `'Claim in 23h 2m 24s'` → `localize('com_custom_tokens_claim_countdown', { time: formattedTime })`
@@ -408,84 +407,22 @@ All components in `custom/features/token-info/client/`:
 
 ---
 
-## Technical Reference
+## Technical Patterns
 
-### Pattern 1: Simple String Replacement
+### Key Patterns Used
 
-**Before**:
+1. **Simple Strings**: `localize('com_custom_key')`
+2. **With Variables**: `localize('com_custom_key', { variable: value })`
+3. **Conditionals**: Ternary with localize calls
+4. **Aria Labels**: Pass localize result to aria-label attribute
+5. **Error Messages**: Wrap localize in Error constructor
 
-```typescript
-<h1>Claim 20,000 Tokens</h1>
-```
-
-**After**:
+### Import
 
 ```typescript
 import { useLocalize } from '~/hooks';
-
 const localize = useLocalize();
-
-<h1>{localize('com_custom_tokens_claim_button', { amount: '20,000' })}</h1>
-```
-
-### Pattern 2: Interpolation with Variables
-
-**Before**:
-
-```typescript
-const buttonText = canClaim ? 'Claim 20,000 Tokens' : `Claim in ${formattedTime}`;
-```
-
-**After**:
-
-```typescript
-const buttonText = canClaim
-  ? localize('com_custom_tokens_claim_button', { amount: '20,000' })
-  : localize('com_custom_tokens_claim_countdown', { time: formattedTime });
-```
-
-### Pattern 3: Dynamic Content with Conditionals
-
-**Before**:
-
-```typescript
-{isPopular ? 'Most Popular' : 'Starter'}
-```
-
-**After**:
-
-```typescript
-{isPopular
-  ? localize('com_custom_tokens_buy_package_popular')
-  : localize('com_custom_tokens_buy_package_starter')}
-```
-
-### Pattern 4: Aria Labels
-
-**Before**:
-
-```typescript
-aria-label="Claim 20,000 tokens"
-```
-
-**After**:
-
-```typescript
-aria-label={localize('com_custom_tokens_claim_button_aria', { amount: '20,000' })}
-```
-
-### Pattern 5: Error Messages
-
-**Before**:
-
-```typescript
-throw new Error('Failed to claim tokens. Please try again.');
-```
-
-**After**:
-
-```typescript
-throw new Error(localize('com_custom_tokens_claim_error'));
+// Use: (localize as any)('key') for custom keys
 ```
 
 ---
@@ -513,116 +450,40 @@ throw new Error(localize('com_custom_tokens_claim_error'));
 
 ---
 
-## Testing Checklist
+## Testing Strategy
 
-### Per-Feature Testing
+**Per-Feature**: Language switching, layout with Chinese, mobile responsive, dark/light mode, dynamic content, error messages, accessibility
 
-For each feature after implementation:
-
-- [ ] Test language switching (en → zh-Hans → en)
-- [ ] Verify all strings translated (no English fallback where not expected)
-- [ ] Check layout with Chinese characters (longer/shorter text)
-- [ ] Test on mobile (responsive design)
-- [ ] Test dark/light mode
-- [ ] Verify dynamic content (interpolation) works
-- [ ] Test error messages display correctly
-- [ ] Check accessibility (screen readers, aria labels)
-
-### Integration Testing
-
-After all features complete:
-
-- [ ] Full app language switch test
-- [ ] Test all custom features in Chinese
-- [ ] Visual regression check (screenshots before/after)
-- [ ] Performance check (no slowdown from i18n)
-- [ ] Browser compatibility (Chrome, Firefox, Safari)
+**Integration**: Full app language switch, all features in Chinese, visual regression, performance, browser compatibility
 
 ---
 
-## Deployment Strategy
+## Deployment
 
-### Phase Rollout
+**Rollout**: Each phase deployed independently as completed
 
-Each phase can be deployed independently:
-
-1. **Phase 1 Complete** → Deploy Claim Tokens translations
-2. **Phase 2 Complete** → Deploy Model Pricing translations
-3. **Phase 3 Complete** → Deploy Auth Layout translations
-4. **Phase 4 Complete** → Deploy Buy Tokens translations
-5. **Phase 5 Complete** → Deploy Token Info Page translations
-
-### Rollback Plan
-
-If issues arise:
-
-- Each phase is isolated (feature-specific keys)
-- Can revert individual feature by removing translation keys
-- English always works as fallback
+**Rollback**: Remove translation keys for affected feature, English fallback remains
 
 ---
 
 ## Future Enhancements
 
-### Additional Languages (Post-MVP)
+**Additional Languages**: zh-Hant, ja, ko, es, pt-BR
 
-After English + Chinese proven working:
-
-- Traditional Chinese (zh-Hant) - Taiwan/Hong Kong market
-- Japanese (ja) - If expanding to Japan
-- Korean (ko) - If expanding to Korea
-- Spanish (es) - Global reach
-- Portuguese (pt-BR) - Brazil market
-
-### Automation Opportunities
-
-- Translation management platform (Crowdin, Lokalise)
-- Automated missing key detection in CI/CD
-- Translation coverage reports
-- AI-assisted translation with human review
+**Automation**: Translation management platform, missing key detection, coverage reports, AI-assisted translation
 
 ---
 
-## Notes & Lessons Learned
+## Key Learnings
 
-### Best Practices Discovered
-
-1. **Start Small**: Beginning with Claim Tokens (5 strings) validates the approach before tackling Token Info (100+ strings)
-2. **Keep Keys Consistent**: Following `com_custom_[feature]_[context]_[name]` pattern throughout
-3. **Test Interpolation**: Chinese character widths affect layout - test responsive design thoroughly
-4. **Document Everything**: This document is essential for multi-session work
-
-### Common Pitfalls to Avoid
-
-1. Don't hard-code currencies (¥) in translation keys - pass as variables
-2. Don't assume Chinese text is shorter - it's often longer than English
-3. Don't forget aria labels - they need translation too
-4. Don't modify upstream LibreChat translation files - only add to them
+1. Start small to validate approach
+2. Keep keys consistent: `com_custom_[feature]_[context]_[name]`
+3. Test Chinese text layout (often longer than English)
+4. Don't hard-code currencies - use variables
+5. Translate aria labels too
+6. Only add to upstream translation files, never modify existing keys
 
 ---
-
-## Questions & Decisions Log
-
-### 2025-11-15 - Initial Planning
-
-- **Q**: Which languages to support?
-- **A**: English + Simplified Chinese (zh-Hans) for MVP
-
-- **Q**: All features at once or incremental?
-- **A**: Feature-by-feature (safer, easier to test)
-
-- **Q**: Who provides translations?
-- **A**: AI-generated with manual review
-
----
-
-## Contact & Support
-
-For questions about this implementation:
-
-- Reference this document in Memory Bank
-- Check LibreChat i18n docs: https://www.librechat.ai/docs/configuration/librechat_yaml/default_interface/internationalization
-- Review upstream translation patterns in `client/src/locales/en/translation.json`
 
 ---
 
