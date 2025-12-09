@@ -394,28 +394,24 @@ Custom Feature Files (7 files):
 Created 5 new reusable components following SOLID principles:
 
 1. **ThemeToggle.tsx** - Light/dark mode switcher button
-
    - Sun/Moon icons from lucide-react
    - Uses `useTheme()` hook from `@librechat/client`
    - Toggles between light and dark modes
    - Persists via Jotai atoms automatically
 
 2. **PageHeader.tsx** - Header with title and theme toggle
-
    - Page title and description
    - Theme toggle positioned top-right
    - Responsive layout with flexbox
    - Clean separator with border-bottom
 
 3. **SectionContainer.tsx** - Reusable section wrapper
-
    - Accepts icon and title props
    - Consistent spacing and typography
    - Optional separator between sections
    - Standardizes all section layouts
 
 4. **ModelPricingCard.tsx** - Pricing table component
-
    - Replaced PricingTable.tsx functionality
    - Category badges (Budget, Mid-Range, Premium)
    - DollarSign icon from lucide-react
@@ -452,13 +448,11 @@ Key changes:
 Updated CostCalculator.tsx for full theme compatibility:
 
 - **Removed Emojis**:
-
   - 🧮 → `<Calculator />` icon
   - 📊 → `<BarChart3 />` icon
   - 💡 → `<Lightbulb />` icon
 
 - **Replaced Hardcoded Colors**:
-
   - `border-2 border-blue-500 bg-blue-50` → `border border-border-medium bg-surface-secondary`
   - `bg-background` → `bg-surface-primary` (for form inputs)
   - `bg-blue-50 dark:bg-blue-900/20` → `bg-blue-500/5` (theme-aware)
@@ -520,7 +514,6 @@ All colors now use LibreChat's design token system:
 **User Impact**:
 
 - **Before Redesign**:
-
   - No theme switcher
   - 15+ emojis looked unprofessional
   - Narrow layout (896px) wasted screen space
@@ -542,25 +535,21 @@ All colors now use LibreChat's design token system:
 **Key Technical Decisions**:
 
 1. **Theme Integration Approach**:
-
    - Decision: Use existing `useTheme()` hook from `@librechat/client`
    - Rationale: Leverages LibreChat's theme system, automatic persistence via Jotai, no custom state management needed
    - Implementation: Import and use hook, access theme state, no local storage logic required
 
 2. **Component Extraction Strategy**:
-
    - Decision: Split into 5 focused components vs keeping monolithic
    - Rationale: Single Responsibility Principle, easier testing, better maintainability, code reuse
    - Result: Each component < 100 lines, clear purpose, independently testable
 
 3. **Icon Library Choice**:
-
    - Decision: Use lucide-react (already in project)
    - Rationale: Consistent with rest of LibreChat, lightweight, excellent icon selection, theme-friendly
    - Implementation: Imported 9 specific icons, replaced all emoji instances
 
 4. **Layout Expansion**:
-
    - Decision: Increase from max-w-4xl (896px) to max-w-7xl (1280px)
    - Rationale: Better utilizes modern screen resolutions, improves readability with proper columns, doesn't waste horizontal space
    - Implementation: Responsive grids (1/2/3 columns based on breakpoints)
@@ -595,25 +584,21 @@ All colors now use LibreChat's design token system:
 **Key Learnings**:
 
 1. **Theme Integration Best Practices**:
-
    - Always use existing theme hooks rather than creating custom solutions
    - Design tokens ensure consistency and theme compatibility
    - Test both light and dark modes during development
 
 2. **Component Architecture**:
-
    - Large components (>200 lines) should be decomposed
    - Extract reusable patterns (SectionContainer, cards)
    - Icon + heading pattern creates consistency
 
 3. **Icon vs Emoji Decision**:
-
    - Emojis can look unprofessional in production apps
    - Icons provide better consistency and theme integration
    - lucide-react provides excellent professional icons
 
 4. **Responsive Design**:
-
    - Mobile-first approach with progressive enhancement
    - Use Tailwind breakpoints (md:, lg:) effectively
    - Test at multiple viewport sizes
@@ -651,7 +636,6 @@ All colors now use LibreChat's design token system:
 **Enhancement Details**:
 
 1. **Package Value Section (📦)** - "What Can You Do with Each Package?"
-
    - Shows exact conversation counts for each token package across different models
    - Based on "typical conversation" (200 words in, 300 words out = ~650 tokens)
    - **100K Package (¥10)**:
@@ -676,7 +660,6 @@ All colors now use LibreChat's design token system:
      - o1: ~205,000 conversations
 
 2. **Real Conversation Examples (📝)** - Three concrete usage scenarios:
-
    - **Quick Question** (50 words in, 100 out = ~195 tokens):
      - gpt-4o-mini: 0.0001 credits (10,000 questions per ¥10)
      - gpt-4o: 0.0024 credits (41,000 questions per ¥10)
@@ -723,17 +706,14 @@ All colors now use LibreChat's design token system:
 **Key Design Decisions**:
 
 1. **Focus on Popular Models**:
-
    - Decision: Show gpt-4o-mini, gpt-4o, claude-3.5-sonnet, o1
    - Rationale: These are the most commonly used models representing budget, mid-range, and premium tiers
 
 2. **Conversation-Based Context**:
-
    - Decision: Express value as "X conversations" rather than abstract token counts
    - Rationale: Users think in terms of usage, not mathematical units
 
 3. **Three Scenario Approach**:
-
    - Decision: Show Quick Question, Standard Chat, Deep Dive examples
    - Rationale: Covers typical usage patterns from simple to complex
 
@@ -844,22 +824,18 @@ Frontend (5 files):
 **Key Technical Decisions**:
 
 1. **New Tab vs Modal**
-
    - **Decision**: Open in new tab
    - **Rationale**: User requested new tab; allows referencing pricing while using app; doesn't interrupt workflow
 
 2. **Data Source**
-
    - **Decision**: Pull pricing from `api/models/tx.js`
    - **Rationale**: Single source of truth; automatic sync with backend; always accurate
 
 3. **Popular Models Only**
-
    - **Decision**: Show ~20 popular models instead of all 100+
    - **Rationale**: Prevents overwhelming users; most users use popular models; easier to categorize
 
 4. **Word-to-Token Conversion**
-
    - **Decision**: Use 1.3x multiplier
    - **Rationale**: Industry-standard approximation; good balance of accuracy and simplicity
 
@@ -870,13 +846,11 @@ Frontend (5 files):
 **Feature Highlights**:
 
 - **Categorized Pricing Tables**: Models organized by cost tier
-
   - 🟢 Budget (≤$2/1M): gpt-4o-mini, gemini-2.0-flash, claude-3-haiku, etc.
   - 🟡 Mid-Range ($2-$20/1M): gpt-4o, claude-3.5-sonnet, gemini-2.5-pro, etc.
   - 🔴 Premium (>$20/1M): o1, claude-opus-4, gpt-4.5, etc.
 
 - **Interactive Calculator**:
-
   - Real-time cost estimation
   - Converts words to tokens (1 word ≈ 1.3 tokens)
   - Shows practical context (conversations with free tokens)
@@ -923,14 +897,12 @@ Frontend (5 files):
 **Implementation Phases**:
 
 1. **Initial Layout Implementation** (6:29-6:32 PM)
-
    - Replaced static image with clean dual-column design
    - Left side: Full-height image from example design
    - Right side: Centered auth forms (max-width: 672px)
    - Files modified: `SplitAuthLayout.tsx`
 
 2. **Layout Fixes** (6:32-6:37 PM)
-
    - **Problem 1**: Vertical scrollbars appearing
      - **Solution**: Added `overflow-hidden` to main container, changed left div from `h-screen min-h-full` to `h-full`
    - **Problem 2**: Auth form taking 100% width on desktop
@@ -941,13 +913,11 @@ Frontend (5 files):
      - Removed `gap-4` to eliminate all spacing between grid items
 
 3. **Feature Cards Integration** (6:39 PM)
-
    - Replaced static image with FeaturesPanel component
    - Restored original feature showcase design
    - Maintained all layout improvements (no scroll, proper sizing, no gaps)
 
 4. **Blue Theme & White-Labeling** (6:40-6:47 PM)
-
    - **Background Changes**:
      - Applied solid blue background to left side container: `bg-blue-600 dark:bg-blue-700`
      - Removed background from inner FeaturesPanel for clean inheritance
@@ -967,7 +937,6 @@ Frontend (5 files):
      - Hover effect: `hover:bg-white/10 hover:shadow-md`
 
 5. **Banner Removal & Vertical Centering** (6:47-6:48 PM)
-
    - Removed Banner component import and usage
    - Added vertical centering to left side: `flex items-center justify-center`
    - Added `overflow-y-auto` to left side for content scrolling if needed
@@ -997,21 +966,18 @@ Frontend (5 files):
 **Key Design Decisions**:
 
 1. **Clean Split-Screen Layout**:
-
    - No banner component to avoid unwanted whitespace
    - Equal 50/50 split on desktop (responsive on mobile)
    - Both sides vertically centered
    - No scrollbars or spacing issues
 
 2. **Blue Theme Branding**:
-
    - Solid blue backgrounds instead of gradients
    - All text white for maximum contrast
    - Glass-morphism feature cards (white/5 opacity with backdrop blur)
    - Professional, cohesive color scheme
 
 3. **White-Labeling**:
-
    - Removed "Open source" references
    - Removed "Self-host" and LibreChat-specific terminology
    - Generic, professional messaging suitable for any brand
@@ -1054,19 +1020,16 @@ Frontend (5 files):
 **Implementation Approach**:
 
 1. **Backend API Endpoint** (4:54-4:56 PM)
-
    - Created `custom/features/model-pricing/server/controller.js` - Uses existing `api/models/tx.js` as single source of truth
    - Created `custom/features/model-pricing/server/routes.js` - Express routes for pricing endpoints
    - Endpoint: `GET /api/custom/pricing/model/:modelName` returns pricing object
 
 2. **Frontend React Hook** (4:56-4:58 PM)
-
    - Created `custom/features/model-pricing/client/usePricing.ts` - Custom hook to fetch pricing
    - Created `custom/features/model-pricing/client/index.tsx` - Barrel export
    - Hook fetches pricing on model change, handles loading/error states
 
 3. **Integration** (4:58-5:01 PM)
-
    - Modified `api/server/index.js` - Registered pricing routes (3 lines)
    - Modified `client/tsconfig.json` - Added `@custom` alias for TypeScript (1 line)
    - Modified `client/src/components/Chat/Landing.tsx` - Display pricing UI (15 lines)
@@ -1103,20 +1066,17 @@ Input: 2.00 | Output: 8.00
 **Key Technical Decisions**:
 
 1. **API Endpoint Pattern** (Not Duplication)
-
    - Initially considered duplicating pricing data to frontend
    - Chose API endpoint approach for single source of truth
    - Pricing automatically updates when `api/models/tx.js` changes
    - No manual sync needed between frontend and backend
 
 2. **TypeScript Path Alias**
-
    - Discovered existing `@custom` alias in `vite.config.ts` (from Claim Tokens)
    - Added matching alias to `client/tsconfig.json` for TypeScript compatibility
    - Enables clean imports: `import { usePricing } from '@custom/features/model-pricing/client'`
 
 3. **Graceful Degradation**
-
    - No pricing display if model not selected
    - Silent fail if API unavailable
    - Handles models without pricing data gracefully
@@ -1151,7 +1111,6 @@ Input: 2.00 | Output: 8.00
 **Problems Solved**:
 
 1. **Webhook Not Firing (3:46-4:07 PM)**
-
    - **Problem**: Payment succeeded on frontend, but webhooks never reached local backend
    - **Root Cause #1**: Dashboard webhook endpoint configured in Stripe Dashboard
      - User had webhook pointing to production (https://gptafrica.io)
@@ -1161,7 +1120,6 @@ Input: 2.00 | Output: 8.00
    - **Result**: Stripe CLI now intercepts test webhooks correctly
 
 2. **Middleware Order Issue (3:54-4:07 PM)**
-
    - **Problem**: Even with CLI setup, webhook signature verification was failing silently
    - **Root Cause #2**: Global `express.json()` middleware parsing body before webhook handler
      - Stripe requires RAW body (Buffer) for signature verification
@@ -1185,7 +1143,6 @@ Input: 2.00 | Output: 8.00
    - **Result**: Webhook handler now receives raw Buffer body for signature verification
 
 3. **Comprehensive Debug Logging Added (4:06-4:07 PM)**
-
    - **File Modified**: `custom/features/buy-tokens/server/controller.js`
    - **Logs Added**:
      - Webhook entry with headers and body type
@@ -1197,7 +1154,6 @@ Input: 2.00 | Output: 8.00
    - **Result**: Complete visibility into webhook processing flow
 
 4. **Production Environment Variable Issue (4:20-4:44 PM)**
-
    - **Problem**: Stripe initialization error on production: "Please call Stripe() with your publishable key. You used an empty string."
    - **Root Cause**: Vite environment variables not available in production
      - `VITE_*` variables are baked into bundle at BUILD time, not runtime
@@ -1206,7 +1162,6 @@ Input: 2.00 | Output: 8.00
    - **Solution**: Multi-step Docker configuration fix
 
      **Step 1**: Updated Dockerfile to accept build arguments
-
      - **File Modified**: `Dockerfile`
      - **Added** (before frontend build):
 
@@ -1223,7 +1178,6 @@ Input: 2.00 | Output: 8.00
      - **Result**: Dockerfile can now accept and use build arguments
 
      **Step 2**: Created docker-compose.override.yml
-
      - **File Created**: `docker-compose.override.yml`
      - **Purpose**: Override deploy-compose.yml to enable local builds with args
      - **Configuration**:
@@ -1241,7 +1195,6 @@ Input: 2.00 | Output: 8.00
      - **Result**: Production builds now include Vite environment variables
 
      **Step 3**: Deployed using existing deploy script
-
      - User's deploy script already correctly uses override file
      - Script runs: `docker-compose -f docker-compose.yml -f docker-compose.override.yml build --no-cache`
      - **Result**: Fresh build with environment variables baked into bundle
@@ -1264,20 +1217,17 @@ Input: 2.00 | Output: 8.00
 **Key Technical Learnings**:
 
 1. **Webhook Routing in Test Mode**:
-
    - Stripe CLI ONLY works when NO dashboard webhook exists in test mode
    - Dashboard webhooks always take precedence over CLI
    - Delete dashboard webhooks for local development
 
 2. **Express Middleware Order**:
-
    - Stripe webhooks REQUIRE raw body (Buffer)
    - Must register webhook route BEFORE `express.json()`
    - Use `express.raw({ type: 'application/json' })` for webhook routes only
    - All other routes can use JSON parsing normally
 
 3. **Vite Environment Variables in Docker**:
-
    - `VITE_*` variables are build-time, not runtime
    - Must be passed as Docker build arguments (ARG)
    - Must be converted to ENV before `npm run frontend`
@@ -1335,7 +1285,6 @@ services:
 **Refactoring Achievements**:
 
 1. **Component Architecture** (2:21-2:32 PM)
-
    - **Problem**: 480+ line TokenPurchaseModal.tsx was difficult to maintain and test
    - **Solution**: Split into 6 single-responsibility components
    - **Files Created** (7 new files):
@@ -1349,7 +1298,6 @@ services:
    - **Result**: Main modal reduced from 480 to 260 lines (220-line reduction)
 
 2. **Payment Methods Implementation** (2:32 PM)
-
    - **Problem**: Only card payment worked, 5 other methods were fake/disabled
    - **Solution**: Properly configured all 6 Stripe payment methods
    - **File Modified**: `server/stripe.service.js`
@@ -1363,7 +1311,6 @@ services:
    - **Result**: All payment methods now functional, no disabled options
 
 3. **Data Management** (2:33 PM)
-
    - **Problem**: TOKEN_PACKAGES duplicated in constants.js and types.ts
    - **Solution**: Following claim-tokens pattern - keep both files for compatibility
    - **Files Updated**:
@@ -1373,7 +1320,6 @@ services:
    - **Documentation**: Added TODO to create validation test
 
 4. **Atomic Transactions** (2:34 PM)
-
    - **Problem**: Balance update and transaction log separate, could fail inconsistently
    - **Solution**: MongoDB transactions for atomic operations
    - **File Modified**: `server/controller.js`
@@ -1393,7 +1339,6 @@ services:
    - **Result**: Payment processing now atomic, automatic rollback on errors
 
 5. **Code Cleanup** (2:37 PM)
-
    - **Duplicate File Removed**: `client/PaymentForm.tsx` (superseded by `client/components/PaymentForm.tsx`)
    - **Dead Code Removed**: `addTokensToBalance()` function from controller.js (~45 lines)
    - **Result**: No duplicate files, no unused code
@@ -1425,25 +1370,21 @@ services:
 **Key Learnings**:
 
 1. **Component Architecture**:
-
    - Large components should be split when exceeding ~150-200 lines
    - Each component should do one thing well
    - Shared logic should be extracted to utilities
 
 2. **Payment Integration**:
-
    - Stripe supports multiple payment methods with proper configuration
    - Each method has specific requirements (client type, redirect flow, etc.)
    - Payment Request API handles Google Pay and Apple Pay
 
 3. **Data Management**:
-
    - Backend (Node.js) and frontend (Vite) have different module systems
    - Keep constants.js (CommonJS) and types.ts (ES6) separate
    - Document sync requirements and add validation tests
 
 4. **Database Operations**:
-
    - Financial transactions require atomic operations
    - MongoDB sessions ensure all-or-nothing commits
    - Always handle rollback on errors
@@ -1474,7 +1415,6 @@ services:
 **Styling Changes**:
 
 1. **Token Package Cards** (2:44-2:50 PM)
-
    - **Layout Changes**:
      - Changed from centered to left-aligned text
      - Reduced font sizes: text-2xl → text-lg, text-3xl → text-xl
@@ -1493,7 +1433,6 @@ services:
    - **File Modified**: `client/TokenPackageCard.tsx`
 
 2. **Payment Method Selector** (2:46-2:49 PM)
-
    - **Visual Fixes**:
      - Icons turn blue when selected (text-blue-600 dark:text-blue-400)
      - Removed background from selected state (only blue border)
@@ -1563,13 +1502,11 @@ custom/features/buy-tokens/
 **Problems Solved**:
 
 1. **Import Path Error** (1:23 PM)
-
    - **Issue**: `useBuyTokens.ts` using wrong import: `import store from '@librechat/client/store'`
    - **Solution**: Changed to `import store from '~/store'` (Vite path alias)
    - **File Modified**: `custom/features/buy-tokens/client/useBuyTokens.ts`
 
 2. **TypeScript Configuration** (1:24 PM)
-
    - **Issue**: ESLint couldn't process custom files - not in `client/tsconfig.json`
    - **Solution**: Added custom directory patterns to include array
    - **File Modified**: `client/tsconfig.json`
@@ -1582,7 +1519,6 @@ custom/features/buy-tokens/
      ```
 
 3. **Modal State Management** (1:27 PM)
-
    - **Issue**: Button and modal using separate `useBuyTokens()` instances = separate state
    - **Root Cause**: Each component created own `isModalOpen` state that didn't communicate
    - **Solution**: Restructured to follow LibreChat's Settings modal pattern:
@@ -1723,34 +1659,29 @@ custom/features/buy-tokens/
 - **Problem Series**: Multiple attempts to fix Vite module resolution
 
   **Attempt 1 (1:44 PM)**: Convert `constants.js` to `constants.ts`
-
   - Created TypeScript version with ES6 exports
   - Frontend worked ✅
   - Backend crashed ❌ ("Cannot find module '../shared/constants'")
   - **Issue**: Node.js cannot `require()` TypeScript files
 
   **Attempt 2 (1:48 PM)**: Maintain both .js and .ts files
-
   - Recreated `constants.js` for backend
   - Kept `constants.ts` for frontend
   - Frontend still failed ❌ (Vite resolving to .js instead of .ts)
   - **Issue**: Module resolution ambiguity
 
   **Attempt 3 (1:51 PM)**: Try explicit .ts extension
-
   - Changed imports to `'../shared/constants.ts'`
   - TypeScript error ❌: "An import path can only end with .ts when allowImportingTsExtensions enabled"
   - **Issue**: TypeScript doesn't allow .ts extensions in imports
 
   **Attempt 4 (1:52 PM)**: Create .d.ts file
-
   - Created `constants.d.ts` with type definitions
   - Updated imports to `'../shared/constants.js'`
   - Still failed ❌ (CommonJS doesn't provide named exports for Vite)
   - **Issue**: Vite expects ES6 exports, not `module.exports`
 
   **Attempt 5 (1:54 PM)**: Follow claim-tokens pattern ✅
-
   - Analyzed claim-tokens: Frontend NEVER imports from constants.js!
   - Moved `TOKEN_PACKAGES` to `types.ts`
   - Backend uses `constants.js`, frontend uses `types.ts`
@@ -1766,7 +1697,6 @@ custom/features/buy-tokens/
   ```
 
 - **Files Modified**:
-
   - `custom/features/buy-tokens/shared/types.ts` - Added TOKEN_PACKAGES and TokenPackage interface
   - `custom/features/buy-tokens/client/TokenPurchaseModal.tsx` - Import from types
   - `custom/features/buy-tokens/client/TokenPackageCard.tsx` - Import from types
@@ -1788,20 +1718,17 @@ custom/features/buy-tokens/
 **Key Learnings**:
 
 1. **Module System Conflicts**:
-
    - Vite/frontend requires ES6 exports (`export const`)
    - Node.js/backend uses CommonJS (`module.exports`)
    - Cannot mix - must keep separate files
 
 2. **Why Attempts 1-4 Failed**:
-
    - TypeScript files cannot be `require()`'d by Node.js
    - CommonJS exports don't work with Vite's ES6 module system
    - Can't use .ts extensions in TypeScript imports
    - .d.ts files don't solve runtime export format mismatch
 
 3. **Why Claim-Tokens Pattern Works**:
-
    - Clean separation: backend constants vs frontend types
    - No module system conflicts
    - Each environment gets what it needs natively
@@ -1899,7 +1826,6 @@ Documentation:
    - Follows same pattern as Claim Tokens feature
 
 2. **Payment Flow Architecture**:
-
    - User selects package → Create payment intent → Stripe processes → Webhook confirms → Tokens added
    - Webhook signature verification ensures authenticity
    - Transaction logging for audit trail
@@ -2040,28 +1966,24 @@ Documentation:
 Since this is a fresh initialization, the next steps depend entirely on what the user wants to accomplish. Common starting points might include:
 
 1. **Setup & Configuration**
-
    - Configure environment variables (.env)
    - Set up MongoDB connection
    - Configure AI provider API keys
    - Set up authentication strategy
 
 2. **Local Development Environment**
-
    - Verify Node.js version (18+)
    - Install dependencies (`npm install`)
    - Start development servers
    - Set up Docker environment (optional)
 
 3. **Feature Development**
-
    - Implement new AI provider integration
    - Add custom agent capabilities
    - Create new tool integrations
    - Enhance UI components
 
 4. **Bug Fixes & Maintenance**
-
    - Address known issues
    - Update dependencies
    - Improve error handling
@@ -2093,25 +2015,21 @@ Since this is a fresh initialization, the next steps depend entirely on what the
 ### Technical Decisions to Consider
 
 1. **Database Strategy**
-
    - MongoDB is required (configured in MONGO_URI)
    - Redis is optional but recommended for production
    - Meilisearch is optional but enhances search experience
 
 2. **Authentication Method**
-
    - Multiple strategies available (local, OAuth2, LDAP, SAML, OpenID)
    - Need to determine which to enable based on requirements
    - JWT_SECRET and JWT_REFRESH_SECRET need to be set securely
 
 3. **AI Provider Selection**
-
    - Need to determine which AI providers to enable
    - Each requires API keys
    - Cost considerations for different providers
 
 4. **Storage Backend**
-
    - Options: Firebase, S3, Azure Blob, Local filesystem
    - Local is simplest for development
    - Cloud storage recommended for production
@@ -2190,20 +2108,17 @@ Since this is a fresh initialization, the next steps depend entirely on what the
 ### Architecture Insights
 
 1. **Monorepo Benefits**
-
    - Shared types between frontend and backend prevent mismatches
    - Atomic changes across packages
    - Simplified dependency management
    - Better developer experience
 
 2. **Provider Abstraction**
-
    - Plugin-based architecture makes adding new AI providers straightforward
    - Each provider has its own client implementing common interface
    - Streaming responses handled consistently across providers
 
 3. **Agent System**
-
    - Agents are configuration layers over AI models
    - Can include tools, custom instructions, and permissions
    - Shareable with users/groups
@@ -2218,14 +2133,12 @@ Since this is a fresh initialization, the next steps depend entirely on what the
 ### Performance Considerations
 
 1. **Caching Strategy**
-
    - Redis for distributed caching (optional but recommended)
    - In-memory fallback when Redis unavailable
    - Response streaming reduces perceived latency
    - Aggressive caching with proper invalidation
 
 2. **Database Optimization**
-
    - MongoDB indexes for common queries
    - Conversation queries are read-heavy
    - Change streams for real-time updates
@@ -2240,13 +2153,11 @@ Since this is a fresh initialization, the next steps depend entirely on what the
 ### Security Patterns
 
 1. **API Key Management**
-
    - Keys encrypted at rest (CREDS_KEY/CREDS_IV)
    - Never exposed to frontend
    - Secure storage in environment variables or secrets
 
 2. **Rate Limiting**
-
    - Multiple layers: per-IP, per-user, per-endpoint
    - Violation tracking with automatic banning
    - Configurable limits and windows
@@ -2260,7 +2171,6 @@ Since this is a fresh initialization, the next steps depend entirely on what the
 ### Scalability Insights
 
 1. **Horizontal Scaling**
-
    - Stateless API servers (sessions in Redis)
    - Multiple instances behind load balancer
    - Shared MongoDB replica set
