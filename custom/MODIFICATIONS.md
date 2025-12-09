@@ -172,6 +172,76 @@ When syncing with upstream:
 
 ---
 
+## Plugins Endpoint Removal (2025-12-09)
+
+### Overview
+
+Removed the deprecated Plugins (gptPlugins) endpoint from the Model Dropdown selector. This endpoint was already marked as deprecated in LibreChat with an amber "Deprecated" badge.
+
+### Modified Files
+
+#### client/src/components/Chat/Menus/Endpoints/components/EndpointItem.tsx
+
+- **Lines**: 209-213 (added filter logic in renderEndpoints function)
+- **Reason**: Remove deprecated gptPlugins endpoint from appearing in Model Dropdown
+- **Upstream Version**: v0.8.1-rc1
+- **Impact**: Low (UI-only change, does not affect backend)
+- **Changes**:
+  - Added filter in `renderEndpoints()` function to exclude endpoints with value 'gptPlugins'
+  - Preserves all other endpoints (OpenAI, Anthropic, Google, Groq, DeepSeek, etc.)
+  - Follows same pattern as Code Interpreter removal
+- **Alternative Considered**: Backend configuration block (rejected for being overly complex and not fork-friendly)
+
+### User Impact
+
+- **Before**: Plugins endpoint appeared in Model Dropdown with amber "Deprecated" badge
+- **After**: Plugins endpoint no longer visible in Model Dropdown
+- **Other Endpoints**: All other endpoints (OpenAI, Anthropic, Google, custom endpoints) remain functional
+
+### Code Implementation
+
+```typescript
+export function renderEndpoints(mappedEndpoints: Endpoint[]) {
+  // CUSTOM: gptchina - Filter out deprecated gptPlugins endpoint
+  const filteredEndpoints = mappedEndpoints.filter((endpoint) => endpoint.value !== 'gptPlugins');
+
+  return filteredEndpoints.map((endpoint) => (
+    <EndpointItem endpoint={endpoint} key={`endpoint-${endpoint.value}-item`} />
+  ));
+}
+```
+
+### Merge Strategy
+
+When syncing with upstream:
+
+1. Check if upstream modified the `renderEndpoints()` function in EndpointItem.tsx
+2. If modified, re-apply the filter logic to the new implementation
+3. Verify the deprecated badge code (lines ~102-110) has been removed from upstream
+4. If upstream removes gptPlugins entirely, this custom modification becomes obsolete
+5. Test that Model Dropdown still displays all other endpoints correctly
+
+### Rationale
+
+- gptPlugins endpoint was already deprecated by LibreChat with a visible warning
+- Removing it from UI reduces user confusion about deprecated features
+- Simple filter approach is fork-friendly and easy to maintain
+- Follows established pattern from Code Interpreter removal
+- No backend changes needed - purely cosmetic UI improvement
+
+### Testing Checklist
+
+- [ ] Verify Plugins no longer appears in Model Dropdown
+- [ ] Verify OpenAI endpoint still works
+- [ ] Verify Anthropic endpoint still works
+- [ ] Verify Google endpoint still works
+- [ ] Verify custom endpoints (Groq, DeepSeek, etc.) still work
+- [ ] Test model selection flow works correctly
+- [ ] Test in both light and dark mode
+- [ ] Verify no console errors
+
+---
+
 ## Custom Features
 
 For documentation on custom features (Claim Tokens, Buy Tokens, Model Pricing, Split Auth Layout), see:
@@ -181,6 +251,6 @@ For documentation on custom features (Claim Tokens, Buy Tokens, Model Pricing, S
 
 ---
 
-**Last Updated**: 2025-11-10
+**Last Updated**: 2025-12-09
 **Maintainer**: gptchina fork
 **Upstream Version**: v0.8.1-rc1

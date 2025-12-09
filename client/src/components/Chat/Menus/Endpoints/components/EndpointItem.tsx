@@ -206,7 +206,12 @@ export function EndpointItem({ endpoint }: EndpointItemProps) {
 }
 
 export function renderEndpoints(mappedEndpoints: Endpoint[]) {
-  return mappedEndpoints.map((endpoint) => (
+  // CUSTOM: gptchina - Filter out deprecated gptPlugins endpoint
+  // See: custom/MODIFICATIONS.md for details
+  // Date: 2025-12-09
+  const filteredEndpoints = mappedEndpoints.filter((endpoint) => endpoint.value !== 'gptPlugins');
+
+  return filteredEndpoints.map((endpoint) => (
     <EndpointItem endpoint={endpoint} key={`endpoint-${endpoint.value}-item`} />
   ));
 }

@@ -12,6 +12,66 @@
 
 ## Recent Changes
 
+### Plugins Endpoint Removal (2025-12-09 11:11-11:13 AM)
+
+**Overview**: Removed the deprecated Plugins (gptPlugins) endpoint from the Model Dropdown selector to clean up the UI and prevent user confusion.
+
+**Problem Identified**: The Plugins endpoint was already marked as deprecated by LibreChat with an amber "Deprecated" badge, but still appeared in the Model Dropdown menu.
+
+**Solution Implemented**: Added a simple filter in the `renderEndpoints()` function to exclude the gptPlugins endpoint from the list of displayed endpoints.
+
+**Implementation**:
+
+- **File Modified**: `client/src/components/Chat/Menus/Endpoints/components/EndpointItem.tsx`
+- **Lines**: 209-213 (added filter logic)
+- **Change**:
+  ```typescript
+  export function renderEndpoints(mappedEndpoints: Endpoint[]) {
+    // CUSTOM: gptchina - Filter out deprecated gptPlugins endpoint
+    const filteredEndpoints = mappedEndpoints.filter((endpoint) => endpoint.value !== 'gptPlugins');
+
+    return filteredEndpoints.map((endpoint) => (
+      <EndpointItem endpoint={endpoint} key={`endpoint-${endpoint.value}-item`} />
+    ));
+  }
+  ```
+
+**User Impact**:
+
+- **Before**: Plugins endpoint appeared in Model Dropdown with amber "Deprecated" badge
+- **After**: Plugins endpoint no longer visible in Model Dropdown
+- **Other Endpoints**: All other endpoints (OpenAI, Anthropic, Google, custom endpoints) remain functional
+
+**Key Technical Decisions**:
+
+- Followed same pattern as Code Interpreter removal
+- Minimal upstream impact (only 5 lines added to 1 file)
+- Fork-friendly approach with clear documentation
+- No backend changes needed - purely UI improvement
+
+**Documentation Updated**:
+
+- Added entry to `custom/MODIFICATIONS.md`
+- Documented merge strategy for upstream syncs
+- Created testing checklist
+
+**Current Status**:
+
+- ✅ Code change implemented
+- ✅ Documentation updated
+- ✅ Fork-friendly markers added
+- ⏳ Ready for testing (requires dev server restart)
+
+**Testing Checklist**:
+
+- [ ] Restart dev server
+- [ ] Verify Plugins no longer appears in Model Dropdown
+- [ ] Verify all other endpoints still work (OpenAI, Anthropic, Google, custom)
+- [ ] Test model selection flow
+- [ ] Test in both light and dark mode
+
+---
+
 ### Model Pricing Data Fix (2025-12-09 10:52-10:57 AM)
 
 **Overview**: Fixed missing pricing data for Perplexity and DeepSeek models, and resolved critical lookup bug preventing DeepSeek pricing from displaying on landing page.
