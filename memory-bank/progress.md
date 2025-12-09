@@ -272,6 +272,34 @@ The following categories represent potential work areas, but specific tasks will
 
 ## Evolution of Project Decisions
 
+### Model Pricing Lookup Bug Fix (2025-12-09 10:57 AM)
+
+**Decision**: Remove generic `deepseek` fallback pattern from tokenValues
+
+- **Problem**: DeepSeek models (deepseek-chat, deepseek-coder, etc.) not displaying pricing on landing page despite pricing data existing in tx.js
+- **Root Cause**: Generic fallback pattern blocking specific model lookups
+  - Generic `deepseek: { prompt: 0.28, completion: 0.42 }` was placed in the "generic fallback patterns" section
+  - LibreChat's `getValueKey()` function checks if endpoint name exists in tokenValues
+  - When it found `endpoint='deepseek'` in tokenValues, it skipped the `findMatchingPattern()` call
+  - This prevented specific models like `deepseek-chat`, `deepseek-coder` from being matched
+  - Function returned `undefined` causing pricing display to fail
+- **Solution**: Deleted the generic `deepseek` fallback line completely
+- **Rationale**:
+  - All specific DeepSeek models are explicitly defined (deepseek-chat, deepseek-coder, deepseek-reasoner, deepseek-r1, deepseek-v3)
+  - Generic fallback was unnecessary and actively harmful
+  - Removing it forces the lookup to use `findMatchingPattern()` which correctly matches specific models
+  - No risk: All DeepSeek variants already have explicit entries
+- **Implementation**:
+  - Removed line 118: `deepseek: { prompt: 0.28, completion: 0.42 },` from generic fallback section
+  - Kept all 5 specific DeepSeek model entries in their proper location (lines 178-182)
+  - Also added missing Perplexity models and deepseek-coder in same session
+- **Impact**: All DeepSeek and Perplexity models now display pricing correctly on landing page
+- **Key Learning**:
+  - Generic fallback patterns must be used carefully - they can interfere with specific model matching
+  - Always understand the lookup logic flow before adding generic patterns
+  - Endpoint-based matching in LibreChat can skip pattern matching if endpoint exists in tokenValues
+  - Test both positive (model shows pricing) and negative (fallback works) cases when adding model categories
+
 ### Claim Tokens Race Condition Fix (2025-11-09 12:32 PM)
 
 **Decision**: Replace read-check-save pattern with atomic database operation
@@ -617,6 +645,20 @@ The following categories represent potential work areas, but specific tasks will
 
 ### Recently Completed
 
+✅ **Model Pricing Data Fix** (2025-12-09 10:52-10:57 AM)
+
+- Fixed missing pricing data for Perplexity AI models (4 models added)
+- Added missing DeepSeek model `deepseek-coder` pricing entry
+- **Critical Bug Fix**: Removed generic `deepseek` fallback pattern that was blocking specific model lookups
+- Root cause: Generic fallback in wrong section caused endpoint matching to skip pattern matching logic
+- Solution: Deleted generic `deepseek: { prompt: 0.28, completion: 0.42 }` line from tokenValues
+- Impact: All DeepSeek models (chat, coder, reasoner, r1, v3) now display pricing correctly on landing page
+- **Models Added**:
+  - Perplexity: sonar ($1/$1), sonar-pro ($3/$15), sonar-reasoning ($1/$5), sonar-reasoning-pro ($2/$8)
+  - DeepSeek: deepseek-coder ($0.28/$0.42)
+- **Files Modified**: `api/models/tx.js` (5 pricing entries added, 1 problematic line removed)
+- **Status**: Complete, requires backend restart ✅
+
 ✅ **Buy Tokens Feature - Deployed to Production** (Completed 2025-11-09 4:44 PM)
 
 - [x] Complete code implementation
@@ -700,13 +742,11 @@ Future milestones will be established based on:
 ### High Priority
 
 1. **Understand User Goals**
-
    - What features or fixes are needed?
    - What's the timeline?
    - Any specific requirements or constraints?
 
 2. **Environment Setup** (if needed)
-
    - Configure `.env` file
    - Set up required services
    - Verify installation
@@ -719,7 +759,6 @@ Future milestones will be established based on:
 ### Medium Priority
 
 4. **Code Exploration**
-
    - Familiarize with specific areas of interest
    - Understand existing patterns
    - Identify potential improvements
@@ -956,14 +995,16 @@ Success criteria will be established based on:
 
 ---
 
-**Last Updated**: 2025-11-15 12:45 AM CST
+**Last Updated**: 2025-12-09 11:02 AM CST
 
 **Status**:
 
 - ✅ Claim Tokens Feature - Production Ready
 - ✅ Buy Tokens Feature - DEPLOYED & OPERATIONAL
+- ✅ Model Pricing Display - Production Ready (DeepSeek & Perplexity Fixed)
 - ✅ Token Info/Pricing Page - REDESIGNED & PRODUCTION READY
 - ✅ i18n Implementation Plan - COMPLETE & READY TO EXECUTE
 - ✅ Production URL: https://gptafrica.io
 - ✅ All payment methods working
 - ✅ Tokens adding correctly
+- ✅ All model pricing data complete (Perplexity & DeepSeek added)

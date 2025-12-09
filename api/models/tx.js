@@ -96,7 +96,6 @@ const tokenValues = Object.assign(
     '16k': { prompt: 3, completion: 4 },
     // Generic fallback patterns (check LAST)
     'claude-': { prompt: 0.8, completion: 2.4 },
-    deepseek: { prompt: 0.28, completion: 0.42 },
     command: { prompt: 0.38, completion: 0.38 },
     gemma: { prompt: 0.02, completion: 0.04 }, // Base pattern (using gemma-3n-e4b pricing)
     gemini: { prompt: 0.5, completion: 1.5 },
@@ -122,6 +121,11 @@ const tokenValues = Object.assign(
     o3: { prompt: 2, completion: 8 },
     'o3-mini': { prompt: 1.1, completion: 4.4 },
     'o4-mini': { prompt: 1.1, completion: 4.4 },
+    // Perplexity AI models
+    sonar: { prompt: 1, completion: 1 },
+    'sonar-pro': { prompt: 3, completion: 15 },
+    'sonar-reasoning': { prompt: 1, completion: 5 },
+    'sonar-reasoning-pro': { prompt: 2, completion: 8 },
     'claude-instant': { prompt: 0.8, completion: 2.4 },
     'claude-2': { prompt: 8, completion: 24 },
     'claude-2.1': { prompt: 8, completion: 24 },
@@ -142,6 +146,7 @@ const tokenValues = Object.assign(
     'command-r-plus': { prompt: 3, completion: 15 },
     'command-text': { prompt: 1.5, completion: 2.0 },
     'deepseek-chat': { prompt: 0.28, completion: 0.42 },
+    'deepseek-coder': { prompt: 0.28, completion: 0.42 },
     'deepseek-reasoner': { prompt: 0.28, completion: 0.42 },
     'deepseek-r1': { prompt: 0.4, completion: 2.0 },
     'deepseek-v3': { prompt: 0.2, completion: 0.8 },

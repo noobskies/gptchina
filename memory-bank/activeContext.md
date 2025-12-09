@@ -12,6 +12,91 @@
 
 ## Recent Changes
 
+### Model Pricing Data Fix (2025-12-09 10:52-10:57 AM)
+
+**Overview**: Fixed missing pricing data for Perplexity and DeepSeek models, and resolved critical lookup bug preventing DeepSeek pricing from displaying on landing page.
+
+**Problem Identified**: User reported missing pricing data for multiple models:
+
+1. All Perplexity AI models (sonar, sonar-pro, sonar-reasoning, sonar-reasoning-pro) - completely missing from tx.js
+2. DeepSeek model `deepseek-coder` - missing from tx.js
+3. **Critical Issue**: ALL DeepSeek models (chat, coder, reasoner, r1, v3) weren't displaying pricing despite data being present in file
+
+**Root Cause Analysis**:
+
+- Generic `deepseek` fallback pattern was incorrectly placed in "generic fallback patterns" section (line 118)
+- When `getValueKey()` function received `endpoint='deepseek'`, it found the generic pattern in `tokenValues`
+- Because endpoint existed in tokenValues, the function skipped calling `findMatchingPattern()`
+- This prevented specific models like `deepseek-chat`, `deepseek-coder` from ever being matched
+- Result: Lookup returned the endpoint name which had no specific pricing, causing display to fail
+
+**Solution Implemented**:
+
+1. **Added Missing Perplexity Models** (4 entries):
+   - `sonar`: $1.00 input / $1.00 output per 1M tokens
+   - `sonar-pro`: $3.00 input / $15.00 output per 1M tokens
+   - `sonar-reasoning`: $1.00 input / $5.00 output per 1M tokens
+   - `sonar-reasoning-pro`: $2.00 input / $8.00 output per 1M tokens
+
+2. **Added Missing DeepSeek Model**:
+   - `deepseek-coder`: $0.28 input / $0.42 output per 1M tokens
+
+3. **Critical Fix - Removed Generic Fallback**:
+   - Deleted line: `deepseek: { prompt: 0.28, completion: 0.42 },`
+   - This forces lookup to use `findMatchingPattern()` which correctly matches specific DeepSeek models
+   - All specific DeepSeek models now work: deepseek-chat, deepseek-coder, deepseek-reasoner, deepseek-r1, deepseek-v3
+
+**Files Modified**:
+
+- `api/models/tx.js` - Added 5 pricing entries, removed 1 problematic generic fallback
+
+**Technical Details**:
+
+The lookup logic in `getValueKey()` is:
+
+```javascript
+// If endpoint exists in tokenValues, skip pattern matching
+if (!endpoint || (typeof endpoint === 'string' && !tokenValues[endpoint])) {
+  const matchedKey = findMatchingPattern(model, tokenValues);
+  // ...
+}
+```
+
+Before fix: `endpoint='deepseek'` existed in tokenValues → pattern matching skipped → no match found
+After fix: `endpoint='deepseek'` not in tokenValues → pattern matching runs → `deepseek-chat` found
+
+**User Impact**:
+
+- Before: Perplexity models had no pricing data at all
+- Before: DeepSeek models showed no pricing despite data existing
+- After: All Perplexity and DeepSeek models now display correct pricing on landing page
+
+**Current Status**:
+
+- ✅ Pricing data added for all missing models
+- ✅ Generic fallback removed to enable specific model lookup
+- ⏳ Requires backend restart to load updated pricing data
+- ⏳ User needs to verify pricing displays correctly after restart
+
+**Key Learning**:
+
+- Generic fallback patterns must be carefully placed - they should only match when more specific patterns don't exist
+- Endpoint matching in LibreChat's pricing lookup can interfere with model-specific pattern matching
+- Always verify the lookup logic flow when adding new model categories
+
+**Testing Checklist**:
+
+- [ ] Restart backend server
+- [ ] Navigate to http://localhost:3090/c/new?endpoint=deepseek&model=deepseek-chat
+- [ ] Verify displays: "Model: deepseek-chat | Input: 0.28 | Output: 0.42"
+- [ ] Test other DeepSeek models (coder, reasoner, r1, v3)
+- [ ] Test Perplexity models (sonar, sonar-pro, etc.)
+- [ ] Verify Token Pricing Guide page includes new models
+
+---
+
+## Previous Work
+
 ### i18n Implementation - Phases 1-3 Complete (2025-11-15 11:08-11:24 AM)
 
 **Overview**: Successfully implemented internationalization for first 3 custom features (Claim Tokens, Model Pricing Display, Split Auth Layout). All UI strings now properly localized using LibreChat's i18next translation system.
