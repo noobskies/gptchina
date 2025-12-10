@@ -50,17 +50,25 @@ export default function Header() {
                 transition={{ duration: 0.2 }}
                 key="header-buttons"
               >
-                <OpenSidebar setNavVisible={setNavVisible} className="max-md:hidden" />
+                <div data-tour="mobile-nav-toggle">
+                  <OpenSidebar setNavVisible={setNavVisible} className="max-md:hidden" />
+                </div>
                 <HeaderNewChat />
               </motion.div>
             )}
           </AnimatePresence>
 
           <div className={navVisible ? 'flex items-center gap-2' : 'ml-2 flex items-center gap-2'}>
-            <ModelSelector startupConfig={startupConfig} />
+            <div data-tour="model-selector">
+              <ModelSelector startupConfig={startupConfig} />
+            </div>
             {interfaceConfig.presets === true && interfaceConfig.modelSelect && <PresetsMenu />}
             {hasAccessToBookmarks === true && <BookmarkMenu />}
-            {hasAccessToMultiConvo === true && <AddMultiConvo />}
+            {hasAccessToMultiConvo === true && (
+              <div data-tour="compare-mode">
+                <AddMultiConvo />
+              </div>
+            )}
             {isSmallScreen && (
               <>
                 <ExportAndShareMenu

@@ -363,13 +363,13 @@ function BadgeRow({
           </div>
         )}
         {showEphemeralBadges === true && (
-          <>
+          <div data-tour="input-tools" className="contents">
             <WebSearch />
             <CodeInterpreter />
             <FileSearch />
             <Artifacts />
             <MCPSelect />
-          </>
+          </div>
         )}
         {ghostBadge && (
           <div

@@ -221,6 +221,7 @@ const Nav = memo(
                 <div className="flex h-full flex-col">
                   <nav
                     id="chat-history-nav"
+                    data-tour="side-panel"
                     aria-label={localize('com_ui_chat_history')}
                     className="flex h-full flex-col px-2 pb-3.5 md:px-3"
                   >

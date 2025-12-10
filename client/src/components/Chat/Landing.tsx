@@ -212,7 +212,10 @@ export default function Landing({ centerFormOnLanding }: { centerFormOnLanding: 
         </div>
         {/* CUSTOM: gptchina - Display model pricing */}
         {conversation?.model && pricing && (
-          <div className="animate-fadeIn mt-4 flex flex-col items-center gap-1 text-center text-sm text-text-secondary">
+          <div
+            data-tour="token-rates"
+            className="animate-fadeIn mt-4 flex flex-col items-center gap-1 text-center text-sm text-text-secondary"
+          >
             <div className="font-medium">
               {(localize as any)('com_custom_pricing_display_model')} {conversation.model}
             </div>

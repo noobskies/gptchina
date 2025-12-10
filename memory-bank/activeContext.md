@@ -2,24 +2,77 @@
 
 ## Current Work Focus
 
-**Status**: Terms of Service Complete ✅
+**Status**: Product Tour Complete ✅
 
 **Active Task**: None - Ready for next feature
 
-**Recently Completed**: Terms of Service page implementation with full i18n
+**Recently Completed**: Interactive product tour with React Joyride (6-step onboarding)
 
 **Priority Tasks**:
 
-1. Test Terms of Service in production
-2. Consider adding footer links to Privacy Policy and Terms of Service
-3. Complete i18n Phase 5 (Token Info/Pricing page)
-4. Token Usage Guide design improvements (optional)
+1. Test Product Tour in production with first-time users
+2. Complete i18n Phase 5 (Token Info/Pricing page - final ~125-140 strings)
+3. Test Terms of Service and Privacy Policy in production
+4. Consider adding footer links to legal pages
 
-**Key Objective**: All core legal/informational pages now complete with i18n support.
+**Key Objective**: Onboarding experience complete, i18n 83% done (293/337-352 strings).
 
 ---
 
 ## Recent Changes (Last 7 Days)
+
+### Product Tour Feature (2025-12-10 Afternoon)
+
+**What**: Interactive 6-step product tour for first-time users using React Joyride
+
+**Files Created**:
+
+- `custom/features/product-tour/client/types.ts`
+- `custom/features/product-tour/client/useTourState.ts`
+- `custom/features/product-tour/client/tourStyles.ts`
+- `custom/features/product-tour/client/tourSteps.ts`
+- `custom/features/product-tour/client/WelcomeModal.tsx`
+- `custom/features/product-tour/client/ProductTour.tsx`
+- `custom/features/product-tour/client/ProductTourProvider.tsx`
+- `custom/features/product-tour/client/index.tsx`
+- `custom/features/product-tour/README.md`
+
+**Files Modified**:
+
+- `client/src/App.jsx` - Wrapped RouterProvider with ProductTourProvider
+- `client/src/components/Chat/Header.tsx` - Added data-tour attributes to ModelSelector, AddMultiConvo, OpenSidebar
+- `client/src/components/Chat/Landing.tsx` - Added data-tour="token-rates" to pricing display
+- `client/src/components/Chat/Input/BadgeRow.tsx` - Added data-tour="input-tools" wrapper
+- `client/src/components/Nav/Nav.tsx` - Added data-tour="side-panel" to nav
+- `client/src/locales/en/translation.json` - Added 18 English keys
+- `client/src/locales/zh-Hans/translation.json` - Added 18 Chinese keys
+- `package.json` - Added react-joyride@^2.8.2 dependency
+
+**Features**:
+
+- Welcome modal (Step 0) introduces GPT China platform
+- Step 1: Model Selection - Teaches provider switching and model selection
+- Step 2: Compare Mode - Explains side-by-side model comparison with (+) button
+- Step 3: Token Usage Rates - Shows Input/Output cost display
+- Step 4: Enhanced Capabilities - Highlights attachment and artifacts tools
+- Step 5: Side Panel - Explains Files, Bookmarks, Memory, Agents, Prompts, Parameters
+- localStorage-based state (shows once per user)
+- Full i18n support (18 keys English + Simplified Chinese)
+- Theme-aware (light/dark mode)
+- Mobile responsive (adaptive step targeting and content)
+
+**Status**: ✅ Complete, ⚠️ Styling fixes applied (spotlight visibility issue resolved)
+
+**Technical Details**:
+
+- React Joyride library integration (~85KB bundle)
+- localStorage keys: `gptchina:tour:completed`, `gptchina:tour:dismissed`, `gptchina:tour:current-step`
+- Modern styling: gradient buttons, shadows, 420px tooltip width, 24px padding
+- Minimal upstream impact: only data attributes + provider wrapper
+
+**Next**: Test with first-time users in production, consider analytics tracking
+
+---
 
 ### Terms of Service Feature (2025-12-10 Afternoon)
 
@@ -345,8 +398,8 @@
 
 ---
 
-**Last Updated**: 2025-12-10 11:46 AM CST
+**Last Updated**: 2025-12-10 12:42 PM CST
 
-**Current Focus**: Terms of Service complete - ready for next feature
+**Current Focus**: Product Tour complete - onboarding experience ready
 
 **Production Status**: All features deployed and operational on https://gptchina.io

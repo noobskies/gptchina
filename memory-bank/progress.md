@@ -64,14 +64,24 @@
    - Route: `/terms-of-service`
    - ⚠️ Requires legal review before production
 
-9. **i18n Support (Partial)** 🚧 IN PROGRESS
-   - ✅ Phases 1-4 Complete (69 strings)
-   - ✅ Token Usage Guide (64 strings)
-   - ✅ Privacy Policy (70 strings)
-   - ✅ Terms of Service (72 strings)
-   - ⏳ Phase 5 Pending (~125-140 strings for Token Info/Pricing)
-   - English + Simplified Chinese (zh-Hans)
-   - **Total Progress**: 275/337-352 strings (81-82%)
+9. **Product Tour** ✅ DEPLOYED
+   - Interactive 6-step onboarding walkthrough using React Joyride
+   - Welcome modal + 5 guided steps (Model Selection, Compare Mode, Token Rates, Input Tools, Side Panel)
+   - localStorage-based state (shows once per user)
+   - Full i18n (18 keys English + Chinese)
+   - Theme-aware styling with gradient buttons and modern tooltips
+   - Mobile responsive with adaptive step targeting
+   - Minimal upstream impact (data attributes only)
+
+10. **i18n Support (Partial)** 🚧 IN PROGRESS
+    - ✅ Phases 1-4 Complete (69 strings)
+    - ✅ Token Usage Guide (64 strings)
+    - ✅ Privacy Policy (70 strings)
+    - ✅ Terms of Service (72 strings)
+    - ✅ Product Tour (18 strings)
+    - ⏳ Phase 5 Pending (~125-140 strings for Token Info/Pricing)
+    - English + Simplified Chinese (zh-Hans)
+    - **Total Progress**: 293/337-352 strings (83-87%)
 
 ---
 
@@ -204,6 +214,16 @@ await Balance.findOneAndUpdate(
 
 ## Milestones
 
+### 2025-12-10 (Afternoon - Late)
+
+- ✅ Product Tour: Interactive onboarding complete
+- ✅ React Joyride integration (~85KB bundle)
+- ✅ 18 translation keys added (English + Chinese)
+- ✅ 6-step walkthrough (welcome + 5 guided steps)
+- ✅ localStorage state management (shows once per user)
+- ✅ Styling fixes applied (spotlight visibility resolved)
+- ✅ Mobile responsive with adaptive targeting
+
 ### 2025-12-10 (Afternoon)
 
 - ✅ Terms of Service: Complete implementation with full i18n
@@ -258,10 +278,11 @@ await Balance.findOneAndUpdate(
 
 ### Current Status
 
-- **Custom Features**: 8 deployed, 1 in progress (i18n Phase 5)
+- **Custom Features**: 9 deployed, 1 in progress (i18n Phase 5)
 - **Production Uptime**: All features operational on https://gptchina.io
 - **Fork Maintenance**: Clean architecture, documented modifications
-- **i18n Progress**: 81-82% complete (275/337-352 strings including Terms of Service)
+- **i18n Progress**: 83-87% complete (293/337-352 strings including Product Tour)
+- **Onboarding**: Product Tour ready for first-time users
 
 ### Quality Indicators
 
@@ -269,6 +290,7 @@ await Balance.findOneAndUpdate(
 - ✅ All payment methods functional
 - ✅ Atomic operations prevent data corruption
 - ✅ Fork-friendly patterns maintained throughout
+- ✅ Modern onboarding experience implemented
 
 ---
 
@@ -276,6 +298,7 @@ await Balance.findOneAndUpdate(
 
 ### Testing Checklist (Pending)
 
+- [ ] Test Product Tour with first-time users
 - [ ] Restart backend server
 - [ ] Verify email template branding ("GPT China" only)
 - [ ] Test email light theme in multiple clients
@@ -284,12 +307,15 @@ await Balance.findOneAndUpdate(
 
 ### Next Session Priorities
 
-1. Execute testing checklist above
-2. Begin i18n Phase 5 implementation
-3. Update memory bank after Phase 5 complete
+1. Test Product Tour in production
+2. Execute testing checklist above
+3. Begin i18n Phase 5 implementation
+4. Update memory bank after Phase 5 complete
 
 ---
 
-**Current Focus**: Memory bank cleanup complete, ready for i18n Phase 5
+**Current Focus**: Product Tour complete - onboarding ready for users
 
 **Team Status**: Solo development, relying on Memory Bank for context preservation
+
+**Last Updated**: 2025-12-10 12:44 PM CST
