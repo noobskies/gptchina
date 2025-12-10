@@ -10,6 +10,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useAuthContext } from '~/hooks';
 import { useTourState } from './useTourState';
 import { WelcomeModal } from './WelcomeModal';
 import { ProductTour } from './ProductTour';
@@ -19,6 +20,7 @@ interface ProductTourProviderProps {
 }
 
 export const ProductTourProvider: React.FC<ProductTourProviderProps> = ({ children }) => {
+  const { isAuthenticated } = useAuthContext();
   const {
     shouldShowTour,
     startTour: startTourState,
@@ -29,9 +31,9 @@ export const ProductTourProvider: React.FC<ProductTourProviderProps> = ({ childr
   const [showWelcome, setShowWelcome] = useState(false);
   const [runTour, setRunTour] = useState(false);
 
-  // Show welcome modal on mount if tour should be shown
+  // Show welcome modal on mount if tour should be shown AND user is authenticated
   useEffect(() => {
-    if (shouldShowTour) {
+    if (shouldShowTour && isAuthenticated) {
       // Small delay to let the page load first
       const timer = setTimeout(() => {
         setShowWelcome(true);
@@ -39,7 +41,7 @@ export const ProductTourProvider: React.FC<ProductTourProviderProps> = ({ childr
 
       return () => clearTimeout(timer);
     }
-  }, [shouldShowTour]);
+  }, [shouldShowTour, isAuthenticated]);
 
   const handleStartTour = () => {
     setShowWelcome(false);
@@ -64,7 +66,7 @@ export const ProductTourProvider: React.FC<ProductTourProviderProps> = ({ childr
   return (
     <>
       {children}
-      {shouldShowTour && (
+      {shouldShowTour && isAuthenticated && (
         <>
           <WelcomeModal
             isOpen={showWelcome}

@@ -13,8 +13,6 @@ import { getThemeFromEnv } from './utils/getThemeFromEnv';
 import { initializeFontSize } from '~/store/fontSize';
 import { LiveAnnouncer } from '~/a11y';
 import { router } from './routes';
-// CUSTOM: gptchina - Product Tour feature
-import { ProductTourProvider } from '@custom/features/product-tour/client';
 
 const App = () => {
   const { setError } = useApiErrorBoundary();
@@ -53,10 +51,7 @@ const App = () => {
             <RadixToast.Provider>
               <ToastProvider>
                 <DndProvider backend={HTML5Backend}>
-                  {/* CUSTOM: gptchina - Product Tour integration */}
-                  <ProductTourProvider>
-                    <RouterProvider router={router} />
-                  </ProductTourProvider>
+                  <RouterProvider router={router} />
                   <WakeLockManager />
                   <ReactQueryDevtools initialIsOpen={false} position="top-right" />
                   <Toast />

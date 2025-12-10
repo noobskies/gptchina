@@ -28,6 +28,8 @@ import { TokenUsageGuidePage } from '@custom/features/token-usage-guide/client';
 import { PrivacyPolicyPage } from '@custom/features/privacy-policy/client';
 // CUSTOM: gptchina - Terms of Service
 import { TermsOfServicePage } from '@custom/features/terms-of-service/client';
+// CUSTOM: gptchina - Product Tour
+import { ProductTourProvider } from '@custom/features/product-tour/client';
 
 const AuthLayout = () => (
   <AuthContextProvider>
@@ -125,7 +127,11 @@ export const router = createBrowserRouter(
         dashboardRoutes,
         {
           path: '/',
-          element: <Root />,
+          element: (
+            <ProductTourProvider>
+              <Root />
+            </ProductTourProvider>
+          ),
           children: [
             {
               index: true,

@@ -62,7 +62,15 @@ export const ProductTour: React.FC<ProductTourProps> = ({ run, onComplete, onSki
       disableCloseOnEsc={false}
       hideCloseButton={false}
       scrollToFirstStep
-      scrollOffset={100}
+      scrollOffset={200}
+      floaterProps={{
+        disableAnimation: false,
+        styles: {
+          floater: {
+            filter: 'none',
+          },
+        },
+      }}
       styles={styles}
       locale={locale}
       callback={handleJoyrideCallback}

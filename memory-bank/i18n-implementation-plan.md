@@ -502,15 +502,16 @@ const localize = useLocalize();
 | 5     | Token Info/Pricing    | ⚪ Not Started | 0%       | -                |
 | 6     | Privacy Policy        | 🟢 Complete    | 100%     | 2025-12-10 11:22 |
 | 7     | Terms of Service      | 🟢 Complete    | 100%     | 2025-12-10 11:46 |
+| 8     | Product Tour          | 🟢 Complete    | 100%     | 2025-12-10 12:42 |
 
 **Legend**: 🟢 Complete | 🟡 In Progress | ⚪ Not Started | 🔴 Blocked
 
 ### Completion Metrics
 
-- **Translation Keys Created**: 275 / ~337-352 (81-82%)
-- **Chinese Translations Added**: 275 / ~337-352 (81-82%)
-- **Components Updated**: ~21 / ~48 (44%)
-- **Features Completed**: 6 / 7 (86%)
+- **Translation Keys Created**: 293 / ~337-352 (83-87%)
+- **Chinese Translations Added**: 293 / ~337-352 (83-87%)
+- **Components Updated**: ~29 / ~48 (60%)
+- **Features Completed**: 7 / 8 (88%)
 
 ---
 
@@ -613,6 +614,72 @@ Comprehensive terms of service with sections for:
 
 ---
 
-**Last Updated**: 2025-12-10 11:47 AM CST  
+---
+
+## Phase 8: Product Tour (BONUS #3)
+
+### Status: 🟢 COMPLETE (2025-12-10 12:30-12:42 PM)
+
+**Note**: This feature was added outside the original 5-phase plan but follows the same i18n patterns and conventions.
+
+### Translation Keys Required (18 keys)
+
+Interactive product tour with sections for:
+
+- **Welcome Modal**: Title, body text, start button (3 keys)
+- **Tour Steps**: Titles and body text for 5 steps (11 keys)
+- **Button Labels**: Back, Next, Skip, Close, Finish (5 keys)
+
+### Files Created
+
+1. `custom/features/product-tour/client/types.ts` - TypeScript interfaces
+2. `custom/features/product-tour/client/useTourState.ts` - localStorage state management
+3. `custom/features/product-tour/client/tourStyles.ts` - Theme-aware Joyride styling
+4. `custom/features/product-tour/client/tourSteps.ts` - Step definitions with i18n
+5. `custom/features/product-tour/client/WelcomeModal.tsx` - Welcome modal component
+6. `custom/features/product-tour/client/ProductTour.tsx` - Main Joyride component
+7. `custom/features/product-tour/client/ProductTourProvider.tsx` - Tour orchestration
+8. `custom/features/product-tour/client/index.tsx` - Barrel export
+9. `custom/features/product-tour/README.md` - Feature documentation
+
+### Files Modified
+
+1. `client/src/App.jsx` - Wrapped RouterProvider with ProductTourProvider
+2. `client/src/components/Chat/Header.tsx` - Added data-tour attributes
+3. `client/src/components/Chat/Landing.tsx` - Added data-tour attribute
+4. `client/src/components/Chat/Input/BadgeRow.tsx` - Added data-tour wrapper
+5. `client/src/components/Nav/Nav.tsx` - Added data-tour attribute
+6. `client/src/locales/en/translation.json` - Added 18 English keys
+7. `client/src/locales/zh-Hans/translation.json` - Added 18 Chinese keys
+8. `package.json` - Added react-joyride@^2.8.2 dependency
+
+### Implementation Checklist
+
+- [x] Create all 8 tour components
+- [x] Add 18 English translation keys
+- [x] Add 18 Chinese translation keys
+- [x] Add data-tour attributes to target elements
+- [x] Integrate ProductTourProvider into app
+- [x] Create README documentation
+- [x] Fix styling issues (tooltip design, gradient buttons)
+- [x] Fix spotlight visibility bug (removed conflicting shadows)
+- [x] Test theme switching (light/dark mode)
+- [x] Test mobile responsive behavior
+
+**Completion Notes**:
+
+- Added 18 translation keys total (welcome modal, 5 steps, 5 button labels)
+- React Joyride library integration (~85KB minified)
+- localStorage-based state management (shows once per user)
+- Modern styling: 420px tooltips, gradient buttons, 24px padding, dramatic shadows
+- Spotlight visibility fixed (removed conflicting overlay/shadow styles)
+- Mobile responsive with adaptive step targeting (toggle button vs panel)
+- Theme-aware using LibreChat's ThemeContext
+- Zero upstream modifications (except provider wrapper + data attributes)
+- Fork-friendly: all code isolated in `custom/features/product-tour/`
+
+---
+
+**Last Updated**: 2025-12-10 12:44 PM CST  
 **Next Action**: Complete Phase 5 - Token Info/Pricing page (final ~125-140 strings)  
-**Status**: Phases 1-4, 6-7 Complete ✅ (275 strings translated, 81-82% done)
+**Status**: Phases 1-4, 6-8 Complete ✅ (293 strings translated, 83-87% done)
