@@ -3,7 +3,7 @@
  *
  * Feature: Buy Tokens (Stripe Integration)
  * Created: 2025-11-09
- * Updated: 2025-11-09 - Added payment method types, single source of truth for TOKEN_PACKAGES
+ * Updated: 2025-12-10 - New pricing tiers with clean, transparent pricing
  * Upstream Impact: None (standalone module)
  *
  * Shared TypeScript types and data for the Buy Tokens feature.
@@ -38,43 +38,44 @@ export const PAYMENT_METHODS = {
 /**
  * Token package definitions
  * All prices in cents (CNY)
+ * Updated: 2025-12-10 - New pricing tiers with clean, transparent pricing
  */
 export const TOKEN_PACKAGES: TokenPackage[] = [
   {
-    id: 'package_100k',
-    tokens: 100000,
+    id: 'package_250k',
+    tokens: 250000,
     price: 1000, // ¥10.00
     originalPrice: null,
     discount: null,
     popular: false,
-    label: '100K Tokens',
+    label: '250K Tokens',
   },
   {
-    id: 'package_500k',
-    tokens: 500000,
-    price: 3500, // ¥35.00
-    originalPrice: 5000, // ¥50.00
-    discount: 30,
+    id: 'package_2_5m',
+    tokens: 2500000,
+    price: 5000, // ¥50.00
+    originalPrice: null,
+    discount: null,
     popular: true,
-    label: '500K Tokens',
-  },
-  {
-    id: 'package_1m',
-    tokens: 1000000,
-    price: 5500, // ¥55.00
-    originalPrice: 10000, // ¥100.00
-    discount: 45,
-    popular: false,
-    label: '1M Tokens',
+    label: '2.5M Tokens',
   },
   {
     id: 'package_10m',
     tokens: 10000000,
-    price: 28000, // ¥280.00
-    originalPrice: 100000, // ¥1000.00
-    discount: 72,
+    price: 15000, // ¥150.00
+    originalPrice: null,
+    discount: null,
     popular: false,
     label: '10M Tokens',
+  },
+  {
+    id: 'package_20m',
+    tokens: 20000000,
+    price: 28000, // ¥280.00
+    originalPrice: null,
+    discount: null,
+    popular: false,
+    label: '20M Tokens',
   },
 ];
 
