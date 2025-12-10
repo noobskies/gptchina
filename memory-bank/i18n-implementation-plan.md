@@ -5,8 +5,8 @@
 **Target Languages**: English (en) + Simplified Chinese (zh-Hans)  
 **Approach**: Feature-by-feature implementation  
 **Created**: 2025-11-15 12:32 AM  
-**Last Updated**: 2025-11-15 11:27 AM  
-**Status**: IN PROGRESS - Phases 1-3 Complete (12-13% done)
+**Last Updated**: 2025-12-10 11:24 AM  
+**Status**: IN PROGRESS - Phases 1-4, 6 Complete (76-77% done)
 
 ---
 
@@ -34,7 +34,8 @@ This document tracks the complete internationalization effort for all custom fea
 | Split Auth Layout     | ~15      | 3        | Medium     | 2-3             |
 | Buy Tokens            | ~40      | 4        | Medium     | 4-5             |
 | Token Info/Pricing    | ~100     | 5        | High       | 8-10            |
-| **TOTAL**             | **~163** | -        | -          | **16-21**       |
+| Privacy Policy        | ~70      | 6        | Medium     | 3-4             |
+| **TOTAL**             | **~233** | -        | -          | **19-25**       |
 
 ---
 
@@ -407,6 +408,66 @@ All components in `custom/features/token-info/client/`:
 
 ---
 
+## Phase 6: Privacy Policy (BONUS)
+
+### Status: 🟢 COMPLETE (2025-12-10 11:10-11:22 AM)
+
+**Note**: This feature was added outside the original 5-phase plan but follows the same i18n patterns and conventions.
+
+### Translation Keys Required (70 keys)
+
+Comprehensive privacy policy with sections for:
+
+- **Title & Introduction**: Policy overview and commitment
+- **Information We Collect**: Account info, usage data, technical data (12 keys)
+- **How We Use Your Data**: Service provision, improvements, communication, security, legal (10 keys)
+- **Data Storage & Security**: Encryption, servers, access controls, monitoring (6 keys)
+- **Third-Party Services**: AI providers (OpenAI, Anthropic, Google), Stripe payments (8 keys)
+- **Your Rights**: Access, correction, deletion, export, opt-out (GDPR-compliant) (10 keys)
+- **Cookies & Tracking**: Essential and functional cookies (4 keys)
+- **Data Retention**: Account, conversations, logs (4 keys)
+- **International Users**: GDPR compliance (3 keys)
+- **Children's Privacy**: Age restrictions (2 keys)
+- **Policy Changes**: Update notifications (2 keys)
+- **Contact Information**: Email and website (3 keys)
+
+### Files Created
+
+1. `custom/features/privacy-policy/client/PrivacyPolicyPage.tsx` - Main page component
+2. `custom/features/privacy-policy/client/index.tsx` - Barrel export
+3. `custom/features/privacy-policy/README.md` - Feature documentation
+
+### Files Modified
+
+1. `client/src/routes/index.tsx` - Added `/privacy-policy` route
+2. `client/src/locales/en/translation.json` - Added 70 English keys
+3. `client/src/locales/zh-Hans/translation.json` - Added 70 Chinese keys
+
+### Implementation Checklist
+
+- [x] Create PrivacyPolicyPage component
+- [x] Add route registration
+- [x] Add 70 English translation keys
+- [x] Add 70 Chinese translation keys
+- [x] Create README documentation
+- [x] Follow fork-friendly patterns (isolated in custom/)
+- [x] Use LibreChat design tokens for theme support
+- [x] GDPR-compliant language
+- [x] Transparent third-party disclosure
+
+**Completion Notes**:
+
+- Added 70 translation keys total (title, 10 sections, contact info)
+- Full page component with card-based layout
+- Theme-aware using LibreChat's design token system
+- GDPR-compliant with user rights section
+- Transparent disclosure of AI providers and Stripe
+- Contact: support@gptchina.io
+- Follows exact patterns from Token Usage Guide
+- Zero upstream modifications (except route registration)
+
+---
+
 ## Technical Patterns
 
 ### Key Patterns Used
@@ -438,15 +499,16 @@ const localize = useLocalize();
 | 3     | Split Auth Layout     | 🟢 Complete    | 100%     | 2025-11-15 11:24 |
 | 4     | Buy Tokens            | 🟢 Complete    | 100%     | 2025-11-15 11:47 |
 | 5     | Token Info/Pricing    | ⚪ Not Started | 0%       | -                |
+| 6     | Privacy Policy        | 🟢 Complete    | 100%     | 2025-12-10 11:22 |
 
 **Legend**: 🟢 Complete | 🟡 In Progress | ⚪ Not Started | 🔴 Blocked
 
 ### Completion Metrics
 
-- **Translation Keys Created**: 69 / ~195-210 (33-36%)
-- **Chinese Translations Added**: 69 / ~195-210 (33-36%)
-- **Components Updated**: 15 / ~45 (33%)
-- **Features Completed**: 4 / 5 (80%)
+- **Translation Keys Created**: 203 / ~265-280 (76-77%)
+- **Chinese Translations Added**: 203 / ~265-280 (76-77%)
+- **Components Updated**: ~18 / ~45 (40%)
+- **Features Completed**: 5 / 6 (83%)
 
 ---
 
@@ -487,6 +549,6 @@ const localize = useLocalize();
 
 ---
 
-**Last Updated**: 2025-11-15 11:30 AM CST  
-**Next Action**: Begin Phase 4 - Buy Tokens feature implementation  
-**Status**: Phases 1-3 Complete ✅ (25 strings translated, 12-13% done)
+**Last Updated**: 2025-12-10 11:24 AM CST  
+**Next Action**: Complete Phase 5 - Token Info/Pricing page (final ~125-140 strings)  
+**Status**: Phases 1-4, 6 Complete ✅ (203 strings translated, 76-77% done)

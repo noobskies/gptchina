@@ -8,7 +8,7 @@
 
 **Production URL**: https://gptchina.io
 
-**Last Updated**: 2025-12-10 10:52 AM CST
+**Last Updated**: 2025-12-10 11:25 AM CST
 
 ---
 
@@ -49,11 +49,20 @@
    - Full i18n (64 keys English + Chinese)
    - Route: `/token-usage-guide`
 
-7. **i18n Support (Partial)** 🚧 IN PROGRESS
-   - ✅ Phase 1-4 Complete (69 strings)
+7. **Privacy Policy** ✅ DEPLOYED
+   - Comprehensive 10-section privacy policy
+   - GDPR-compliant user rights disclosure
+   - Transparent AI provider and payment processor disclosure
+   - Full i18n (70 keys English + Chinese)
+   - Route: `/privacy-policy`
+
+8. **i18n Support (Partial)** 🚧 IN PROGRESS
+   - ✅ Phases 1-4 Complete (69 strings)
    - ✅ Token Usage Guide (64 strings)
+   - ✅ Privacy Policy (70 strings)
    - ⏳ Phase 5 Pending (~125-140 strings for Token Info/Pricing)
    - English + Simplified Chinese (zh-Hans)
+   - **Total Progress**: 203/265-280 strings (76-77%)
 
 ---
 
@@ -186,7 +195,14 @@ await Balance.findOneAndUpdate(
 
 ## Milestones
 
-### 2025-12-10
+### 2025-12-10 (Afternoon)
+
+- ✅ Privacy Policy: Complete implementation with full i18n
+- ✅ 70 translation keys added (English + Chinese)
+- ✅ 10 comprehensive sections covering data privacy, rights, and compliance
+- ✅ GDPR-compliant language included
+
+### 2025-12-10 (Morning)
 
 - ✅ Token Usage Guide: Complete implementation with full i18n
 - ✅ 64 translation keys added (English + Chinese)
@@ -227,10 +243,10 @@ await Balance.findOneAndUpdate(
 
 ### Current Status
 
-- **Custom Features**: 6 deployed, 1 in progress (i18n)
+- **Custom Features**: 7 deployed, 1 in progress (i18n Phase 5)
 - **Production Uptime**: All features operational on https://gptchina.io
 - **Fork Maintenance**: Clean architecture, documented modifications
-- **i18n Progress**: 51-64% complete (133/195-210 strings including Token Usage Guide)
+- **i18n Progress**: 76-77% complete (203/265-280 strings including Privacy Policy)
 
 ### Quality Indicators
 

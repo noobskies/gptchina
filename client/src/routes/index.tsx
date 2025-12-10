@@ -24,6 +24,8 @@ import Root from './Root';
 import { TokenPricingPage } from '@custom/features/token-info/client';
 // CUSTOM: gptchina - Token Usage Guide
 import { TokenUsageGuidePage } from '@custom/features/token-usage-guide/client';
+// CUSTOM: gptchina - Privacy Policy
+import { PrivacyPolicyPage } from '@custom/features/privacy-policy/client';
 
 const AuthLayout = () => (
   <AuthContextProvider>
@@ -50,6 +52,11 @@ export const router = createBrowserRouter(
     {
       path: 'token-usage-guide',
       element: <TokenUsageGuidePage />,
+      errorElement: <RouteErrorBoundary />,
+    },
+    {
+      path: 'privacy-policy',
+      element: <PrivacyPolicyPage />,
       errorElement: <RouteErrorBoundary />,
     },
     {
