@@ -28,31 +28,33 @@ export default function TokenUsageGuidePage() {
   return (
     <div className="flex min-h-screen flex-col overflow-hidden bg-surface-primary text-text-primary">
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto max-w-4xl px-6 py-12">
+        <div className="mx-auto max-w-5xl px-6 py-12">
           {/* Title */}
-          <h1 className="mb-6 text-3xl font-bold">
-            {(localize as any)('com_custom_usage_guide_title')}
-          </h1>
+          <div className="mb-8">
+            <h1 className="mb-4 text-4xl font-bold">
+              {(localize as any)('com_custom_usage_guide_title')}
+            </h1>
+          </div>
 
           {/* Introduction */}
-          <section className="mb-8">
-            <p className="mb-4 text-base leading-relaxed">
+          <section className="bg-surface-secondary/50 mb-12 rounded-xl border border-border-medium p-8 shadow-sm">
+            <p className="mb-4 text-base leading-relaxed text-text-secondary">
               {(localize as any)('com_custom_usage_guide_intro')}
             </p>
-            <p className="mb-4 text-base leading-relaxed">
+            <p className="text-base leading-relaxed text-text-secondary">
               {(localize as any)('com_custom_usage_guide_intro_2')}
             </p>
           </section>
 
           {/* Understanding Input vs Output */}
-          <section className="mb-8">
-            <h2 className="mb-4 text-2xl font-semibold">
+          <section className="bg-surface-secondary/50 mb-12 rounded-xl border border-border-medium p-8 shadow-sm">
+            <h2 className="mb-6 text-2xl font-bold">
               {(localize as any)('com_custom_usage_guide_understanding_title')}
             </h2>
-            <p className="mb-3 text-base">
+            <p className="mb-4 text-base text-text-secondary">
               {(localize as any)('com_custom_usage_guide_understanding_intro')}
             </p>
-            <ol className="mb-4 ml-6 list-decimal space-y-2">
+            <ol className="mb-6 ml-6 list-decimal space-y-3">
               <li className="text-base leading-relaxed">
                 <strong>{(localize as any)('com_custom_usage_guide_input_label')}</strong>{' '}
                 {(localize as any)('com_custom_usage_guide_input_desc')}
@@ -62,71 +64,78 @@ export default function TokenUsageGuidePage() {
                 {(localize as any)('com_custom_usage_guide_output_desc')}
               </li>
             </ol>
-            <div className="rounded-lg bg-surface-secondary px-4 py-3">
-              <p className="text-sm italic">
-                <strong>{(localize as any)('com_custom_usage_guide_note_label')}</strong>{' '}
+            <div className="rounded-lg border-l-4 border-l-blue-500 bg-surface-tertiary px-5 py-4">
+              <p className="text-sm">
+                <strong className="font-semibold">
+                  {(localize as any)('com_custom_usage_guide_note_label')}
+                </strong>{' '}
                 {(localize as any)('com_custom_usage_guide_note_content')}
               </p>
             </div>
           </section>
 
           {/* Model Pricing Table */}
-          <section className="mb-8">
-            <h2 className="mb-4 text-2xl font-semibold">
+          <section className="bg-surface-secondary/50 mb-12 rounded-xl border border-border-medium p-8 shadow-sm">
+            <h2 className="mb-6 text-2xl font-bold">
               {(localize as any)('com_custom_usage_guide_pricing_title')}
             </h2>
-            <p className="mb-4 text-sm italic text-text-secondary">
+            <p className="mb-6 text-sm italic text-text-secondary">
               {(localize as any)('com_custom_usage_guide_pricing_note')}
             </p>
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse rounded-lg border border-border-medium">
-                <thead>
-                  <tr className="bg-surface-secondary">
-                    <th className="border border-border-medium px-4 py-3 text-left font-semibold">
-                      {(localize as any)('com_custom_usage_guide_table_model')}
-                    </th>
-                    <th className="border border-border-medium px-4 py-3 text-left font-semibold">
-                      {(localize as any)('com_custom_usage_guide_table_input')}
-                    </th>
-                    <th className="border border-border-medium px-4 py-3 text-left font-semibold">
-                      {(localize as any)('com_custom_usage_guide_table_output')}
-                    </th>
-                    <th className="border border-border-medium px-4 py-3 text-left font-semibold">
-                      {(localize as any)('com_custom_usage_guide_table_best_for')}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {MODEL_PRICING.map((pricing, index) => (
-                    <tr key={index} className="hover:bg-surface-hover">
-                      <td className="border border-border-medium px-4 py-3 font-medium">
-                        {pricing.model}
-                      </td>
-                      <td className="border border-border-medium px-4 py-3">
-                        {pricing.inputCost.toFixed(2)}
-                      </td>
-                      <td className="border border-border-medium px-4 py-3">
-                        {pricing.outputCost.toFixed(2)}
-                      </td>
-                      <td className="border border-border-medium px-4 py-3 text-sm">
-                        {(localize as any)(pricing.bestForKey)}
-                      </td>
+            <div className="overflow-hidden rounded-xl border border-border-medium shadow-sm">
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="bg-surface-tertiary">
+                      <th className="border-b border-border-medium px-6 py-4 text-left font-semibold">
+                        {(localize as any)('com_custom_usage_guide_table_model')}
+                      </th>
+                      <th className="border-b border-border-medium px-6 py-4 text-left font-semibold">
+                        {(localize as any)('com_custom_usage_guide_table_input')}
+                      </th>
+                      <th className="border-b border-border-medium px-6 py-4 text-left font-semibold">
+                        {(localize as any)('com_custom_usage_guide_table_output')}
+                      </th>
+                      <th className="border-b border-border-medium px-6 py-4 text-left font-semibold">
+                        {(localize as any)('com_custom_usage_guide_table_best_for')}
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {MODEL_PRICING.map((pricing, index) => (
+                      <tr
+                        key={index}
+                        className={`border-b border-border-light transition-colors hover:bg-surface-hover ${
+                          index % 2 === 0 ? 'bg-surface-primary' : 'bg-surface-secondary/30'
+                        }`}
+                      >
+                        <td className="px-6 py-4 font-medium">{pricing.model}</td>
+                        <td className="px-6 py-4 font-mono text-sm">
+                          {pricing.inputCost.toFixed(2)}
+                        </td>
+                        <td className="px-6 py-4 font-mono text-sm">
+                          {pricing.outputCost.toFixed(2)}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-text-secondary">
+                          {(localize as any)(pricing.bestForKey)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </section>
 
           {/* Thinking & Reasoning Models */}
-          <section className="mb-8">
-            <h2 className="mb-4 text-2xl font-semibold">
+          <section className="bg-surface-secondary/50 mb-12 rounded-xl border border-border-medium p-8 shadow-sm">
+            <h2 className="mb-6 text-2xl font-bold">
               {(localize as any)('com_custom_usage_guide_reasoning_title')}
             </h2>
-            <p className="mb-3 text-base leading-relaxed">
+            <p className="mb-6 text-base leading-relaxed text-text-secondary">
               {(localize as any)('com_custom_usage_guide_reasoning_intro')}
             </p>
-            <ul className="ml-6 list-disc space-y-2">
+            <ul className="ml-6 list-disc space-y-3">
               <li className="text-base leading-relaxed">
                 <strong>
                   {(localize as any)('com_custom_usage_guide_reasoning_transparency_label')}
@@ -141,14 +150,14 @@ export default function TokenUsageGuidePage() {
           </section>
 
           {/* Real-World Calculation Example */}
-          <section className="mb-8">
-            <h2 className="mb-4 text-2xl font-semibold">
+          <section className="bg-surface-secondary/50 mb-12 rounded-xl border border-border-medium p-8 shadow-sm">
+            <h2 className="mb-6 text-2xl font-bold">
               {(localize as any)('com_custom_usage_guide_example_title')}
             </h2>
-            <p className="mb-4 text-base leading-relaxed">
+            <p className="mb-6 text-base leading-relaxed text-text-secondary">
               {(localize as any)('com_custom_usage_guide_example_intro')}
             </p>
-            <div className="mb-4 rounded-lg bg-surface-secondary px-4 py-3">
+            <div className="mb-8 rounded-lg border border-border-medium bg-surface-tertiary px-5 py-4">
               <p className="font-mono text-sm">
                 {(localize as any)('com_custom_usage_guide_example_total_input', {
                   context: CONTEXT_TOKENS.toLocaleString(),
@@ -169,8 +178,11 @@ export default function TokenUsageGuidePage() {
               const totalCost = inputCharge + outputCharge;
 
               return (
-                <div key={example.scenario} className="mb-6">
-                  <h3 className="mb-2 text-lg font-semibold">
+                <div
+                  key={example.scenario}
+                  className="bg-surface-tertiary/50 mb-6 rounded-lg border border-border-light p-6"
+                >
+                  <h3 className="mb-4 text-lg font-semibold">
                     {(localize as any)(
                       `com_custom_usage_guide_example_scenario_${example.scenario.toLowerCase()}`,
                       {
@@ -178,7 +190,7 @@ export default function TokenUsageGuidePage() {
                       },
                     )}
                   </h3>
-                  <ul className="ml-6 list-disc space-y-1 text-base">
+                  <ul className="ml-6 list-disc space-y-2 text-base">
                     <li>
                       {(localize as any)('com_custom_usage_guide_example_input_charge', {
                         calculation: `${TOTAL_INPUT.toLocaleString()} × ${example.inputCost}`,
@@ -201,14 +213,14 @@ export default function TokenUsageGuidePage() {
               );
             })}
 
-            <p className="text-base italic text-text-secondary">
+            <p className="mt-6 text-base italic text-text-secondary">
               {(localize as any)('com_custom_usage_guide_example_conclusion')}
             </p>
           </section>
 
           {/* Top Tips for Saving Tokens */}
-          <section className="mb-8">
-            <h2 className="mb-4 text-2xl font-semibold">
+          <section className="bg-surface-secondary/50 mb-12 rounded-xl border border-border-medium p-8 shadow-sm">
+            <h2 className="mb-6 text-2xl font-bold">
               {(localize as any)('com_custom_usage_guide_tips_title')}
             </h2>
             <ol className="ml-6 list-decimal space-y-4">
@@ -240,20 +252,20 @@ export default function TokenUsageGuidePage() {
           </section>
 
           {/* Controlling Costs with Parameters */}
-          <section className="mb-8">
-            <h2 className="mb-4 text-2xl font-semibold">
+          <section className="bg-surface-secondary/50 mb-12 rounded-xl border border-border-medium p-8 shadow-sm">
+            <h2 className="mb-6 text-2xl font-bold">
               {(localize as any)('com_custom_usage_guide_parameters_title')}
             </h2>
-            <p className="mb-6 text-base leading-relaxed">
+            <p className="mb-8 text-base leading-relaxed text-text-secondary">
               {(localize as any)('com_custom_usage_guide_parameters_intro')}
             </p>
 
             {/* Max Context Tokens */}
-            <div className="mb-6">
-              <h3 className="mb-2 text-lg font-semibold">
+            <div className="bg-surface-tertiary/30 mb-8 rounded-lg border border-border-light p-6">
+              <h3 className="mb-4 text-lg font-semibold">
                 {(localize as any)('com_custom_usage_guide_param_context_title')}
               </h3>
-              <ul className="ml-6 list-disc space-y-1 text-base">
+              <ul className="ml-6 list-disc space-y-2 text-base">
                 <li>
                   <strong>{(localize as any)('com_custom_usage_guide_param_how_label')}</strong>{' '}
                   {(localize as any)('com_custom_usage_guide_param_context_how')}
@@ -270,8 +282,8 @@ export default function TokenUsageGuidePage() {
             </div>
 
             {/* Max Output Tokens */}
-            <div className="mb-6">
-              <h3 className="mb-2 text-lg font-semibold">
+            <div className="bg-surface-tertiary/30 mb-8 rounded-lg border border-border-light p-6">
+              <h3 className="mb-4 text-lg font-semibold">
                 {(localize as any)('com_custom_usage_guide_param_output_title')}
               </h3>
               <ul className="ml-6 list-disc space-y-1 text-base">
@@ -287,14 +299,14 @@ export default function TokenUsageGuidePage() {
             </div>
 
             {/* Thinking Budget */}
-            <div className="mb-6">
-              <h3 className="mb-2 text-lg font-semibold">
+            <div className="bg-surface-tertiary/30 rounded-lg border border-border-light p-6">
+              <h3 className="mb-4 text-lg font-semibold">
                 {(localize as any)('com_custom_usage_guide_param_thinking_title')}
               </h3>
-              <p className="mb-2 text-base leading-relaxed">
+              <p className="mb-4 text-base leading-relaxed text-text-secondary">
                 {(localize as any)('com_custom_usage_guide_param_thinking_desc')}
               </p>
-              <ul className="ml-6 list-disc space-y-1 text-base">
+              <ul className="ml-6 list-disc space-y-2 text-base">
                 <li>
                   <strong>
                     {(localize as any)('com_custom_usage_guide_param_thinking_higher_label')}
