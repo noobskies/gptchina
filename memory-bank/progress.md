@@ -8,7 +8,7 @@
 
 **Production URL**: https://gptchina.io
 
-**Last Updated**: 2025-12-09 11:54 AM CST
+**Last Updated**: 2025-12-10 10:52 AM CST
 
 ---
 
@@ -42,9 +42,17 @@
    - Theme switcher, categorized tables
    - Interactive calculator, package comparisons
 
-6. **i18n Support (Partial)** 🚧 IN PROGRESS
+6. **Token Usage Guide** ✅ DEPLOYED
+   - Educational page for understanding token costs
+   - Left nav link ("Learn More" below Buy Tokens)
+   - Opens in new tab, 7 comprehensive sections
+   - Full i18n (64 keys English + Chinese)
+   - Route: `/token-usage-guide`
+
+7. **i18n Support (Partial)** 🚧 IN PROGRESS
    - ✅ Phase 1-4 Complete (69 strings)
-   - ⏳ Phase 5 Pending (~125-140 strings)
+   - ✅ Token Usage Guide (64 strings)
+   - ⏳ Phase 5 Pending (~125-140 strings for Token Info/Pricing)
    - English + Simplified Chinese (zh-Hans)
 
 ---
@@ -178,6 +186,13 @@ await Balance.findOneAndUpdate(
 
 ## Milestones
 
+### 2025-12-10
+
+- ✅ Token Usage Guide: Complete implementation with full i18n
+- ✅ 64 translation keys added (English + Chinese)
+- ✅ Left-aligned "Learn More" button in nav
+- ⏳ Design improvements pending
+
 ### 2025-12-09
 
 - ✅ Email templates: Simplified branding, light theme
@@ -212,10 +227,10 @@ await Balance.findOneAndUpdate(
 
 ### Current Status
 
-- **Custom Features**: 5 deployed, 1 in progress (i18n)
+- **Custom Features**: 6 deployed, 1 in progress (i18n)
 - **Production Uptime**: All features operational on https://gptchina.io
 - **Fork Maintenance**: Clean architecture, documented modifications
-- **i18n Progress**: 33-36% complete (69/195-210 strings)
+- **i18n Progress**: 51-64% complete (133/195-210 strings including Token Usage Guide)
 
 ### Quality Indicators
 

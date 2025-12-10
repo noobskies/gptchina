@@ -2,17 +2,55 @@
 
 ## Current Work Focus
 
-**Status**: Internationalization (i18n) Implementation - IN PROGRESS 🚧
+**Status**: Token Usage Guide - Design Improvements 🎨
 
-**Active Task**: Phase 5 - Token Info/Pricing Page translations (~125-140 strings remaining)
+**Active Task**: Enhance visual design of Token Usage Guide page
 
-**Progress**: 69 / ~195-210 total strings (33-36% complete)
+**Priority Tasks**:
 
-**Key Objective**: Make all custom features fully multilingual with proper i18n support using LibreChat's i18next system.
+1. Improve visual hierarchy and spacing
+2. Better pricing table design
+3. Add section dividers/cards
+4. Overall design polish
+
+**Key Objective**: Make the Token Usage Guide more visually appealing and easier to read.
 
 ---
 
 ## Recent Changes (Last 7 Days)
+
+### Token Usage Guide Feature (2025-12-10)
+
+**What**: New educational page explaining token costs and optimization strategies
+
+**Files Created**:
+
+- `custom/features/token-usage-guide/README.md`
+- `custom/features/token-usage-guide/client/data.ts`
+- `custom/features/token-usage-guide/client/TokenUsageGuideLink.tsx`
+- `custom/features/token-usage-guide/client/TokenUsageGuidePage.tsx`
+- `custom/features/token-usage-guide/client/index.tsx`
+
+**Files Modified**:
+
+- `client/src/components/Nav/Nav.tsx` - Added "Learn More" link (left-aligned)
+- `client/src/routes/index.tsx` - Added `/token-usage-guide` route
+- `client/src/locales/en/translation.json` - Added 64 English keys
+- `client/src/locales/zh-Hans/translation.json` - Added 64 Chinese keys
+
+**Features**:
+
+- Standalone page accessible from left nav (below Buy Tokens button)
+- Opens in new tab for reference while chatting
+- Full i18n support (English + Simplified Chinese)
+- 7 content sections: Introduction, Input/Output explanation, Pricing table (6 models), Reasoning models, 3 calculation examples, 3 saving tips, 3 parameter explanations
+- Proper Token terminology (kept "Token" in English with space in Chinese: "输入 Token")
+
+**Status**: ✅ Complete, ⏳ Design improvements pending
+
+**Next**: Enhance visual design (better spacing, improved table, section cards, overall polish)
+
+---
 
 ### Email Template Fixes (2025-12-09)
 
@@ -121,6 +159,15 @@
 - Comprehensive pricing page with theme switcher
 - Categorized pricing tables, interactive calculator
 - Package value comparisons, conversation examples
+
+**Token Usage Guide** (Dec 2025)
+
+- Educational guide for understanding token costs
+- Accessible from left nav ("Learn More" link below Buy Tokens)
+- Opens in new tab for easy reference while chatting
+- 7 sections: Introduction, Input/Output costs, Pricing table, Reasoning models, Calculation examples, Saving tips, Parameter controls
+- Full i18n (64 keys in English + Chinese)
+- Proper Token terminology maintained
 
 ---
 
@@ -232,8 +279,8 @@
 
 ---
 
-**Last Updated**: 2025-12-09 11:52 AM CST
+**Last Updated**: 2025-12-10 10:52 AM CST
 
-**Current Focus**: Memory bank cleanup + i18n Phase 5 preparation
+**Current Focus**: Token Usage Guide design improvements
 
 **Production Status**: All features deployed and operational on https://gptchina.io

@@ -28,6 +28,12 @@ const AgentMarketplaceButton = lazy(() => import('./AgentMarketplaceButton'));
 const ClaimTokensButton = lazy(() => import('@custom/features/claim-tokens/client'));
 // CUSTOM: GPT China - Buy Tokens feature
 const BuyTokensButton = lazy(() => import('@custom/features/buy-tokens/client'));
+// CUSTOM: GPT China - Token Usage Guide feature
+const TokenUsageGuideLink = lazy(() =>
+  import('@custom/features/token-usage-guide/client').then((module) => ({
+    default: module.TokenUsageGuideLink,
+  })),
+);
 
 const NAV_WIDTH_DESKTOP = '260px';
 const NAV_WIDTH_MOBILE = '320px';
@@ -246,6 +252,10 @@ const Nav = memo(
                     {/* CUSTOM: GPT China - Buy Tokens feature */}
                     <Suspense fallback={null}>
                       <BuyTokensButton />
+                    </Suspense>
+                    {/* CUSTOM: GPT China - Token Usage Guide */}
+                    <Suspense fallback={null}>
+                      <TokenUsageGuideLink />
                     </Suspense>
                     <Suspense fallback={null}>
                       <AccountSettings />
