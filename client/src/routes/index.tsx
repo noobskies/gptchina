@@ -26,6 +26,8 @@ import { TokenPricingPage } from '@custom/features/token-info/client';
 import { TokenUsageGuidePage } from '@custom/features/token-usage-guide/client';
 // CUSTOM: gptchina - Privacy Policy
 import { PrivacyPolicyPage } from '@custom/features/privacy-policy/client';
+// CUSTOM: gptchina - Terms of Service
+import { TermsOfServicePage } from '@custom/features/terms-of-service/client';
 
 const AuthLayout = () => (
   <AuthContextProvider>
@@ -57,6 +59,11 @@ export const router = createBrowserRouter(
     {
       path: 'privacy-policy',
       element: <PrivacyPolicyPage />,
+      errorElement: <RouteErrorBoundary />,
+    },
+    {
+      path: 'terms-of-service',
+      element: <TermsOfServicePage />,
       errorElement: <RouteErrorBoundary />,
     },
     {

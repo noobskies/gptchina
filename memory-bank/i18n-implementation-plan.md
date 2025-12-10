@@ -5,8 +5,8 @@
 **Target Languages**: English (en) + Simplified Chinese (zh-Hans)  
 **Approach**: Feature-by-feature implementation  
 **Created**: 2025-11-15 12:32 AM  
-**Last Updated**: 2025-12-10 11:24 AM  
-**Status**: IN PROGRESS - Phases 1-4, 6 Complete (76-77% done)
+**Last Updated**: 2025-12-10 11:47 AM  
+**Status**: IN PROGRESS - Phases 1-4, 6-7 Complete (81-82% done)
 
 ---
 
@@ -35,7 +35,8 @@ This document tracks the complete internationalization effort for all custom fea
 | Buy Tokens            | ~40      | 4        | Medium     | 4-5             |
 | Token Info/Pricing    | ~100     | 5        | High       | 8-10            |
 | Privacy Policy        | ~70      | 6        | Medium     | 3-4             |
-| **TOTAL**             | **~233** | -        | -          | **19-25**       |
+| Terms of Service      | ~72      | 7        | Medium     | 2-3             |
+| **TOTAL**             | **~305** | -        | -          | **21-28**       |
 
 ---
 
@@ -500,15 +501,16 @@ const localize = useLocalize();
 | 4     | Buy Tokens            | 🟢 Complete    | 100%     | 2025-11-15 11:47 |
 | 5     | Token Info/Pricing    | ⚪ Not Started | 0%       | -                |
 | 6     | Privacy Policy        | 🟢 Complete    | 100%     | 2025-12-10 11:22 |
+| 7     | Terms of Service      | 🟢 Complete    | 100%     | 2025-12-10 11:46 |
 
 **Legend**: 🟢 Complete | 🟡 In Progress | ⚪ Not Started | 🔴 Blocked
 
 ### Completion Metrics
 
-- **Translation Keys Created**: 203 / ~265-280 (76-77%)
-- **Chinese Translations Added**: 203 / ~265-280 (76-77%)
-- **Components Updated**: ~18 / ~45 (40%)
-- **Features Completed**: 5 / 6 (83%)
+- **Translation Keys Created**: 275 / ~337-352 (81-82%)
+- **Chinese Translations Added**: 275 / ~337-352 (81-82%)
+- **Components Updated**: ~21 / ~48 (44%)
+- **Features Completed**: 6 / 7 (86%)
 
 ---
 
@@ -549,6 +551,68 @@ const localize = useLocalize();
 
 ---
 
-**Last Updated**: 2025-12-10 11:24 AM CST  
+## Phase 7: Terms of Service (BONUS #2)
+
+### Status: 🟢 COMPLETE (2025-12-10 11:33-11:46 AM)
+
+**Note**: This feature was added outside the original 5-phase plan but follows the same i18n patterns and conventions.
+
+### Translation Keys Required (72 keys)
+
+Comprehensive terms of service with sections for:
+
+- **Title & Metadata**: Title, last updated (2 keys)
+- **Introduction & Acceptance**: Agreement overview, binding terms, age requirement (4 keys)
+- **Account Registration**: User responsibilities, security, notification (8 keys)
+- **Token System & Payments**: Purchase, usage, pricing, claims, non-refundable (12 keys)
+- **Acceptable Use Policy**: Prohibited activities list (12 keys)
+- **User Content & IP**: Ownership, licenses, platform IP (7 keys)
+- **Service Availability**: Uptime, maintenance, modifications (5 keys)
+- **Third-Party Services**: AI providers, payment, links (4 keys)
+- **Disclaimer of Warranties**: "As-is" service, no warranties, AI output (4 keys)
+- **Limitation of Liability**: Indirect damages, data loss, liability cap (5 keys)
+- **Termination & Suspension**: User/platform termination, effect (7 keys)
+- **Dispute Resolution & Contact**: Governing law, resolution, jurisdiction, contact (8 keys)
+
+### Files Created
+
+1. `custom/features/terms-of-service/client/TermsOfServicePage.tsx` - Main page component
+2. `custom/features/terms-of-service/client/index.tsx` - Barrel export
+3. `custom/features/terms-of-service/README.md` - Feature documentation
+
+### Files Modified
+
+1. `client/src/routes/index.tsx` - Added `/terms-of-service` route
+2. `client/src/locales/en/translation.json` - Added 72 English keys
+3. `client/src/locales/zh-Hans/translation.json` - Added 72 Chinese keys
+
+### Implementation Checklist
+
+- [x] Create TermsOfServicePage component
+- [x] Add route registration
+- [x] Add 72 English translation keys
+- [x] Add 72 Chinese translation keys
+- [x] Create README documentation
+- [x] Follow fork-friendly patterns (isolated in custom/)
+- [x] Use LibreChat design tokens for theme support
+- [x] Legal compliance language (age 13+, non-refundable warnings)
+- [x] Transparent third-party disclosure
+
+**Completion Notes**:
+
+- Added 72 translation keys total (title, 11 sections, contact info)
+- Full page component with card-based layout
+- Theme-aware using LibreChat's design token system
+- Legal compliance with age requirement and non-refundable token policy
+- Red warning box for critical non-refundable policy
+- Transparent disclosure of AI providers and Stripe
+- Contact: support@gptchina.io
+- Follows exact patterns from Privacy Policy
+- Zero upstream modifications (except route registration)
+- ⚠️ Requires legal counsel review before production deployment
+
+---
+
+**Last Updated**: 2025-12-10 11:47 AM CST  
 **Next Action**: Complete Phase 5 - Token Info/Pricing page (final ~125-140 strings)  
-**Status**: Phases 1-4, 6 Complete ✅ (203 strings translated, 76-77% done)
+**Status**: Phases 1-4, 6-7 Complete ✅ (275 strings translated, 81-82% done)

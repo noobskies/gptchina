@@ -2,16 +2,16 @@
 
 ## Current Work Focus
 
-**Status**: Privacy Policy Complete ✅
+**Status**: Terms of Service Complete ✅
 
 **Active Task**: None - Ready for next feature
 
-**Recently Completed**: Privacy Policy page implementation with full i18n
+**Recently Completed**: Terms of Service page implementation with full i18n
 
 **Priority Tasks**:
 
-1. Test Privacy Policy in production
-2. Consider adding footer link to Privacy Policy
+1. Test Terms of Service in production
+2. Consider adding footer links to Privacy Policy and Terms of Service
 3. Complete i18n Phase 5 (Token Info/Pricing page)
 4. Token Usage Guide design improvements (optional)
 
@@ -21,7 +21,39 @@
 
 ## Recent Changes (Last 7 Days)
 
-### Privacy Policy Feature (2025-12-10)
+### Terms of Service Feature (2025-12-10 Afternoon)
+
+**What**: Comprehensive terms of service page outlining user agreements and legal terms
+
+**Files Created**:
+
+- `custom/features/terms-of-service/client/TermsOfServicePage.tsx`
+- `custom/features/terms-of-service/client/index.tsx`
+- `custom/features/terms-of-service/README.md`
+
+**Files Modified**:
+
+- `client/src/routes/index.tsx` - Added `/terms-of-service` route
+- `client/src/locales/en/translation.json` - Added 72 English keys
+- `client/src/locales/zh-Hans/translation.json` - Added 72 Chinese keys
+
+**Features**:
+
+- Standalone page accessible at `/terms-of-service`
+- Full i18n support (English + Simplified Chinese)
+- 11 comprehensive sections: Introduction & Acceptance, Account Registration, Token System & Payments, Acceptable Use Policy, User Content & IP, Service Availability, Third-Party Services, Disclaimer of Warranties, Limitation of Liability, Termination & Suspension, Dispute Resolution & Contact
+- Legal compliance language (age requirement 13+, non-refundable policy with red warning box)
+- Theme-aware design matching Privacy Policy
+- Transparent disclosure of AI providers and payment processing
+- Contact email: support@gptchina.io
+
+**Status**: ✅ Complete, ⚠️ Requires legal review before production
+
+**Next**: Legal counsel review, test in production, add footer links
+
+---
+
+### Privacy Policy Feature (2025-12-10 Morning)
 
 **What**: Comprehensive privacy policy page explaining data collection, usage, and user rights
 
@@ -313,8 +345,8 @@
 
 ---
 
-**Last Updated**: 2025-12-10 11:22 AM CST
+**Last Updated**: 2025-12-10 11:46 AM CST
 
-**Current Focus**: Privacy Policy complete - ready for next feature
+**Current Focus**: Terms of Service complete - ready for next feature
 
 **Production Status**: All features deployed and operational on https://gptchina.io

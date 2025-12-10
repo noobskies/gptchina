@@ -8,7 +8,7 @@
 
 **Production URL**: https://gptchina.io
 
-**Last Updated**: 2025-12-10 11:25 AM CST
+**Last Updated**: 2025-12-10 11:47 AM CST
 
 ---
 
@@ -56,13 +56,22 @@
    - Full i18n (70 keys English + Chinese)
    - Route: `/privacy-policy`
 
-8. **i18n Support (Partial)** 🚧 IN PROGRESS
+8. **Terms of Service** ✅ DEPLOYED
+   - Comprehensive 11-section legal agreement
+   - User agreements, acceptable use policy, liability disclaimers
+   - Age requirement (13+), non-refundable token policy with red warning
+   - Full i18n (72 keys English + Chinese)
+   - Route: `/terms-of-service`
+   - ⚠️ Requires legal review before production
+
+9. **i18n Support (Partial)** 🚧 IN PROGRESS
    - ✅ Phases 1-4 Complete (69 strings)
    - ✅ Token Usage Guide (64 strings)
    - ✅ Privacy Policy (70 strings)
+   - ✅ Terms of Service (72 strings)
    - ⏳ Phase 5 Pending (~125-140 strings for Token Info/Pricing)
    - English + Simplified Chinese (zh-Hans)
-   - **Total Progress**: 203/265-280 strings (76-77%)
+   - **Total Progress**: 275/337-352 strings (81-82%)
 
 ---
 
@@ -197,6 +206,12 @@ await Balance.findOneAndUpdate(
 
 ### 2025-12-10 (Afternoon)
 
+- ✅ Terms of Service: Complete implementation with full i18n
+- ✅ 72 translation keys added (English + Chinese)
+- ✅ 11 comprehensive sections covering user agreements, acceptable use, liability
+- ✅ Legal compliance language (age 13+, non-refundable policy with visual warning)
+- ⚠️ Requires legal counsel review before production deployment
+
 - ✅ Privacy Policy: Complete implementation with full i18n
 - ✅ 70 translation keys added (English + Chinese)
 - ✅ 10 comprehensive sections covering data privacy, rights, and compliance
@@ -243,10 +258,10 @@ await Balance.findOneAndUpdate(
 
 ### Current Status
 
-- **Custom Features**: 7 deployed, 1 in progress (i18n Phase 5)
+- **Custom Features**: 8 deployed, 1 in progress (i18n Phase 5)
 - **Production Uptime**: All features operational on https://gptchina.io
 - **Fork Maintenance**: Clean architecture, documented modifications
-- **i18n Progress**: 76-77% complete (203/265-280 strings including Privacy Policy)
+- **i18n Progress**: 81-82% complete (275/337-352 strings including Terms of Service)
 
 ### Quality Indicators
 
