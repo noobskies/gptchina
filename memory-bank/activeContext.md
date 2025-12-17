@@ -21,7 +21,7 @@
 
 ## Recent Changes (Last 7 Days)
 
-### Product Tour Feature (2025-12-10 Afternoon)
+### Product Tour Feature (2025-12-10 Afternoon - Complete with Bug Fixes)
 
 **What**: Interactive 6-step product tour for first-time users using React Joyride
 
@@ -39,11 +39,12 @@
 
 **Files Modified**:
 
-- `client/src/App.jsx` - Wrapped RouterProvider with ProductTourProvider
-- `client/src/components/Chat/Header.tsx` - Added data-tour attributes to ModelSelector, AddMultiConvo, OpenSidebar
-- `client/src/components/Chat/Landing.tsx` - Added data-tour="token-rates" to pricing display
-- `client/src/components/Chat/Input/BadgeRow.tsx` - Added data-tour="input-tools" wrapper
-- `client/src/components/Nav/Nav.tsx` - Added data-tour="side-panel" to nav
+- `client/src/App.jsx` - Removed ProductTourProvider (moved to routes)
+- `client/src/routes/index.tsx` - Added ProductTourProvider wrapping Root component
+- `client/src/components/Chat/Header.tsx` - Added data-tour attributes
+- `client/src/components/Chat/Landing.tsx` - Added data-tour="token-rates"
+- `client/src/components/Chat/Input/BadgeRow.tsx` - Moved data-tour to parent container
+- `client/src/components/Nav/Nav.tsx` - Added data-tour="side-panel"
 - `client/src/locales/en/translation.json` - Added 18 English keys
 - `client/src/locales/zh-Hans/translation.json` - Added 18 Chinese keys
 - `package.json` - Added react-joyride@^2.8.2 dependency
@@ -61,16 +62,66 @@
 - Theme-aware (light/dark mode)
 - Mobile responsive (adaptive step targeting and content)
 
-**Status**: ✅ Complete, ⚠️ Styling fixes applied (spotlight visibility issue resolved)
+**Status**: ✅ Complete - All bugs fixed and production-ready
+
+**Bug Fixes Applied**:
+
+1. **Welcome Modal Styling** ✅
+   - Enhanced gradient button with shadow effects
+   - Better spacing and padding (py-6, gap-3)
+   - Improved border and theme integration
+
+2. **Close Button Positioning** ✅
+   - Fixed positioning (absolute, top: 20px, right: 20px)
+   - Increased size to 24px for better clickability
+   - Added flexbox centering
+
+3. **Spotlight/Highlight Issues** ✅
+   - Removed problematic `mixBlendMode: 'normal'`
+   - Added explicit `boxShadow` to spotlight
+   - Fixed overlay contrast for better visibility
+
+4. **AuthContext Provider Error** ✅ **CRITICAL**
+   - Root cause: ProductTourProvider outside AuthLayout
+   - Solution: Moved from App.jsx to routes/index.tsx wrapping Root
+   - Now properly inside AuthContextProvider scope
+
+5. **Step 4 Positioning** ✅
+   - Changed placement: 'bottom' → 'top'
+   - Moved data-tour from invisible `display: contents` wrapper to parent container
+   - Fixed disconnected tooltip floating in center
+
+6. **Tooltip Size** ✅
+   - Reduced width: 420px → 380px
+   - Added minWidth: 320px
+   - Optimized font sizes (18px title, 14px content)
+
+7. **Button Wrapping** ✅
+   - Added `flexWrap: 'nowrap'` to footer
+   - Added `whiteSpace: 'nowrap'` to all buttons
+   - Added `flexShrink: 0` to prevent shrinking
+   - Reduced padding for better fit
+
+8. **Scroll Configuration** ✅
+   - Increased scrollOffset: 100 → 200
+   - Added floaterProps for better positioning
 
 **Technical Details**:
 
-- React Joyride library integration (~85KB bundle)
+- React Joyride library (~85KB bundle)
 - localStorage keys: `gptchina:tour:completed`, `gptchina:tour:dismissed`, `gptchina:tour:current-step`
-- Modern styling: gradient buttons, shadows, 420px tooltip width, 24px padding
-- Minimal upstream impact: only data attributes + provider wrapper
+- Final styling: 380px tooltips, gradient buttons, compact padding
+- Authentication-aware: only shows for logged-in users
+- Minimal upstream impact: data attributes + provider in routes
 
-**Next**: Test with first-time users in production, consider analytics tracking
+**Key Learnings**:
+
+1. React Joyride cannot target elements with `display: contents` - use visible parent containers
+2. Provider hierarchy matters - custom providers using hooks must be inside required context providers
+3. Placement of tooltips on edge elements (top/bottom of screen) requires careful consideration
+4. Button layout needs explicit no-wrap constraints in compact tooltips
+
+**Next**: Production testing with first-time users
 
 ---
 

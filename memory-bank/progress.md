@@ -64,14 +64,26 @@
    - Route: `/terms-of-service`
    - ⚠️ Requires legal review before production
 
-9. **Product Tour** ✅ DEPLOYED
+9. **Product Tour** ✅ DEPLOYED (All Bugs Fixed)
    - Interactive 6-step onboarding walkthrough using React Joyride
    - Welcome modal + 5 guided steps (Model Selection, Compare Mode, Token Rates, Input Tools, Side Panel)
    - localStorage-based state (shows once per user)
    - Full i18n (18 keys English + Chinese)
-   - Theme-aware styling with gradient buttons and modern tooltips
+   - Theme-aware styling with gradient buttons and optimized tooltips (380px)
    - Mobile responsive with adaptive step targeting
-   - Minimal upstream impact (data attributes only)
+   - Authentication-aware (only shows for logged-in users)
+   - Provider hierarchy fixed (inside AuthLayout)
+   - Minimal upstream impact (data attributes + provider in routes)
+
+   **Bug Fixes Applied**:
+   - ✅ Welcome modal styling enhanced
+   - ✅ Close button positioned correctly
+   - ✅ Spotlight/highlight visibility fixed
+   - ✅ AuthContext provider error resolved (moved to routes)
+   - ✅ Step 4 positioning fixed (tooltip anchored to icons)
+   - ✅ Tooltip size optimized (420px → 380px)
+   - ✅ Button wrapping prevented
+   - ✅ Scroll offset improved (200px)
 
 10. **i18n Support (Partial)** 🚧 IN PROGRESS
     - ✅ Phases 1-4 Complete (69 strings)
@@ -216,13 +228,19 @@ await Balance.findOneAndUpdate(
 
 ### 2025-12-10 (Afternoon - Late)
 
-- ✅ Product Tour: Interactive onboarding complete
+- ✅ Product Tour: Interactive onboarding complete with all bug fixes
 - ✅ React Joyride integration (~85KB bundle)
 - ✅ 18 translation keys added (English + Chinese)
 - ✅ 6-step walkthrough (welcome + 5 guided steps)
 - ✅ localStorage state management (shows once per user)
-- ✅ Styling fixes applied (spotlight visibility resolved)
+- ✅ All styling and positioning issues resolved
 - ✅ Mobile responsive with adaptive targeting
+- ✅ Critical bug fixes:
+  - AuthContext provider hierarchy fixed
+  - Step 4 positioning corrected (moved data-tour to visible parent)
+  - Tooltip sizing optimized (380px width)
+  - Button wrapping prevented
+  - Welcome modal styling enhanced
 
 ### 2025-12-10 (Afternoon)
 
@@ -318,4 +336,4 @@ await Balance.findOneAndUpdate(
 
 **Team Status**: Solo development, relying on Memory Bank for context preservation
 
-**Last Updated**: 2025-12-10 12:44 PM CST
+**Last Updated**: 2025-12-10 1:39 PM CST
