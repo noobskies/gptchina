@@ -9,11 +9,13 @@ function Footer({ startupConfig }: { startupConfig: TStartupConfig | null | unde
   const privacyPolicy = startupConfig.interface?.privacyPolicy;
   const termsOfService = startupConfig.interface?.termsOfService;
 
+  // CUSTOM: gptchina - Blue theme branding
   const privacyPolicyRender = privacyPolicy?.externalUrl && (
     <a
-      className="text-sm text-blue-500"
+      className="text-sm text-blue-600 underline decoration-transparent transition-all duration-200 hover:text-blue-700 hover:decoration-blue-700 focus:text-blue-700 focus:decoration-blue-700 dark:text-blue-500 dark:hover:text-blue-400 dark:hover:decoration-blue-400 dark:focus:text-blue-400 dark:focus:decoration-blue-400"
       href={privacyPolicy.externalUrl}
-      target={privacyPolicy.openNewTab ? '_blank' : undefined}
+      // Removed for WCAG compliance
+      // target={privacyPolicy.openNewTab ? '_blank' : undefined}
       rel="noreferrer"
     >
       {localize('com_ui_privacy_policy')}
@@ -22,9 +24,10 @@ function Footer({ startupConfig }: { startupConfig: TStartupConfig | null | unde
 
   const termsOfServiceRender = termsOfService?.externalUrl && (
     <a
-      className="text-sm text-blue-500"
+      className="text-sm text-blue-600 underline decoration-transparent transition-all duration-200 hover:text-blue-700 hover:decoration-blue-700 focus:text-blue-700 focus:decoration-blue-700 dark:text-blue-500 dark:hover:text-blue-400 dark:hover:decoration-blue-400 dark:focus:text-blue-400 dark:focus:decoration-blue-400"
       href={termsOfService.externalUrl}
-      target={termsOfService.openNewTab ? '_blank' : undefined}
+      // Removed for WCAG compliance
+      // target={termsOfService.openNewTab ? '_blank' : undefined}
       rel="noreferrer"
     >
       {localize('com_ui_terms_of_service')}
