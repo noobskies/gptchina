@@ -322,21 +322,16 @@ function BadgeRow({
   }, [dragState.draggedBadge, handleMouseMove, handleMouseUp]);
 
   return (
-<<<<<<< HEAD
-    <BadgeRowProvider conversationId={conversationId} isSubmitting={isSubmitting}>
-      <div
-        ref={containerRef}
-        className="relative flex flex-wrap items-center gap-2"
-        data-tour="input-tools"
-      >
-=======
     <BadgeRowProvider
       conversationId={conversationId}
       specName={specName}
       isSubmitting={isSubmitting}
     >
-      <div ref={containerRef} className="relative flex flex-wrap items-center gap-2">
->>>>>>> main
+      <div
+        ref={containerRef}
+        className="relative flex flex-wrap items-center gap-2"
+        data-tour="input-tools"
+      >
         {showEphemeralBadges === true && <ToolsDropdown />}
         {tempBadges.map((badge, index) => (
           <React.Fragment key={badge.id}>
