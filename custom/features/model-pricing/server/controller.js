@@ -11,7 +11,8 @@
  * See: custom/features/model-pricing/README.md
  */
 
-const { tokenValues, getValueKey } = require('../../../../api/models/tx');
+// CUSTOM: gptchina - tokenValues/getValueKey moved to @librechat/data-schemas in upstream v0.8.4
+const { tokenValues, getValueKey } = require('@librechat/data-schemas');
 
 /**
  * Get pricing information for a specific model

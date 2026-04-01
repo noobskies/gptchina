@@ -8,7 +8,8 @@
  * Controller for token pricing information endpoints.
  */
 
-const { tokenValues } = require('../../../../api/models/tx');
+// CUSTOM: gptchina - tokenValues moved to @librechat/data-schemas in upstream v0.8.4
+const { tokenValues } = require('@librechat/data-schemas');
 const { logger } = require('../../../../api/config');
 
 /**

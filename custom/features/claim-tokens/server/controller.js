@@ -10,7 +10,8 @@
 
 const { CLAIM_TOKENS_CONFIG, CLAIM_TOKENS_ERRORS } = require('../shared/constants');
 const { Balance } = require('../../../../api/db/models');
-const { createAutoRefillTransaction } = require('../../../../api/models/Transaction');
+// CUSTOM: gptchina - createAutoRefillTransaction moved to ~/models in upstream v0.8.4
+const { createAutoRefillTransaction } = require('../../../../api/models');
 const { logger } = require('@librechat/data-schemas');
 
 /**

@@ -10,7 +10,8 @@
 
 const { BUY_TOKENS_ERRORS } = require('../shared/constants');
 const { Balance } = require('../../../../api/db/models');
-const { createTransaction } = require('../../../../api/models/Transaction');
+// CUSTOM: gptchina - createTransaction moved to ~/models in upstream v0.8.4
+const { createTransaction } = require('../../../../api/models');
 const { logger } = require('@librechat/data-schemas');
 const {
   createPaymentIntent,
