@@ -1,4 +1,12 @@
 import { useCallback, useEffect, useState, useMemo, memo, lazy, Suspense, useRef } from 'react';
+// CUSTOM: gptchina - token action buttons in expanded conversation panel
+const ClaimTokensButton = lazy(() => import('@custom/features/claim-tokens/client'));
+const BuyTokensButton = lazy(() => import('@custom/features/buy-tokens/client'));
+const TokenUsageGuideLink = lazy(() =>
+  import('@custom/features/token-usage-guide/client').then((module) => ({
+    default: module.TokenUsageGuideLink,
+  })),
+);
 import { useQueryClient } from '@tanstack/react-query';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
 import { useMediaQuery, NewChatIcon } from '@librechat/client';
@@ -160,6 +168,18 @@ const ConversationsSection = memo(() => {
           isChatsExpanded={isChatsExpanded}
           setIsChatsExpanded={setIsChatsExpanded}
         />
+      </div>
+      {/* CUSTOM: gptchina - full-width token action buttons at bottom of conversation panel */}
+      <div className="flex flex-col gap-1 px-2 pb-1 pt-2">
+        <Suspense fallback={null}>
+          <ClaimTokensButton />
+        </Suspense>
+        <Suspense fallback={null}>
+          <BuyTokensButton />
+        </Suspense>
+        <Suspense fallback={null}>
+          <TokenUsageGuideLink />
+        </Suspense>
       </div>
     </div>
   );

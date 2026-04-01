@@ -168,19 +168,16 @@ function ExpandedPanel({
         ))}
       </div>
 
-      {/* CUSTOM: gptchina - restore custom sidebar actions in UnifiedSidebar */}
+      {/* CUSTOM: gptchina - icon-only token buttons in icon strip (always collapsed style) */}
       <div className="mt-auto flex flex-col gap-1">
-        {/* CUSTOM: gptchina - Claim Tokens feature */}
         <Suspense fallback={null}>
-          <ClaimTokensButton collapsed={!expanded} />
+          <ClaimTokensButton collapsed />
         </Suspense>
-        {/* CUSTOM: gptchina - Buy Tokens feature */}
         <Suspense fallback={null}>
-          <BuyTokensButton collapsed={!expanded} />
+          <BuyTokensButton collapsed />
         </Suspense>
-        {/* CUSTOM: gptchina - Token Usage Guide */}
         <Suspense fallback={null}>
-          <TokenUsageGuideLink collapsed={!expanded} />
+          <TokenUsageGuideLink collapsed />
         </Suspense>
         <Suspense fallback={<Skeleton className="h-9 w-9 rounded-lg" />}>
           <AccountSettings collapsed />
