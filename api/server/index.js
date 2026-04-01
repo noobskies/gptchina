@@ -94,6 +94,18 @@ const startServer = async () => {
 
   app.get('/health', (_req, res) => res.status(200).send('OK'));
 
+  // CUSTOM: gptchina - Stripe webhook MUST be registered before express.json()
+  // Stripe requires raw body for signature verification
+  const customBuyTokensWebhook = require('../../custom/features/buy-tokens/server/routes');
+  app.use(
+    '/api/custom/stripe/webhook',
+    express.raw({ type: 'application/json' }),
+    customBuyTokensWebhook,
+  );
+  logger.info(
+    '✅ Buy Tokens webhook route registered: /api/custom/stripe/webhook (with raw body parser)',
+  );
+
   /* Middleware */
   app.use(noIndex);
   app.use(express.json({ limit: '3mb' }));
@@ -185,6 +197,29 @@ const startServer = async () => {
 
   app.use('/api/tags', routes.tags);
   app.use('/api/mcp', routes.mcp);
+
+  // CUSTOM: gptchina - Claim Tokens feature
+  // See: custom/features/claim-tokens/README.md
+  const customClaimTokensRoutes = require('../../custom/features/claim-tokens/server/routes');
+  app.use('/api/custom', customClaimTokensRoutes);
+
+  // CUSTOM: gptchina - Buy Tokens feature (non-webhook routes)
+  // See: custom/features/buy-tokens/README.md
+  // Note: Webhook route registered earlier before express.json()
+  const customBuyTokensRoutes = require('../../custom/features/buy-tokens/server/routes');
+  app.use('/api/custom', customBuyTokensRoutes);
+
+  // CUSTOM: gptchina - Model Pricing feature
+  // See: custom/features/model-pricing/README.md
+  const customModelPricingRoutes = require('../../custom/features/model-pricing/server/routes');
+  app.use('/api/custom/pricing', customModelPricingRoutes);
+
+  // CUSTOM: gptchina - Token Info / Pricing Guide feature
+  // See: custom/features/token-info/README.md
+  const customTokenInfoRoutes = require('../../custom/features/token-info/server/routes');
+  app.use('/api/custom/token-info', customTokenInfoRoutes);
+
+  app.use(ErrorController);
 
   /** 404 for unmatched API routes */
   app.use('/api', apiNotFound);

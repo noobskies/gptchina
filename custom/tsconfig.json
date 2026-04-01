@@ -1,0 +1,20 @@
+{
+  "extends": "../client/tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "baseUrl": "..",
+    "paths": {
+      "~/*": ["./client/src/*"],
+      "test/*": ["./client/test/*"],
+      "*": ["./client/*", "../node_modules/*"],
+      "librechat-data-provider/*": ["./packages/data-provider/*"]
+    }
+  },
+  "include": [
+    "features/**/client/**/*.ts",
+    "features/**/client/**/*.tsx",
+    "features/**/shared/**/*.ts",
+    "features/**/shared/**/*.tsx"
+  ]
+}

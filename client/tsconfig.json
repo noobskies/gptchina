@@ -23,7 +23,8 @@
       "~/*": ["./client/src/*"],
       "test/*": ["./client/test/*"],
       "*": ["./client/*", "../node_modules/*"],
-      "librechat-data-provider/*": ["./packages/data-provider/*"]
+      "librechat-data-provider/*": ["./packages/data-provider/*"],
+      "@custom/*": ["./custom/*"]
     }
   },
   "types": ["node", "jest", "@testing-library/jest-dom"],
@@ -36,6 +37,10 @@
     "env.d.ts",
     "../config/translations/**/*.ts",
     "../packages/client/src/hooks/useDelayedRender.tsx",
-    "../packages/client/src/components/InfoHoverCard.tsx"
+    "../packages/client/src/components/InfoHoverCard.tsx",
+    "../custom/features/**/client/**/*.ts",
+    "../custom/features/**/client/**/*.tsx",
+    "../custom/features/**/shared/**/*.ts",
+    "../custom/features/**/shared/**/*.tsx"
   ]
 }

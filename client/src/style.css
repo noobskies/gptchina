@@ -18,17 +18,17 @@
   --gray-800: #212121;
   --gray-850: #171717;
   --gray-900: #0d0d0d;
-  --green-50: #ecfdf5;
-  --green-100: #d1fae5;
-  --green-200: #a7f3d0;
-  --green-300: #6ee7b7;
-  --green-400: #34d399;
-  --green-500: #10b981;
-  --green-600: #059669;
-  --green-700: #047857;
-  --green-800: #065f46;
-  --green-900: #064e3b;
-  --green-950: #022c22;
+  --blue-50: #eff6ff;
+  --blue-100: #dbeafe;
+  --blue-200: #bfdbfe;
+  --blue-300: #93c5fd;
+  --blue-400: #60a5fa;
+  --blue-500: #3b82f6;
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+  --blue-800: #1e40af;
+  --blue-900: #1e3a8a;
+  --blue-950: #172554;
   --red-50: #fef2f2;
   --red-100: #fee2e2;
   --red-200: #fecaca;
@@ -87,8 +87,8 @@ html {
   --surface-tertiary: var(--gray-100);
   --surface-tertiary-alt: var(--white);
   --surface-dialog: var(--white);
-  --surface-submit: var(--green-700);
-  --surface-submit-hover: var(--green-800);
+  --surface-submit: var(--blue-700);
+  --surface-submit-hover: var(--blue-800);
   --surface-destructive: var(--red-700);
   --surface-destructive-hover: var(--red-800);
   --surface-chat: var(--white);
@@ -149,8 +149,8 @@ html {
   --surface-tertiary: var(--gray-700);
   --surface-tertiary-alt: var(--gray-700);
   --surface-dialog: var(--gray-850);
-  --surface-submit: var(--green-700);
-  --surface-submit-hover: var(--green-800);
+  --surface-submit: var(--blue-700);
+  --surface-submit-hover: var(--blue-800);
   --surface-destructive: var(--red-800);
   --surface-destructive-hover: var(--red-900);
   --surface-chat: var(--gray-700);
@@ -2224,6 +2224,25 @@ html {
   background-clip: content-box;
   -webkit-box-shadow: 0 0 0 50vh #0d0d0d inset;
 }
+
+/* CUSTOM: gptchina - Fix autofill label overlay bug */
+/* Issue: Floating labels don't move when browser autofills email/username field */
+/* Root cause: :placeholder-shown pseudo-class doesn't update on autofill */
+/* Solution: Explicitly position label when input is autofilled */
+/* Upstream version: v0.8.1-rc1 */
+.peer:-webkit-autofill ~ label,
+.peer:autofill ~ label {
+  top: 0.375rem !important;
+  transform: translateY(-1rem) scale(0.75) !important;
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
+
+/* Ensure autofilled text is visible in both themes */
+.peer:-webkit-autofill {
+  -webkit-text-fill-color: var(--text-primary) !important;
+}
+/* CUSTOM: gptchina - End fix */
 
 /* Ordered Listing */
 .prose :where(ol[type='A']):not(:where([class~='not-prose'] *)) {
