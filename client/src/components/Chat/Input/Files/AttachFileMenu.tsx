@@ -9,44 +9,55 @@ import {
   TerminalSquareIcon,
 } from 'lucide-react';
 import {
-  Providers,
-  EToolResources,
-  EModelEndpoint,
-  defaultAgentCapabilities,
-  isDocumentSupportedProvider,
-} from 'librechat-data-provider';
-import {
   FileUpload,
   TooltipAnchor,
   DropdownPopup,
   AttachmentIcon,
   SharePointIcon,
 } from '@librechat/client';
-import type { EndpointFileConfig } from 'librechat-data-provider';
+import {
+  Providers,
+  EToolResources,
+  EModelEndpoint,
+  defaultAgentCapabilities,
+  bedrockDocumentExtensions,
+  isDocumentSupportedProvider,
+} from 'librechat-data-provider';
+import type { EndpointFileConfig, TConversation } from 'librechat-data-provider';
+import type { ExtendedFile, FileSetter } from '~/common';
 import {
   useAgentToolPermissions,
   useAgentCapabilities,
   useGetAgentsConfig,
-  useFileHandling,
+  useFileHandlingNoChatContext,
   useLocalize,
 } from '~/hooks';
-import useSharePointFileHandling from '~/hooks/Files/useSharePointFileHandling';
+import { useSharePointFileHandlingNoChatContext } from '~/hooks/Files/useSharePointFileHandling';
 import { SharePointPickerDialog } from '~/components/SharePoint';
 import { useGetStartupConfig } from '~/data-provider';
 import { ephemeralAgentByConvoId } from '~/store';
 import { MenuItemProps } from '~/common';
 import { cn } from '~/utils';
 
-type FileUploadType = 'image' | 'document' | 'image_document' | 'image_document_video_audio';
+type FileUploadType =
+  | 'image'
+  | 'document'
+  | 'image_document'
+  | 'image_document_extended'
+  | 'image_document_video_audio';
 
 interface AttachFileMenuProps {
   agentId?: string | null;
   endpoint?: string | null;
   disabled?: boolean | null;
   conversationId: string;
-  endpointType?: EModelEndpoint;
+  endpointType?: EModelEndpoint | string;
   endpointFileConfig?: EndpointFileConfig;
   useResponsesApi?: boolean;
+  files: Map<string, ExtendedFile>;
+  setFiles: FileSetter;
+  setFilesLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  conversation: TConversation | null;
 }
 
 const AttachFileMenu = ({
@@ -57,6 +68,10 @@ const AttachFileMenu = ({
   conversationId,
   endpointFileConfig,
   useResponsesApi,
+  files,
+  setFiles,
+  setFilesLoading,
+  conversation,
 }: AttachFileMenuProps) => {
   const localize = useLocalize();
   const isUploadDisabled = disabled ?? false;
@@ -66,10 +81,17 @@ const AttachFileMenu = ({
     ephemeralAgentByConvoId(conversationId),
   );
   const [toolResource, setToolResource] = useState<EToolResources | undefined>();
-  const { handleFileChange } = useFileHandling();
-  const { handleSharePointFiles, isProcessing, downloadProgress } = useSharePointFileHandling({
-    toolResource,
+  const { handleFileChange } = useFileHandlingNoChatContext(undefined, {
+    files,
+    setFiles,
+    setFilesLoading,
+    conversation,
   });
+  const { handleSharePointFiles, isProcessing, downloadProgress } =
+    useSharePointFileHandlingNoChatContext(
+      { toolResource },
+      { files, setFiles, setFilesLoading, conversation },
+    );
 
   const { agentsConfig } = useGetAgentsConfig();
   const { data: startupConfig } = useGetStartupConfig();
@@ -99,6 +121,8 @@ const AttachFileMenu = ({
       inputRef.current.accept = '.pdf,application/pdf';
     } else if (fileType === 'image_document') {
       inputRef.current.accept = 'image/*,.heif,.heic,.pdf,application/pdf';
+    } else if (fileType === 'image_document_extended') {
+      inputRef.current.accept = `image/*,.heif,.heic,${bedrockDocumentExtensions}`;
     } else if (fileType === 'image_document_video_audio') {
       inputRef.current.accept = 'image/*,.heif,.heic,.pdf,application/pdf,video/*,audio/*';
     } else {
@@ -134,6 +158,11 @@ const AttachFileMenu = ({
             let fileType: Exclude<FileUploadType, 'image' | 'document'> = 'image_document';
             if (currentProvider === Providers.GOOGLE || currentProvider === Providers.OPENROUTER) {
               fileType = 'image_document_video_audio';
+            } else if (
+              currentProvider === Providers.BEDROCK ||
+              endpointType === EModelEndpoint.bedrock
+            ) {
+              fileType = 'image_document_extended';
             }
             onAction(fileType);
           },

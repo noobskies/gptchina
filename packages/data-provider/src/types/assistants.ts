@@ -206,6 +206,38 @@ export type SupportContact = {
   email?: string;
 };
 
+/**
+ * Specifies who can invoke a tool.
+ * - 'direct': LLM can call directly
+ * - 'code_execution': Only callable via programmatic tool calling (PTC)
+ */
+export type AllowedCaller = 'direct' | 'code_execution';
+
+/**
+ * Per-tool configuration options stored at the agent level.
+ * Keyed by tool_id (e.g., "search_mcp_github").
+ */
+export type ToolOptions = {
+  /**
+   * If true, the tool uses deferred loading (discoverable via tool search).
+   * @default false
+   */
+  defer_loading?: boolean;
+  /**
+   * Specifies who can invoke this tool.
+   * - 'direct': LLM can call directly (default behavior)
+   * - 'code_execution': Only callable via PTC sandbox
+   * @default ['direct']
+   */
+  allowed_callers?: AllowedCaller[];
+};
+
+/**
+ * Map of tool_id to its configuration options.
+ * Used to customize tool behavior per agent.
+ */
+export type AgentToolOptions = Record<string, ToolOptions>;
+
 export type Agent = {
   _id?: string;
   id: string;
@@ -217,18 +249,15 @@ export type Agent = {
   description: string | null;
   created_at: number;
   avatar: AgentAvatar | null;
-  instructions: string | null;
+  instructions?: string | null;
   additional_instructions?: string | null;
   tools?: string[];
-  projectIds?: string[];
   tool_kwargs?: Record<string, unknown>;
   metadata?: Record<string, unknown>;
   provider: AgentProvider;
   model: string | null;
   model_parameters: AgentModelParameters;
   conversation_starters?: string[];
-  /** @deprecated Use ACL permissions instead */
-  isCollaborative?: boolean;
   tool_resources?: AgentToolResources;
   /** @deprecated Use edges instead */
   agent_ids?: string[];
@@ -241,6 +270,8 @@ export type Agent = {
   version?: number;
   category?: string;
   support_contact?: SupportContact;
+  /** Per-tool configuration options (deferred loading, allowed callers, etc.) */
+  tool_options?: AgentToolOptions;
 };
 
 export type TAgentsMap = Record<string, Agent | undefined>;
@@ -265,6 +296,7 @@ export type AgentCreateParams = {
   | 'recursion_limit'
   | 'category'
   | 'support_contact'
+  | 'tool_options'
 >;
 
 export type AgentUpdateParams = {
@@ -278,9 +310,6 @@ export type AgentUpdateParams = {
   provider?: AgentProvider;
   model?: string | null;
   model_parameters?: AgentModelParameters;
-  projectIds?: string[];
-  removeProjectIds?: string[];
-  isCollaborative?: boolean;
 } & Pick<
   Agent,
   | 'agent_ids'
@@ -291,6 +320,7 @@ export type AgentUpdateParams = {
   | 'recursion_limit'
   | 'category'
   | 'support_contact'
+  | 'tool_options'
 >;
 
 export type AgentListParams = {
@@ -491,6 +521,21 @@ export type ContentPart = (
 
 export type TextData = (Text & PartMetadata) | undefined;
 
+export type SummaryContentPart = {
+  type: ContentTypes.SUMMARY;
+  content?: Array<{ type: ContentTypes.TEXT; text: string }>;
+  tokenCount?: number;
+  summarizing?: boolean;
+  summaryVersion?: number;
+  model?: string;
+  provider?: string;
+  createdAt?: string;
+  boundary?: {
+    messageId: string;
+    contentIndex: number;
+  };
+};
+
 export type TMessageContentParts =
   | ({
       type: ContentTypes.ERROR;
@@ -515,6 +560,7 @@ export type TMessageContentParts =
         PartMetadata;
     } & ContentMetadata)
   | ({ type: ContentTypes.IMAGE_FILE; image_file: ImageFile & PartMetadata } & ContentMetadata)
+  | (SummaryContentPart & ContentMetadata)
   | (Agents.AgentUpdate & ContentMetadata)
   | (Agents.MessageContentImageUrl & ContentMetadata)
   | (Agents.MessageContentVideoUrl & ContentMetadata)

@@ -1,4 +1,4 @@
-import { logger } from '@librechat/data-schemas';
+import { logger, tenantStorage, SYSTEM_TENANT_ID } from '@librechat/data-schemas';
 import {
   SystemRoles,
   Permissions,
@@ -43,6 +43,8 @@ function hasExplicitConfig(
       return interfaceConfig?.fileCitations !== undefined;
     case PermissionTypes.MCP_SERVERS:
       return interfaceConfig?.mcpServers !== undefined;
+    case PermissionTypes.REMOTE_AGENTS:
+      return interfaceConfig?.remoteAgents !== undefined;
     default:
       return false;
   }
@@ -52,6 +54,7 @@ export async function updateInterfacePermissions({
   appConfig,
   getRoleByName,
   updateAccessPermissions,
+  tenantId,
 }: {
   appConfig: AppConfig;
   getRoleByName: (roleName: string, fieldsToSelect?: string | string[]) => Promise<IRole | null>;
@@ -61,7 +64,19 @@ export async function updateInterfacePermissions({
 
     roleData?: IRole | null,
   ) => Promise<void>;
-}) {
+  /**
+   * Optional tenant ID for scoping role updates to a specific tenant.
+   * When provided (and not SYSTEM_TENANT_ID), runs inside `tenantStorage.run({ tenantId })`.
+   * When omitted or SYSTEM_TENANT_ID, uses the caller's existing ALS context.
+   */
+  tenantId?: string;
+}): Promise<void> {
+  if (tenantId && tenantId !== SYSTEM_TENANT_ID) {
+    return tenantStorage.run({ tenantId }, async () =>
+      updateInterfacePermissions({ appConfig, getRoleByName, updateAccessPermissions }),
+    );
+  }
+
   const loadedInterface = appConfig?.interfaceConfig;
   if (!loadedInterface) {
     return;
@@ -101,7 +116,9 @@ export async function updateInterfacePermissions({
     const defaultPerms = roleDefaults[roleName]?.permissions;
 
     const existingRole = await getRoleByName(roleName);
-    const existingPermissions = existingRole?.permissions;
+    const existingPermissions = existingRole?.permissions as
+      | Partial<Record<PermissionTypes, Record<string, boolean | undefined>>>
+      | undefined;
     const permissionsToUpdate: Partial<
       Record<PermissionTypes, Record<string, boolean | undefined>>
     > = {};
@@ -142,21 +159,28 @@ export async function updateInterfacePermissions({
     };
 
     // Helper to extract value from boolean or object config
-    const getConfigUse = (
-      config: boolean | { use?: boolean; share?: boolean; public?: boolean } | undefined,
-    ) => (typeof config === 'boolean' ? config : config?.use);
-    const getConfigShare = (
-      config: boolean | { use?: boolean; share?: boolean; public?: boolean } | undefined,
-    ) => (typeof config === 'boolean' ? undefined : config?.share);
-    const getConfigPublic = (
-      config: boolean | { use?: boolean; share?: boolean; public?: boolean } | undefined,
-    ) => (typeof config === 'boolean' ? undefined : config?.public);
+    type PermissionConfig =
+      | boolean
+      | { use?: boolean; create?: boolean; share?: boolean; public?: boolean }
+      | undefined;
+    const getConfigUse = (config: PermissionConfig) =>
+      typeof config === 'boolean' ? config : config?.use;
+    const getConfigCreate = (config: PermissionConfig) =>
+      typeof config === 'boolean' ? undefined : config?.create;
+    const getConfigShare = (config: PermissionConfig) =>
+      typeof config === 'boolean' ? undefined : config?.share;
+    const getConfigPublic = (config: PermissionConfig) =>
+      typeof config === 'boolean' ? undefined : config?.public;
 
-    // Get default use values (for backward compat when config is boolean)
+    // Get default values (for backward compat when config is boolean)
     const promptsDefaultUse =
       typeof defaults.prompts === 'boolean' ? defaults.prompts : defaults.prompts?.use;
     const agentsDefaultUse =
       typeof defaults.agents === 'boolean' ? defaults.agents : defaults.agents?.use;
+    const promptsDefaultCreate =
+      typeof defaults.prompts === 'object' ? defaults.prompts?.create : undefined;
+    const agentsDefaultCreate =
+      typeof defaults.agents === 'object' ? defaults.agents?.create : undefined;
     const promptsDefaultShare =
       typeof defaults.prompts === 'object' ? defaults.prompts?.share : undefined;
     const agentsDefaultShare =
@@ -173,21 +197,32 @@ export async function updateInterfacePermissions({
           defaultPerms[PermissionTypes.PROMPTS]?.[Permissions.USE],
           promptsDefaultUse,
         ),
-        [Permissions.CREATE]: getPermissionValue(
-          undefined,
-          defaultPerms[PermissionTypes.PROMPTS]?.[Permissions.CREATE],
-          true,
-        ),
-        [Permissions.SHARE]: getPermissionValue(
-          getConfigShare(loadedInterface.prompts),
-          defaultPerms[PermissionTypes.PROMPTS]?.[Permissions.SHARE],
-          promptsDefaultShare,
-        ),
-        [Permissions.SHARE_PUBLIC]: getPermissionValue(
-          getConfigPublic(loadedInterface.prompts),
-          defaultPerms[PermissionTypes.PROMPTS]?.[Permissions.SHARE_PUBLIC],
-          promptsDefaultPublic,
-        ),
+        ...((typeof interfaceConfig?.prompts === 'object' && 'create' in interfaceConfig.prompts) ||
+        !existingPermissions?.[PermissionTypes.PROMPTS]
+          ? {
+              [Permissions.CREATE]: getPermissionValue(
+                getConfigCreate(loadedInterface.prompts),
+                defaultPerms[PermissionTypes.PROMPTS]?.[Permissions.CREATE],
+                promptsDefaultCreate ?? true,
+              ),
+            }
+          : {}),
+        ...((typeof interfaceConfig?.prompts === 'object' &&
+          ('share' in interfaceConfig.prompts || 'public' in interfaceConfig.prompts)) ||
+        !existingPermissions?.[PermissionTypes.PROMPTS]
+          ? {
+              [Permissions.SHARE]: getPermissionValue(
+                getConfigShare(loadedInterface.prompts),
+                defaultPerms[PermissionTypes.PROMPTS]?.[Permissions.SHARE],
+                promptsDefaultShare,
+              ),
+              [Permissions.SHARE_PUBLIC]: getPermissionValue(
+                getConfigPublic(loadedInterface.prompts),
+                defaultPerms[PermissionTypes.PROMPTS]?.[Permissions.SHARE_PUBLIC],
+                promptsDefaultPublic,
+              ),
+            }
+          : {}),
       },
       [PermissionTypes.BOOKMARKS]: {
         [Permissions.USE]: getPermissionValue(
@@ -238,21 +273,32 @@ export async function updateInterfacePermissions({
           defaultPerms[PermissionTypes.AGENTS]?.[Permissions.USE],
           agentsDefaultUse,
         ),
-        [Permissions.CREATE]: getPermissionValue(
-          undefined,
-          defaultPerms[PermissionTypes.AGENTS]?.[Permissions.CREATE],
-          true,
-        ),
-        [Permissions.SHARE]: getPermissionValue(
-          getConfigShare(loadedInterface.agents),
-          defaultPerms[PermissionTypes.AGENTS]?.[Permissions.SHARE],
-          agentsDefaultShare,
-        ),
-        [Permissions.SHARE_PUBLIC]: getPermissionValue(
-          getConfigPublic(loadedInterface.agents),
-          defaultPerms[PermissionTypes.AGENTS]?.[Permissions.SHARE_PUBLIC],
-          agentsDefaultPublic,
-        ),
+        ...((typeof interfaceConfig?.agents === 'object' && 'create' in interfaceConfig.agents) ||
+        !existingPermissions?.[PermissionTypes.AGENTS]
+          ? {
+              [Permissions.CREATE]: getPermissionValue(
+                getConfigCreate(loadedInterface.agents),
+                defaultPerms[PermissionTypes.AGENTS]?.[Permissions.CREATE],
+                agentsDefaultCreate ?? true,
+              ),
+            }
+          : {}),
+        ...((typeof interfaceConfig?.agents === 'object' &&
+          ('share' in interfaceConfig.agents || 'public' in interfaceConfig.agents)) ||
+        !existingPermissions?.[PermissionTypes.AGENTS]
+          ? {
+              [Permissions.SHARE]: getPermissionValue(
+                getConfigShare(loadedInterface.agents),
+                defaultPerms[PermissionTypes.AGENTS]?.[Permissions.SHARE],
+                agentsDefaultShare,
+              ),
+              [Permissions.SHARE_PUBLIC]: getPermissionValue(
+                getConfigPublic(loadedInterface.agents),
+                defaultPerms[PermissionTypes.AGENTS]?.[Permissions.SHARE_PUBLIC],
+                agentsDefaultPublic,
+              ),
+            }
+          : {}),
       },
       [PermissionTypes.TEMPORARY_CHAT]: {
         [Permissions.USE]: getPermissionValue(
@@ -319,27 +365,204 @@ export async function updateInterfacePermissions({
           defaultPerms[PermissionTypes.MCP_SERVERS]?.[Permissions.USE],
           defaults.mcpServers?.use,
         ),
-        [Permissions.CREATE]: getPermissionValue(
-          loadedInterface.mcpServers?.create,
-          defaultPerms[PermissionTypes.MCP_SERVERS]?.[Permissions.CREATE],
-          defaults.mcpServers?.create,
+        ...((typeof interfaceConfig?.mcpServers === 'object' &&
+          'create' in interfaceConfig.mcpServers) ||
+        !existingPermissions?.[PermissionTypes.MCP_SERVERS]
+          ? {
+              [Permissions.CREATE]: getPermissionValue(
+                typeof interfaceConfig?.mcpServers === 'object'
+                  ? interfaceConfig.mcpServers.create
+                  : undefined,
+                defaultPerms[PermissionTypes.MCP_SERVERS]?.[Permissions.CREATE],
+                defaults.mcpServers?.create,
+              ),
+            }
+          : {}),
+        ...((typeof interfaceConfig?.mcpServers === 'object' &&
+          ('share' in interfaceConfig.mcpServers || 'public' in interfaceConfig.mcpServers)) ||
+        !existingPermissions?.[PermissionTypes.MCP_SERVERS]
+          ? {
+              [Permissions.SHARE]: getPermissionValue(
+                loadedInterface.mcpServers?.share,
+                defaultPerms[PermissionTypes.MCP_SERVERS]?.[Permissions.SHARE],
+                defaults.mcpServers?.share,
+              ),
+              [Permissions.SHARE_PUBLIC]: getPermissionValue(
+                loadedInterface.mcpServers?.public,
+                defaultPerms[PermissionTypes.MCP_SERVERS]?.[Permissions.SHARE_PUBLIC],
+                defaults.mcpServers?.public,
+              ),
+            }
+          : {}),
+      },
+      [PermissionTypes.REMOTE_AGENTS]: {
+        [Permissions.USE]: getPermissionValue(
+          loadedInterface.remoteAgents?.use,
+          defaultPerms[PermissionTypes.REMOTE_AGENTS]?.[Permissions.USE],
+          defaults.remoteAgents?.use,
         ),
-        [Permissions.SHARE]: getPermissionValue(
-          loadedInterface.mcpServers?.share,
-          defaultPerms[PermissionTypes.MCP_SERVERS]?.[Permissions.SHARE],
-          defaults.mcpServers?.share,
-        ),
-        [Permissions.SHARE_PUBLIC]: getPermissionValue(
-          loadedInterface.mcpServers?.public,
-          defaultPerms[PermissionTypes.MCP_SERVERS]?.[Permissions.SHARE_PUBLIC],
-          defaults.mcpServers?.public,
-        ),
+        ...((typeof interfaceConfig?.remoteAgents === 'object' &&
+          'create' in interfaceConfig.remoteAgents) ||
+        !existingPermissions?.[PermissionTypes.REMOTE_AGENTS]
+          ? {
+              [Permissions.CREATE]: getPermissionValue(
+                typeof interfaceConfig?.remoteAgents === 'object'
+                  ? interfaceConfig.remoteAgents.create
+                  : undefined,
+                defaultPerms[PermissionTypes.REMOTE_AGENTS]?.[Permissions.CREATE],
+                defaults.remoteAgents?.create,
+              ),
+            }
+          : {}),
+        ...((typeof interfaceConfig?.remoteAgents === 'object' &&
+          ('share' in interfaceConfig.remoteAgents || 'public' in interfaceConfig.remoteAgents)) ||
+        !existingPermissions?.[PermissionTypes.REMOTE_AGENTS]
+          ? {
+              [Permissions.SHARE]: getPermissionValue(
+                loadedInterface.remoteAgents?.share,
+                defaultPerms[PermissionTypes.REMOTE_AGENTS]?.[Permissions.SHARE],
+                defaults.remoteAgents?.share,
+              ),
+              [Permissions.SHARE_PUBLIC]: getPermissionValue(
+                loadedInterface.remoteAgents?.public,
+                defaultPerms[PermissionTypes.REMOTE_AGENTS]?.[Permissions.SHARE_PUBLIC],
+                defaults.remoteAgents?.public,
+              ),
+            }
+          : {}),
       },
     };
 
     // Check and add each permission type if needed
     for (const [permType, permissions] of Object.entries(allPermissions)) {
       addPermissionIfNeeded(permType as PermissionTypes, permissions);
+    }
+
+    /**
+     * Backfill SHARE / SHARE_PUBLIC for permission types that already exist in the DB but are
+     * missing these fields — caused by the PR #11283 schema change that added SHARE/SHARE_PUBLIC
+     * to PROMPTS and AGENTS (replacing the removed SHARED_GLOBAL field) without a DB migration.
+     *
+     * This is intentionally kept separate from `addPermissionIfNeeded` to avoid overwriting
+     * user-customised share settings when the config uses a boolean (e.g. `agents: true`).
+     * Only fields that are literally absent from the existing DB document are backfilled here;
+     * any field that is already set keeps its current value.
+     */
+    type ShareBackfillEntry = [PermissionTypes, Record<string, boolean | undefined>];
+    const shareBackfill: ShareBackfillEntry[] = [
+      [
+        PermissionTypes.PROMPTS,
+        {
+          [Permissions.SHARE]: getPermissionValue(
+            getConfigShare(loadedInterface.prompts),
+            defaultPerms[PermissionTypes.PROMPTS]?.[Permissions.SHARE],
+            promptsDefaultShare,
+          ),
+          [Permissions.SHARE_PUBLIC]: getPermissionValue(
+            getConfigPublic(loadedInterface.prompts),
+            defaultPerms[PermissionTypes.PROMPTS]?.[Permissions.SHARE_PUBLIC],
+            promptsDefaultPublic,
+          ),
+        },
+      ],
+      [
+        PermissionTypes.AGENTS,
+        {
+          [Permissions.SHARE]: getPermissionValue(
+            getConfigShare(loadedInterface.agents),
+            defaultPerms[PermissionTypes.AGENTS]?.[Permissions.SHARE],
+            agentsDefaultShare,
+          ),
+          [Permissions.SHARE_PUBLIC]: getPermissionValue(
+            getConfigPublic(loadedInterface.agents),
+            defaultPerms[PermissionTypes.AGENTS]?.[Permissions.SHARE_PUBLIC],
+            agentsDefaultPublic,
+          ),
+        },
+      ],
+      [
+        PermissionTypes.MCP_SERVERS,
+        {
+          [Permissions.SHARE]: getPermissionValue(
+            loadedInterface.mcpServers?.share,
+            defaultPerms[PermissionTypes.MCP_SERVERS]?.[Permissions.SHARE],
+            defaults.mcpServers?.share,
+          ),
+          [Permissions.SHARE_PUBLIC]: getPermissionValue(
+            loadedInterface.mcpServers?.public,
+            defaultPerms[PermissionTypes.MCP_SERVERS]?.[Permissions.SHARE_PUBLIC],
+            defaults.mcpServers?.public,
+          ),
+        },
+      ],
+      [
+        PermissionTypes.REMOTE_AGENTS,
+        {
+          [Permissions.SHARE]: getPermissionValue(
+            loadedInterface.remoteAgents?.share,
+            defaultPerms[PermissionTypes.REMOTE_AGENTS]?.[Permissions.SHARE],
+            defaults.remoteAgents?.share,
+          ),
+          [Permissions.SHARE_PUBLIC]: getPermissionValue(
+            loadedInterface.remoteAgents?.public,
+            defaultPerms[PermissionTypes.REMOTE_AGENTS]?.[Permissions.SHARE_PUBLIC],
+            defaults.remoteAgents?.public,
+          ),
+        },
+      ],
+    ];
+
+    for (const [permType, shareDefaults] of shareBackfill) {
+      const existingPerms = existingPermissions?.[permType];
+      // Skip permission types that don't exist yet — addPermissionIfNeeded already handles those
+      if (!existingPerms) {
+        continue;
+      }
+
+      const missingFields: Record<string, boolean | undefined> = {};
+      for (const [field, value] of Object.entries(shareDefaults)) {
+        if (
+          value !== undefined &&
+          existingPerms[field] === undefined &&
+          // Don't clobber a value already queued by addPermissionIfNeeded (e.g. explicit config)
+          permissionsToUpdate[permType as PermissionTypes]?.[field] === undefined
+        ) {
+          missingFields[field] = value;
+        }
+      }
+
+      if (Object.keys(missingFields).length > 0) {
+        logger.debug(
+          `Role '${roleName}': Backfilling missing share fields for '${permType}': ${Object.keys(missingFields).join(', ')}`,
+        );
+        // Merge into any update already queued by addPermissionIfNeeded, or create a new entry
+        permissionsToUpdate[permType] = { ...permissionsToUpdate[permType], ...missingFields };
+      }
+    }
+
+    /**
+     * One-time migration: correct MCP_SERVERS.CREATE for USER role.
+     * Before the explicit roleDefaults fix, Zod schema defaults resolved CREATE to true
+     * for all roles. ADMIN should keep CREATE: true, but USER should have CREATE: false
+     * unless explicitly configured otherwise in librechat.yaml.
+     */
+    if (roleName === SystemRoles.USER) {
+      const existingMcpPerms = existingPermissions?.[PermissionTypes.MCP_SERVERS];
+      const mcpCreateExplicit =
+        typeof interfaceConfig?.mcpServers === 'object' && 'create' in interfaceConfig.mcpServers;
+      if (
+        existingMcpPerms?.[Permissions.CREATE] === true &&
+        !mcpCreateExplicit &&
+        defaultPerms[PermissionTypes.MCP_SERVERS]?.[Permissions.CREATE] === false
+      ) {
+        logger.debug(
+          `Role '${roleName}': Migrating MCP_SERVERS.CREATE from true to false (Zod default correction)`,
+        );
+        permissionsToUpdate[PermissionTypes.MCP_SERVERS] = {
+          ...permissionsToUpdate[PermissionTypes.MCP_SERVERS],
+          [Permissions.CREATE]: false,
+        };
+      }
     }
 
     // Update permissions if any need updating

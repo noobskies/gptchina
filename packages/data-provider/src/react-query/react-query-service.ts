@@ -124,6 +124,7 @@ export const useUpdateUserKeysMutation = (): UseMutationResult<
   return useMutation((payload: t.TUpdateUserKeyRequest) => dataService.updateUserKey(payload), {
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries([QueryKeys.name, variables.name]);
+      queryClient.invalidateQueries([QueryKeys.models]);
     },
   });
 };
@@ -142,6 +143,7 @@ export const useRevokeUserKeyMutation = (name: string): UseMutationResult<unknow
   return useMutation(() => dataService.revokeUserKey(name), {
     onSuccess: () => {
       queryClient.invalidateQueries([QueryKeys.name, name]);
+      queryClient.invalidateQueries([QueryKeys.models]);
       if (s.isAssistantsEndpoint(name)) {
         queryClient.invalidateQueries([QueryKeys.assistants, name, defaultOrderQuery]);
         queryClient.invalidateQueries([QueryKeys.assistantDocs]);
@@ -176,6 +178,7 @@ export const useRevokeAllUserKeysMutation = (): UseMutationResult<unknown> => {
       queryClient.invalidateQueries([QueryKeys.mcpTools]);
       queryClient.invalidateQueries([QueryKeys.actions]);
       queryClient.invalidateQueries([QueryKeys.tools]);
+      queryClient.invalidateQueries([QueryKeys.models]);
     },
   });
 };
@@ -523,4 +526,44 @@ export const useMCPServerConnectionStatusQuery = (
       ...config,
     },
   );
+};
+
+export const useGetAgentApiKeysQuery = (
+  config?: UseQueryOptions<t.TAgentApiKeyListResponse>,
+): QueryObserverResult<t.TAgentApiKeyListResponse> => {
+  return useQuery<t.TAgentApiKeyListResponse>(
+    [QueryKeys.agentApiKeys],
+    () => dataService.getAgentApiKeys(),
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
+      ...config,
+    },
+  );
+};
+
+export const useCreateAgentApiKeyMutation = (): UseMutationResult<
+  t.TAgentApiKeyCreateResponse,
+  unknown,
+  t.TAgentApiKeyCreateRequest
+> => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    (payload: t.TAgentApiKeyCreateRequest) => dataService.createAgentApiKey(payload),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([QueryKeys.agentApiKeys]);
+      },
+    },
+  );
+};
+
+export const useDeleteAgentApiKeyMutation = (): UseMutationResult<void, unknown, string> => {
+  const queryClient = useQueryClient();
+  return useMutation((id: string) => dataService.deleteAgentApiKey(id), {
+    onSuccess: () => {
+      queryClient.invalidateQueries([QueryKeys.agentApiKeys]);
+    },
+  });
 };

@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const { createMethods } = require('@librechat/data-schemas');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const { ResourceType, PermissionBits } = require('librechat-data-provider');
-const { createAgent } = require('~/models/Agent');
+const { createAgent } = require('~/models');
 
 /**
  * Mock the PermissionsController to isolate route testing
@@ -32,7 +32,7 @@ jest.mock('~/server/middleware/checkPeoplePickerAccess', () => ({
 
 // Import actual middleware to get canAccessResource
 const { canAccessResource } = require('~/server/middleware');
-const { findMCPServerById } = require('~/models');
+const { findMCPServerByObjectId } = require('~/models');
 
 /**
  * Security Tests for SBA-ADV-20251203-02
@@ -151,7 +151,7 @@ describe('Access Permissions Routes - Security Tests (SBA-ADV-20251203-02)', () 
           resourceType: ResourceType.MCPSERVER,
           requiredPermission,
           resourceIdParam: 'resourceId',
-          idResolver: findMCPServerById,
+          idResolver: findMCPServerByObjectId,
         });
       } else {
         return res.status(400).json({

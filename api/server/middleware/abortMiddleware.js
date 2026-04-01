@@ -1,18 +1,67 @@
 const { logger } = require('@librechat/data-schemas');
+const { isAssistantsEndpoint, ErrorTypes } = require('librechat-data-provider');
 const {
-  countTokens,
   isEnabled,
   sendEvent,
+  countTokens,
   GenerationJobManager,
+  recordCollectedUsage,
   sanitizeMessageForTransmit,
 } = require('@librechat/api');
-const { isAssistantsEndpoint, ErrorTypes } = require('librechat-data-provider');
 const { truncateText, smartTruncateText } = require('~/app/clients/prompts');
 const clearPendingReq = require('~/cache/clearPendingReq');
 const { sendError } = require('~/server/middleware/error');
-const { spendTokens } = require('~/models/spendTokens');
-const { saveMessage, getConvo } = require('~/models');
 const { abortRun } = require('./abortRun');
+const db = require('~/models');
+
+/**
+ * Spend tokens for all models from collected usage.
+ * This handles both sequential and parallel agent execution.
+ *
+ * IMPORTANT: After spending, this function clears the collectedUsage array
+ * to prevent double-spending. The array is shared with AgentClient.collectedUsage,
+ * so clearing it here prevents the finally block from also spending tokens.
+ *
+ * @param {Object} params
+ * @param {string} params.userId - User ID
+ * @param {string} params.conversationId - Conversation ID
+ * @param {Array<Object>} params.collectedUsage - Usage metadata from all models
+ * @param {string} [params.fallbackModel] - Fallback model name if not in usage
+ * @param {string} [params.messageId] - The response message ID for transaction correlation
+ */
+async function spendCollectedUsage({
+  userId,
+  conversationId,
+  collectedUsage,
+  fallbackModel,
+  messageId,
+}) {
+  if (!collectedUsage || collectedUsage.length === 0) {
+    return;
+  }
+
+  await recordCollectedUsage(
+    {
+      spendTokens: db.spendTokens,
+      spendStructuredTokens: db.spendStructuredTokens,
+      pricing: { getMultiplier: db.getMultiplier, getCacheMultiplier: db.getCacheMultiplier },
+      bulkWriteOps: { insertMany: db.bulkInsertTransactions, updateBalance: db.updateBalance },
+    },
+    {
+      user: userId,
+      conversationId,
+      collectedUsage,
+      context: 'abort',
+      messageId,
+      model: fallbackModel,
+    },
+  );
+
+  // Clear the array to prevent double-spending from the AgentClient finally block.
+  // The collectedUsage array is shared by reference with AgentClient.collectedUsage,
+  // so clearing it here ensures recordCollectedUsage() sees an empty array and returns early.
+  collectedUsage.length = 0;
+}
 
 /**
  * Abort an active message generation.
@@ -39,9 +88,8 @@ async function abortMessage(req, res) {
     return;
   }
 
-  const { jobData, content, text } = abortResult;
+  const { jobData, content, text, collectedUsage } = abortResult;
 
-  // Count tokens and spend them
   const completionTokens = await countTokens(text);
   const promptTokens = jobData?.promptTokens ?? 0;
 
@@ -62,19 +110,35 @@ async function abortMessage(req, res) {
     tokenCount: completionTokens,
   };
 
-  await spendTokens(
-    { ...responseMessage, context: 'incomplete', user: userId },
-    { promptTokens, completionTokens },
-  );
+  // Spend tokens for ALL models from collectedUsage (handles parallel agents/addedConvo)
+  if (collectedUsage && collectedUsage.length > 0) {
+    await spendCollectedUsage({
+      userId,
+      conversationId: jobData?.conversationId,
+      collectedUsage,
+      fallbackModel: jobData?.model,
+      messageId: jobData?.responseMessageId,
+    });
+  } else {
+    // Fallback: no collected usage, use text-based token counting for primary model only
+    await db.spendTokens(
+      { ...responseMessage, context: 'incomplete', user: userId },
+      { promptTokens, completionTokens },
+    );
+  }
 
-  await saveMessage(
-    req,
+  await db.saveMessage(
+    {
+      userId: req?.user?.id,
+      isTemporary: req?.body?.isTemporary,
+      interfaceConfig: req?.config?.interfaceConfig,
+    },
     { ...responseMessage, user: userId },
     { context: 'api/server/middleware/abortMiddleware.js' },
   );
 
   // Get conversation for title
-  const conversation = await getConvo(userId, conversationId);
+  const conversation = await db.getConvo(userId, conversationId);
 
   const finalEvent = {
     title: conversation && !conversation.title ? null : conversation?.title || 'New Chat',
@@ -206,4 +270,5 @@ const handleAbortError = async (res, req, error, data) => {
 module.exports = {
   handleAbort,
   handleAbortError,
+  spendCollectedUsage,
 };

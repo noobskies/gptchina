@@ -48,6 +48,10 @@ const balanceSchema = new Schema<t.IBalance>({
     type: [String],
     default: [],
   },
+  tenantId: {
+    type: String,
+    index: true,
+  },
 });
 
 export default balanceSchema;

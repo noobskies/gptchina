@@ -1,10 +1,10 @@
 import path from 'path';
-import { AnthropicVertex } from '@anthropic-ai/vertex-sdk';
 import { GoogleAuth } from 'google-auth-library';
-import { ClientOptions } from '@anthropic-ai/sdk';
 import { AuthKeys } from 'librechat-data-provider';
-import { loadServiceKey } from '~/utils/key';
+import { AnthropicVertex } from '@anthropic-ai/vertex-sdk';
+import type { ClientOptions } from '@anthropic-ai/sdk';
 import type { AnthropicCredentials, VertexAIClientOptions } from '~/types/anthropic';
+import { loadServiceKey } from '~/utils/key';
 
 /**
  * Options for loading Vertex AI credentials
@@ -79,7 +79,7 @@ export function isAnthropicVertexCredentials(credentials: AnthropicCredentials):
 
 /**
  * Filters anthropic-beta header values to only include those supported by Vertex AI.
- * Vertex AI rejects prompt-caching-2024-07-31 but we use 'prompt-caching-vertex' as a
+ * Vertex AI handles caching differently and we use 'prompt-caching-vertex' as a
  * marker to trigger cache_control application in the agents package.
  */
 function filterVertexHeaders(headers?: Record<string, string>): Record<string, string> | undefined {
@@ -110,10 +110,6 @@ function filterVertexHeaders(headers?: Record<string, string>): Record<string, s
         }
         // Remove token-efficient-tools headers
         if (v.includes('token-efficient-tools')) {
-          return false;
-        }
-        // Remove context-1m headers
-        if (v.includes('context-1m')) {
           return false;
         }
         return true;

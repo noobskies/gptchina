@@ -30,7 +30,7 @@ import AgentTool from './AgentTool';
 import CodeForm from './Code/Form';
 import MCPTools from './MCPTools';
 
-const labelClass = 'mb-2 text-token-text-primary block font-medium';
+const labelClass = 'mb-2 text-token-text-primary block text-sm font-medium';
 const inputClass = cn(
   defaultTextProps,
   'flex w-full px-3 py-2 border-border-light bg-surface-secondary focus-visible:ring-2 focus-visible:ring-ring-primary',
@@ -180,7 +180,7 @@ export default function AgentConfig() {
 
   return (
     <>
-      <div className="h-auto bg-white px-4 pt-3 dark:bg-transparent">
+      <div className="h-auto pt-1">
         {/* Avatar & Name */}
         <div className="mb-4">
           <AgentAvatar avatar={agent?.['avatar'] ?? null} />
@@ -209,6 +209,7 @@ export default function AgentConfig() {
                     'mt-1 w-56 text-sm text-red-500',
                     errors.name ? 'visible h-auto' : 'invisible h-0',
                   )}
+                  role="alert"
                 >
                   {errors.name ? errors.name.message : ' '}
                 </div>
@@ -264,7 +265,7 @@ export default function AgentConfig() {
           <button
             type="button"
             onClick={() => setActivePanel(Panel.model)}
-            className="btn btn-neutral border-token-border-light relative h-10 w-full rounded-lg font-medium"
+            className="btn btn-neutral border-token-border-light relative h-9 w-full rounded-lg font-medium"
             aria-haspopup="true"
             aria-expanded="false"
           >
@@ -289,7 +290,7 @@ export default function AgentConfig() {
           contextEnabled ||
           webSearchEnabled) && (
           <div className="mb-4 flex w-full flex-col items-start gap-3">
-            <label className="text-token-text-primary block font-medium">
+            <label className="text-token-text-primary block text-sm font-medium">
               {localize('com_assistants_capabilities')}
             </label>
             {/* Code Execution */}
@@ -392,7 +393,7 @@ export default function AgentConfig() {
         <div className="mb-4">
           <div className="mb-1.5 flex items-center gap-2">
             <span>
-              <label className="text-token-text-primary block font-medium">
+              <label className="text-token-text-primary block text-sm font-medium">
                 {localize('com_ui_support_contact')}
               </label>
             </span>

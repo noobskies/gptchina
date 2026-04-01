@@ -1,9 +1,14 @@
 import { logger } from '@librechat/data-schemas';
 import { createContentAggregator } from '@librechat/agents';
-import type { IJobStore, SerializableJobData, JobStatus } from '~/stream/interfaces/IJobStore';
 import type { StandardGraph } from '@librechat/agents';
 import type { Agents } from 'librechat-data-provider';
 import type { Redis, Cluster } from 'ioredis';
+import type {
+  SerializableJobData,
+  UsageMetadata,
+  IJobStore,
+  JobStatus,
+} from '~/stream/interfaces/IJobStore';
 
 /**
  * Key prefixes for Redis storage.
@@ -24,8 +29,9 @@ const KEYS = {
   runSteps: (streamId: string) => `stream:{${streamId}}:runsteps`,
   /** Running jobs set for cleanup (global set - single slot) */
   runningJobs: 'stream:running',
-  /** User's active jobs set: stream:user:{userId}:jobs */
-  userJobs: (userId: string) => `stream:user:{${userId}}:jobs`,
+  /** User's active jobs set, tenant-qualified when tenantId is available */
+  userJobs: (userId: string, tenantId?: string) =>
+    tenantId ? `stream:user:{${tenantId}:${userId}}:jobs` : `stream:user:{${userId}}:jobs`,
 };
 
 /**
@@ -90,6 +96,13 @@ export class RedisJobStore implements IJobStore {
    */
   private localGraphCache = new Map<string, WeakRef<StandardGraph>>();
 
+  /**
+   * Local cache for collectedUsage arrays.
+   * Generation happens on a single instance, so collectedUsage is only available locally.
+   * For cross-replica abort, the abort handler falls back to text-based token counting.
+   */
+  private localCollectedUsageCache = new Map<string, UsageMetadata[]>();
+
   /** Cleanup interval in ms (1 minute) */
   private cleanupIntervalMs = 60000;
 
@@ -128,10 +141,12 @@ export class RedisJobStore implements IJobStore {
     streamId: string,
     userId: string,
     conversationId?: string,
+    tenantId?: string,
   ): Promise<SerializableJobData> {
     const job: SerializableJobData = {
       streamId,
       userId,
+      ...(tenantId && { tenantId }),
       status: 'running',
       createdAt: Date.now(),
       conversationId,
@@ -139,18 +154,18 @@ export class RedisJobStore implements IJobStore {
     };
 
     const key = KEYS.job(streamId);
-    const userJobsKey = KEYS.userJobs(userId);
+    const userJobsKey = KEYS.userJobs(userId, tenantId);
 
     // For cluster mode, we can't pipeline keys on different slots
     // The job key uses hash tag {streamId}, runningJobs and userJobs are on different slots
     if (this.isCluster) {
-      await this.redis.hmset(key, this.serializeJob(job));
+      await this.redis.hset(key, this.serializeJob(job));
       await this.redis.expire(key, this.ttl.running);
       await this.redis.sadd(KEYS.runningJobs, streamId);
       await this.redis.sadd(userJobsKey, streamId);
     } else {
       const pipeline = this.redis.pipeline();
-      pipeline.hmset(key, this.serializeJob(job));
+      pipeline.hset(key, this.serializeJob(job));
       pipeline.expire(key, this.ttl.running);
       pipeline.sadd(KEYS.runningJobs, streamId);
       pipeline.sadd(userJobsKey, streamId);
@@ -171,17 +186,23 @@ export class RedisJobStore implements IJobStore {
 
   async updateJob(streamId: string, updates: Partial<SerializableJobData>): Promise<void> {
     const key = KEYS.job(streamId);
-    const exists = await this.redis.exists(key);
-    if (!exists) {
-      return;
-    }
 
     const serialized = this.serializeJob(updates as SerializableJobData);
     if (Object.keys(serialized).length === 0) {
       return;
     }
 
-    await this.redis.hmset(key, serialized);
+    const fields = Object.entries(serialized).flat();
+    const updated = await this.redis.eval(
+      'if redis.call("EXISTS", KEYS[1]) == 1 then redis.call("HSET", KEYS[1], unpack(ARGV)) return 1 else return 0 end',
+      1,
+      key,
+      ...fields,
+    );
+
+    if (updated === 0) {
+      return;
+    }
 
     // If status changed to complete/error/aborted, update TTL and remove from running set
     // Note: userJobs cleanup is handled lazily via self-healing in getActiveJobIdsByUser
@@ -227,6 +248,7 @@ export class RedisJobStore implements IJobStore {
   async deleteJob(streamId: string): Promise<void> {
     // Clear local caches
     this.localGraphCache.delete(streamId);
+    this.localCollectedUsageCache.delete(streamId);
 
     // Note: userJobs cleanup is handled lazily via self-healing in getActiveJobIdsByUser
     // In cluster mode, separate runningJobs (global) from stream-specific keys (same slot)
@@ -283,30 +305,46 @@ export class RedisJobStore implements IJobStore {
       }
     }
 
-    for (const streamId of streamIds) {
-      const job = await this.getJob(streamId);
+    // Process in batches of 50 to avoid sequential per-job round-trips
+    const BATCH_SIZE = 50;
+    for (let i = 0; i < streamIds.length; i += BATCH_SIZE) {
+      const batch = streamIds.slice(i, i + BATCH_SIZE);
+      const results = await Promise.allSettled(
+        batch.map(async (streamId) => {
+          const job = await this.getJob(streamId);
 
-      // Job no longer exists (TTL expired) - remove from set
-      if (!job) {
-        await this.redis.srem(KEYS.runningJobs, streamId);
-        this.localGraphCache.delete(streamId);
-        cleaned++;
-        continue;
-      }
+          // Job no longer exists (TTL expired) - remove from set
+          if (!job) {
+            await this.redis.srem(KEYS.runningJobs, streamId);
+            this.localGraphCache.delete(streamId);
+            this.localCollectedUsageCache.delete(streamId);
+            return 1;
+          }
 
-      // Job completed but still in running set (shouldn't happen, but handle it)
-      if (job.status !== 'running') {
-        await this.redis.srem(KEYS.runningJobs, streamId);
-        this.localGraphCache.delete(streamId);
-        cleaned++;
-        continue;
-      }
+          // Job completed but still in running set (shouldn't happen, but handle it)
+          if (job.status !== 'running') {
+            await this.redis.srem(KEYS.runningJobs, streamId);
+            this.localGraphCache.delete(streamId);
+            this.localCollectedUsageCache.delete(streamId);
+            return 1;
+          }
 
-      // Stale running job (failsafe - running for > configured TTL)
-      if (now - job.createdAt > this.ttl.running * 1000) {
-        logger.warn(`[RedisJobStore] Cleaning up stale job: ${streamId}`);
-        await this.deleteJob(streamId);
-        cleaned++;
+          // Stale running job (failsafe - running for > configured TTL)
+          if (now - job.createdAt > this.ttl.running * 1000) {
+            logger.warn(`[RedisJobStore] Cleaning up stale job: ${streamId}`);
+            await this.deleteJob(streamId);
+            return 1;
+          }
+
+          return 0;
+        }),
+      );
+      for (const result of results) {
+        if (result.status === 'fulfilled') {
+          cleaned += result.value;
+        } else {
+          logger.warn(`[RedisJobStore] Cleanup failed for a job:`, result.reason);
+        }
       }
     }
 
@@ -342,8 +380,8 @@ export class RedisJobStore implements IJobStore {
    * @param userId - The user ID to query
    * @returns Array of conversation IDs with active jobs
    */
-  async getActiveJobIdsByUser(userId: string): Promise<string[]> {
-    const userJobsKey = KEYS.userJobs(userId);
+  async getActiveJobIdsByUser(userId: string, tenantId?: string): Promise<string[]> {
+    const userJobsKey = KEYS.userJobs(userId, tenantId);
     const trackedIds = await this.redis.smembers(userJobsKey);
 
     if (trackedIds.length === 0) {
@@ -382,6 +420,7 @@ export class RedisJobStore implements IJobStore {
     }
     // Clear local caches
     this.localGraphCache.clear();
+    this.localCollectedUsageCache.clear();
     // Don't close the Redis connection - it's shared
     logger.info('[RedisJobStore] Destroyed');
   }
@@ -406,9 +445,26 @@ export class RedisJobStore implements IJobStore {
    * No-op for Redis - content parts are reconstructed from chunks.
    * Metadata (agentId, groupId) is embedded directly on content parts by the agent runtime.
    */
-  setContentParts(_streamId: string, _contentParts: Agents.MessageContentComplex[]): void {
+  setContentParts(): void {
     // Content parts are reconstructed from chunks during getContentParts
     // No separate storage needed
+  }
+
+  /**
+   * Store collectedUsage reference in local cache.
+   * This is used for abort handling to spend tokens for all models.
+   * Note: Only available on the generating instance; cross-replica abort uses fallback.
+   */
+  setCollectedUsage(streamId: string, collectedUsage: UsageMetadata[]): void {
+    this.localCollectedUsageCache.set(streamId, collectedUsage);
+  }
+
+  /**
+   * Get collected usage for a job.
+   * Only available if this is the generating instance.
+   */
+  getCollectedUsage(streamId: string): UsageMetadata[] {
+    return this.localCollectedUsageCache.get(streamId) ?? [];
   }
 
   /**
@@ -528,6 +584,7 @@ export class RedisJobStore implements IJobStore {
   clearContentState(streamId: string): void {
     // Clear local caches immediately
     this.localGraphCache.delete(streamId);
+    this.localCollectedUsageCache.delete(streamId);
 
     // Fire and forget - async cleanup for Redis
     this.clearContentStateAsync(streamId).catch((err) => {
@@ -552,16 +609,14 @@ export class RedisJobStore implements IJobStore {
    */
   async appendChunk(streamId: string, event: unknown): Promise<void> {
     const key = KEYS.chunks(streamId);
-    const added = await this.redis.xadd(key, '*', 'event', JSON.stringify(event));
-
-    // Set TTL on first chunk (when stream is created)
-    // Subsequent chunks inherit the stream's TTL
-    if (added) {
-      const len = await this.redis.xlen(key);
-      if (len === 1) {
-        await this.redis.expire(key, this.ttl.running);
-      }
-    }
+    // Pipeline XADD + EXPIRE in a single round-trip.
+    // EXPIRE is O(1) and idempotent — refreshing TTL on every chunk is better than
+    // only setting it once, since the original approach could let the TTL expire
+    // during long-running streams.
+    const pipeline = this.redis.pipeline();
+    pipeline.xadd(key, '*', 'event', JSON.stringify(event));
+    pipeline.expire(key, this.ttl.running);
+    await pipeline.exec();
   }
 
   /**
@@ -816,6 +871,7 @@ export class RedisJobStore implements IJobStore {
     return {
       streamId: data.streamId,
       userId: data.userId,
+      tenantId: data.tenantId || undefined,
       status: data.status as JobStatus,
       createdAt: parseInt(data.createdAt, 10),
       completedAt: data.completedAt ? parseInt(data.completedAt, 10) : undefined,

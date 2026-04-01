@@ -1,19 +1,27 @@
 import React, { useRef, useCallback, useMemo, useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 import { LayoutGrid } from 'lucide-react';
 import { useDrag, useDrop } from 'react-dnd';
 import { Skeleton } from '@librechat/client';
 import { useNavigate } from 'react-router-dom';
 import { useQueries } from '@tanstack/react-query';
+import { useRecoilValue } from 'recoil';
 import { QueryKeys, dataService } from 'librechat-data-provider';
 import type t from 'librechat-data-provider';
-import { useFavorites, useLocalize, useShowMarketplace, useNewConvo } from '~/hooks';
+import type { AgentQueryResult } from '~/common';
+import {
+  useGetConversation,
+  useShowMarketplace,
+  useFavorites,
+  useLocalize,
+  useNewConvo,
+} from '~/hooks';
 import { useAssistantsMapContext, useAgentsMapContext } from '~/Providers';
 import useSelectMention from '~/hooks/Input/useSelectMention';
 import { useGetEndpointsQuery } from '~/data-provider';
 import FavoriteItem from './FavoriteItem';
 import store from '~/store';
 
+/** Height intentionally matches FavoriteItem (px-3 py-2 + h-5 icon) to keep the CellMeasurerCache valid across the isAgentsLoading transition. */
 const FavoriteItemSkeleton = () => (
   <div className="flex w-full items-center rounded-lg px-3 py-2">
     <Skeleton className="mr-2 h-5 w-5 rounded-full" />
@@ -111,33 +119,40 @@ const DraggableFavoriteItem = ({
 export default function FavoritesList({
   isSmallScreen,
   toggleNav,
-  onHeightChange,
 }: {
   isSmallScreen?: boolean;
   toggleNav?: () => void;
-  /** Callback when the list height might have changed (e.g., agents finished loading) */
-  onHeightChange?: () => void;
 }) {
   const navigate = useNavigate();
   const localize = useLocalize();
   const search = useRecoilValue(store.search);
+  const getConversation = useGetConversation(0);
   const { favorites, reorderFavorites, isLoading: isFavoritesLoading } = useFavorites();
   const showAgentMarketplace = useShowMarketplace();
 
   const { newConversation } = useNewConvo();
   const assistantsMap = useAssistantsMapContext();
   const agentsMap = useAgentsMapContext();
-  const conversation = useRecoilValue(store.conversationByIndex(0));
   const { data: endpointsConfig = {} as t.TEndpointsConfig } = useGetEndpointsQuery();
 
-  const { onSelectEndpoint } = useSelectMention({
+  const { onSelectEndpoint: _onSelectEndpoint } = useSelectMention({
     modelSpecs: [],
-    conversation,
     assistantsMap,
     endpointsConfig,
+    getConversation,
     newConversation,
     returnHandlers: true,
   });
+
+  const onSelectEndpoint = useCallback(
+    (...args: Parameters<NonNullable<typeof _onSelectEndpoint>>) => {
+      _onSelectEndpoint?.(...args);
+      if (isSmallScreen && toggleNav) {
+        toggleNav();
+      }
+    },
+    [_onSelectEndpoint, isSmallScreen, toggleNav],
+  );
 
   const marketplaceRef = useRef<HTMLDivElement>(null);
   const listContainerRef = useRef<HTMLDivElement>(null);
@@ -184,11 +199,49 @@ export default function FavoritesList({
   const missingAgentQueries = useQueries({
     queries: missingAgentIds.map((agentId) => ({
       queryKey: [QueryKeys.agent, agentId],
-      queryFn: () => dataService.getAgentById({ agent_id: agentId }),
+      queryFn: async (): Promise<AgentQueryResult> => {
+        try {
+          const agent = await dataService.getAgentById({ agent_id: agentId });
+          return { found: true, agent };
+        } catch (error) {
+          if (error && typeof error === 'object' && 'response' in error) {
+            const axiosError = error as { response?: { status?: number } };
+            const status = axiosError.response?.status;
+            if (status === 404 || status === 403) {
+              return { found: false };
+            }
+          }
+          throw error;
+        }
+      },
       staleTime: 1000 * 60 * 5,
-      enabled: missingAgentIds.length > 0,
     })),
   });
+
+  const staleAgentIdsKey = useMemo(() => {
+    const ids: string[] = [];
+    for (let i = 0; i < missingAgentIds.length; i++) {
+      const query = missingAgentQueries[i];
+      if (query.data && !query.data.found) {
+        ids.push(missingAgentIds[i]);
+      }
+    }
+    return ids.sort().join(',');
+  }, [missingAgentIds, missingAgentQueries]);
+
+  const cleanupAttemptedRef = useRef('');
+
+  useEffect(() => {
+    if (!staleAgentIdsKey || cleanupAttemptedRef.current === staleAgentIdsKey) {
+      return;
+    }
+    const staleSet = new Set(staleAgentIdsKey.split(','));
+    const cleaned = safeFavorites.filter((f) => !f.agentId || !staleSet.has(f.agentId));
+    if (cleaned.length < safeFavorites.length) {
+      cleanupAttemptedRef.current = staleAgentIdsKey;
+      reorderFavorites(cleaned, true);
+    }
+  }, [staleAgentIdsKey, safeFavorites, reorderFavorites]);
 
   const combinedAgentsMap = useMemo(() => {
     if (agentsMap === undefined) {
@@ -201,8 +254,8 @@ export default function FavoritesList({
       }
     }
     missingAgentQueries.forEach((query) => {
-      if (query.data) {
-        combined[query.data.id] = query.data;
+      if (query.data?.found) {
+        combined[query.data.agent.id] = query.data.agent;
       }
     });
     return combined;
@@ -211,12 +264,6 @@ export default function FavoritesList({
   const isAgentsLoading =
     (allAgentIds.length > 0 && agentsMap === undefined) ||
     (missingAgentIds.length > 0 && missingAgentQueries.some((q) => q.isLoading));
-
-  useEffect(() => {
-    if (!isAgentsLoading && onHeightChange) {
-      onHeightChange();
-    }
-  }, [isAgentsLoading, onHeightChange]);
 
   const draggedFavoritesRef = useRef(safeFavorites);
 
@@ -282,7 +329,7 @@ export default function FavoritesList({
                 role="button"
                 tabIndex={0}
                 aria-label={localize('com_agents_marketplace')}
-                className="group relative flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-sm text-text-primary hover:bg-surface-active-alt"
+                className="group relative flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-sm text-text-primary outline-none hover:bg-surface-active-alt focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-black dark:focus-visible:ring-white"
                 onClick={handleAgentMarketplace}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {

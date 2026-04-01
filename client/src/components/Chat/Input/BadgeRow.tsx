@@ -28,6 +28,7 @@ interface BadgeRowProps {
   onChange: (badges: Pick<BadgeItem, 'id'>[]) => void;
   onToggle?: (badgeId: string, currentActive: boolean) => void;
   conversationId?: string | null;
+  specName?: string | null;
   isSubmitting?: boolean;
   isInChat: boolean;
 }
@@ -142,6 +143,7 @@ const dragReducer = (state: DragState, action: DragAction): DragState => {
 function BadgeRow({
   showEphemeralBadges,
   conversationId,
+  specName,
   isSubmitting,
   onChange,
   onToggle,
@@ -320,12 +322,21 @@ function BadgeRow({
   }, [dragState.draggedBadge, handleMouseMove, handleMouseUp]);
 
   return (
+<<<<<<< HEAD
     <BadgeRowProvider conversationId={conversationId} isSubmitting={isSubmitting}>
       <div
         ref={containerRef}
         className="relative flex flex-wrap items-center gap-2"
         data-tour="input-tools"
       >
+=======
+    <BadgeRowProvider
+      conversationId={conversationId}
+      specName={specName}
+      isSubmitting={isSubmitting}
+    >
+      <div ref={containerRef} className="relative flex flex-wrap items-center gap-2">
+>>>>>>> main
         {showEphemeralBadges === true && <ToolsDropdown />}
         {tempBadges.map((badge, index) => (
           <React.Fragment key={badge.id}>

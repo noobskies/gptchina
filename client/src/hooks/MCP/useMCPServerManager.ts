@@ -2,7 +2,14 @@ import { useCallback, useState, useMemo, useRef, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { useToastContext } from '@librechat/client';
 import { useQueryClient } from '@tanstack/react-query';
-import { Constants, QueryKeys, MCPOptions, ResourceType } from 'librechat-data-provider';
+import {
+  Constants,
+  QueryKeys,
+  MCPOptions,
+  Permissions,
+  ResourceType,
+  PermissionTypes,
+} from 'librechat-data-provider';
 import {
   useCancelMCPOAuthMutation,
   useUpdateUserPluginsMutation,
@@ -11,7 +18,7 @@ import {
 } from 'librechat-data-provider/react-query';
 import type { TUpdateUserPlugins, TPlugin, MCPServersResponse } from 'librechat-data-provider';
 import type { ConfigFieldDetail } from '~/common';
-import { useLocalize, useMCPSelect, useMCPConnectionStatus } from '~/hooks';
+import { useLocalize, useHasAccess, useMCPSelect, useMCPConnectionStatus } from '~/hooks';
 import { useGetStartupConfig, useMCPServersQuery } from '~/data-provider';
 import { mcpServerInitStatesAtom, getServerInitState } from '~/store/mcp';
 import type { MCPServerInitState } from '~/store/mcp';
@@ -28,16 +35,26 @@ export interface MCPServerDefinition {
 // The init states (isInitializing, isCancellable, etc.) are stored in the global Jotai atom
 type PollIntervals = Record<string, NodeJS.Timeout | null>;
 
-export function useMCPServerManager({ conversationId }: { conversationId?: string | null } = {}) {
+export function useMCPServerManager({
+  conversationId,
+  storageContextKey,
+}: { conversationId?: string | null; storageContextKey?: string } = {}) {
   const localize = useLocalize();
   const queryClient = useQueryClient();
   const { showToast } = useToastContext();
-  const { data: startupConfig } = useGetStartupConfig(); // Keep for UI config only
+  /** Retained for `interface.mcpServers.placeholder` used by `placeholderText` below */
+  const { data: startupConfig } = useGetStartupConfig();
+  const canUseMcp = useHasAccess({
+    permissionType: PermissionTypes.MCP_SERVERS,
+    permission: Permissions.USE,
+  });
 
-  const { data: loadedServers, isLoading } = useMCPServersQuery();
+  const { data: loadedServers, isLoading } = useMCPServersQuery({ enabled: canUseMcp });
 
   // Fetch effective permissions for all MCP servers
-  const { data: permissionsMap } = useGetAllEffectivePermissionsQuery(ResourceType.MCPSERVER);
+  const { data: permissionsMap } = useGetAllEffectivePermissionsQuery(ResourceType.MCPSERVER, {
+    enabled: canUseMcp,
+  });
 
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
   const [selectedToolForConfig, setSelectedToolForConfig] = useState<TPlugin | null>(null);
@@ -73,6 +90,7 @@ export function useMCPServerManager({ conversationId }: { conversationId?: strin
 
   const { mcpValues, setMCPValues, isPinned, setIsPinned } = useMCPSelect({
     conversationId,
+    storageContextKey,
     servers: selectableServers,
   });
   const mcpValuesRef = useRef(mcpValues);
@@ -94,8 +112,20 @@ export function useMCPServerManager({ conversationId }: { conversationId?: strin
   const cancelOAuthMutation = useCancelMCPOAuthMutation();
 
   const updateUserPluginsMutation = useUpdateUserPluginsMutation({
-    onSuccess: async () => {
-      showToast({ message: localize('com_nav_mcp_vars_updated'), status: 'success' });
+    onSuccess: async (_data, variables) => {
+      const isRevoke = variables.action === 'uninstall';
+      const message = isRevoke
+        ? localize('com_nav_mcp_access_revoked')
+        : localize('com_nav_mcp_vars_updated');
+      showToast({ message, status: 'success' });
+
+      /** Deselect server from mcpValues when revoking access */
+      if (isRevoke && variables.pluginKey?.startsWith(Constants.mcp_prefix)) {
+        const serverName = variables.pluginKey.replace(Constants.mcp_prefix, '');
+        const currentValues = mcpValuesRef.current ?? [];
+        const filteredValues = currentValues.filter((name) => name !== serverName);
+        setMCPValues(filteredValues);
+      }
 
       await Promise.all([
         queryClient.invalidateQueries([QueryKeys.mcpServers]),
@@ -417,33 +447,6 @@ export function useMCPServerManager({ conversationId }: { conversationId?: strin
     [startupConfig?.interface?.mcpServers?.placeholder, localize],
   );
 
-  const batchToggleServers = useCallback(
-    (serverNames: string[]) => {
-      const connectedServers: string[] = [];
-      const disconnectedServers: string[] = [];
-
-      serverNames.forEach((serverName) => {
-        if (isInitializing(serverName)) {
-          return;
-        }
-
-        const serverStatus = connectionStatus?.[serverName];
-        if (serverStatus?.connectionState === 'connected') {
-          connectedServers.push(serverName);
-        } else {
-          disconnectedServers.push(serverName);
-        }
-      });
-
-      setMCPValues(connectedServers);
-
-      disconnectedServers.forEach((serverName) => {
-        initializeServer(serverName);
-      });
-    },
-    [connectionStatus, setMCPValues, initializeServer, isInitializing],
-  );
-
   const toggleServerSelection = useCallback(
     (serverName: string) => {
       if (isInitializing(serverName)) {
@@ -457,15 +460,10 @@ export function useMCPServerManager({ conversationId }: { conversationId?: strin
         const filteredValues = currentValues.filter((name) => name !== serverName);
         setMCPValues(filteredValues);
       } else {
-        const serverStatus = connectionStatus?.[serverName];
-        if (serverStatus?.connectionState === 'connected') {
-          setMCPValues([...currentValues, serverName]);
-        } else {
-          initializeServer(serverName);
-        }
+        setMCPValues([...currentValues, serverName]);
       }
     },
-    [mcpValues, setMCPValues, connectionStatus, initializeServer, isInitializing],
+    [mcpValues, setMCPValues, isInitializing],
   );
 
   const handleConfigSave = useCallback(
@@ -491,13 +489,10 @@ export function useMCPServerManager({ conversationId }: { conversationId?: strin
           auth: {},
         };
         updateUserPluginsMutation.mutate(payload);
-
-        const currentValues = mcpValues ?? [];
-        const filteredValues = currentValues.filter((name) => name !== targetName);
-        setMCPValues(filteredValues);
+        /** Deselection is now handled centrally in updateUserPluginsMutation.onSuccess */
       }
     },
-    [selectedToolForConfig, updateUserPluginsMutation, mcpValues, setMCPValues],
+    [selectedToolForConfig, updateUserPluginsMutation],
   );
 
   /** Standalone revoke function for OAuth servers - doesn't require selectedToolForConfig */
@@ -664,7 +659,6 @@ export function useMCPServerManager({ conversationId }: { conversationId?: strin
     isPinned,
     setIsPinned,
     placeholderText,
-    batchToggleServers,
     toggleServerSelection,
     localize,
 

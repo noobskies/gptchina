@@ -11,7 +11,7 @@ const {
 const { requireJwtAuth, checkBan, uaParser, canAccessResource } = require('~/server/middleware');
 const { checkPeoplePickerAccess } = require('~/server/middleware/checkPeoplePickerAccess');
 const { checkSharePublicAccess } = require('~/server/middleware/checkSharePublicAccess');
-const { findMCPServerById } = require('~/models');
+const { findMCPServerByObjectId } = require('~/models');
 
 const router = express.Router();
 
@@ -53,6 +53,12 @@ const checkResourcePermissionAccess = (requiredPermission) => (req, res, next) =
       requiredPermission,
       resourceIdParam: 'resourceId',
     });
+  } else if (resourceType === ResourceType.REMOTE_AGENT) {
+    middleware = canAccessResource({
+      resourceType: ResourceType.REMOTE_AGENT,
+      requiredPermission,
+      resourceIdParam: 'resourceId',
+    });
   } else if (resourceType === ResourceType.PROMPTGROUP) {
     middleware = canAccessResource({
       resourceType: ResourceType.PROMPTGROUP,
@@ -64,7 +70,7 @@ const checkResourcePermissionAccess = (requiredPermission) => (req, res, next) =
       resourceType: ResourceType.MCPSERVER,
       requiredPermission,
       resourceIdParam: 'resourceId',
-      idResolver: findMCPServerById,
+      idResolver: findMCPServerByObjectId,
     });
   } else {
     return res.status(400).json({
