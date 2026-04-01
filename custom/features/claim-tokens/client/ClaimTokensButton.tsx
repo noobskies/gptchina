@@ -9,12 +9,16 @@
  */
 
 import React from 'react';
-import { Button, useToastContext } from '@librechat/client';
+import { Button, TooltipAnchor, useToastContext } from '@librechat/client';
 import { useLocalize } from '~/hooks';
 import { useClaimTokens } from './useClaimTokens';
 import { ClaimTokensIcon } from './ClaimTokensIcon';
 
-export const ClaimTokensButton: React.FC = () => {
+interface ClaimTokensButtonProps {
+  collapsed?: boolean;
+}
+
+export const ClaimTokensButton: React.FC<ClaimTokensButtonProps> = ({ collapsed = false }) => {
   const localize = useLocalize();
   const { showToast } = useToastContext();
   const { canClaim, isLoading, isClaiming, formattedTime, claimTokens, isSuccess } =
@@ -48,6 +52,34 @@ export const ClaimTokensButton: React.FC = () => {
       : localize('com_custom_tokens_claim_loading');
   const isDisabled = !canClaim || isLoading;
 
+  const ariaLabel = canClaim
+    ? localize('com_custom_tokens_claim_button_aria', { amount: '20,000' })
+    : localize('com_custom_tokens_claim_countdown_aria', { time: formattedTime });
+
+  if (collapsed) {
+    return (
+      <TooltipAnchor
+        side="right"
+        description={buttonText}
+        render={
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={handleClaim}
+            disabled={isDisabled}
+            aria-label={ariaLabel}
+            data-testid="claim-tokens-button"
+            className={`h-9 w-9 rounded-lg ${
+              canClaim ? 'text-blue-600 hover:bg-surface-hover' : 'text-text-secondary hover:bg-surface-hover'
+            }`}
+          >
+            <ClaimTokensIcon className="h-4 w-4" />
+          </Button>
+        }
+      />
+    );
+  }
+
   const buttonClassName = canClaim
     ? 'relative mb-2 flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white ring-offset-background transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'
     : 'relative mb-2 flex h-10 w-full items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-border-light bg-background px-4 py-2 text-sm font-medium text-text-primary ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
@@ -59,11 +91,7 @@ export const ClaimTokensButton: React.FC = () => {
       variant="outline"
       className={buttonClassName}
       data-testid="claim-tokens-button"
-      aria-label={
-        canClaim
-          ? localize('com_custom_tokens_claim_button_aria', { amount: '20,000' })
-          : localize('com_custom_tokens_claim_countdown_aria', { time: formattedTime })
-      }
+      aria-label={ariaLabel}
     >
       <ClaimTokensIcon className="h-4 w-4" />
       <span className="text-center">{buttonText}</span>

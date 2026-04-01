@@ -16,12 +16,16 @@ import { TokenPurchaseModal } from './TokenPurchaseModal';
  * Buy Tokens feature wrapper component
  * Manages modal state and combines button with modal
  */
-const BuyTokens: React.FC = () => {
+interface BuyTokensProps {
+  collapsed?: boolean;
+}
+
+const BuyTokens: React.FC<BuyTokensProps> = ({ collapsed = false }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <>
-      <BuyTokensButton onClick={() => setIsModalOpen(true)} />
+      <BuyTokensButton collapsed={collapsed} onClick={() => setIsModalOpen(true)} />
       {isModalOpen && <TokenPurchaseModal open={isModalOpen} onOpenChange={setIsModalOpen} />}
     </>
   );
