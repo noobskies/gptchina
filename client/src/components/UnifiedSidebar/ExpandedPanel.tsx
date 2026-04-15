@@ -1,11 +1,12 @@
 import { memo, useCallback, lazy, Suspense } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRecoilValue } from 'recoil';
+import { SquarePen } from 'lucide-react';
 import { QueryKeys } from 'librechat-data-provider';
-import { Skeleton, Sidebar, Button, TooltipAnchor, NewChatIcon } from '@librechat/client';
+import { Skeleton, Sidebar, Button, TooltipAnchor } from '@librechat/client';
 import type { NavLink } from '~/common';
 import { CLOSE_SIDEBAR_ID } from '~/components/Chat/Menus/OpenSidebar';
-import { useActivePanel, resolveActivePanel } from '~/Providers';
+import { useActivePanel, resolveActivePanel, DEFAULT_PANEL } from '~/Providers';
 import { useLocalize, useNewConvo } from '~/hooks';
 import { clearMessagesCache, cn } from '~/utils';
 import store from '~/store';
@@ -22,23 +23,30 @@ const TokenUsageGuideLink = lazy(() =>
   })),
 );
 
-const NewChatButton = memo(function NewChatButton() {
+const NewChatButton = memo(function NewChatButton({
+  setActive,
+}: {
+  setActive: (id: string) => void;
+}) {
   const localize = useLocalize();
   const queryClient = useQueryClient();
   const { newConversation } = useNewConvo();
   const conversation = useRecoilValue(store.conversationByIndex(0));
+  const switchToHistory = useRecoilValue(store.newChatSwitchToHistory);
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>) => {
-      if (e.button === 0 && (e.ctrlKey || e.metaKey)) {
-        return;
+      if (e.button === 0 && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        clearMessagesCache(queryClient, conversation?.conversationId);
+        queryClient.invalidateQueries([QueryKeys.messages]);
+        newConversation();
+        if (switchToHistory) {
+          setActive(DEFAULT_PANEL);
+        }
       }
-      e.preventDefault();
-      clearMessagesCache(queryClient, conversation?.conversationId);
-      queryClient.invalidateQueries([QueryKeys.messages]);
-      newConversation();
     },
-    [queryClient, conversation?.conversationId, newConversation],
+    [queryClient, conversation?.conversationId, newConversation, switchToHistory, setActive],
   );
 
   return (
@@ -53,9 +61,7 @@ const NewChatButton = memo(function NewChatButton() {
           className="flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:bg-surface-hover"
           onClick={handleClick}
         >
-          <div className="flex size-6 items-center justify-center rounded-full bg-text-primary">
-            <NewChatIcon className="size-3.5 text-white dark:text-black" />
-          </div>
+          <SquarePen className="h-5 w-5 text-text-primary" />
         </a>
       }
     />
@@ -68,12 +74,14 @@ const NavIconButton = memo(function NavIconButton({
   expanded,
   setActive,
   onExpand,
+  onCollapse,
 }: {
   link: NavLink;
   isActive: boolean;
   expanded: boolean;
   setActive: (id: string) => void;
   onExpand?: () => void;
+  onCollapse?: () => void;
 }) {
   const localize = useLocalize();
 
@@ -83,6 +91,10 @@ const NavIconButton = memo(function NavIconButton({
         link.onClick(e);
         return;
       }
+      if (isActive && expanded) {
+        onCollapse?.();
+        return;
+      }
       if (!isActive) {
         setActive(link.id);
       }
@@ -90,7 +102,7 @@ const NavIconButton = memo(function NavIconButton({
         onExpand?.();
       }
     },
-    [link, isActive, setActive, expanded, onExpand],
+    [link, isActive, setActive, expanded, onExpand, onCollapse],
   );
 
   return (
@@ -109,7 +121,7 @@ const NavIconButton = memo(function NavIconButton({
           )}
           onClick={handleClick}
         >
-          <link.icon className="h-4 w-4" aria-hidden="true" />
+          <link.icon className="h-5 w-5" aria-hidden="true" />
         </Button>
       }
     />
@@ -154,7 +166,8 @@ function ExpandedPanel({
           </Button>
         }
       />
-      <NewChatButton />
+      <NewChatButton setActive={setActive} />
+      <div className="mx-2 border-b border-border-light" />
       <div className="flex flex-col gap-1 overflow-y-auto">
         {links.map((link) => (
           <NavIconButton
@@ -164,6 +177,7 @@ function ExpandedPanel({
             expanded={expanded ?? true}
             setActive={setActive}
             onExpand={onExpand}
+            onCollapse={onCollapse}
           />
         ))}
       </div>

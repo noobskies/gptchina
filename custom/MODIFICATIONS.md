@@ -491,6 +491,76 @@ When syncing with upstream:
 
 ---
 
-**Last Updated**: 2025-12-10
+## Unified Sidebar Token Actions (2026-04-15)
+
+### Overview
+
+Preserved GPT China token actions while merging LibreChat's newer Unified Sidebar implementation from upstream.
+
+### Modified Files
+
+#### 1. client/src/components/UnifiedSidebar/ExpandedPanel.tsx
+
+- **Lines**: ~15-22, ~173-196
+- **Reason**: Keep icon-strip shortcuts for Claim Tokens, Buy Tokens, and Token Usage Guide inside the sidebar rail
+- **Upstream Version**: v0.8.5-rc1
+- **Impact**: Low (localized UI-only customization)
+- **Changes**:
+  - Preserved lazy imports for the three custom token actions
+  - Kept the collapsed icon-only buttons in the bottom action stack
+  - Left upstream sidebar toggle and New Chat behavior intact
+
+#### 2. client/src/components/UnifiedSidebar/ConversationsSection.tsx
+
+- **Lines**: ~1-8, ~131-155
+- **Reason**: Keep full-width token action buttons at the bottom of the expanded conversation history panel
+- **Upstream Version**: v0.8.5-rc1
+- **Impact**: Low (localized UI-only customization)
+- **Changes**:
+  - Preserved lazy imports for the custom token actions
+  - Kept the bottom stacked action buttons below the conversation list
+  - Took upstream structural/sidebar behavior changes everywhere else
+
+### Merge Strategy
+
+When syncing with upstream:
+
+1. Take upstream sidebar structure changes first
+2. Re-apply the token action lazy imports if the file header changes
+3. Keep the icon-only buttons in `ExpandedPanel.tsx` above `AccountSettings`
+4. Keep the full-width buttons in `ConversationsSection.tsx` below the conversation list
+5. Verify both collapsed and expanded sidebar states still expose the token actions
+
+---
+
+## Custom Feature ESLint Support (2026-04-15)
+
+### Overview
+
+Preserved gptchina-specific ESLint support for `custom/**/*.ts(x)` while taking upstream flat-config changes.
+
+### Modified Files
+
+#### eslint.config.mjs
+
+- **Lines**: bottom package-specific config block
+- **Reason**: Ensure files in `custom/` continue to resolve against `custom/tsconfig.json` after upstream ESLint updates
+- **Upstream Version**: v0.8.5-rc1
+- **Impact**: Low (linting/configuration only)
+- **Changes**:
+  - Took upstream's new `no-restricted-syntax` guardrails for `packages/data-schemas`
+  - Re-added the gptchina custom TypeScript block for `custom/**/*.ts` and `custom/**/*.tsx`
+
+### Merge Strategy
+
+When syncing with upstream:
+
+1. Keep upstream ESLint rule updates intact
+2. Re-append the `custom/**/*.ts(x)` block if upstream rewrites the flat config footer
+3. Verify the block still points at `./custom/tsconfig.json`
+
+---
+
+**Last Updated**: 2026-04-15
 **Maintainer**: gptchina fork
-**Upstream Version**: v0.8.1-rc1
+**Upstream Version**: v0.8.5-rc1
