@@ -1,0 +1,95 @@
+# Custom Configuration for gptchina Fork
+# This file extends the upstream librechat.yaml configuration
+# All custom features should be configured here
+
+version: 1.0.0
+
+# Feature toggles
+features:
+  # Example: Custom analytics
+  # analytics:
+  #   enabled: false
+  #   endpoint: 'https://analytics.example.com'
+  #   api_key: '' # Set via CUSTOM_ANALYTICS_API_KEY env var
+  #   batch_size: 100
+  #   flush_interval: 5000
+  #   events:
+  #     - 'message:sent'
+  #     - 'user:login'
+  #     - 'conversation:created'
+
+  # Example: Enhanced authentication
+  # enhanced_auth:
+  #   enabled: false
+  #   two_factor:
+  #     enabled: false
+  #     issuer: 'gptchina'
+  #   ip_whitelist:
+  #     enabled: false
+  #     ranges:
+  #       - '192.168.1.0/24'
+  #       - '10.0.0.0/8'
+  #   session:
+  #     max_concurrent: 3
+  #     idle_timeout: 3600
+
+# Custom API endpoints
+# endpoints:
+#   custom_api:
+#     url: 'https://api.example.com'
+#     timeout: 30000
+#     retry:
+#       attempts: 3
+#       delay: 1000
+
+# Custom model configurations
+# models:
+#   - id: 'custom-model-1'
+#     name: 'Custom Model 1'
+#     provider: 'custom'
+#     enabled: true
+#     config:
+#       temperature: 0.7
+#       max_tokens: 4096
+
+# Custom middleware configuration
+# middleware:
+#   rate_limiting:
+#     enabled: true
+#     window: 60000 # 1 minute
+#     max_requests: 100
+#   logging:
+#     enabled: true
+#     level: 'info'
+#     include_request_body: false
+
+# Custom UI configuration
+# ui:
+#   custom_theme:
+#     enabled: false
+#     primary_color: '#007bff'
+#     secondary_color: '#6c757d'
+#   custom_branding:
+#     enabled: false
+#     logo_url: '/custom/assets/logo.png'
+#     app_name: 'gptchina'
+
+# Integration configurations
+# integrations:
+#   slack:
+#     enabled: false
+#     webhook_url: '' # Set via CUSTOM_SLACK_WEBHOOK env var
+#   discord:
+#     enabled: false
+#     webhook_url: '' # Set via CUSTOM_DISCORD_WEBHOOK env var
+
+# Development and debugging
+development:
+  debug_mode: false
+  verbose_logging: false
+  mock_external_services: false
+# Notes:
+# - Use environment variables for sensitive data (API keys, secrets)
+# - Prefix all custom env vars with CUSTOM_
+# - Document all configuration options in custom/FEATURES.md
+# - Test configuration changes thoroughly

@@ -12,6 +12,16 @@ import { clearMessagesCache, cn } from '~/utils';
 import store from '~/store';
 
 const AccountSettings = lazy(() => import('~/components/Nav/AccountSettings'));
+// CUSTOM: gptchina - Claim Tokens feature
+const ClaimTokensButton = lazy(() => import('@custom/features/claim-tokens/client'));
+// CUSTOM: gptchina - Buy Tokens feature
+const BuyTokensButton = lazy(() => import('@custom/features/buy-tokens/client'));
+// CUSTOM: gptchina - Token Usage Guide feature
+const TokenUsageGuideLink = lazy(() =>
+  import('@custom/features/token-usage-guide/client').then((module) => ({
+    default: module.TokenUsageGuideLink,
+  })),
+);
 
 const NewChatButton = memo(function NewChatButton({
   setActive,
@@ -172,7 +182,20 @@ function ExpandedPanel({
         ))}
       </div>
 
-      <div className="mt-auto">
+      {/* CUSTOM: gptchina - restore custom sidebar actions in UnifiedSidebar */}
+      <div className="mt-auto flex flex-col gap-1">
+        {/* CUSTOM: gptchina - Claim Tokens feature */}
+        <Suspense fallback={null}>
+          <ClaimTokensButton />
+        </Suspense>
+        {/* CUSTOM: gptchina - Buy Tokens feature */}
+        <Suspense fallback={null}>
+          <BuyTokensButton />
+        </Suspense>
+        {/* CUSTOM: gptchina - Token Usage Guide */}
+        <Suspense fallback={null}>
+          <TokenUsageGuideLink />
+        </Suspense>
         <Suspense fallback={<Skeleton className="h-9 w-9 rounded-lg" />}>
           <AccountSettings collapsed />
         </Suspense>

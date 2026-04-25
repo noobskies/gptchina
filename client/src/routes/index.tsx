@@ -20,6 +20,16 @@ import ShareRoute from './ShareRoute';
 import ChatRoute from './ChatRoute';
 import Search from './Search';
 import Root from './Root';
+// CUSTOM: gptchina - Token Pricing Guide
+import { TokenPricingPage } from '@custom/features/token-info/client';
+// CUSTOM: gptchina - Token Usage Guide
+import { TokenUsageGuidePage } from '@custom/features/token-usage-guide/client';
+// CUSTOM: gptchina - Privacy Policy
+import { PrivacyPolicyPage } from '@custom/features/privacy-policy/client';
+// CUSTOM: gptchina - Terms of Service
+import { TermsOfServicePage } from '@custom/features/terms-of-service/client';
+// CUSTOM: gptchina - Product Tour
+import { ProductTourProvider } from '@custom/features/product-tour/client';
 
 const AuthLayout = () => (
   <AuthContextProvider>
@@ -41,6 +51,26 @@ export const router = createBrowserRouter(
     {
       path: 'share/:shareId',
       element: <ShareRoute />,
+      errorElement: <RouteErrorBoundary />,
+    },
+    {
+      path: 'token-pricing',
+      element: <TokenPricingPage />,
+      errorElement: <RouteErrorBoundary />,
+    },
+    {
+      path: 'token-usage-guide',
+      element: <TokenUsageGuidePage />,
+      errorElement: <RouteErrorBoundary />,
+    },
+    {
+      path: 'privacy-policy',
+      element: <PrivacyPolicyPage />,
+      errorElement: <RouteErrorBoundary />,
+    },
+    {
+      path: 'terms-of-service',
+      element: <TermsOfServicePage />,
       errorElement: <RouteErrorBoundary />,
     },
     {
@@ -102,7 +132,11 @@ export const router = createBrowserRouter(
         dashboardRoutes,
         {
           path: '/',
-          element: <Root />,
+          element: (
+            <ProductTourProvider>
+              <Root />
+            </ProductTourProvider>
+          ),
           children: [
             {
               index: true,
